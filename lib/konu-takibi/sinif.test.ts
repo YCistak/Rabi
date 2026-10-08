@@ -21,7 +21,6 @@ import {
   BOS_TAKIP,
   asamaYaz,
   konuBloklari,
-  oncekiOkulsuzlar,
   satirlarinKimlikleri,
   sinifSekmeleri,
   type YksTakip,
@@ -231,7 +230,7 @@ describe('sinifSekmeleri — ekranın üstü', () => {
   })
 })
 
-describe('konuBloklari ve oncekiOkulsuzlar — sınıfın ders listesi', () => {
+describe('konuBloklari — sınıfın ders listesi', () => {
   const mat = (ogrenci: number, sinif: 9 | 10 | 11 | 12) =>
     sinifDersleri(sinif, 'say', ogrenci).find((d) => d.id === 'matematik')!
 
@@ -239,13 +238,9 @@ describe('konuBloklari ve oncekiOkulsuzlar — sınıfın ders listesi', () => {
     expect(konuBloklari(mat(MAARIF, 9)).map((b) => b.bolum)).toEqual([null, 'Geometri'])
   })
 
-  it('"bu ve öncekiler" yalnız o sınıfın, aynı bölümün önceki satırları', () => {
-    const on = mat(ESKI, 10)
-    const satirlar = oncekiOkulsuzlar(on, 'tyt-mat-polinom', BOS_TAKIP)
-    expect(satirlar.map((s) => s.id)).toEqual(['tyt-mat-carpanlara-ayirma', 'tyt-mat-fonksiyon', 'tyt-mat-polinom'])
-    // Birleşen satırlar iki kimliği de yazıyor.
+  it('birleşen satırlar iki kimliği de yazıyor', () => {
+    const satirlar = mat(ESKI, 10).konular.filter((s) => s.id === 'tyt-mat-fonksiyon' || s.id === 'tyt-mat-polinom')
     expect(satirlarinKimlikleri(satirlar)).toEqual([
-      'tyt-mat-carpanlara-ayirma',
       'tyt-mat-fonksiyon',
       'ayt-mat-fonksiyon',
       'tyt-mat-polinom',
@@ -254,7 +249,7 @@ describe('konuBloklari ve oncekiOkulsuzlar — sınıfın ders listesi', () => {
     expect(satirlar.every((s) => sinifAtamasi(s.id, ESKI) === 10)).toBe(true)
   })
 
-  it('Maarif\'te görünmeyen konu listede yok', () => {
-    expect(oncekiOkulsuzlar(mat(MAARIF, 10), 'tyt-mat-polinom', BOS_TAKIP)).toEqual([])
+  it('Maarif\'te görünmeyen konu 10. sınıf listesinde yok', () => {
+    expect(mat(MAARIF, 10).konular.some((s) => s.id === 'tyt-mat-polinom')).toBe(false)
   })
 })
