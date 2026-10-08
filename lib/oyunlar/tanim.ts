@@ -209,7 +209,7 @@ export const OYUNLAR: OyunTanimi[] = [
   {
     id: 'islem',
     ders: 'matematik',
-    ad: 'Dört İşlem',
+    ad: 'Hızlı Hesap',
     kisaAciklama: 'İşlem hızını aç, sonucu tuşla yaz',
     ikon: '🧮',
     ozet: `Ekrana gelen işlemin sonucunu tuş takımıyla yazıp onaylarsın; sonuçlar hep tam sayı. Hangi işlemlerle çalışacağını aşağıdan seçersin.`,
