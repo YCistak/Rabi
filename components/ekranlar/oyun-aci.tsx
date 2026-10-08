@@ -13,9 +13,11 @@ import {
 } from '@/lib/oyunlar/aci'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -65,7 +67,7 @@ const EN_COK_RAKAM = 3
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-type GeriBildirim = { dogruMu: boolean; girilen: string; soru: AciSorusu }
+type GeriBildirim = { dogruMu: boolean; pas: boolean; girilen: string; soru: AciSorusu }
 
 /** Banka kayıtlarından tur soruları; şekil sorudan yeniden kuruluyor. */
 function bankaSorulariniCoz(kayitlar: readonly BankaKaydi[]): AciSorusu[] {
@@ -222,25 +224,33 @@ export function AciOyunuEkrani({
     ).catch(() => {})
   }
 
-  /** `pas` true ise cevap verilmeden geçiliyor; yanlış sayılır. */
+  /**
+   * `cevap`: yazılan sayı onaylandı. `sure`: soru saati doldu, cevapsız soru
+   * yanlış sayılır. `pas`: pas hakkı kullanıldı — bedelsiz (`Cevap.pas`),
+   * yalnızca doğrusu gösterilip geçiliyor.
+   */
   const cevapla = useCallback(
-    (pas: boolean) => {
+    (nasil: 'cevap' | 'sure' | 'pas') => {
       if (asama !== 'oynaniyor' || geriBildirim !== null) return
       const soru = sorular[sira]
       if (!soru) return
-      if (!pas && girilen === '') return
+      if (nasil === 'cevap' && girilen === '') return
+      if (nasil === 'pas' && kalanPas(cevaplarRef.current) <= 0) return
 
-      const dogruMu = !pas && Number(girilen) === soru.cevap
-      setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
-      if (!dogruMu) setYanlisGirdileri((onceki) => [...onceki, pas ? '' : girilen])
-      setGeriBildirim({ dogruMu, girilen: pas ? '' : girilen, soru })
-      geriBildir(dogruMu)
+      const pas = nasil === 'pas'
+      const yazilan = nasil === 'cevap' ? girilen : ''
+      const dogruMu = nasil === 'cevap' && Number(girilen) === soru.cevap
+      setCevaplar((onceki) => [...onceki, pas ? { soru, dogruMu, pas } : { soru, dogruMu }])
+      if (!dogruMu) setYanlisGirdileri((onceki) => [...onceki, yazilan])
+      setGeriBildirim({ dogruMu, pas, girilen: yazilan, soru })
+      // Pas bir hata değil: yanlış titreşimi ve sesi yok.
+      if (!pas) geriBildir(dogruMu)
 
 
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
         setGirilen('')
-        if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+        if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
           setElendi('yanlis')
           turBitir(cevaplarRef.current)
         } else {
@@ -253,13 +263,14 @@ export function AciOyunuEkrani({
 
 
   /**
-   * Süre dolması cevap vermemekle aynı: soru pas geçilmiş sayılıyor.
+   * Süre dolması cevap vermemekle aynı: soru yanlış sayılıyor (pas hakkı
+   * harcanmıyor, pas bedelsiz olduğu için ikisi ayrı).
    *
    * Matematik oyunlarında eleme yok — süre dolunca
    * tur bitmiyor, sıradaki soruya geçiliyor.
    */
   const sureDoldu = useCallback(() => {
-    cevapla(true)
+    cevapla('sure')
   }, [cevapla])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
@@ -290,7 +301,7 @@ export function AciOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
     sure: soruSuresi('aci'),
@@ -310,7 +321,7 @@ export function AciOyunuEkrani({
     const dinleyici = (olay: KeyboardEvent) => {
       if (olay.key >= '0' && olay.key <= '9') rakamYaz(olay.key)
       else if (olay.key === 'Backspace') sil()
-      else if (olay.key === 'Enter') cevapla(false)
+      else if (olay.key === 'Enter') cevapla('cevap')
       else return
       olay.preventDefault()
     }
@@ -346,11 +357,16 @@ export function AciOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: () => cevapla('pas'),
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -393,9 +409,13 @@ export function AciOyunuEkrani({
                 <CevapAlani
                   girilen={geriBildirim ? geriBildirim.girilen : girilen}
                   durum={
-                    geriBildirim ? (geriBildirim.dogruMu ? 'dogru' : 'yanlis') : 'yaziliyor'
+                    geriBildirim
+                      ? geriBildirim.pas ? 'pas' : geriBildirim.dogruMu ? 'dogru' : 'yanlis'
+                      : 'yaziliyor'
                   }
-                  bosYazi={geriBildirim && !geriBildirim.dogruMu ? 'pas' : 'dereceyi yaz'}
+                  bosYazi={
+                    geriBildirim?.pas ? 'pas' : geriBildirim && !geriBildirim.dogruMu ? 'süre doldu' : 'dereceyi yaz'
+                  }
                 />
 
                 <TusTakimi
@@ -403,15 +423,15 @@ export function AciOyunuEkrani({
                   bosMu={girilen === ''}
                   onRakam={rakamYaz}
                   onSil={sil}
-                  onOnayla={() => cevapla(false)}
-                  onPas={() => cevapla(true)}
+                  onOnayla={() => cevapla('cevap')}
                 />
               </div>
 
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? ACI_KURALI_ADI[geriBildirim.soru.kural]

@@ -31,6 +31,23 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   bayrağı (`onTurBitti` 4. parametre) ile rekora, istatistiğe, geçmişe yazılmaz
   (`oyunlar.tsx` → `turBitti`); rekor rozeti kutlamaz.
 
+## Pas (`lib/oyunlar/tur.ts` → `PAS_HAKKI`)
+
+- Eşleştirme dışındaki bütün oyunlarda turda **5 pas hakkı** (kullanıcı istedi). Düğme kabuğun sayaç
+  şeridinin sağında (`OyunKabugu` → `pas`, `PasBilgisi`), oyun dosyasında değil.
+  Kalan hak ayrı sayaç değil, cevaplardan türer (`kalanPas`).
+- Pas **bedelsiz** (kullanıcı seçti): yanlış sayılmaz (`yanlisSayisi`), süreden
+  götürmez, Sıfır Tolerans'ta elemez, seriyi bozmaz, uyuma girmez, yanlış sesi ve
+  titreşimi yok. Kayıt `{ dogruMu: false, pas: true }`: doğrusu gösterilir ("Pas
+  geçtin", nötr `Bildirim pas`), tur sonunda listelenir ve **bankaya düşer**.
+- Süre dolması pas değil, yanlıştır.
+- **Eşleştirme oyunlarında pas yok** (edebiyat, antlaşma, formül, kavram; kullanıcı
+  kaldırttı): `pas` prop'u verilmez, düğme çizilmez. Köklü'de pas yalnız aralık
+  aşamasında; Sıralama'da sorunun tamamını geçer.
+- Eskiden bazı oyunlarda sınırsız pas vardı (yanlış sayılıyordu) ve Harita/Bölünme'de
+  "ilk tercih oluyor" diye kaldırılmıştı; hak sınırı o sorunu karşılıyor. Sınırsız
+  pası geri getirme.
+
 ## Oyun Bankası
 
 - İki çıkış: **kazanılan** (genel testte doğru → düşer, "bankadan düşen" sayacı ve
