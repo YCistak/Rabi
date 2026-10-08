@@ -56,6 +56,7 @@ import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import {
   Bildirim,
   EN_COK_YANLIS,
@@ -522,10 +523,11 @@ export function YazimOyunuEkrani({
                     soru.tur === 'yazim' ? 'flex flex-col' : 'grid grid-cols-2',
                   )}
                 >
-                  {soru.siklar.map((sik) => (
+                  {soru.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={sik.metin}
                       sik={sik}
+                      sira={i}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
                     />
@@ -587,37 +589,21 @@ function CevapBildirimi({ geriBildirim }: { geriBildirim: GeriBildirim }) {
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: Sik
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilenMetin === sik.metin
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  /** Yanlış seçildiğinde doğrusu da işaretleniyor — öğrenme burada oluyor. */
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilenMetin === sik.metin, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[62px] w-full items-center justify-center gap-2 rounded-[20px] border-2 px-4 py-3',
-        'font-display text-lg font-extrabold leading-snug transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
-      <span className="flex min-w-0 flex-col items-center">
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[62px] py-3 text-lg">
+      <span className="flex flex-col items-center">
         {/* İşaret büyük, adı altında: tek başına bir “;” küçük ekranda “,” ile
             karışıyor, ad da işareti okumadan seçmeyi engellemiyor. */}
         <span className={cn('break-words', sik.altYazi && 'text-[28px] leading-[1.1]')}>
@@ -625,9 +611,7 @@ function SikDugmesi({
         </span>
         {sik.altYazi && <span className="text-[11.5px] font-semibold">{sik.altYazi}</span>}
       </span>
-      {(dogruSecim || isaretli) && <Check size={19} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={19} className="shrink-0" aria-hidden />}
-    </button>
+    </OyunSikki>
   )
 }
 

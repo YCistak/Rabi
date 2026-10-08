@@ -9,5 +9,7 @@ export function dersVurgusu(ders: KonuDersId): CSSProperties {
     '--primary-parlak': `var(--konu-${ders}-ok)`,
     '--primary-dolu': `var(--konu-${ders}-ok)`,
     '--ring': `var(--konu-${ders}-koyu)`,
+    // Oyun şıklarının kenarı ve basılma gölgesi (`components/oyun-sikki.tsx`).
+    '--vurgu-kenar': `var(--konu-${ders}-kenar)`,
   } as CSSProperties
 }

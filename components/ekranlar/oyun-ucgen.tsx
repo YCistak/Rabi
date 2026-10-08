@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import {
   UCGEN_ACIKLAMASI,
@@ -37,7 +36,6 @@ import type { BildirimKolu } from '@/components/hata-bildir'
 import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
-import { cn } from '@/lib/utils'
 import { Rabi, type MaskotDurumu } from '@/components/maskot/rabi'
 import {
   Bildirim,
@@ -49,6 +47,7 @@ import {
   rekorCumlesi,
   type Eleme,
 } from '@/components/oyun-kabuk'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import { OyunSekli } from '@/components/oyun-sekil'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 
@@ -421,10 +420,11 @@ export function UcgenOyunuEkrani({
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  {gecerli.siklar.map((sik) => (
+                  {gecerli.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={kenarMetni(sik)}
                       sik={sik}
+                      sira={i}
                       dogruMu={kenarEsit(sik, ucgenCevabi(gecerli.soru))}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
@@ -471,11 +471,13 @@ export function UcgenOyunuEkrani({
  */
 function SikDugmesi({
   sik,
+  sira,
   dogruMu,
   geriBildirim,
   onSec,
 }: {
   sik: Kenar
+  sira: number
   dogruMu: boolean
   geriBildirim: GeriBildirim | null
   onSec: () => void
@@ -484,30 +486,17 @@ function SikDugmesi({
   // Süre dolduysa hiçbir şık seçili değil; yalnızca doğrusu işaretleniyor.
   const secilen =
     acikta && geriBildirim.secilen !== null && kenarEsit(geriBildirim.secilen, sik)
-  const dogruSecim = secilen && dogruMu
-  const yanlisSecim = secilen && !dogruMu
-  const isaretli = acikta && !secilen && dogruMu
+  const hal = sikHali(acikta, secilen, dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart flex min-h-[60px] w-full items-center justify-center gap-2 rounded-[20px] border-2 px-4 py-3',
-        'rakam font-display text-[26px] font-extrabold leading-none transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !dogruMu && 'border-border bg-card opacity-45',
-      )}
+    <OyunSikki
+      sira={sira}
+      hal={hal}
+      onSec={onSec}
+      className="min-h-[60px] py-3 rakam text-[26px] leading-none"
     >
       {kenarMetni(sik)}
-      {(dogruSecim || isaretli) && <Check size={19} className="shrink-0" aria-hidden />}
-      {yanlisSecim && <X size={19} className="shrink-0" aria-hidden />}
-    </button>
+    </OyunSikki>
   )
 }
 

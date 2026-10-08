@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
-import { Check, X } from 'lucide-react'
 import type { OyunIstatistigi } from '@/lib/types'
 import {
   bankaTuruHazirla,
@@ -58,6 +57,7 @@ import {
   rekorCumlesi,
   type Eleme,
 } from '@/components/oyun-kabuk'
+import { OyunSikki, sikHali } from '@/components/oyun-sikki'
 import { OyunSekli } from '@/components/oyun-sekil'
 import { OyunTanitim } from '@/components/oyun-tanitim'
 import { KesirYazisi } from '@/components/kesir-yazisi'
@@ -376,10 +376,11 @@ export function TrigonometriOyunuEkrani({
                 <SoruKarti soru={soru.soru} maskot={maskotDurumu} />
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  {soru.siklar.map((sik) => (
+                  {soru.siklar.map((sik, i) => (
                     <SikDugmesi
                       key={sik.deger}
                       sik={sik}
+                      sira={i}
                       geriBildirim={geriBildirim}
                       onSec={() => cevapla(sik)}
                     />
@@ -475,42 +476,22 @@ function SoruKarti({ soru, maskot }: { soru: TrigSorusu; maskot: MaskotDurumu })
  */
 function SikDugmesi({
   sik,
+  sira,
   geriBildirim,
   onSec,
 }: {
   sik: TrigSikki
+  sira: number
   geriBildirim: GeriBildirim | null
   onSec: () => void
 }) {
   const acikta = geriBildirim !== null
-  const secilen = acikta && geriBildirim.secilen === sik.deger
-  const dogruSecim = secilen && sik.dogruMu
-  const yanlisSecim = secilen && !sik.dogruMu
-  const isaretli = acikta && !secilen && sik.dogruMu
+  const hal = sikHali(acikta, acikta && geriBildirim.secilen === sik.deger, sik.dogruMu)
 
   return (
-    <button
-      type="button"
-      onClick={onSec}
-      disabled={acikta}
-      className={cn(
-        'golge-kart relative flex min-h-[74px] w-full items-center justify-center rounded-[20px] border-2 px-4 py-2',
-        'font-display text-[22px] font-extrabold transition',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        !acikta && 'border-border bg-card active:brightness-95',
-        dogruSecim && 'border-success bg-success text-white',
-        yanlisSecim && 'border-ikincil bg-ikincil text-white',
-        isaretli && 'border-success bg-card text-success',
-        acikta && !secilen && !sik.dogruMu && 'border-border bg-card opacity-45',
-      )}
-    >
+    <OyunSikki sira={sira} hal={hal} onSec={onSec} className="min-h-[74px] py-2 text-[22px]">
       <KesirYazisi metin={sik.metin} />
-      {/* İşaret köşede: kesrin yanına konsa kesir ortadan kayardı. */}
-      {(dogruSecim || isaretli) && (
-        <Check size={17} className="absolute right-2.5 top-2.5 shrink-0" aria-hidden />
-      )}
-      {yanlisSecim && <X size={17} className="absolute right-2.5 top-2.5 shrink-0" aria-hidden />}
-    </button>
+    </OyunSikki>
   )
 }
 
