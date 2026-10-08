@@ -57,7 +57,7 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   konunun **asıl içeriğini** anlatıyorsa; tek kartta değinmek yetmez. Karşılığı
   olmayan konuda aşama hiç gösterilmez. 12. sınıf kartları yazılınca tabloya eklenir
   (Matematik eklendi: diziler, toplam-fark, limit, türev, integral, çemberin
-  analitiği); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
+  analitiği; Kimya eklendi: AYT'nin dört 12. sınıf başlığı `kim12-*`); yalnız `mat12-*` destesine eşli konu `MAARIF_SINIF`ta "henüz yok"
   kalır. `takip.test.ts` iki uçtaki kimlikleri denetler.
   Fizik 12 eklendi: AYT Fizik'in dönerek öteleme, Kepler, BHH (`fzk12-bhh` ek),
   dalga mekaniği, atom, modern fizik ve teknoloji satırları `fzk12-*` destelerine

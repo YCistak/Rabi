@@ -19,6 +19,10 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   BHH destesi `fzk10-periyodik`le örtüşür ama 2018'in konum-hız-ivme ve yay bağlama
   kazanımlarını taşır. Programın "hesaplamaya girilmez" dediği yerde (görelilik,
   Compton, girişim, eylemsizlik momenti) bağıntı yalnız değişken ilişkisi için verilir.
+- **12. sınıf Kimya** (`12-kimya.ts`, 2018'in dört ünitesi): Lewis (`kim9-lewis`),
+  nanoteknoloji (`kim9/11-nano`), sürdürülebilirlik/yeşil kimya (`kim9-yesil`,
+  `kim11-mikroplastik`) ve hidrojen üretimi (`kim11-yesil-hidrojen`) 9–11'de var,
+  12'de yazılmaz; Nernst hesabı ve yakıt pili (Fen Lisesi) yok.
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve
