@@ -45,8 +45,8 @@ export const ingilizce12Sorulari1: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['“I’m into hip-hop.” ne demektir?', ['Hip-hop’tan nefret ederim', 'Hip-hop’a meraklıyım'], 1, 'Be into, bir şeye ilgi duymak demektir.'],
   ]),
   'ing12-arkadaslik-ozellik': sorular([
-    ['“What does she look like?” sorusu görünüşü sorar.', true, 'Look like sorusu dış görünüşü sorar; huy için what kind of person kullanılır.'],
-    ['“What kind of person is he?” sorusu boyunu ve saç rengini sorar.', false, 'Bu soru kişiliği sorar; görünüş için what does he look like kullanılır.'],
+    ['“What does she look like” sorusu görünüşü sorar.', true, 'Look like sorusu dış görünüşü sorar; huy için what kind of person kullanılır.'],
+    ['“What kind of person is he” sorusu boyunu ve saç rengini sorar.', false, 'Bu soru kişiliği sorar; görünüş için what does he look like kullanılır.'],
     ['“Tom is as handsome as his brother” iki kişiyi eşit gösterir.', true, 'As … as eşitlik anlatır.'],
     ['“She looks very younger than her sister” doğru bir cümledir.', false, 'Comparative ile much kullanılır: much younger; very kullanılmaz.'],
     ['“He behaves badly” cümlesinde behave fiilinden sonra zarf gelmiştir.', true, 'Badly bir zarftır; davranışın nasıl olduğunu anlatır.'],
@@ -93,7 +93,7 @@ export const ingilizce12Sorulari1: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['“Governments should protect children” bir öneri bildirir.', true, 'Should + yalın fiil öneri verir.'],
     ['“I suggest to build a ramp” doğru bir cümledir.', false, 'Suggest’ten sonra to + fiil gelmez: I suggest building / that we build.'],
     ['“Lead to” sonuç doğurmayı anlatır.', true, 'Poverty leads to a lack of education: yoksulluk eğitim eksikliğine yol açar.'],
-    ['“Why don’t we write to the mayor?” bir yasak bildirir.', false, 'Why don’t we …? öneri kalıbıdır.'],
+    ['“Why don’t we write to the mayor” kalıbı bir yasak bildirir.', false, 'Why don’t we …? öneri kalıbıdır.'],
     ['“Lack of access to schools” erişim eksikliğini anlatır.', true, 'Lack of eksikliği anlatır.'],
     ['“However” cümleye neden ekler.', false, 'However karşıtlık kurar; neden için because kullanılır.'],
   ], [
