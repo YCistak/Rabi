@@ -110,7 +110,7 @@ import {
 } from '@/lib/ozet'
 import { bugunKonuBittiMi, gorevlerBittiMi } from '@/lib/ana-maskot'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { DENEME_FORMU_ADIMLARI, DENEME_VAZGEC, HARITA_TUR_ADIMLARI, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
+import { DENEME_FORMU_ADIMLARI, DENEME_VAZGEC, GOREV_VAZGEC, HARITA_TUR_ADIMLARI, gorevFormuTurdaAcik, gorevYazilabilir, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
 import { demoDenemeleri, istatistikTuruDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
 import { tanitimGeriKarari } from '@/lib/tanitim-rehber'
 import { taniKaydet } from '@/lib/tanitim-tani'
@@ -135,6 +135,9 @@ const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutE
 export function AppShell() {
   return <TanitimSaglayici><RabiUygulamasi /></TanitimSaglayici>
 }
+
+/** Yapılacaklar turunda görev listesine yazım: turda görev oluşmuyor (`gorevYazilabilir`). */
+const turdaGorevYazma = () => {}
 
 function RabiUygulamasi() {
   const tanitim = useTanitim()
@@ -1293,8 +1296,13 @@ function RabiUygulamasi() {
             {ekran === 'notlar' && (
               <YapilacaklarEkrani
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
-                setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
-                tanitim={anaTurda ? turFormu('gorev-form', 'gorev-listesi') : undefined}
+                // Yapılacaklar turu görev eklemeyi yalnızca gösteriyor: listeye yazılmıyor.
+                setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : gorevYazilabilir(tanitim.aktifTur) ? setGorevler : turdaGorevYazma}
+                tanitim={tanitim.aktifTur === 'yapilacaklar' ? {
+                  formAcik: gorevFormuTurdaAcik(tanitim.aktifTur, tanitim.adim?.kimlik ?? null),
+                  formuAc: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'gorev-ekle' }),
+                  formuKapat: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: GOREV_VAZGEC }),
+                } : undefined}
                 // Turda ve ayar kapalıyken izin sorulmuyor.
                 gorevIzniIste={!anaTurda && ayarlar.gorevHatirlatma ? gorevIzniIste : undefined}
                 onPomodoroBaslat={(gorev) => {

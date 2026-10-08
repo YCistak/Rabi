@@ -75,8 +75,10 @@ export function YapilacaklarEkrani({
    */
   gorevIzniIste?: () => Promise<boolean | null>
   /**
-   * Başlangıç turunda ekleme sayfası yalnızca tur o adımdayken görünüyor
-   * (`SoruTakibiEkrani` ile aynı gerekçe).
+   * Yapılacaklar turu: ekleme sayfası kullanıcının dokunuşuna değil turun
+   * adımına bağlı (`gorevFormuTurdaAcik`). "+" yalnızca tura bildiriyor,
+   * kapatma "+" adımına döndürüyor ve Kaydet hiçbir şey yazmıyor — tur görev
+   * eklemeyi gösteriyor, eklettirmiyor.
    */
   tanitim?: { formAcik: boolean; formuAc: () => void; formuKapat: () => void }
 }) {
@@ -124,6 +126,8 @@ export function YapilacaklarEkrani({
   }
 
   const kaydet = (duzen: GorevDuzeni, duzenlenen?: Gorev) => {
+    // Turda kayıt yok (Kaydet zaten rehberin kilidinde; bu ikinci emniyet).
+    if (tanitim) return
     if (duzenlenen) {
       const sonuc = gorevDuzenle(gorevler, duzenlenen.id, duzen)
       if (sonuc) setGorevler(sonuc)
@@ -141,11 +145,16 @@ export function YapilacaklarEkrani({
     soyle('Listeye eklendi.')
   }
 
-  /** Ekleme sayfası; turda açılışı tura da bildiriliyor (adım ilerliyor). */
+  /** Ekleme sayfası; turda yalnızca tura bildiriliyor, sayfayı adım açıyor. */
   const sayfaAc = () => {
-    setSayfa({})
-    tanitim?.formuAc()
+    if (tanitim) tanitim.formuAc()
+    else setSayfa({})
   }
+  /*
+    Turda sayfanın açıklığı yalnızca adımdan geliyor: `sayfa` kullanılsaydı
+    tur bitince (prop kalkınca) adımın kapattığı sayfa yeniden belirirdi.
+  */
+  const formGorunur = tanitim ? tanitim.formAcik : sayfa !== null
 
   const ertele = (gorev: Gorev) => {
     const sonuc = gorevErtele(gorevler, gorev.id)
@@ -198,8 +207,11 @@ export function YapilacaklarEkrani({
             {!gecmis && (
               <button
                 type="button"
+                data-tanitim="gorev-ekle"
                 onClick={sayfaAc}
-                disabled={!yerVar}
+                // Turda dolu günde de basılabilir: sayfa yalnızca gösteriliyor,
+                // kayıt olmuyor; pasif düğme turu "+" adımında kilitlerdi.
+                disabled={!yerVar && !tanitim}
                 aria-label="Görev ekle"
                 // Görsel 36 piksel; `::after` dokunma alanını 44'e çıkarıyor.
                 className="relative grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary transition after:absolute after:-inset-1 active:scale-95 disabled:opacity-40 disabled:active:scale-100"
@@ -250,13 +262,14 @@ export function YapilacaklarEkrani({
         </div>
       )}
 
-      {sayfa !== null && (!tanitim || tanitim.formAcik) && (
+      {formGorunur && (
         <EklemeSayfasi
-          duzenlenen={sayfa.gorev}
+          duzenlenen={tanitim ? undefined : sayfa?.gorev}
           gunEtiketi={gunEtiketi}
           onKapat={() => (tanitim ? tanitim.formuKapat() : setSayfa(null))}
-          onKaydet={(duzen) => kaydet(duzen, sayfa.gorev)}
+          onKaydet={(duzen) => kaydet(duzen, tanitim ? undefined : sayfa?.gorev)}
           gorevIzniIste={gorevIzniIste}
+          turda={!!tanitim}
         />
       )}
 
@@ -562,6 +575,7 @@ function EklemeSayfasi({
   onKapat,
   onKaydet,
   gorevIzniIste,
+  turda = false,
 }: {
   /** Verilirse sayfa bu görevi düzenliyor, alanlar onun değerleriyle açılıyor. */
   duzenlenen?: Gorev
@@ -569,6 +583,8 @@ function EklemeSayfasi({
   onKapat: () => void
   onKaydet: (duzen: GorevDuzeni) => void
   gorevIzniIste?: () => Promise<boolean | null>
+  /** Turda gösteriliyor: boş formda Kaydet soluk çizilmesin (rehber "dokununca eklenir" diyor). */
+  turda?: boolean
 }) {
   const [metin, setMetin] = useState(duzenlenen?.metin ?? '')
   /** Saat kutusunun ham değeri; boşsa görev saatsiz. */
@@ -694,70 +710,75 @@ function EklemeSayfasi({
           </button>
         </div>
 
-        <AlanBasligi
-          baslik="Ne yapacaksın?"
-          // Sayaç sınırı görünür kılıyor: yazarken kesilen bir kutu, bozuk
-          // görünüyor. Sınırın kendisi satırın genişliğinden geliyor.
-          sayac={`${yazilan.length}/${EN_UZUN_GOREV}`}
-          hata={hata && yazilan === '' ? 'Bir iş yaz' : undefined}
-        />
-        <input
-          value={metin}
-          onChange={(olay) => setMetin(olay.target.value.slice(0, EN_UZUN_GOREV))}
-          maxLength={EN_UZUN_GOREV}
-          placeholder="Tek satırlık bir iş yaz"
-          className={cn(
-            'h-[52px] w-full rounded-[16px] border bg-background px-3.5 text-[15px] font-bold outline-none transition placeholder:font-semibold placeholder:text-muted-foreground/70 focus-visible:border-primary-parlak focus-visible:bg-card',
-            hata && yazilan === '' ? 'border-danger' : 'border-input',
-          )}
-        />
+        {/* Tur hedefleri (`data-tanitim`) başlığı ve alanı birlikte sarıyor. */}
+        <div data-tanitim="gorev-ad">
+          <AlanBasligi
+            baslik="Ne yapacaksın?"
+            // Sayaç sınırı görünür kılıyor: yazarken kesilen bir kutu, bozuk
+            // görünüyor. Sınırın kendisi satırın genişliğinden geliyor.
+            sayac={`${yazilan.length}/${EN_UZUN_GOREV}`}
+            hata={hata && yazilan === '' ? 'Bir iş yaz' : undefined}
+          />
+          <input
+            value={metin}
+            onChange={(olay) => setMetin(olay.target.value.slice(0, EN_UZUN_GOREV))}
+            maxLength={EN_UZUN_GOREV}
+            placeholder="Tek satırlık bir iş yaz"
+            className={cn(
+              'h-[52px] w-full rounded-[16px] border bg-background px-3.5 text-[15px] font-bold outline-none transition placeholder:font-semibold placeholder:text-muted-foreground/70 focus-visible:border-primary-parlak focus-visible:bg-card',
+              hata && yazilan === '' ? 'border-danger' : 'border-input',
+            )}
+          />
+        </div>
 
         {/* Saat isteğe bağlı ve kapalı başlıyor: tek dokunuşla telefonun saat
             seçicisi açılıyor. Çarpı saati siler, görev saatsiz kalır. */}
-        <AlanBasligi baslik="Saat" sayac="isteğe bağlı" />
-        {saatAcik ? (
-          <div className="flex items-center gap-2">
-            <label className="flex h-[46px] min-w-0 flex-1 items-center gap-2.5 rounded-[12px] border-[1.5px] border-primary-parlak bg-card px-3.5 text-primary">
-              <Clock size={17} strokeWidth={2.4} aria-hidden className="shrink-0" />
-              <input
-                ref={saatKutusu}
-                type="time"
-                value={saat}
-                onChange={(olay) => setSaat(olay.target.value)}
-                aria-label="Görevin saati"
-                className="rakam h-full min-w-0 flex-1 bg-transparent text-[15px] font-extrabold text-foreground outline-none"
-              />
-            </label>
+        <div data-tanitim="gorev-saat">
+          <AlanBasligi baslik="Saat" sayac="isteğe bağlı" />
+          {saatAcik ? (
+            <div className="flex items-center gap-2">
+              <label className="flex h-[46px] min-w-0 flex-1 items-center gap-2.5 rounded-[12px] border-[1.5px] border-primary-parlak bg-card px-3.5 text-primary">
+                <Clock size={17} strokeWidth={2.4} aria-hidden className="shrink-0" />
+                <input
+                  ref={saatKutusu}
+                  type="time"
+                  value={saat}
+                  onChange={(olay) => setSaat(olay.target.value)}
+                  aria-label="Görevin saati"
+                  className="rakam h-full min-w-0 flex-1 bg-transparent text-[15px] font-extrabold text-foreground outline-none"
+                />
+              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  setSaat('')
+                  setSaatAcik(false)
+                }}
+                aria-label="Saati kaldır"
+                className="grid size-[46px] shrink-0 place-items-center rounded-[12px] bg-muted/70 text-muted-foreground transition active:brightness-95"
+              >
+                <X size={17} strokeWidth={2.4} aria-hidden />
+              </button>
+            </div>
+          ) : (
             <button
               type="button"
               onClick={() => {
-                setSaat('')
-                setSaatAcik(false)
+                seciciAcilsin.current = true
+                setSaatAcik(true)
               }}
-              aria-label="Saati kaldır"
-              className="grid size-[46px] shrink-0 place-items-center rounded-[12px] bg-muted/70 text-muted-foreground transition active:brightness-95"
+              className="flex h-[46px] w-full items-center justify-center gap-2 rounded-[12px] border-[1.5px] border-dashed border-border bg-card text-[13.5px] font-extrabold text-muted-foreground transition active:border-primary active:text-primary"
             >
-              <X size={17} strokeWidth={2.4} aria-hidden />
+              <Clock size={16} strokeWidth={2.4} aria-hidden />
+              Saat ekle
             </button>
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => {
-              seciciAcilsin.current = true
-              setSaatAcik(true)
-            }}
-            className="flex h-[46px] w-full items-center justify-center gap-2 rounded-[12px] border-[1.5px] border-dashed border-border bg-card text-[13.5px] font-extrabold text-muted-foreground transition active:border-primary active:text-primary"
-          >
-            <Clock size={16} strokeWidth={2.4} aria-hidden />
-            Saat ekle
-          </button>
-        )}
-        {izinYok && saatGirildi && (
-          <p className="mt-1.5 px-0.5 text-[11.5px] font-bold text-muted-foreground">
-            Bildirim izni kapalı, bu görev için hatırlatma gelmez.
-          </p>
-        )}
+          )}
+          {izinYok && saatGirildi && (
+            <p className="mt-1.5 px-0.5 text-[11.5px] font-bold text-muted-foreground">
+              Bildirim izni kapalı, bu görev için hatırlatma gelmez.
+            </p>
+          )}
+        </div>
 
         {/* Varsayılan seçili gelmiyor: seçili bir "30 dk", kullanıcının hiç
             vermediği bir tahmini onun adına kaydederdi. Seçili çipe yeniden
@@ -806,6 +827,7 @@ function EklemeSayfasi({
         <button
           type="button"
           role="switch"
+          data-tanitim="gorev-pomodoro"
           aria-checked={pomodoro}
           onClick={() => setPomodoro((o) => !o)}
           className="mt-4 flex min-h-[52px] w-full items-center gap-3 rounded-[16px] border-[1.5px] border-border bg-card px-3.5 py-2 text-left transition active:bg-muted"
@@ -901,9 +923,10 @@ function EklemeSayfasi({
           ilerlenmiyor": pasif düğmenin yanında sebep yazmalı).
         */}
         <Buton
+          data-tanitim="gorev-kaydet"
           onClick={gonder}
           aria-disabled={!gecerli}
-          className={cn('mt-[18px] h-[54px] w-full rounded-[17px] text-base', !gecerli && 'opacity-45')}
+          className={cn('mt-[18px] h-[54px] w-full rounded-[17px] text-base', !gecerli && !turda && 'opacity-45')}
         >
           Kaydet
         </Buton>
