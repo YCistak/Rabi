@@ -66,13 +66,18 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   bitince.
 - **"Bu ve önceki konuları okulda işlendi say"** (`oncekiOkulsuzlar`): görünen liste
   (seçili sınıf, o ders), yalnız aynı bölüm, yalnız okul aşaması, bildirimde Geri al.
-- **Özet tek segmentli çubuk** (bitti › soru › okul › kalan, her konu en ileri
+- **Giriş ekranı (tasarım C):** sınıf sekmesi, "Bugün sırada" kutusu (`DevamKarti`, tek
+  konu — aşağıdaki Devam et kuralı), altında iki sütunlu ders kartları (`DersKarti`: ders
+  simgeli ilerleme halkası, ad, "x/y bitti"). Girişte sınıf özeti çubuğu ve kartta
+  "Sıradaki" satırı yok: ilerleme sekmede yüzde, kartta halka + sayı olarak bir kez
+  yazılır; tekrar ekleme. Halka dolumu bitti 1, soru 0,66, okul 0,33 ağırlıklı (yalnız görsel).
+- **Ders ekranında özet tek segmentli çubuk** (bitti › soru › okul › kalan, her konu en ileri
   aşamasında) + tek satır sayı, seçili sınıfa göre ("10. sınıf · …"); yüzde ve büyük
   halka yok. **Tempo satırı kaldırıldı:** sınıf görünümü sınav takvimiyle konuşmuyor
   (10. sınıfın kalan konusunu YKS'ye kalan güne bölmek anlamsız).
 - **Öneri müfredat sırasında, seçili sınıfın içinde** (`siradakiKonu`,
   `devamKonusu`): ders içi Sıradaki, bitmemiş **ve** aşamaları tamamlanmamış ilk satır
-  (harita karşılığı yoksa harita sayılmaz). Girişteki tek "Devam et" kartı seçili
+  (harita karşılığı yoksa harita sayılmaz). Girişteki tek "Bugün sırada" kutusu seçili
   sınıfta en son dokunulan dersin (bitirmek de dokunuş) Sıradaki'si. "En son
   işaretlenen yarım konu" kuralına dönme: öneri takılıyor ve zıplıyordu (TestFlight
   geri bildirimi). Aşamaları tamam ama bitmemiş konu (`bitirmeyeHazir`) öneri olmaz;

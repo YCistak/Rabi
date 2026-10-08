@@ -16,7 +16,6 @@ import {
   oncekiOkulsuzlar,
   siradakiKonu,
   bitirmeyeHazir,
-  toplamOzet,
   satirDurumu,
   satirYaz,
   satirlarinKimlikleri,
@@ -203,7 +202,6 @@ export function KonuTakibiEkrani({
     return tablo
   }, [dersler, takip, ilerlemeler])
 
-  const toplam = toplamOzet(dersler.map((d) => ozetler.get(d.id)!))
   const devam = useMemo(() => devamKonusu(dersler, takip, ilerlemeler), [dersler, takip, ilerlemeler])
   /** Hiç işaret yok — ilk kullanım ipucu bundan türüyor, ayrı bir ayar tutulmuyor. */
   const bos = Object.keys(takip.konular).length === 0
@@ -333,22 +331,11 @@ export function KonuTakibiEkrani({
         )}
       </div>
 
-      <Kart className="py-3.5">
-        <OzetCubugu ozet={toplam} r={MARKA_RENGI} onEk={`${gorunenSinif}. sınıf ·`} />
-      </Kart>
-
-      <ul className="golge-kart mt-4 overflow-hidden rounded-[22px] bg-card tablet:grid tablet:grid-cols-2">
+      {/* Sınıfın toplam özeti burada yok: sekmedeki yüzde ve kartlardaki "x/y bitti" aynı ilerlemeyi söylüyor. */}
+      <ul className="mt-4 grid grid-cols-2 gap-2 tablet:grid-cols-3">
         {dersler.map((ders) => (
-          <li
-            key={ders.id}
-            className="border-t border-border first:border-t-0 tablet:odd:border-r tablet:[&:nth-child(2)]:border-t-0"
-          >
-            <DersSatiri
-              ders={ders}
-              ozet={ozetler.get(ders.id)!}
-              siradaki={siradakiKonu(ders, takip, ilerlemeler)}
-              onAc={() => dersAc(ders)}
-            />
+          <li key={ders.id}>
+            <DersKarti ders={ders} ozet={ozetler.get(ders.id)!} onAc={() => dersAc(ders)} />
           </li>
         ))}
       </ul>
@@ -412,22 +399,21 @@ function DevamKarti({ ders, konu, onAc }: { ders: TakipDersi; konu: TakipSatiri;
     <button
       type="button"
       onClick={onAc}
-      className="golge-kart mb-3 flex w-full items-center gap-3 rounded-[18px] bg-card px-3.5 py-3 text-left transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="golge-kart mb-3 w-full rounded-[18px] px-3.5 py-3.5 text-left transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      // Dersin zemini karta doğru solarak akıyor (tasarım C); renk derse ait, sabit değil.
+      style={{ background: `linear-gradient(135deg, ${r.zemin}, var(--card))` }}
     >
-      <span
-        className="emoji grid size-10 shrink-0 place-items-center rounded-[13px] text-[19px] leading-none"
-        style={{ background: r.zemin }}
-        aria-hidden
-      >
-        {ders.ikon}
+      <span className="block text-[12px] font-extrabold tracking-[0.06em] uppercase" style={{ color: r.koyu }}>
+        Bugün sırada
       </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-[12px] font-extrabold tracking-[0.06em] uppercase" style={{ color: r.koyu }}>
-          Devam et · {ders.ad}
+      <span className="mt-2.5 flex items-center gap-2.5">
+        <span className="h-[34px] w-2 shrink-0 rounded-full" style={{ background: r.dolgu }} aria-hidden />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[15px] leading-snug font-extrabold">{konu.ad}</span>
+          <span className="block truncate text-[12px] font-bold text-muted-foreground">{ders.ad}</span>
         </span>
-        <span className="mt-0.5 block truncate text-[15px] leading-snug font-extrabold">{konu.ad}</span>
+        <ChevronRight size={18} strokeWidth={2.6} aria-hidden className="shrink-0 text-muted-foreground" />
       </span>
-      <ChevronRight size={18} strokeWidth={2.6} aria-hidden className="shrink-0" style={{ color: r.koyu }} />
     </button>
   )
 }
@@ -556,67 +542,59 @@ function AlanSorusu({ onSec }: { onSec: (alan: PuanTuru) => void }) {
   )
 }
 
-/** Ders listesinin satırı: dersin rengi, segmentli çubuk ve sıradaki konu. */
-function DersSatiri({
-  ders,
-  ozet,
-  siradaki,
-  onAc,
-}: {
-  ders: TakipDersi
-  ozet: DersOzeti
-  siradaki: TakipSatiri | null
-  onAc: () => void
-}) {
+/**
+ * Ders kartı (tasarım C): ortada ders simgesi olan ilerleme halkası, altında
+ * ad ve "x/y bitti". Halka segmentli çubukla aynı mantıkta aşama ağırlıklı
+ * dolar (bitti tam, soru çözülen 2/3, okulda işlenen 1/3); yalnız görsel,
+ * kayıt ve öneri kuralı değişmiyor.
+ */
+function DersKarti({ ders, ozet, onAc }: { ders: TakipDersi; ozet: DersOzeti; onAc: () => void }) {
   const r = renkler(ders.renk)
-  const bitti = ozet.toplam > 0 && ozet.biten === ozet.toplam
+  const oran = ozet.toplam > 0 ? (ozet.biten + ozet.soruda * 0.66 + ozet.okulda * 0.33) / ozet.toplam : 0
   return (
     <button
       type="button"
       onClick={onAc}
-      className="flex w-full items-center gap-3 px-3.5 py-3 text-left transition active:bg-muted focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
+      className="golge-kart flex h-full w-full flex-col gap-2 rounded-[18px] bg-card p-3 text-left transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      <span
-        className="emoji grid size-[42px] shrink-0 place-items-center rounded-[14px] text-[20px] leading-none"
-        style={{ background: r.zemin }}
-        aria-hidden
-      >
-        {ders.ikon}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="flex items-baseline gap-2">
-          <span className="min-w-0 flex-1 truncate font-display text-[16px] leading-tight font-extrabold tracking-tight">
-            {ders.ad}
-          </span>
-          <span className="shrink-0 text-[12px] font-bold text-muted-foreground">
-            <span className="rakam text-foreground">{ozet.biten}</span>/<span className="rakam">{ozet.toplam}</span> bitti
-          </span>
-        </span>
-        <DersCubugu ozet={ozet} r={r} />
-        <span className="mt-1.5 block truncate text-[12.5px] font-semibold text-muted-foreground">
-          {bitti ? 'Hepsi bitti' : siradaki ? `Sıradaki: ${siradaki.ad}` : ''}
+      <span className="relative grid size-11 place-items-center">
+        <Halka oran={oran} renk={r.dolgu} />
+        <span className="emoji absolute inset-0 grid place-items-center text-[19px] leading-none" aria-hidden>
+          {ders.ikon}
         </span>
       </span>
-      <ChevronRight size={16} strokeWidth={2.6} aria-hidden className="shrink-0 text-muted-foreground/50" />
+      <span className="font-display text-[14px] leading-tight font-extrabold tracking-tight">{ders.ad}</span>
+      <span className="text-[12px] font-extrabold text-muted-foreground">
+        <span className="rakam">{ozet.biten}</span>/<span className="rakam">{ozet.toplam}</span> bitti
+      </span>
     </button>
   )
 }
 
-/** Ders satırındaki ince çubuk — `OzetCubugu`nun sayısız hâli. */
-function DersCubugu({ ozet, r }: { ozet: DersOzeti; r: Renkler }) {
-  const dilimler = cubukDilimleri(ozet, r)
+/** Ders kartının ilerleme halkası: boş iz + ders renginde yay. */
+function Halka({ oran, renk }: { oran: number; renk: string }) {
+  const boyut = 44
+  const kalinlik = 4
+  const yaricap = (boyut - kalinlik) / 2
+  const cevre = 2 * Math.PI * yaricap
   return (
-    <span className="mt-1.5 flex h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
-      {dilimler.map((d) =>
-        d.sayi > 0 ? (
-          <span
-            key={d.ad}
-            className="h-full"
-            style={{ width: `${(d.sayi / Math.max(1, ozet.toplam)) * 100}%`, background: d.renk, opacity: d.opaklik }}
-          />
-        ) : null,
+    <svg width={boyut} height={boyut} className="-rotate-90" aria-hidden>
+      <circle cx={boyut / 2} cy={boyut / 2} r={yaricap} fill="none" stroke="var(--muted)" strokeWidth={kalinlik} />
+      {oran > 0 && (
+        <circle
+          cx={boyut / 2}
+          cy={boyut / 2}
+          r={yaricap}
+          fill="none"
+          stroke={renk}
+          strokeWidth={kalinlik}
+          strokeLinecap="round"
+          strokeDasharray={cevre}
+          strokeDashoffset={cevre * (1 - Math.min(1, oran))}
+          className="transition-[stroke-dashoffset] duration-300"
+        />
       )}
-    </span>
+    </svg>
   )
 }
 
