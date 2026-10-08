@@ -29,7 +29,7 @@ export const girisHikayeTemalari = [
         ['Durum hikâyesi', 'Belirgin bir olay örgüsü yoktur; sıradan bir kesit anlatılır.\nBu çizgide Memduh Şevket Esendal ve Sait Faik öne çıkar.'],
         ['Sait Faik Abasıyanık', '1906–1954 arasında yaşadı; durum hikâyesinin en güçlü adıdır.\nBurgaz Adası’nı, balıkçıları ve sıradan insanı anlattı.'],
         ['Sait Faik’in kitapları', '- **Semaver:** 1936\n- **Sarnıç:** 1939\n- **Lüzumsuz Adam:** 1948\n- **Alemdağ’da Var Bir Yılan:** 1954'],
-        ['Memduh Şevket Esendal', 'Sade bir dille Anadolu insanını anlattı.\nAyaşlı ile Kirvelisi (1934) en bilinen hikâye kitabıdır.'],
+        ['Memduh Şevket Esendal', 'Sade bir dille Anadolu insanını anlattı.\nAyaşlı ile Kiracıları (1934) romanıyla da tanınır.'],
         ['Sabahattin Ali', 'Değirmen (1935), Kağnı (1936), Ses (1937) ve Sırça Köşk (1947) kitaplarını yazdı.\nYoksul insanı ve toplumsal sorunları gerçekçi bir gözle işledi.'],
         ['Refik Halit Karay', 'Memleket Hikâyeleri (1919) Anadolu insanını ince bir mizahla anlatır.\nGurbet Hikâyeleri (1940) sürgün yıllarının ürünüdür.'],
       ],

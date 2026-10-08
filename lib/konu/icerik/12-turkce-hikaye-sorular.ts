@@ -24,7 +24,7 @@ export const girisHikayeSorulari: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['Maupassant geleneği durum hikâyesi olarak bilinir.', false, 'Maupassant olay hikâyesini, Çehov durum hikâyesini temsil eder.'],
     ['Sait Faik’in hikâyelerinde Burgaz Adası ve balıkçılar sık yer alır.', true, 'Adada yaşadı; balıkçıları ve sıradan insanı anlattı.'],
     ['Sabahattin Ali’nin Değirmen kitabı 1947’de çıktı.', false, 'Değirmen 1935’tedir; 1947’de Sırça Köşk yayımlandı.'],
-    ['Ayaşlı ile Kirvelisi, Memduh Şevket Esendal’ın 1934 tarihli kitabıdır.', true, 'Esendal sade bir dille Anadolu insanını anlatır.'],
+    ['Ayaşlı ile Kiracıları, Memduh Şevket Esendal’ın 1934 tarihli romanıdır.', true, 'Esendal sade bir dille Anadolu insanını anlatır.'],
   ], [
     ['Sait Faik’in Semaver kitabı hangi yıl çıktı?', '1936', '1939', '1939 Sarnıç’ın yılıdır.'],
     ['Sürpriz sonla biten, olay öne çıkan hikâye türü?', 'Olay hikâyesi', 'Durum hikâyesi', 'Durum hikâyesi sonucu değil ruh hâlini öne çıkarır.'],
