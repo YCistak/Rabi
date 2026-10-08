@@ -669,7 +669,7 @@ export const kimya12 = program('kimya', 12, 'Pilden elektrolize, karbondan yakı
       ),
       kart(
         'Fiziksel özellikler',
-        '- Apolardır; suda çözünmez ve sudan hafiftir.\n- C sayısı arttıkça kaynama noktası yükselir.\n- 25 °C’de C₁–C₄ gaz, C₅–C₁₇ sıvı, daha büyükleri katıdır.',
+        '- Apolardır; suda çözünmez ve sudan hafiftir.\n- C sayısı arttıkça kaynama noktası yükselir.\n- Düz zincirlilerde 25 °C’de C₁–C₄ gaz, C₅–C₁₇ sıvı, daha büyükleri katıdır.',
       ),
       kart(
         'Dallanma ve kaynama',
