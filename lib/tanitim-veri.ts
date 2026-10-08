@@ -10,6 +10,7 @@
   `tanitimKayitlariniAyikla` onları ayırt edip yalnızca onları siliyor.
 */
 import { gunKaydir } from './utils'
+import { bosSifir, herhangiDolu } from './bos-sifir'
 import type { Deneme, DersSonuc, PuanTuru, Sablon } from './types'
 
 export const TANITIM_ONEKI = 'tanitim-'
@@ -161,14 +162,15 @@ export function turFormuSonuclari(sablon: Sablon): DersSonuc[] {
 }
 
 /**
- * Boş bırakılan derse girilen sonuç turu geçirir mi: iki kutu da yazılmış
- * (yanlışa 0 yazmak da bir cevap), en az bir soru cevaplanmış ve toplam o
- * dersin soru sayısını aşmıyor. Yarım giriş ("doğru" yazılıp "yanlış" boş)
- * geçirmiyor; yoksa tur ilk rakamda ileri atlayıp ikinci kutuyu kapatırdı.
+ * Boş bırakılan derse girilen sonuç turu geçirir mi: en az bir kutuya bir şey
+ * yazılmış (boş kutu 0 sayılır, `bosSifir`), en az bir soru cevaplanmış ve
+ * toplam o dersin soru sayısını aşmıyor. Hiçbir şey yazılmamış ya da yalnız
+ * "0" yazılmış giriş geçirmiyor. Tur ilk rakamda ileri atlamasın diye
+ * ekran geçişi kısa bir gecikmeyle yapıyor (`yeni-deneme.tsx`).
  */
 export function bosDersGirisiGecerli(giris: { dogru: string; yanlis: string } | undefined, ders: { soruSayisi: number }): boolean {
-  if (!giris || !/^\d+$/.test(giris.dogru) || !/^\d+$/.test(giris.yanlis)) return false
-  const dogru = Number(giris.dogru)
-  const yanlis = Number(giris.yanlis)
-  return dogru + yanlis >= 1 && dogru + yanlis <= ders.soruSayisi
+  if (!giris || !herhangiDolu(giris.dogru, giris.yanlis)) return false
+  if (!/^\d*$/.test(giris.dogru) || !/^\d*$/.test(giris.yanlis)) return false
+  const toplam = bosSifir(giris.dogru) + bosSifir(giris.yanlis)
+  return toplam >= 1 && toplam <= ders.soruSayisi
 }

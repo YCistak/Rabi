@@ -62,8 +62,11 @@ listesi**.
 - Bugün ve yalnız bir önceki gün düzenlenebilir (`gunKaydir(bugunIso, -1)`); eski
   günler salt okunur, gelecek seçilemez.
 - "Soru ekle" sayfası ortak `DersSeridi`ni kullanır; sıra geçmiş kayıtlardaki toplam
-  soru sayısına göre (`calismaSirasi`). Kaydet ders seçilmeden ve Toplam/Doğru/Yanlış
-  üçü doldurulmadan açılmaz (0 geçerli, boş alan girilmemiş demek).
+  soru sayısına göre (`calismaSirasi`). Kaydet ders seçilmeden, Toplam 0 iken ya da
+  doğru + yanlış toplamı aşarken açılmaz. **Boş sayı kutusu 0 sayılır**
+  (`lib/bos-sifir.ts`: "60 soru, 60 doğru"da yanlışa 0 yazdırılmaz); Soru Takibi,
+  deneme formu ve tanıtım turu aynı kuralı kullanır. Hiçbir sayı girilmemiş form
+  yine kaydedilmez.
 
 ## Takvim tek bileşen
 

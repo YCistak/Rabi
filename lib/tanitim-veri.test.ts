@@ -162,7 +162,9 @@ describe('Turun deneme formu: bir ders boş kalıyor', () => {
     const ders = { soruSayisi: 40 }
     expect(bosDersGirisiGecerli(undefined, ders)).toBe(false)
     expect(bosDersGirisiGecerli({ dogru: '', yanlis: '' }, ders)).toBe(false)
-    expect(bosDersGirisiGecerli({ dogru: '25', yanlis: '' }, ders)).toBe(false)
+    expect(bosDersGirisiGecerli({ dogru: '25', yanlis: '' }, ders)).toBe(true)
+    expect(bosDersGirisiGecerli({ dogru: '', yanlis: '5' }, ders)).toBe(true)
+    expect(bosDersGirisiGecerli({ dogru: '', yanlis: '41' }, ders)).toBe(false)
     expect(bosDersGirisiGecerli({ dogru: '0', yanlis: '0' }, ders)).toBe(false)
     expect(bosDersGirisiGecerli({ dogru: '30', yanlis: '11' }, ders)).toBe(false)
     expect(bosDersGirisiGecerli({ dogru: '25', yanlis: '0' }, ders)).toBe(true)
