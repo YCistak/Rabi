@@ -376,12 +376,40 @@ export const HARITA_ESLEMESI: Readonly<Record<string, readonly string[]>> = {
   'ayt-edb-soz-sanatlari': ['trk9-sanat'],
   'ayt-edb-anlatmaya-bagli': ['trk9-yapi', 'trk9-anlatici', 'trk9-hikaye'],
   'ayt-edb-masal-fabl': ['trk10-masal'],
-  'ayt-edb-ogretici': ['trk9-deneme', 'trk11-mektup', 'trk11-biyografi'],
-  'ayt-edb-tiyatro': ['trk9-tiyatro', 'trk11-karagoz', 'trk11-tiyatro'],
+  'ayt-edb-ogretici': ['trk9-deneme', 'trk11-mektup', 'trk11-biyografi', 'trk12-deneme', 'trk12-soylev'],
+  'ayt-edb-tiyatro': [
+    'trk9-tiyatro',
+    'trk11-karagoz',
+    'trk11-tiyatro',
+    'trk12-tiyatro-kurumlar',
+    'trk12-tiyatro-epik-absurt',
+  ],
   'ayt-edb-islamiyet-oncesi': ['trk10-destan', 'trk11-orhun'],
   'ayt-edb-halk': ['trk10-anonim'],
   'ayt-edb-halk-asik': ['trk11-asik'],
   'ayt-edb-milli': ['trk10-milli', 'trk10-milli-turler'],
+  // Cumhuriyet Dönemi: 12. sınıf Edebiyat'ın hikâye, şiir, roman ve tiyatro
+  // desteleri (2018 programı, `12-turkce*.ts`). Deneme ve söylev "Öğretici
+  // Metinler"e, dil/sözlük destesi (`trk12-dil-sozluk`) hiçbir başlığa eşlenmedi.
+  'ayt-edb-cumhuriyet': [
+    'trk12-hikaye-1923',
+    'trk12-hikaye-1960',
+    'trk12-siir-hece',
+    'trk12-siir-saf',
+    'trk12-siir-toplumcu',
+    'trk12-siir-garip',
+    'trk12-siir-ikinci-yeni',
+    'trk12-siir-dini',
+    'trk12-siir-1960-sonrasi',
+    'trk12-siir-halk',
+    'trk12-roman-1923',
+    'trk12-roman-toplumcu',
+    'trk12-roman-modern',
+    'trk12-roman-1980',
+    'trk12-roman-dunya',
+    'trk12-tiyatro-kurumlar',
+    'trk12-tiyatro-epik-absurt',
+  ],
 
   // --- AYT Coğrafya ------------------------------------------------------
   'ayt-cog-nufus-politika': ['cog9-nufus-politika'],

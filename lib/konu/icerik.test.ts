@@ -26,10 +26,10 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// 12'de yedi ders (2018 programı) yazıldı: Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya, İngilizce;
+// 12'de sekiz ders (2018 programı) yazıldı: Matematik, Fizik, Kimya, Biyoloji, Tarih, Coğrafya, İngilizce, Edebiyat;
 // İngilizce 9 ve 10'da yok. Beklenen programlar eksikse testten süzülmez.
 const beklenenMi = (sinif: number, ders: string) =>
-  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya', 'ingilizce'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
+  sinif === 12 ? ['matematik', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya', 'ingilizce', 'turkce'].includes(ders) : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
@@ -215,6 +215,23 @@ describe('12. sınıf İngilizce (2018 programı)', () => {
       expect(konu.sorular.length, `${konu.ad}: soru sayısı`).toBeGreaterThan(konu.kartlar.length)
       expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
       expect(konu.kontroller, `${konu.ad}: kontrol`).toHaveLength(2)
+    }
+  })
+})
+
+describe('12. sınıf Türk Dili ve Edebiyatı (2018 programı)', () => {
+  const edebiyat = programBul('turkce', 12)!
+
+  it('her konuda tek Rabi notu var', () => {
+    for (const konu of tumKonular(edebiyat)) {
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+    }
+  })
+
+  it('11. sınıfta kartı olan konular tekrar yazılmadı', () => {
+    const adlar = tumKonular(edebiyat).map((k) => k.ad.toLocaleLowerCase('tr'))
+    for (const yasak of ['orhun yazıtları', 'âşık geleneği', 'küçürek']) {
+      expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
     }
   })
 })

@@ -46,6 +46,13 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   past perfect yalnız haber anlatımı, wish + had V3 / would ise pişmanlık
   bağlamında yeniden geçiyor. YDT'ye bağlanan harita eşlemesi yok (kartlar
   işlev odaklı).
+- **12. sınıf Türk Dili ve Edebiyatı** (`12-turkce*.ts`, ders kimliği `turkce`, konu
+  kimlikleri `trk12-*`, 2018 programı): temalar programın ünite adları (Giriş, Hikâye,
+  Şiir, Roman, Tiyatro, Deneme, Söylev). Kalıp 12-Matematik'ten farklı: kartlar ve hızlı
+  kontrol `edebiyatKonusu` (`12-turkce-yardimci.ts`) ile, sorular `*-sorular.ts`
+  dosyalarında `sorular()` ile. **Yazar–eser–yıl eşleşmesi yalnız emin olunandan yazılır**;
+  program metni doğrulanamadığından makale, eleştiri ve röportaj desteleri yok. 11'de
+  kartı olan Orhun, Âşık geleneği ve Küçürek Hikâye tekrarlanmaz (`icerik.test.ts`).
 - Konu ölçüsü `lib/konu/maarif/iskelet.json`, `scripts/maarif-cek.mjs` ile
   tymm.meb.gov.tr'den çekilir; **elle düzenlenmez**. `maarif.test.ts` kelime
   örtüşmesiyle denetler (kısaltırken konuyu tanıtan kelimeyi atma); Türk Dili ve

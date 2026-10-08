@@ -51,6 +51,10 @@ import { ingilizce12Temalar3 } from './icerik/12-ingilizce-3'
 import { ingilizce12Sorulari3 } from './icerik/12-ingilizce-3-sorular'
 import { ingilizce12Temalar4 } from './icerik/12-ingilizce-4'
 import { ingilizce12Sorulari4 } from './icerik/12-ingilizce-4-sorular'
+import { turkce12 } from './icerik/12-turkce'
+import { girisHikayeSorulari } from './icerik/12-turkce-hikaye-sorular'
+import { siirSorulari } from './icerik/12-turkce-siir-sorular'
+import { romanSoylevSorulari } from './icerik/12-turkce-roman-sorular'
 
 export type {
   AkisGorseli,
@@ -208,6 +212,7 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
     { ...ingilizce12Sorulari1, ...ingilizce12Sorulari2, ...ingilizce12Sorulari3,
       ...ingilizce12Sorulari4 },
   ),
+  'turkce-12': sorulariBagla(turkce12, { ...girisHikayeSorulari, ...siirSorulari, ...romanSoylevSorulari }),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */

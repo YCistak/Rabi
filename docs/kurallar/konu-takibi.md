@@ -67,6 +67,9 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   Coğrafya (`cog12-*`): ulaşım-ticaret-turizm, jeopolitik, ekstrem doğa olayları ve
   çevre başlıkları eşlendi; `ayt-cog-ulasim-ticaret` `ESKI_SINIF`ta 12 (2018: 12.2.7-17).
   Küresel ve bölgesel örgütler eşlenmedi (12 destelerinde ayrı deste yok).
+  12. sınıf Edebiyat (`trk12-*`): AYT "Cumhuriyet Dönemi Türk Edebiyatı" hikâye, şiir,
+  roman ve tiyatro desteleriyle, "Öğretici Metinler" deneme ve söylev desteleriyle,
+  "Tiyatro" iki tiyatro desteyle eşli; dil/sözlük destesi hiçbir başlığa eşli değil.
 - **Ders içi liste ve konu kartı** (tasarım D/K1a, kullanıcı onayladı 2026-10): satır tek
   dokunuşluk bir düğme; solda **dilimli halka** (harita · okul · soru üç dilim, haritasız
   konuda iki; dolu dilim ders renginde, yarım harita açık ton, bitince tam yeşil halka + tik,
