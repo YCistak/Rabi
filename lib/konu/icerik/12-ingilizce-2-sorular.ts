@@ -18,7 +18,7 @@ export const ingilizce12Sorulari2: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['“It is going to rain” cümlesi, şimdiki kanıta dayanan bir tahmin olabilir.', true, 'Be going to, bulut gibi şimdiki kanıttan çıkan tahminlerde kullanılır.'],
     ['“It will probably rain” cümlesinde probably, will’den önce gelir.', false, 'Zarf will’den sonra gelir: will probably.'],
     ['“It probably won’t rain” cümlesinde zarf won’t’tan önce yer alır.', true, 'Olumsuz biçimde zarf won’t’tan önce gelir.'],
-    ['“If people will waste water, we will have shortage” doğru bir birinci koşul cümlesidir.', false, 'If bölümünde present simple kullanılır: If people waste water.'],
+    ['“If people will waste water, we will have a shortage” doğru bir birinci koşul cümlesidir.', false, 'If bölümünde present simple kullanılır: If people waste water.'],
     ['“In order to reduce” kalıbı amaç bildirir.', true, 'In order to + yalın fiil, amacı anlatır.'],
     ['“Due to” kalıbından sonra tam bir cümle gelir.', false, 'Due to’dan sonra isim öbeği gelir; tam cümle için because kullanılır.'],
   ], [
@@ -40,7 +40,7 @@ export const ingilizce12Sorulari2: Record<string, Omit<SoruKarti, 'id'>[]> = {
     ['“E-postanı doğrula” için hangi fiil kullanılır?', ['vary', 'verify'], 1, 'Verify doğrulamak demektir; vary değişmektir.'],
     ['Adımlara başlarken hangi bağlaç kullanılır?', ['First', 'Finally'], 0, 'First ilk adımı bildirir.'],
     ['Hangisi bir siber suçtur?', ['gaming', 'hacking'], 1, 'Hacking izinsiz girmedir; gaming oyun oynamaktır.'],
-    ['“Many children cannot ___ between reality and games.”', ['differentiate', 'differ'], 0, 'Differentiate between A and B kalıbı vardır.'],
+    ['“Many children cannot ___ between reality and games.”', ['differentiate', 'different'], 0, 'Differentiate between A and B kalıbı vardır; different sıfattır, fiil yerine geçmez.'],
     ['Karşıdakinin cümlesini teyit etmek için ne denir?', ['Did you mean …?', 'Don’t share …'], 0, 'Did you mean …? anlamı doğrulatan sorudur.'],
     ['Hangisi doğru parola güvenliğidir?', ['Share it with friends', 'Use a strong password'], 1, 'Parola paylaşılmaz ve güçlü seçilir.'],
   ]),
@@ -69,7 +69,7 @@ export const ingilizce12Sorulari2: Record<string, Omit<SoruKarti, 'id'>[]> = {
   ], [
     ['“I suggest ___ a break.”', ['to take', 'taking'], 1, 'Suggest’ten sonra V-ing gelir.'],
     ['“You’d better ___ late.”', ['not stay', 'not to stay'], 0, 'Had better not + yalın fiil.'],
-    ['“If I ___ you, I would talk to a counsellor.”', ['was', 'were'], 1, 'If I were you öğüt kalıbıdır.'],
+    ['“If I ___ you, I would talk to a counsellor.”', ['am', 'were'], 1, 'If I were you öğüt kalıbıdır; am bu kalıpta kullanılmaz.'],
     ['Sıralamada ilk adım bağlacı hangisidir?', ['First', 'Finally'], 0, 'First ilk adımı belirtir.'],
     ['“Kaygı” hangisidir?', ['anxiety', 'relaxation'], 0, 'Anxiety kaygıdır; relaxation rahatlamadır.'],
     ['Rahatlatıcı talimat nasıl okunur?', ['Fast and loud', 'Slow and soft'], 1, 'Rahatlatıcı talimat yavaş ve yumuşak söylenir.'],
