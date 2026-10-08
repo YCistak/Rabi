@@ -190,7 +190,9 @@ describe('AYT\'de TYT ile ortak konuların haritası', () => {
     expect(HARITA_ESLEMESI['ayt-mat-turev']).toEqual(['mat12-turev', 'mat12-turev-uygulama'])
     expect(HARITA_ESLEMESI['ayt-mat-integral']).toEqual(['mat12-belirsiz-integral', 'mat12-belirli-integral'])
     expect(HARITA_ESLEMESI['ayt-mat-limit']).toEqual(['mat12-limit'])
-    for (const id of ['ayt-kim-organik', 'ayt-biy-genden-proteine']) {
+    expect(HARITA_ESLEMESI['ayt-biy-genden-proteine']).toContain('byl12-dna-eslenme')
+    expect(HARITA_ESLEMESI['ayt-biy-bitki']).toContain('byl12-floem')
+    for (const id of ['ayt-kim-organik']) {
       expect(HARITA_ESLEMESI[id], id).toBeUndefined()
     }
   })
