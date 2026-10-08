@@ -15,7 +15,9 @@ import {
 import {
   guncelSeri,
   rekorKirildiMi,
+  kalanPas,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -81,7 +83,7 @@ function sirayiKur(akis: SoruAkisi<OrganelSorusu>): SoruAkisi<HucreOyunSorusu> {
 }
 
 /** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: string | null; dogruMu: boolean; soru: OrganelSorusu }
+type GeriBildirim = { secilen: string | null; dogruMu: boolean; pas: boolean; soru: OrganelSorusu }
 
 /**
  * Banka kayıtlarından soru havuzu.
@@ -157,6 +159,8 @@ export function HucreOyunuEkrani({
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<OrganelSorusu>
+    /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+    paslar: boolean[]
     yeniRekor: boolean
   } | null>(null)
 
@@ -205,6 +209,7 @@ export function HucreOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -251,7 +256,8 @@ export function HucreOyunuEkrani({
 
   const soru = sorular[zorluk][sira]
 
-  const ilerle = (dogruMu: boolean) => {
+  /** `pas`: bedelsiz geçiş — zorluğu kaydırmıyor, Sıfır Tolerans'ta elemiyor. */
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -262,8 +268,8 @@ export function HucreOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -279,16 +285,25 @@ export function HucreOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
+  }
+
+  /** Pas hakkı: doğrusu gösterilip geçiliyor; yanlış sesi ve titreşimi yok. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
   }
 
   /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor. */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
@@ -324,7 +339,7 @@ export function HucreOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('hucre'),
@@ -344,7 +359,7 @@ export function HucreOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -365,11 +380,12 @@ export function HucreOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{ kalan: kalanPas(cevaplar), kilitli: geriBildirim !== null, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -415,7 +431,8 @@ export function HucreOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu ? undefined : `Doğrusu: ${geriBildirim.soru.organel}`
                   }
@@ -477,7 +494,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<OrganelSorusu>; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<OrganelSorusu>; paslar: boolean[]; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -486,7 +503,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -525,6 +542,7 @@ function SonucGorunumu({
               </b>
               <span className="mt-1 block text-[12px] font-extrabold text-success">
                 {yanlis.organel}
+                {paslar[sira] && <span className="text-muted-foreground"> · Pas geçtin</span>}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {yanlis.aciklama}

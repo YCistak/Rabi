@@ -14,8 +14,10 @@ import { ORTAK_HAVUZU } from '@/lib/oyunlar/ortak-havuzu'
 import { SINIFLANDIRMA_HAVUZU } from '@/lib/oyunlar/siniflandirma-havuzu'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -96,8 +98,13 @@ function sirayiKur(akis: SoruAkisi<BiyolojiSorusu>): SoruAkisi<BiyolojiOyunSorus
   return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: string | null; dogruMu: boolean; soru: BiyolojiSorusu }
+/** `secilen` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = {
+  secilen: string | null
+  dogruMu: boolean
+  pas: boolean
+  soru: BiyolojiSorusu
+}
 
 /** Banka kayıtlarından soru havuzu; kayıt sorunun tamamını taşıyor. */
 function bankaHavuzu(
@@ -172,6 +179,8 @@ export function BiyolojiOyunuEkrani({
 
   const [sonuc, setSonuc] = useState<{
     ozet: TurOzeti<BiyolojiSorusu>
+    /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+    paslar: boolean[]
     yeniRekor: boolean
   } | null>(null)
 
@@ -220,6 +229,7 @@ export function BiyolojiOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -266,7 +276,8 @@ export function BiyolojiOyunuEkrani({
 
   const soru = sorular[zorluk][sira]
 
-  const ilerle = (dogruMu: boolean) => {
+  /** `pas`: bedelsiz geçiş — zorluğu kaydırmıyor, Sıfır Tolerans'ta elemiyor. */
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -277,8 +288,8 @@ export function BiyolojiOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -294,16 +305,25 @@ export function BiyolojiOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
+  }
+
+  /** Pas hakkı: doğrusu gösterilip geçiliyor; yanlış sesi ve titreşimi yok. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
   }
 
   /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor. */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
@@ -339,7 +359,7 @@ export function BiyolojiOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi(oyunId),
@@ -359,7 +379,7 @@ export function BiyolojiOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -380,11 +400,12 @@ export function BiyolojiOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{ kalan: kalanPas(cevaplar), kilitli: geriBildirim !== null, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -432,7 +453,8 @@ export function BiyolojiOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu ? undefined : `Doğrusu: ${geriBildirim.soru.dogru}`
                   }
@@ -496,7 +518,7 @@ function SonucGorunumu({
 }: {
   oyunId: BiyolojiOyunId
   bolumBasligi: string
-  sonuc: { ozet: TurOzeti<BiyolojiSorusu>; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<BiyolojiSorusu>; paslar: boolean[]; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -505,7 +527,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -545,6 +567,11 @@ function SonucGorunumu({
               <span className="mt-1 block text-[12px] font-extrabold text-success">
                 {yanlis.dogru}
               </span>
+              {paslar[sira] && (
+                <span className="mt-0.5 block text-[11px] font-semibold text-muted-foreground">
+                  Pas geçtin
+                </span>
+              )}
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {yanlis.aciklama}
               </span>

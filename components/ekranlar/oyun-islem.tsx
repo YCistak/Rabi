@@ -13,9 +13,11 @@ import {
 } from '@/lib/oyunlar/islem'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -33,11 +35,11 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Rabi } from '@/components/maskot/rabi'
 import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -65,7 +67,7 @@ const TUR_SORUSU = TUR_SORU_SINIRI
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-type GeriBildirim = { dogruMu: boolean; girilen: string; beklenen: number }
+type GeriBildirim = { dogruMu: boolean; pas: boolean; girilen: string; beklenen: number }
 
 /** İşlem ifadesindeki işaretler — ekranda mercan renginde duruyorlar. */
 const ISARETLER = new Set(['+', '−', '-', '×', '÷', '·', '/'])
@@ -288,25 +290,33 @@ export function IslemOyunuEkrani({
     ).catch(() => {})
   }
 
-  /** `pas` true ise cevap verilmeden geçiliyor; yanlış sayılır. */
+  /**
+   * `cevap`: yazılan sayı onaylandı. `sure`: soru saati doldu, cevapsız soru
+   * yanlış sayılır. `pas`: pas hakkı kullanıldı — bedelsiz (`Cevap.pas`),
+   * yalnızca doğrusu gösterilip geçiliyor.
+   */
   const cevapla = useCallback(
-    (pas: boolean) => {
+    (nasil: 'cevap' | 'sure' | 'pas') => {
       if (asama !== 'oynaniyor' || geriBildirim !== null || demoDuraklatildi) return
       const soru = sorular[sira]
       if (!soru) return
-      if (!pas && girilen === '') return
+      if (nasil === 'cevap' && girilen === '') return
+      if (nasil === 'pas' && kalanPas(cevaplarRef.current) <= 0) return
 
-      const dogruMu = !pas && Number(girilen) === soru.sonuc
-      setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
-      if (!dogruMu) setYanlisGirdileri((onceki) => [...onceki, pas ? '' : girilen])
-      setGeriBildirim({ dogruMu, girilen: pas ? '' : girilen, beklenen: soru.sonuc })
-      geriBildir(dogruMu)
+      const pas = nasil === 'pas'
+      const yazilan = nasil === 'cevap' ? girilen : ''
+      const dogruMu = nasil === 'cevap' && Number(girilen) === soru.sonuc
+      setCevaplar((onceki) => [...onceki, pas ? { soru, dogruMu, pas } : { soru, dogruMu }])
+      if (!dogruMu) setYanlisGirdileri((onceki) => [...onceki, yazilan])
+      setGeriBildirim({ dogruMu, pas, girilen: yazilan, beklenen: soru.sonuc })
+      // Pas bir hata değil: yanlış titreşimi ve sesi yok.
+      if (!pas) geriBildir(dogruMu)
 
 
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
         setGirilen('')
-        if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+        if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
           setElendi('yanlis')
           turBitir(cevaplarRef.current)
         } else {
@@ -324,7 +334,7 @@ export function IslemOyunuEkrani({
    * Yanlış sayıldığı için turu da bitiriyor — beklemek de bilmemek.
    */
   const sureDoldu = useCallback(() => {
-    cevapla(true)
+    cevapla('sure')
   }, [cevapla])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
@@ -356,7 +366,7 @@ export function IslemOyunuEkrani({
     mod: gecerliMod,
     turSuresi: demoSorulari ? 600 : undefined,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && !demoDuraklatildi,
     sure: soruSuresi('islem'),
@@ -377,7 +387,7 @@ export function IslemOyunuEkrani({
     const dinleyici = (olay: KeyboardEvent) => {
       if (olay.key >= '0' && olay.key <= '9') rakamYaz(olay.key)
       else if (olay.key === 'Backspace') sil()
-      else if (olay.key === 'Enter') cevapla(false)
+      else if (olay.key === 'Enter') cevapla('cevap')
       else return
       olay.preventDefault()
     }
@@ -418,9 +428,18 @@ export function IslemOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
+              }
+        }
+        pas={
+          demoSorulari
+            ? undefined
+            : {
+                kalan: kalanPas(cevaplar),
+                kilitli: geriBildirim !== null,
+                onPas: () => cevapla('pas'),
               }
         }
         onCik={turdanCik}
@@ -450,7 +469,7 @@ export function IslemOyunuEkrani({
                     yarısını söylemek olurdu. */}
                 <div data-tanitim={demoSorulari ? "demo-islem" : undefined} className="golge-kart rounded-3xl bg-card px-5 pb-5 pt-4">
                   <div className="flex items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
-                    <Rabi durum="calisiyor" boyut={26} />
+                    <KoseRabisi durum="calisiyor" />
                     Kaç eder?
                   </div>
 
@@ -468,9 +487,13 @@ export function IslemOyunuEkrani({
                 <CevapAlani
                   girilen={geriBildirim ? geriBildirim.girilen : girilen}
                   durum={
-                    geriBildirim ? (geriBildirim.dogruMu ? 'dogru' : 'yanlis') : 'yaziliyor'
+                    geriBildirim
+                      ? geriBildirim.pas ? 'pas' : geriBildirim.dogruMu ? 'dogru' : 'yanlis'
+                      : 'yaziliyor'
                   }
-                  bosYazi={geriBildirim && !geriBildirim.dogruMu ? 'pas' : 'sonucu yaz'}
+                  bosYazi={
+                    geriBildirim?.pas ? 'pas' : geriBildirim && !geriBildirim.dogruMu ? 'süre doldu' : 'sonucu yaz'
+                  }
                 />
 
                 <TusTakimi
@@ -478,8 +501,7 @@ export function IslemOyunuEkrani({
                   bosMu={girilen === ''}
                   onRakam={rakamYaz}
                   onSil={sil}
-                  onOnayla={() => cevapla(false)}
-                  onPas={() => cevapla(true)}
+                  onOnayla={() => cevapla('cevap')}
                 />
                 </div>
               </div>
@@ -487,7 +509,8 @@ export function IslemOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu ? undefined : `— doğrusu ${geriBildirim.beklenen}`
                   }

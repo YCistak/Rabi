@@ -114,6 +114,8 @@ const POZLAR = [
     ['tavsan-ayracli', 'kitaba ayraç koyan.png'],
     // Mini oyunlarda sorunun üstünde: oyun bir bulmaca, tavşan yapboz tamamlıyor.
     ['tavsan-yapboz', 'yapboz tamamlayan.png'],
+    // Oyun modu penceresinin başında: tur başlamadan önce, oyuncuyu bekliyor.
+    ['tavsan-oturan', 'oturan.png'],
   ].map(([ad, kaynak]) => ({ ad, kaynak })),
   // --- İlk takım.
   { ad: 'tavsan-tam', kaynak: 'normal maskot.png' },

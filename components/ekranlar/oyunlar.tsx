@@ -35,8 +35,6 @@ import { gecmiseIsle, type SoruGecmisi } from '@/lib/oyunlar/gecmis'
 import { sesleriHazirla } from '@/lib/oyunlar/oyun-sesi'
 import { ANAHTARLAR, OYUN_GECMIS_SINIRI, TUR_EN_UZUN, useYerelDepo } from '@/lib/depo'
 import { VARSAYILAN_MOD, etkinMod, modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
-import { BASLANGIC_ZORLUGU } from '@/lib/oyunlar/uyum'
-import type { Zorluk } from '@/lib/oyunlar/ritim'
 import { dogruKimlikler } from '@/lib/oyunlar/genel-test'
 import { useGeriKatmani } from '@/lib/geri'
 import { bugun } from '@/lib/utils'
@@ -192,14 +190,11 @@ export function OyunlarEkrani({
     Tur öncesi seçimler. Sahibi burası: kayda yazan ve bağlamı kuran yer tek
     olmalı, yoksa yirmi iki oyun dosyası aynı anahtarı ayrı ayrı açardı.
 
-    Mod tek değer (bütün oyunlarda ortak), zorluk bir tablo (oyun başına ayrı).
-    Gerekçeleri `lib/depo.ts` içindeki anahtar açıklamalarında.
+    Yalnız mod (bütün oyunlarda ortak); gerekçesi `lib/depo.ts` içindeki
+    anahtar açıklamasında. Oyun başına başlangıç zorluğu da burada saklanıyordu;
+    seçim kalkınca anahtarı `ESKI_ANAHTARLAR`a taşındı.
   */
   const [mod, setMod] = useYerelDepo<OyunModu>(ANAHTARLAR.oyunModu, VARSAYILAN_MOD)
-  const [zorluklar, setZorluklar] = useYerelDepo<Partial<Record<OyunId, Zorluk>>>(
-    ANAHTARLAR.oyunZorlugu,
-    {},
-  )
 
   /*
     Ana sayfadan gelen ders isteği bir kez tüketiliyor.
@@ -346,22 +341,15 @@ export function OyunlarEkrani({
     tur içindeki bütün oyun ekranı boşuna yeniden çizilirdi — sayaç her saniye
     tikliyor, yani çizim de her saniye geliyor.
 
-    Zorluk açık oyunun satırından okunuyor; oyun seçilmemişken (ızgaradayken)
-    kimse okumuyor ve varsayılan yeterli. `secilebilir` banka turunda kapalı:
-    o tur ne modu ne zorluğu dinliyor (`etkinMod`).
+    `secilebilir` banka turunda kapalı: o tur modu dinlemiyor (`etkinMod`).
   */
   const turAyari = useMemo(
     () => ({
       mod,
-      zorluk: (acikOyun && zorluklar[acikOyun]) || BASLANGIC_ZORLUGU,
       setMod,
-      setZorluk: (yeni: Zorluk) => {
-        if (!acikOyun) return
-        setZorluklar((onceki) => ({ ...onceki, [acikOyun]: yeni }))
-      },
       secilebilir: bankaTuru === null,
     }),
-    [mod, setMod, zorluklar, setZorluklar, acikOyun, bankaTuru],
+    [mod, setMod, bankaTuru],
   )
 
   /**

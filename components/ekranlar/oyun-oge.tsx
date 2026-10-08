@@ -9,8 +9,10 @@ import { OGE_HAVUZU, OGE_ACIKLAMASI, OGE_ADI } from '@/lib/oyunlar/oge-havuzu'
 import { cumleMetni, turHazirla, type OgeOyunSorusu, type OgeSikki } from '@/lib/oyunlar/oge'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -62,8 +64,8 @@ function sirayiKur(akis: SoruAkisi<OgeSorusu>): SoruAkisi<OgeOyunSorusu> {
   return akisiEsle(akis, (sorular) => turHazirla(sorular, Math.random, false))
 }
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: OgeTuru | null; dogruMu: boolean; soru: OgeSorusu }
+/** `secilen` süre dolduğunda ya da pas geçilince `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = { secilen: OgeTuru | null; dogruMu: boolean; pas: boolean; soru: OgeSorusu }
 
 /**
  * Banka kayıtlarından ses havuzu.
@@ -259,7 +261,7 @@ export function OgeOyunuEkrani({
    * doğruda da yanlışta da aynı: doğrusunu okumadan ekranın değişmesi,
    * elenirken bile öğretmeyi bırakmak olurdu.
    */
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       /*
@@ -270,8 +272,9 @@ export function OgeOyunuEkrani({
         değişirdi. İkisi aynı karede güncellenince değişen tek şey bir
         sonraki soru oluyor.
       */
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      // Pas bedelsiz: zorluğu düşürmüyor, Sıfır Tolerans'ta turu bitirmiyor.
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -287,7 +290,7 @@ export function OgeOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -296,13 +299,22 @@ export function OgeOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /** Pas hakkı: doğrusu gösterilip geçiliyor; yanlış sesi ve titreşimi yok. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
+  }
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -332,7 +344,7 @@ export function OgeOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('oge'),
@@ -352,7 +364,7 @@ export function OgeOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -373,11 +385,12 @@ export function OgeOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{ kalan: kalanPas(cevaplar), kilitli: geriBildirim !== null, onPas: pasGec }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -434,7 +447,8 @@ export function OgeOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? `“${geriBildirim.soru.oge}”`

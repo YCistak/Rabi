@@ -21,8 +21,10 @@ import {
 } from '@/lib/oyunlar/trigonometri'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -49,6 +51,7 @@ import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -73,7 +76,7 @@ const CEVAP_BEKLEMESI = { dogru: 1200, yanlis: 2600 } as const
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
 /** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: string | null; dogruMu: boolean; soru: TrigSorusu }
+type GeriBildirim = { secilen: string | null; dogruMu: boolean; pas: boolean; soru: TrigSorusu }
 
 function bankaHavuzu(kayitlar: readonly BankaKaydi[]): TrigSorusu[] {
   const havuz: TrigSorusu[] = []
@@ -132,9 +135,12 @@ export function TrigonometriOyunuEkrani({
   /** Kaçıncı tur — tur saatli modlarda sayacı sıfırlayan tek şey (`tur-sayaci.ts`). */
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{ ozet: TurOzeti<TrigSorusu>; yeniRekor: boolean } | null>(
-    null,
-  )
+  const [sonuc, setSonuc] = useState<{
+    ozet: TurOzeti<TrigSorusu>
+    /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+    paslar: boolean[]
+    yeniRekor: boolean
+  } | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -180,6 +186,7 @@ export function TrigonometriOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -222,14 +229,14 @@ export function TrigonometriOyunuEkrani({
 
   const soru = sorular[zorluk][sira]
 
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
       // Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil: ekrandaki
       // soru `sorular[zorluk][sira]` ile okunuyor ve geri bildirim okunurken
-      // değişmemeli.
-      zorlukKaydet(dogruMu)
-      if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+      // değişmemeli. Pas bedelsiz: zorluğu da düşürmüyor.
+      if (!pas) zorlukKaydet(dogruMu)
+      if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
         setElendi('yanlis')
         turBitir(cevaplarRef.current)
       } else {
@@ -245,16 +252,29 @@ export function TrigonometriOyunuEkrani({
 
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.deger, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.deger, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
+  }
+
+  /**
+   * Pas hakkı: bedelsiz (`Cevap.pas`) — yanlış sayılmıyor; elemeye, zorluğa ve
+   * sese girmiyor. Doğru şık işaretlenip sıradaki soruya geçiliyor; bekleme
+   * yanlışınki kadar, doğrusu okunabilsin diye.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
   }
 
   /** Süre dolması cevap vermemekle aynı: yanlış sayılıyor. */
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
@@ -284,7 +304,7 @@ export function TrigonometriOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('trigonometri'),
@@ -304,7 +324,7 @@ export function TrigonometriOyunuEkrani({
 
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -325,11 +345,16 @@ export function TrigonometriOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -367,7 +392,8 @@ export function TrigonometriOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={trigAciklamasi(geriBildirim.soru)}
                 />
               )}
@@ -401,7 +427,7 @@ function SoruKarti({ soru, maskot }: { soru: TrigSorusu; maskot: MaskotDurumu })
     return (
       <div className="golge-kart flex min-h-0 flex-1 flex-col rounded-3xl bg-card px-3 pb-2.5 pt-3">
         <div className="flex flex-none items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
-          <Rabi durum={maskot} boyut={26} />
+          <KoseRabisi durum={maskot} />
           <span>
             <b className="font-display text-[15px] font-extrabold text-foreground">{sorulanAd(soru)}</b>{' '}
             kaçtır?
@@ -480,7 +506,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<TrigSorusu>; yeniRekor: boolean }
+  sonuc: { ozet: TurOzeti<TrigSorusu>; paslar: boolean[]; yeniRekor: boolean }
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -530,6 +556,9 @@ function SonucGorunumu({
               </b>
               <span className="rakam mt-0.5 block text-[11.5px] font-semibold text-success">
                 {sorulanAd(yanlis)} = {trigCevabi(yanlis)}
+                {sonuc.paslar[sira] && (
+                  <span className="text-muted-foreground"> · Pas geçtin</span>
+                )}
               </span>
               <span className="mt-1.5 block border-t border-border pt-1.5 text-[11px] font-semibold leading-snug text-muted-foreground">
                 {trigAciklamasi(yanlis)}

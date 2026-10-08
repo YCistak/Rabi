@@ -18,8 +18,10 @@ import {
 } from '@/lib/oyunlar/iklim'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -69,8 +71,13 @@ const CEVAP_BEKLEMESI = 1500
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-/** `secilen` süre dolduğunda `null`: oyuncu bir şık işaretlemedi. */
-type GeriBildirim = { secilen: string | null; dogruMu: boolean; soru: IklimSorusu }
+/** `secilen` süre dolduğunda ve pasta `null`: oyuncu bir şık işaretlemedi. */
+type GeriBildirim = {
+  secilen: string | null
+  dogruMu: boolean
+  pas: boolean
+  soru: IklimSorusu
+}
 
 /**
  * `ritim.ts`'in kurduğu sıraya şıkları ekler.
@@ -147,10 +154,7 @@ export function IklimOyunuEkrani({
   const [duraklatilan, setDuraklatilan] = useState(false)
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{
-    ozet: TurOzeti<IklimSorusu>
-    yeniRekor: boolean
-  } | null>(null)
+  const [sonuc, setSonuc] = useState<SonucBilgisi | null>(null)
 
   const havuz = useMemo(() => bankaHavuzu(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -196,6 +200,7 @@ export function IklimOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -242,9 +247,14 @@ export function IklimOyunuEkrani({
 
   const soru = sorular[zorluk][sira]
 
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      // Pas bedelsiz: zorluğu kaydırmıyor, Sıfır Tolerans'ta turu bitirmiyor.
+      if (pas) {
+        setSira((s) => s + 1)
+        return
+      }
       /*
         Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
 
@@ -267,7 +277,7 @@ export function IklimOyunuEkrani({
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     const dogruMu = sik.dogruMu
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu }])
-    setGeriBildirim({ secilen: sik.metin, dogruMu, soru: soru.soru })
+    setGeriBildirim({ secilen: sik.metin, dogruMu, pas: false, soru: soru.soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -276,13 +286,22 @@ export function IklimOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru: soru.soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru: soru.soru })
     geriBildir(false)
     ilerle(false)
     // `ilerle` ve `geriBildir` her renderda yeniden kuruluyor; sayaç yalnızca
     // güncel olanı çağırsın diye bağımlılıklar bilerek dar tutuldu.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /** Pas: doğru şık gösterilip geçiliyor; ses ve titreşim yok, hata değil. */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru: soru.soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru: soru.soru })
+    ilerle(false, true)
+  }
 
   const turSuresiDoldu = () => {
     setElendi('sure')
@@ -300,7 +319,7 @@ export function IklimOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('iklim'),
@@ -335,11 +354,16 @@ export function IklimOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -389,7 +413,8 @@ export function IklimOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? geriBildirim.soru.aciklama
@@ -523,6 +548,13 @@ function SikDugmesi({
   )
 }
 
+type SonucBilgisi = {
+  ozet: TurOzeti<IklimSorusu>
+  /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+  paslar: boolean[]
+  yeniRekor: boolean
+}
+
 function SonucGorunumu({
   sonuc,
   rekor,
@@ -533,7 +565,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<IklimSorusu>; yeniRekor: boolean }
+  sonuc: SonucBilgisi
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -542,7 +574,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -578,6 +610,11 @@ function SonucGorunumu({
             >
               <b className="block font-display text-[13.5px] font-extrabold leading-tight">
                 {yanlis.ad}
+                {paslar[sira] && (
+                  <span className="ml-1.5 text-[11px] font-bold text-muted-foreground">
+                    · Pas geçtin
+                  </span>
+                )}
               </b>
               <span className="mt-1 block text-[12px] font-extrabold text-success">
                 {IKLIM_ADI[yanlis.iklim]}

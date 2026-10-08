@@ -3,11 +3,10 @@
 import { createContext, useContext } from 'react'
 import { VARSAYILAN_MOD, etkinMod, type OyunModu } from '@/lib/oyunlar/mod'
 import { BASLANGIC_ZORLUGU, useUyum } from '@/lib/oyunlar/uyum'
-import type { Zorluk } from '@/lib/oyunlar/ritim'
 
 /**
- * Turun ayarları: seçilen mod, seçilen başlangıç zorluğu ve ikisinin
- * değiştiricileri.
+ * Turun ayarları: seçilen mod ve değiştiricisi. Başlangıç zorluğu da
+ * buradaydı; seçimi kaldırıldı (kullanıcı istedi), tur hep ortadan başlıyor.
  *
  * Bağlamla taşınıyor, prop'la değil — `genel-test-baglami.tsx` ile aynı
  * gerekçe: ayarı seçtiren yer tek (`oyun-tanitim.tsx`) ama o pencereyi çizen
@@ -24,17 +23,11 @@ import type { Zorluk } from '@/lib/oyunlar/ritim'
  */
 export type TurAyari = {
   mod: OyunModu
-  /**
-   * Turun **başladığı** seviye; kaldığı seviye değil. Uyum bunun üstünde
-   * çalışmaya devam ediyor (`lib/oyunlar/uyum.ts`).
-   */
-  zorluk: Zorluk
   setMod: (mod: OyunModu) => void
-  setZorluk: (zorluk: Zorluk) => void
   /**
    * Ayarlar adımı çıksın mı.
    *
-   * Oyun Bankası turunda `false`: o tur ne modu ne zorluğu dinliyor
+   * Oyun Bankası turunda `false`: o tur modu dinlemiyor
    * (`etkinMod`), sunulup dinlenmeyen bir seçim yalan söyleyen bir arayüzdür.
    */
   secilebilir: boolean
@@ -42,9 +35,7 @@ export type TurAyari = {
 
 const TurAyariBaglami = createContext<TurAyari>({
   mod: VARSAYILAN_MOD,
-  zorluk: BASLANGIC_ZORLUGU,
   setMod: () => {},
-  setZorluk: () => {},
   secilebilir: false,
 })
 
@@ -67,16 +58,11 @@ export function useEtkinMod(bankaTuru: boolean): OyunModu {
 }
 
 /**
- * Uyumun oyun ekranlarına bakan yüzü: başlangıcı bağlamdan okur.
- *
- * Sarmal burada, `lib/oyunlar/uyum.ts` içinde değil: `lib/` saf mantık ve bir
- * bileşenden içeri bakmıyor (`AGENTS.md`). Uyum kuralının kendisi orada
- * duruyor ve bağlamı hiç görmüyor; buradaki tek iş seçilen seviyeyi ona
- * geçirmek.
- *
- * Oyun Bankası turunda seçim sorulmuyor ve bağlam varsayılanla geliyor: o tur
- * ortadan başlıyor.
+ * Uyumun oyun ekranlarına bakan yüzü. Başlangıç seçimi kalktı; her tur
+ * ortadan (`BASLANGIC_ZORLUGU`) başlıyor, uyum gidişi belirliyor
+ * (`lib/oyunlar/uyum.ts`). Oyun dosyaları yine bunu çağırıyor: başlangıç bir
+ * gün yeniden seçilebilir olursa tek yer burası.
  */
 export function useUyarlananZorluk() {
-  return useUyum(useTurAyari().zorluk)
+  return useUyum(BASLANGIC_ZORLUGU)
 }

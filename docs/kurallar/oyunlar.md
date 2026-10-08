@@ -31,6 +31,23 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   bayrağı (`onTurBitti` 4. parametre) ile rekora, istatistiğe, geçmişe yazılmaz
   (`oyunlar.tsx` → `turBitti`); rekor rozeti kutlamaz.
 
+## Pas (`lib/oyunlar/tur.ts` → `PAS_HAKKI`)
+
+- Eşleştirme dışındaki bütün oyunlarda turda **5 pas hakkı** (kullanıcı istedi). Düğme kabuğun sayaç
+  şeridinin sağında (`OyunKabugu` → `pas`, `PasBilgisi`), oyun dosyasında değil.
+  Kalan hak ayrı sayaç değil, cevaplardan türer (`kalanPas`).
+- Pas **bedelsiz** (kullanıcı seçti): yanlış sayılmaz (`yanlisSayisi`), süreden
+  götürmez, Sıfır Tolerans'ta elemez, seriyi bozmaz, uyuma girmez, yanlış sesi ve
+  titreşimi yok. Kayıt `{ dogruMu: false, pas: true }`: doğrusu gösterilir ("Pas
+  geçtin", nötr `Bildirim pas`), tur sonunda listelenir ve **bankaya düşer**.
+- Süre dolması pas değil, yanlıştır.
+- **Eşleştirme oyunlarında pas yok** (edebiyat, antlaşma, formül, kavram; kullanıcı
+  kaldırttı): `pas` prop'u verilmez, düğme çizilmez. Köklü'de pas yalnız aralık
+  aşamasında; Sıralama'da sorunun tamamını geçer.
+- Eskiden bazı oyunlarda sınırsız pas vardı (yanlış sayılıyordu) ve Harita/Bölünme'de
+  "ilk tercih oluyor" diye kaldırılmıştı; hak sınırı o sorunu karşılıyor. Sınırsız
+  pası geri getirme.
+
 ## Oyun Bankası
 
 - İki çıkış: **kazanılan** (genel testte doğru → düşer, "bankadan düşen" sayacı ve
@@ -53,28 +70,35 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 | Sıfır Tolerans | soruya ait (`SORU_SURESI`) | tur biter | var |
 | Rahat | yok | hiçbir şey | **yok** |
 
-- Mod ve başlangıç zorluğu tur öncesi tam ekranda (`TurAyariEkrani`, `ModSecimi`,
-  `ZorlukSecimi`), varsayılan Sıradan · Orta. Mod bütün oyunlarda ortak, saklanır
-  (`ANAHTARLAR.oyunModu`). Soru türü seçimi yok. Rahat seçilince sarı şerit kayda
-  geçmediğini söyler; kapı `kayitliMi` / `turBitti`.
+- Mod tur öncesi **açılır pencerede** (`ModPenceresi` in `oyun-tanitim.tsx`,
+  `ModSecimi`; tasarım `tasarim/oyun-modu-penceresi.html`): üstte oturan Rabi
+  (`tavsan-oturan`), "Oyun modunu seç", 2×2 kart (emoji + ad + tek satır `ozet`),
+  `sahne-dugme` dilinde "Başla →". Varsayılan Sıradan. Mod bütün oyunlarda ortak,
+  saklanır (`ANAHTARLAR.oyunModu`). Kapanış ✕, zemine dokunma, geri tuşu; sormaz.
+- Pencerede yalnız mod (kullanıcı istedi): **zorluk seçimi yok** (anahtar
+  `ESKI_ANAHTARLAR`ta), oyun adı, rekor, uzun kural ve Rahat'ın sarı şeridi yok.
+  Seçili kart **modun kendi rengine** boyanır (Sıradan `isl`, Turbo `yzm`, Sıfır
+  Tolerans `fzk`, Rahat `cog`), ders rengine değil (kullanıcı: "hepsi kahverengi
+  olmasın"). Soru türü seçimi yok. Rahat'ın kayda geçmemesi tur içi şeritte ve tur
+  sonunda yazar; kapı `kayitliMi` / `turBitti`.
 - **Ayarlardan sonra tanıtım yok** (kullanıcı kaldırttı): "Başlat" doğrudan sayıma
   gider; kurallar turdaki "?"te. Tanıtım yalnız ayar çıkmayan turda (banka).
 - Oyun Bankası turu hep **Rahat** (`etkinMod`), ayar adımı yok (`secilebilir`), sayım
   yalnız ilk oyunda (`BankaTuru.ilk`).
-- Mod kutularında lucide ikon; tur içi mod rozetinde emoji kalır.
-- Zorluk şeritli seçici: dıştaki ray düğmelerin alanı, gösterge rayın üçte biri
-  (`calc` ile yarım piksel kayıyordu).
+- Mod kartlarında **emoji** (kullanıcı istedi; hizalı kardeşlerde çizgi ikon
+  kuralının bilinçli istisnası). Sıfır Tolerans 🎯 (💀 Rabi'nin havasına sert
+  geliyordu).
 - Seçim prop değil **bağlamla** iner (`components/tur-ayari-baglami.tsx`); oyunlar
   `useEtkinMod` / `useUyarlananZorluk` çağırır, `etkinMod` ve `uyumBasla` saf kalır.
+  `useUyarlananZorluk` hep `BASLANGIC_ZORLUGU`dan başlatır.
 - Sayaç tek yerde `lib/oyunlar/tur-sayaci.ts` (toplam 0 = sayaç yok). Saat ya tura ya
   soruya ait, ikisi birden olmaz (`mod.test.ts`).
 
 ## Zorluk
 
-- Seçim başlangıcı, uyum (`lib/oyunlar/uyum.ts`) gidişi belirler: 3 ardışık doğru bir
-  üst, 2 ardışık yanlış bir alt seviye. Seçim yoksa başlangıç orta. Seçim oyun başına
-  saklanır (`ANAHTARLAR.oyunZorlugu`), kayan seviye saklanmaz. Kayma kullanıcıya
-  **söylenmez**.
+- Başlangıç hep orta (seçim kaldırıldı, kullanıcı istedi; geri getirmeden sor), uyum
+  (`lib/oyunlar/uyum.ts`) gidişi belirler: 3 ardışık doğru bir üst, 2 ardışık yanlış
+  bir alt seviye. Kayan seviye saklanmaz. Kayma kullanıcıya **söylenmez**.
 - `turSirasi` üç **eşit boylu** şerit döndürür (`SoruAkisi`, `ritim.test.ts`); oyun
   `akis[zorluk][sira]` okur. Havuzsuz oyunlar `akisUret`, banka turu `tekAkis`.
 - Uyum `ilerle`nin zamanlayıcısında işlenir (`zorlukKaydet`, `setSira` ile aynı

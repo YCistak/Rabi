@@ -26,8 +26,10 @@ import {
 const PERIYODIK_TIPLERI: readonly PeriyodikTipi[] = ['bul', 'sec', 'sinif']
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -67,8 +69,13 @@ const CEVAP_BEKLEMESI = 1400
 
 type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
-/** `secilen` süre dolduğunda `null`: oyuncu hiçbir şey seçmedi. */
-type GeriBildirim = { secilen: string | null; dogruMu: boolean; soru: PeriyodikSorusu }
+/** `secilen` süre dolduğunda ve pasta `null`: oyuncu hiçbir şey seçmedi. */
+type GeriBildirim = {
+  secilen: string | null
+  dogruMu: boolean
+  pas: boolean
+  soru: PeriyodikSorusu
+}
 
 /**
  * Banka kayıtlarından element havuzu.
@@ -135,10 +142,7 @@ export function PeriyodikOyunuEkrani({
   const [duraklatilan, setDuraklatilan] = useState(false)
   const [turNo, setTurNo] = useState(0)
 
-  const [sonuc, setSonuc] = useState<{
-    ozet: TurOzeti<PeriyodikSorusu>
-    yeniRekor: boolean
-  } | null>(null)
+  const [sonuc, setSonuc] = useState<SonucBilgisi | null>(null)
 
   const havuz = useMemo(() => bankaSorulariniCoz(bankaSorulari), [bankaSorulari])
   const bankaTuru = havuz.length > 0
@@ -185,6 +189,7 @@ export function PeriyodikOyunuEkrani({
       const ozet = turOzeti(verilenler)
       setSonuc({
         ozet,
+        paslar: verilenler.filter((c) => !c.dogruMu).map((c) => c.pas === true),
         yeniRekor:
           !yarim &&
           !bankaTuru &&
@@ -228,9 +233,14 @@ export function PeriyodikOyunuEkrani({
 
   const soru = sorular[zorluk][sira]
 
-  const ilerle = (dogruMu: boolean) => {
+  const ilerle = (dogruMu: boolean, pas = false) => {
     zamanlayiciRef.current = setTimeout(() => {
       setGeriBildirim(null)
+      // Pas bedelsiz: zorluğu kaydırmıyor, Sıfır Tolerans'ta turu bitirmiyor.
+      if (pas) {
+        setSira((s) => s + 1)
+        return
+      }
       /*
         Zorluk **ilerlerken** güncelleniyor, cevap verilirken değil.
 
@@ -249,12 +259,11 @@ export function PeriyodikOyunuEkrani({
     }, CEVAP_BEKLEMESI)
   }
 
-  /** Boş seçim pas demek: hiçbir şeye dokunulmadı, cevap yanlış sayılıyor. */
   const cevapla = (secilen: string) => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     const dogruMu = secilen === dogruCevap(soru)
     setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
-    setGeriBildirim({ secilen: secilen === '' ? null : secilen, dogruMu, soru })
+    setGeriBildirim({ secilen, dogruMu, pas: false, soru })
     geriBildir(dogruMu)
     ilerle(dogruMu)
   }
@@ -263,11 +272,23 @@ export function PeriyodikOyunuEkrani({
   const sureDoldu = useCallback(() => {
     if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
     setCevaplar((onceki) => [...onceki, { soru, dogruMu: false }])
-    setGeriBildirim({ secilen: null, dogruMu: false, soru })
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: false, soru })
     geriBildir(false)
     ilerle(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asama, geriBildirim, soru])
+
+  /**
+   * Pas: doğrusu tabloda gösterilip geçiliyor; ses ve titreşim yok, hata değil.
+   * Rastgele bir hücreye dokunup şansa bırakmaktansa bilmediğini kabul etmenin yolu.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [...onceki, { soru, dogruMu: false, pas: true }])
+    setGeriBildirim({ secilen: null, dogruMu: false, pas: true, soru })
+    ilerle(false, true)
+  }
 
   /** Tur saati bitti: yanlış değil, tur biter. */
   const turSuresiDoldu = () => {
@@ -290,7 +311,7 @@ export function PeriyodikOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('periyodik'),
@@ -325,11 +346,16 @@ export function PeriyodikOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -366,7 +392,8 @@ export function PeriyodikOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Doğru!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? `${soru.element.ad} · ${soru.element.grup}. grup, ${soru.element.periyot}. periyot`
@@ -575,17 +602,8 @@ function CevapAlani({
           <br />
           <span className="text-[11.5px]">Boş kutularda element yok.</span>
         </p>
-        {/* Pas, bilmediğini kabul etmenin yolu: rastgele bir hücreye dokunup
-            şansa bırakmaktansa geçmek hem daha dürüst hem tur sonunda doğru
-            ders. */}
-        <button
-          type="button"
-          disabled={geriBildirim !== null}
-          onClick={() => onSec('')}
-          className="rounded-lg px-3 py-1.5 text-[12.5px] font-extrabold text-muted-foreground transition active:bg-foreground/10 disabled:opacity-45"
-        >
-          Bilmiyorum, pas geç
-        </button>
+        {/* Buradaki sınırsız "Bilmiyorum, pas geç" düğmesi kaldırıldı: pas
+            artık bütün oyunlarda sayaç şeridinde, turda 5 hakla ve bedelsiz. */}
       </div>
     )
   }
@@ -620,6 +638,13 @@ function CevapAlani({
   )
 }
 
+type SonucBilgisi = {
+  ozet: TurOzeti<PeriyodikSorusu>
+  /** `ozet.yanlislar` ile aynı sırada: o soru pas mı geçildi. */
+  paslar: boolean[]
+  yeniRekor: boolean
+}
+
 function SonucGorunumu({
   sonuc,
   rekor,
@@ -630,7 +655,7 @@ function SonucGorunumu({
   onCik,
   bildir,
 }: {
-  sonuc: { ozet: TurOzeti<PeriyodikSorusu>; yeniRekor: boolean }
+  sonuc: SonucBilgisi
   rekor: number
   bankaTuru: boolean
   mod: OyunModu
@@ -639,7 +664,7 @@ function SonucGorunumu({
   onCik: () => void
   bildir: BildirimKolu
 }) {
-  const { ozet, yeniRekor } = sonuc
+  const { ozet, paslar, yeniRekor } = sonuc
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalan = ozet.yanlislar.length - gorunen.length
 
@@ -689,6 +714,7 @@ function SonucGorunumu({
                   <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
                     {yanlis.element.grup}. grup · {yanlis.element.periyot}. periyot ·{' '}
                     {SINIF_ADI[yanlis.element.sinif]}
+                    {paslar[sira] && ' · Pas geçtin'}
                   </span>
                 </div>
               </div>

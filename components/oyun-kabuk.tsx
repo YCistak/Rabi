@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Check, HelpCircle, Trophy, X } from 'lucide-react'
+import { Check, HelpCircle, SkipForward, Trophy, X } from 'lucide-react'
 import { sureUyarisi } from '@/lib/oyunlar/oyun-sesi'
 import { GeriSayim } from '@/components/oyun-geri-sayim'
 import type { OyunId } from '@/lib/types'
@@ -133,6 +133,18 @@ export type SayacBilgisi = {
   puan?: number
 }
 
+/**
+ * Turun pas düğmesi. Sayımı oyun tutmuyor, cevap listesinden türüyor
+ * (`kalanPas`); oyun yalnızca soruyu geçirmeyi biliyor.
+ */
+export type PasBilgisi = {
+  /** Kalan hak; sıfırda düğme pasif. */
+  kalan: number
+  /** Cevap gösterilirken (ya da sorunun ortasında, eşleştirmede) basılamaz. */
+  kilitli: boolean
+  onPas: () => void
+}
+
 /** Süre uyarısının ve nabzın başladığı oran — halkanın kırmızıya döndüğü yer. */
 const BASKI_ORANI = 0.25
 
@@ -207,10 +219,16 @@ export function OyunKabugu({
   tanitimSayacHedefi,
   baslik,
   sayac,
+  pas,
   onCik,
   onYardim,
   children,
 }: {
+  /**
+   * Pas düğmesi, sayaç şeridinde. Bütün oyunlarda aynı yerde: her oyun kendi
+   * köşesine koysaydı oyuncu her oyunda düğmeyi yeniden arardı.
+   */
+  pas?: PasBilgisi
   tanitimBosluk?: boolean
   tanitimSayacHedefi?: string
   oyunId: OyunId
@@ -320,11 +338,11 @@ export function OyunKabugu({
               {sayac.mod !== 'siradan' && <ModRozeti mod={sayac.mod} />}
             </div>
 
-            <SayacSeridi sayac={sayac} />
+            <SayacSeridi sayac={sayac} pas={pas} />
           </div>
         )}
 
-        {sayac && sayac.toplam <= 0 && <SayacSeridi sayac={sayac} />}
+        {sayac && sayac.toplam <= 0 && <SayacSeridi sayac={sayac} pas={pas} />}
 
         {children}
       </div>
@@ -377,24 +395,47 @@ function ModRozeti({ mod }: { mod: OyunModu }) {
  * gitti (`lib/oyunlar/ritim.ts`). Yerine üçüncü bir sayı konmadı — gösterilecek
  * bir şey uydurmak, boş bir sütuna sayı koymak olurdu.
  */
-function SayacSeridi({ sayac }: { sayac: SayacBilgisi }) {
+function SayacSeridi({ sayac, pas }: { sayac: SayacBilgisi; pas?: PasBilgisi }) {
   // Puan yalnızca puanlı oyunlarda var (köklü sayı, organel, zaman şeridi):
   // sütun sayısı ona göre bir artıyor, boşluk bırakılmıyor.
   const puanli = sayac.puan !== undefined
 
   return (
-    <div
-      className={cn(
-        'mt-3.5 grid flex-none gap-1.5 border-b border-border pb-3',
-        puanli ? 'grid-cols-3' : 'grid-cols-2',
-      )}
-    >
-      <Sayac deger={sayac.dogru} etiket="Doğru" renk="text-success" />
-      {sayac.puan !== undefined && (
-        <Sayac deger={sayac.puan} etiket="Puan" renk="text-primary" />
-      )}
-      <Sayac deger={sayac.rekor} etiket="Rekor" />
+    <div className="mt-3.5 flex flex-none items-center gap-1.5 border-b border-border pb-3">
+      <div className={cn('grid flex-1 gap-1.5', puanli ? 'grid-cols-3' : 'grid-cols-2')}>
+        <Sayac deger={sayac.dogru} etiket="Doğru" renk="text-success" />
+        {sayac.puan !== undefined && (
+          <Sayac deger={sayac.puan} etiket="Puan" renk="text-primary" />
+        )}
+        <Sayac deger={sayac.rekor} etiket="Rekor" />
+      </div>
+      {pas && <PasDugmesi pas={pas} />}
     </div>
+  )
+}
+
+/**
+ * Pas düğmesi: kalan hak üstünde yazıyor, bitince soluyor.
+ *
+ * Şeridin sağında, sayılarla aynı satırda: soru alanına konsaydı her oyunun
+ * yerleşimine ayrı ayrı girmek gerekirdi (şık ızgarası, tuş takımı, harita).
+ */
+function PasDugmesi({ pas }: { pas: PasBilgisi }) {
+  const bitti = pas.kalan <= 0
+  return (
+    <button
+      type="button"
+      onClick={pas.onPas}
+      disabled={bitti || pas.kilitli}
+      aria-label={bitti ? 'Pas hakkın bitti' : `Pas geç, ${pas.kalan} hakkın kaldı`}
+      className="flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-foreground/[0.07] px-3 text-[13px] font-extrabold text-foreground transition active:bg-foreground/15 disabled:opacity-40"
+    >
+      <SkipForward size={15} strokeWidth={2.4} aria-hidden />
+      Pas
+      <span className="rakam grid h-5 min-w-5 place-items-center rounded-full bg-card px-1 text-[11.5px] text-muted-foreground">
+        {pas.kalan}
+      </span>
+    </button>
   )
 }
 
@@ -525,10 +566,13 @@ function Sayac({ deger, etiket, renk }: { deger: number; etiket: string; renk?: 
  */
 export function Bildirim({
   iyi,
+  pas = false,
   baslik,
   aciklama,
 }: {
   iyi: boolean
+  /** Pas geçildi: yanlış değil, şerit nötr renkte. Doğrusu yine yazıyor. */
+  pas?: boolean
   baslik: string
   aciklama?: string
 }) {
@@ -536,10 +580,16 @@ export function Bildirim({
     <div
       className={cn(
         'flex flex-none items-center gap-2 rounded-2xl px-3.5 py-2.5 text-[13.5px] font-extrabold',
-        iyi ? 'bg-success-soft text-success' : 'bg-ikincil-soft text-ikincil',
+        pas
+          ? 'bg-foreground/[0.07] text-foreground/75'
+          : iyi
+            ? 'bg-success-soft text-success'
+            : 'bg-ikincil-soft text-ikincil',
       )}
     >
-      {iyi ? (
+      {pas ? (
+        <SkipForward size={17} className="shrink-0" aria-hidden />
+      ) : iyi ? (
         <Check size={17} className="shrink-0" aria-hidden />
       ) : (
         <X size={17} className="shrink-0" aria-hidden />
@@ -923,4 +973,16 @@ export function KalanHapi({ kalan }: { kalan: number }) {
       </p>
     </div>
   )
+}
+
+/**
+ * Soru kartının köşesine oturan Rabi.
+ *
+ * Kartın başlık satırında eskiden 26–38 px'lik baş vardı; yapboz pozu tam boy
+ * ve 70 pikselin altında leke oluyor. Satıra büyük tavşan koymak şekilli
+ * oyunlarda (açı, üçgen) şekli küçültürdü: negatif üst boşlukla kulaklar
+ * kartın üstüne taşıyor, satıra yalnızca ~16 px ekleniyor.
+ */
+export function KoseRabisi({ durum }: { durum: MaskotDurumu }) {
+  return <Rabi durum={durum} poz="yapboz" boyut={68} className="-mb-1 -ml-1 -mt-8" />
 }

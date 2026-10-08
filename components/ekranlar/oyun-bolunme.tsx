@@ -17,9 +17,11 @@ import {
 } from '@/lib/oyunlar/bolunme'
 import {
   guncelSeri,
+  kalanPas,
   karistir,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -33,11 +35,11 @@ import { oyunBul } from '@/lib/oyunlar/tanim'
 import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
-import { Rabi } from '@/components/maskot/rabi'
 import {
   Bildirim,
   EN_COK_YANLIS,
   KalanHapi,
+  KoseRabisi,
   OyunKabugu,
   TurSonu,
   YanlisKarti,
@@ -61,7 +63,10 @@ type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 /** Verilen cevap: kalan sorusunda yazılan rakam, bölünür sorusunda evet/hayır. */
 type Girdi = { tip: 'kalan'; rakam: string } | { tip: 'bolunur'; evet: boolean }
 
-type GeriBildirim = { dogruMu: boolean; girdi: Girdi | null; soru: BolunmeSorusu }
+type GeriBildirim = { dogruMu: boolean; pas: boolean; girdi: Girdi | null; soru: BolunmeSorusu }
+
+/** Tur sonundaki girdi: verilen cevap, `null` süre doldu, `'pas'` pas geçildi. */
+type YanlisGirdisi = Girdi | null | 'pas'
 
 /**
  * Bölenin yönelme hâli: 6 → "6'ya", 9 → "9'a".
@@ -159,8 +164,8 @@ export function BolunmeOyunuEkrani({
   const [sira, setSira] = useState(0)
   const [girilen, setGirilen] = useState('')
   const [cevaplar, setCevaplar] = useState<Cevap<BolunmeSorusu>[]>([])
-  /** Yanlışlarla aynı sıradaki girdiler; null süre dolduğunu gösterir. */
-  const [yanlisGirdileri, setYanlisGirdileri] = useState<(Girdi | null)[]>([])
+  /** Yanlışlarla aynı sıradaki girdiler (pas geçilenler dahil). */
+  const [yanlisGirdileri, setYanlisGirdileri] = useState<YanlisGirdisi[]>([])
   const [geriBildirim, setGeriBildirim] = useState<GeriBildirim | null>(null)
 
   /** Tur nasıl bitti — tur sonu ekranı bunu ayrıca söylüyor. */
@@ -266,13 +271,20 @@ export function BolunmeOyunuEkrani({
     ).catch(() => {})
   }
 
-  /** `girdi` null ise süre dolmuş; yanlış sayılır. Pas geçme düğmesi yok — soruyu
-      denemeden bırakmak, oyunun ölçtüğü şeyi ölçülemez yapıyordu. */
+  /**
+   * `sure`: soru saati doldu, cevapsız soru yanlış sayılır. `pas`: pas hakkı
+   * kullanıldı — bedelsiz (`Cevap.pas`), yalnızca doğrusu gösterilip geçiliyor.
+   * Hak sınırlı (`PAS_HAKKI`): sınırsız pas soruyu denemeden bırakmayı ilk
+   * tercih yapıyor, oyunun ölçtüğü şeyi ölçülemez kılıyordu.
+   */
   const cevapla = useCallback(
-    (girdi: Girdi | null) => {
+    (cevap: Girdi | 'sure' | 'pas') => {
       if (asama !== 'oynaniyor' || geriBildirim !== null) return
       const soru = sorular[sira]
       if (!soru) return
+      const pas = cevap === 'pas'
+      if (pas && kalanPas(cevaplarRef.current) <= 0) return
+      const girdi = typeof cevap === 'string' ? null : cevap
       // Soru tipiyle girdi tipi uyuşmuyorsa (klavyeden yanlış tuş) cevap sayılmaz.
       if (girdi && girdi.tip !== soru.tip) return
 
@@ -282,16 +294,17 @@ export function BolunmeOyunuEkrani({
           ? Number(girdi.rakam) === bolunmeCevabi(soru)
           : girdi.evet === bolunuyorMu(soru))
 
-      setCevaplar((onceki) => [...onceki, { soru, dogruMu }])
-      if (!dogruMu) setYanlisGirdileri((onceki) => [...onceki, girdi])
-      setGeriBildirim({ dogruMu, girdi, soru })
-      geriBildir(dogruMu)
+      setCevaplar((onceki) => [...onceki, pas ? { soru, dogruMu, pas } : { soru, dogruMu }])
+      if (!dogruMu) setYanlisGirdileri((onceki) => [...onceki, pas ? 'pas' : girdi])
+      setGeriBildirim({ dogruMu, pas, girdi, soru })
+      // Pas bir hata değil: yanlış titreşimi ve sesi yok.
+      if (!pas) geriBildir(dogruMu)
 
 
       zamanlayiciRef.current = setTimeout(() => {
         setGeriBildirim(null)
         setGirilen('')
-        if (elerMi(dogruMu, bankaTuru, gecerliMod)) {
+        if (!pas && elerMi(dogruMu, bankaTuru, gecerliMod)) {
           setElendi('yanlis')
           turBitir(cevaplarRef.current)
         } else {
@@ -312,7 +325,7 @@ export function BolunmeOyunuEkrani({
    * tur bitmiyor, sıradaki soruya geçiliyor.
    */
   const sureDoldu = useCallback(() => {
-    cevapla(null)
+    cevapla('sure')
   }, [cevapla])
 
   /** Tur saati bitti: yanlış değil, tur biter. */
@@ -343,7 +356,7 @@ export function BolunmeOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan,
     sure: soruSuresi('bolunme'),
@@ -407,11 +420,16 @@ export function BolunmeOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: geriBildirim !== null,
+          onPas: () => cevapla('pas'),
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -437,7 +455,7 @@ export function BolunmeOyunuEkrani({
                     aşağıya sabitli, başparmağın gittiği yerde kalsın diye. */}
                 <div className="golge-kart my-auto rounded-3xl bg-card px-5 pb-4 pt-4">
                   <div className="flex items-center gap-2 text-[12.5px] font-bold text-muted-foreground">
-                    <Rabi durum="calisiyor" boyut={26} />
+                    <KoseRabisi durum="calisiyor" />
                     {soru.tip === 'kalan' ? 'Kalanı bul' : 'Evet mi, hayır mı?'}
                   </div>
 
@@ -477,7 +495,8 @@ export function BolunmeOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
-                  baslik={geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
+                  pas={geriBildirim.pas}
+                  baslik={geriBildirim.pas ? 'Pas geçtin' : geriBildirim.dogruMu ? 'Aynen böyle!' : 'Olmadı'}
                   aciklama={
                     geriBildirim.dogruMu
                       ? kuralIzi(geriBildirim.soru.sayi, geriBildirim.soru.bolen)
@@ -513,7 +532,8 @@ function CevapAlani({
   girilen: string
   geriBildirim: GeriBildirim | null
 }) {
-  const yanlisMi = geriBildirim !== null && !geriBildirim.dogruMu
+  const pas = geriBildirim?.pas === true
+  const yanlisMi = geriBildirim !== null && !geriBildirim.dogruMu && !pas
   const dogruMu = geriBildirim?.dogruMu === true
   const gosterilen =
     geriBildirim === null
@@ -531,11 +551,13 @@ function CevapAlani({
         !geriBildirim && 'bg-card',
         dogruMu && 'bg-success text-white',
         yanlisMi && 'bg-ikincil text-white',
+        // Pas yanlış değil: alan nötr kalıyor.
+        pas && 'bg-foreground/10 text-foreground',
       )}
     >
       {gosterilen === '' ? (
         <span className="text-[19px] font-bold tracking-normal opacity-60">
-          {yanlisMi ? 'pas' : 'kalanı yaz'}
+          {pas ? 'pas' : yanlisMi && geriBildirim?.girdi === null ? 'süre doldu' : yanlisMi ? '' : 'kalanı yaz'}
         </span>
       ) : (
         gosterilen
@@ -675,7 +697,7 @@ function SonucGorunumu({
   bildir,
 }: {
   sonuc: { ozet: TurOzeti<BolunmeSorusu>; yeniRekor: boolean }
-  girdiler: (Girdi | null)[]
+  girdiler: YanlisGirdisi[]
   bolenler: readonly number[]
   rekor: number
   bankaTuru: boolean
@@ -689,7 +711,12 @@ function SonucGorunumu({
   const gorunen = ozet.yanlislar.slice(0, EN_COK_YANLIS)
   const kalanSayisi = ozet.yanlislar.length - gorunen.length
 
-  const dagilim = bolenDagilimi(ozet.yanlislar, bolenler)
+  // Dağılım yalnızca yanlışlardan: alt yazı "N yanlıştan" diye `ozet.yanlis`
+  // sayıyor, pas geçilenler de girseydi sayılar tutmazdı.
+  const dagilim = bolenDagilimi(
+    ozet.yanlislar.filter((_, i) => girdiler[i] !== 'pas'),
+    bolenler,
+  )
   const enCok = dagilim[0]
   const dolular = dagilim.filter((s) => s.sayi > 0)
   const boslar = dagilim.filter((s) => s.sayi === 0)
@@ -758,7 +785,9 @@ function SonucGorunumu({
                 </b>
                 <span className="mt-0.5 block text-[11.5px] font-semibold text-muted-foreground">
                   {kuralIzi(yanlis.sayi, yanlis.bolen)}
-                  {girdi === null ? (
+                  {girdi === 'pas' ? (
+                    ' · pas geçtin'
+                  ) : girdi === null ? (
                     ' · süre doldu'
                   ) : (
                     <>

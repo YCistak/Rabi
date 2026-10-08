@@ -6,32 +6,25 @@ import { Haptics, NotificationType } from '@capacitor/haptics'
 import type { PuanTuru } from '@/lib/types'
 import type { KonuDersId } from '@/lib/konu/tip'
 import type { KonuIlerlemeleri } from '@/lib/konu/ilerleme'
+import { ALAN_ADLARI } from '@/lib/konu-takibi/liste'
+import { sinifDersleri, type TakipDersi, type TakipSatiri } from '@/lib/konu-takibi/okul-dersleri'
 import {
-  ALAN_ADLARI,
-  dersAdi,
-  oturumDersleri,
-  type YksDers,
-  type YksKonu,
-  type YksOturum,
-} from '@/lib/konu-takibi/liste'
-import {
-  asamaYaz,
   devamKonusu,
   dersOzeti,
   eksikAsamalar,
-  konuDurumu,
   okuluTopluYaz,
   oncekiOkulsuzlar,
   siradakiKonu,
   bitirmeyeHazir,
   toplamOzet,
-  tempoHesapla,
-  oturumKalanGun,
+  satirDurumu,
+  satirYaz,
+  satirlarinKimlikleri,
   HIZLI_SECENEKLER,
   hizliBaslangicKonulari,
   hizliBaslangicSinifi,
   hizliBayragiCoz,
-  oturumIsaretsiz,
+  dersleriIsaretsiz,
   BOS_HIZLI_BAYRAK,
   type HizliBaslangicBayragi,
   type AsamaId,
@@ -44,26 +37,21 @@ import {
   konuBloklari,
   type SinifSekmesi as SinifSekmesiVerisi,
 } from '@/lib/konu-takibi/takip'
-import {
-  HARITASIZ_SINIF,
-  HENUZ_YOK,
-  konuyuGosterenSecim,
-  sekmeSecilebilir,
-  sinifKonulari,
-  varsayilanSinifSecimi,
-  type SinifSecimi,
-} from '@/lib/konu-takibi/sinif'
+import { HARITASIZ_SINIF, sinifMi, varsayilanSinif, type YksSinif } from '@/lib/konu-takibi/sinif'
 import { useGeriKatmani } from '@/lib/geri'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { bugun, cn, tariheCevir } from '@/lib/utils'
-import { BaslikSatiri, Cip, Kart, Not } from '@/components/ui'
+import { BaslikSatiri, Cip, Kart } from '@/components/ui'
 import { dersVurgusu } from '@/components/ders-renkleri'
 import { Konfeti } from '@/components/oyun-kabuk'
 
 /**
  * Konu Takibi — YKS konularını aşama aşama işaretleme.
  *
- * Akış iki kat: TYT/AYT sekmesi → ders listesi → dersin konu listesi.
+ * Akış: en üstte sınıf sekmesi (9 · 10 · 11 · 12) → o sınıfın okul dersleri →
+ * dersin yalnız o sınıftaki konuları. TYT/AYT ayrımı yok (kullanıcı
+ * kaldırttı, 2026-10); dersler okul dersi başına birleşik
+ * (`lib/konu-takibi/okul-dersleri.ts`).
  * İşaretleme **satırın kendisinde**: soldaki ilerleme dairesi "Bitirdim"i,
  * sağdaki okul ve soru yuvaları kendi aşamasını aç/kapa yapıyor. Bir süre
  * aşamalar satırın altında açılan bir kartta işaretleniyordu ve bir konu
@@ -87,17 +75,16 @@ const KUTLAMA_SURESI = 2200
 const BILDIRIM_SURESI = 4500
 
 /*
-  Oturumluk hatırlananlar: seçili sekme, açık ders ve ders listesinin kaydırma
+  Oturumluk hatırlananlar: seçili sınıf, açık ders ve ders listesinin kaydırma
   konumu. Araçtan çıkıp dönen öğrenci kaldığı dersi bulsun; ama bunlar kalıcı
   bir ayar değil, uygulama kapanınca başa dönmek doğru. `sessionStorage`
   gizli pencerede ya da kısıtlı WebView'da atabiliyor, o yüzden her erişim
   sarılı ve ekran onsuz da doğru çalışıyor.
 */
+/** Seçili sınıf ('9'–'12'). Eskiden 'tyt'/'ayt' tutuyordu; okunamayan değer varsayılana düşüyor. */
 const OTURUM_ANAHTARI = 'rabi-konu-takibi-sekme'
 const DERS_ANAHTARI = 'rabi-konu-takibi-ders'
 const KAYDIRMA_ANAHTARI = 'rabi-konu-takibi-kaydirma'
-/** Ders ekranındaki sınıf sekmesi, `<ders>:<seçim>` — haritaya gidip dönünce aynı sekme. */
-const SINIF_ANAHTARI = 'rabi-konu-takibi-sinif'
 
 function oturumOku(anahtar: string): string | null {
   try {
@@ -163,8 +150,8 @@ export function KonuTakibiEkrani({
   onHaritayaGit,
 }: {
   /**
-   * Tanıtım turu ekranı gösteriyor: giriş görünümü TYT'de açılıyor (oturumda
-   * açık kalmış ders ya da alan sorusu turun hedefini örtmesin) ve lejant
+   * Tanıtım turu ekranı gösteriyor: giriş görünümü öğrencinin sınıfında
+   * açılıyor (oturumda açık kalmış ders turun hedefini örtmesin) ve lejant
    * kayıt dolu olsa da görünüyor — tur aşamaları onun üstünden anlatıyor.
    */
   tanitimda?: boolean
@@ -172,53 +159,60 @@ export function KonuTakibiEkrani({
   setTakip: (guncelle: (onceki: YksTakip) => YksTakip) => void
   /** Konu haritasının kaydı — "Haritada çalıştım" buradan hesaplanıyor. */
   ilerlemeler: KonuIlerlemeleri
-  /** Ayarlardaki alan; `null` "Karar vermedim". */
+  /** Ayarlardaki alan; `null` "Karar vermedim" — bütün AYT konuları görünüyor. */
   alan: PuanTuru | null
-  /** Alan seçilmemişse AYT sekmesinde soruluyor; cevap ayarlara yazılıyor. */
+  /** Alan seçilmemişse listenin altında soruluyor; cevap ayarlara yazılıyor. */
   setAlan: (alan: PuanTuru) => void
-  /** Ayarlardaki `buYilSinif` (mezun 13) — sınav tarihi ve hızlı başlangıç buna bakıyor. */
+  /** Ayarlardaki `buYilSinif` (mezun 13) — varsayılan sınıf, müfredat ve hızlı başlangıç. */
   sinif: number
   onHaritayaGit: (konum: HaritaKonumu) => void
 }) {
-  const [oturum, setOturum] = useState<YksOturum>(() => (oturumOku(OTURUM_ANAHTARI) === 'ayt' ? 'ayt' : 'tyt'))
+  const [seciliSinif, setSeciliSinif] = useState<YksSinif>(() => {
+    const kayitli = Number(oturumOku(OTURUM_ANAHTARI))
+    return sinifMi(kayitli) ? kayitli : varsayilanSinif(sinif)
+  })
   const [acikDersId, setAcikDersId] = useState<string | null>(() => oturumOku(DERS_ANAHTARI))
   /** Ders "Devam et"ten açıldıysa ders ekranının açıp göstereceği konu. */
   const [hedefKonu, setHedefKonu] = useState<string | null>(null)
   /** Ders listesinin kaydırma konumu — ders kapanınca geri geliyor. */
   const listeKaydirma = useRef(Number(oturumOku(KAYDIRMA_ANAHTARI)) || 0)
 
-  useEffect(() => oturumYaz(OTURUM_ANAHTARI, oturum), [oturum])
+  useEffect(() => oturumYaz(OTURUM_ANAHTARI, String(seciliSinif)), [seciliSinif])
   useEffect(() => oturumYaz(DERS_ANAHTARI, acikDersId), [acikDersId])
 
-  const tytDersleri = useMemo(() => oturumDersleri('tyt', alan), [alan])
-  const aytDersleri = useMemo(() => oturumDersleri('ayt', alan), [alan])
-  const gorunenOturum: YksOturum = tanitimda ? 'tyt' : oturum
-  const dersler = gorunenOturum === 'tyt' ? tytDersleri : aytDersleri
+  const sekmeler = useMemo(() => sinifSekmeleri(alan, sinif, takip, ilerlemeler), [alan, sinif, takip, ilerlemeler])
+  /*
+    Görünen sınıf: seçilen, ama pasifse (oturumdan dönen sekme artık boş,
+    Maarif'te 12) önce öğrencinin sınıfı, o da olmazsa ilk açık sekme.
+    Tanıtım turu her zaman öğrencinin sınıfında.
+  */
+  const secilebilir = (s: YksSinif) => sekmeler.some((x) => x.sinif === s && !x.pasif)
+  const varsayilan = varsayilanSinif(sinif)
+  const yedek = secilebilir(varsayilan) ? varsayilan : (sekmeler.find((x) => !x.pasif)?.sinif ?? varsayilan)
+  const gorunenSinif: YksSinif = !tanitimda && secilebilir(seciliSinif) ? seciliSinif : yedek
+
+  const dersler = useMemo(() => sinifDersleri(gorunenSinif, alan, sinif), [gorunenSinif, alan, sinif])
 
   /*
-    Ders özetleri bir kez hesaplanıyor; sekmenin özeti ve ders satırları aynı
+    Ders özetleri bir kez hesaplanıyor; sınıfın özeti ve ders satırları aynı
     tablodan okuyor.
   */
   const ozetler = useMemo(() => {
     const tablo = new Map<string, DersOzeti>()
-    for (const ders of [...tytDersleri, ...aytDersleri]) tablo.set(ders.id, dersOzeti(ders, takip, ilerlemeler))
+    for (const ders of dersler) tablo.set(ders.id, dersOzeti(ders, takip, ilerlemeler))
     return tablo
-  }, [tytDersleri, aytDersleri, takip, ilerlemeler])
+  }, [dersler, takip, ilerlemeler])
 
   const toplam = toplamOzet(dersler.map((d) => ozetler.get(d.id)!))
-  /** Sekmenin kendi sınavına göre tempo: TYT cumartesiye, AYT/YDT pazara. */
-  const tempo = tempoHesapla(toplam.toplam - toplam.biten, oturumKalanGun(bugun(), sinif, gorunenOturum))
-  const devam = useMemo(
-    () => devamKonusu([...tytDersleri, ...aytDersleri], takip, ilerlemeler),
-    [tytDersleri, aytDersleri, takip, ilerlemeler],
-  )
+  const devam = useMemo(() => devamKonusu(dersler, takip, ilerlemeler), [dersler, takip, ilerlemeler])
   /** Hiç işaret yok — ilk kullanım ipucu bundan türüyor, ayrı bir ayar tutulmuyor. */
   const bos = Object.keys(takip.konular).length === 0
 
   /*
-    Hızlı başlangıç: 12. sınıf ve mezunda, oturumda hiç işaret yokken bir
-    kez "TYT'de neredeyim?". Bayrak kalıcı; `hazir` beklenmeden çizilseydi
-    kart depo okunana kadar bir kare görünüp kaybolurdu.
+    Hızlı başlangıç: 12. sınıf ve mezunda, seçili sınıfta hiç işaret yokken
+    o sınıf için bir kez "N. sınıfta neredeyim?". Bayrak kalıcı; `hazir`
+    beklenmeden çizilseydi kart depo okunana kadar bir kare görünüp
+    kaybolurdu.
   */
   const [hizliHam, setHizliBayrak, hizliHazir] = useYerelDepo<HizliBaslangicBayragi>(
     ANAHTARLAR.konuTakibiHizliBaslangic,
@@ -230,8 +224,8 @@ export function KonuTakibiEkrani({
     !tanitimda &&
     hizliBaslangicSinifi(sinif) &&
     dersler.length > 0 &&
-    !hizliBayrak.gosterilen.includes(gorunenOturum) &&
-    oturumIsaretsiz(dersler, takip)
+    !hizliBayrak.gosterilen.includes(gorunenSinif) &&
+    dersleriIsaretsiz(dersler, takip)
 
   const [bildirim, setBildirim] = useState<Bildirim | null>(null)
   const bildirimZamani = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -248,34 +242,34 @@ export function KonuTakibiEkrani({
     bildirimZamani.current = setTimeout(() => setBildirim((o) => (o?.kimlik === kimlik ? null : o)), BILDIRIM_SURESI)
   }
 
-  const bayrakYaz = (o: YksOturum, gosterildi: boolean) =>
+  const bayrakYaz = (s: YksSinif, gosterildi: boolean) =>
     setHizliBayrak((onceki) => {
-      const eski = hizliBayragiCoz(onceki).gosterilen.filter((x) => x !== o)
-      return { surum: 1, gosterilen: gosterildi ? [...eski, o] : eski }
+      const eski = hizliBayragiCoz(onceki).gosterilen.filter((x) => x !== s)
+      return { surum: 2, gosterilen: gosterildi ? [...eski, s] : eski }
     })
 
   /**
-   * Seçime göre her dersin ilk konularını "okulda işlendi" yazar ve kartı
-   * kapatır. Geri al ikisini birden geri alıyor: işaretler kalkıyor, kart
-   * yeniden çıkıyor — öğrenci yanlış seçeneğe bastıysa doğrusunu seçebilsin.
+   * Seçime göre seçili sınıfın her dersinin ilk konularını "okulda işlendi"
+   * yazar ve kartı kapatır. Geri al ikisini birden geri alıyor: işaretler
+   * kalkıyor, kart yeniden çıkıyor — öğrenci yanlış seçeneğe bastıysa
+   * doğrusunu seçebilsin.
    */
   const hizliSec = (oran: number) => {
-    const o = gorunenOturum
+    const s = gorunenSinif
     const konuIdleri = hizliBaslangicKonulari(dersler, oran)
-    bayrakYaz(o, true)
+    bayrakYaz(s, true)
     if (konuIdleri.length === 0) return
     const gun = bugun()
     setTakip((onceki) => okuluTopluYaz(onceki, konuIdleri, true, gun))
     soyle(`${konuIdleri.length} konu okulda işlendi`, () => {
       setTakip((onceki) => okuluTopluYaz(onceki, konuIdleri, false, gun))
-      bayrakYaz(o, false)
+      bayrakYaz(s, false)
     })
   }
 
-  const dersAc = (ders: YksDers, konuId: string | null = null) => {
+  const dersAc = (ders: TakipDersi, konuId: string | null = null) => {
     listeKaydirma.current = window.scrollY
     oturumYaz(KAYDIRMA_ANAHTARI, String(Math.round(window.scrollY)))
-    setOturum(ders.oturum)
     setHedefKonu(konuId)
     setAcikDersId(ders.id)
   }
@@ -304,16 +298,14 @@ export function KonuTakibiEkrani({
   if (acikDers) {
     return (
       <DersEkrani
-        key={acikDers.id}
+        key={`${acikDers.sinif}-${acikDers.id}`}
         ders={acikDers}
-        ad={dersAdi(acikDers, alan)}
         ozet={ozetler.get(acikDers.id)!}
         takip={takip}
         setTakip={setTakip}
         ilerlemeler={ilerlemeler}
         bos={bos}
         hedefKonu={hedefKonu}
-        sinif={sinif}
         onHaritayaGit={onHaritayaGit}
       />
     )
@@ -327,69 +319,41 @@ export function KonuTakibiEkrani({
 
       {/* Tanıtım turunun "Konu konu işaretle" adımı bu bloğu aydınlatıyor. */}
       <div data-tanitim="konu-takibi">
-        <div className="mb-3 flex gap-1 rounded-[14px] bg-muted p-1" role="tablist">
-          <SegmentDugmesi secili={gorunenOturum === 'tyt'} onClick={() => setOturum('tyt')}>
-            TYT
-          </SegmentDugmesi>
-          <SegmentDugmesi secili={gorunenOturum === 'ayt'} onClick={() => setOturum('ayt')}>
-            {alan === 'dil' ? 'YDT' : 'AYT'}
-          </SegmentDugmesi>
-        </div>
+        <SinifSekmesi sekmeler={sekmeler} secili={gorunenSinif} r={MARKA_RENGI} onSec={setSeciliSinif} />
 
-        {devam && <DevamKarti ders={devam.ders} konu={devam.konu} alan={alan} onAc={() => dersAc(devam.ders, devam.konu.id)} />}
+        {devam && <DevamKarti ders={devam.ders} konu={devam.konu} onAc={() => dersAc(devam.ders, devam.konu.id)} />}
         {hizliGoster ? (
           <HizliBaslangic
-            sinav={gorunenOturum === 'tyt' ? 'TYT' : alan === 'dil' ? 'YDT' : 'AYT'}
+            sinif={gorunenSinif}
             onSec={hizliSec}
-            onAtla={() => bayrakYaz(gorunenOturum, true)}
+            onAtla={() => bayrakYaz(gorunenSinif, true)}
           />
         ) : (
           (bos || tanitimda) && <IlkKullanim />
         )}
       </div>
 
-      {gorunenOturum === 'ayt' && alan === null ? (
-        <AlanSorusu onSec={setAlan} />
-      ) : (
-        <>
-          <Kart className="py-3.5">
-            <OzetCubugu ozet={toplam} r={MARKA_RENGI} />
-            {tempo && (
-              <p className="mt-1.5 text-[12.5px] font-bold text-muted-foreground">
-                Kalan <span className="rakam text-foreground">{tempo.kalanKonu}</span> konu · günde ~
-                <span className="rakam text-foreground">{tempo.gunluk}</span> konu ile sınava yetişir
-              </p>
-            )}
-          </Kart>
+      <Kart className="py-3.5">
+        <OzetCubugu ozet={toplam} r={MARKA_RENGI} onEk={`${gorunenSinif}. sınıf ·`} />
+      </Kart>
 
-          {gorunenOturum === 'ayt' && (
-            <Not className="mt-3">
-              {alan === 'dil'
-                ? 'YDT, alanın Dil olduğu için burada. '
-                : `${ALAN_ADLARI[alan!]} alanının AYT dersleri. `}
-              {alan !== 'dil' && 'AYT, TYT konularını da sorar; burada yalnızca AYT’ye özgü konular var. '}
-              Alanını Ayarlar › Alanım’dan değiştirebilirsin.
-            </Not>
-          )}
+      <ul className="golge-kart mt-4 overflow-hidden rounded-[22px] bg-card tablet:grid tablet:grid-cols-2">
+        {dersler.map((ders) => (
+          <li
+            key={ders.id}
+            className="border-t border-border first:border-t-0 tablet:odd:border-r tablet:[&:nth-child(2)]:border-t-0"
+          >
+            <DersSatiri
+              ders={ders}
+              ozet={ozetler.get(ders.id)!}
+              siradaki={siradakiKonu(ders, takip, ilerlemeler)}
+              onAc={() => dersAc(ders)}
+            />
+          </li>
+        ))}
+      </ul>
 
-          <ul className="golge-kart mt-4 overflow-hidden rounded-[22px] bg-card tablet:grid tablet:grid-cols-2">
-            {dersler.map((ders) => (
-              <li
-                key={ders.id}
-                className="border-t border-border first:border-t-0 tablet:odd:border-r tablet:[&:nth-child(2)]:border-t-0"
-              >
-                <DersSatiri
-                  ders={ders}
-                  ad={dersAdi(ders, alan)}
-                  ozet={ozetler.get(ders.id)!}
-                  siradaki={siradakiKonu(ders, takip, ilerlemeler)}
-                  onAc={() => dersAc(ders)}
-                />
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      {alan === null && <AlanSorusu onSec={setAlan} />}
 
       {bildirim && <BildirimSeridi key={bildirim.kimlik} bildirim={bildirim} onKapat={() => setBildirim(null)} />}
     </div>
@@ -403,18 +367,18 @@ export function KonuTakibiEkrani({
  * vermek zorunlu değil.
  */
 function HizliBaslangic({
-  sinav,
+  sinif,
   onSec,
   onAtla,
 }: {
-  sinav: string
+  sinif: YksSinif
   onSec: (oran: number) => void
   onAtla: () => void
 }) {
   return (
     <Kart className="mb-3">
       <div className="flex items-start gap-2">
-        <p className="min-w-0 flex-1 font-display text-[17px] font-extrabold tracking-tight">{sinav}’de neredeyim?</p>
+        <p className="min-w-0 flex-1 font-display text-[17px] font-extrabold tracking-tight">{sinif}. sınıfta neredeyim?</p>
         <button
           type="button"
           onClick={onAtla}
@@ -424,7 +388,7 @@ function HizliBaslangic({
         </button>
       </div>
       <p className="mt-0.5 text-[13.5px] font-semibold text-pretty text-muted-foreground">
-        Okulda işlenen konuları her derste müfredat sırasıyla işaretleyeyim; sonra tek tek düzeltebilirsin.
+        Bu sınıfın okulda işlenen konularını her derste müfredat sırasıyla işaretleyeyim; sonra tek tek düzeltebilirsin.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
         {HIZLI_SECENEKLER.map((s) => (
@@ -437,50 +401,12 @@ function HizliBaslangic({
   )
 }
 
-/** Yanlış Soru Bankası'ndaki bölümlü seçicinin aynısı (`yanlis-banka.tsx`). */
-function SegmentDugmesi({
-  secili,
-  onClick,
-  children,
-}: {
-  secili: boolean
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <button
-      type="button"
-      role="tab"
-      aria-selected={secili}
-      onClick={onClick}
-      className={cn(
-        'flex h-10 min-w-0 flex-1 items-center justify-center rounded-[11px] text-sm font-extrabold transition-[background-color,box-shadow] duration-200',
-        secili
-          ? 'bg-card text-primary shadow-[0_1px_3px_rgba(27,26,25,0.12),0_1px_1px_rgba(27,26,25,0.04)]'
-          : 'text-muted-foreground',
-      )}
-    >
-      {children}
-    </button>
-  )
-}
-
 /**
- * Dersler arası en son işaretlenen yarım konu. Tek kart ve tek iş: oraya
- * dön. Hiç işaret yokken çizilmiyor — dokunulmamış bir konuya "devam"
- * denmez.
+ * Seçili sınıfta en son dokunulan dersin sıradaki konusu. Tek kart ve tek
+ * iş: oraya dön. Hiç işaret yokken çizilmiyor — dokunulmamış bir konuya
+ * "devam" denmez.
  */
-function DevamKarti({
-  ders,
-  konu,
-  alan,
-  onAc,
-}: {
-  ders: YksDers
-  konu: YksKonu
-  alan: PuanTuru | null
-  onAc: () => void
-}) {
+function DevamKarti({ ders, konu, onAc }: { ders: TakipDersi; konu: TakipSatiri; onAc: () => void }) {
   const r = renkler(ders.renk)
   return (
     <button
@@ -497,7 +423,7 @@ function DevamKarti({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[12px] font-extrabold tracking-[0.06em] uppercase" style={{ color: r.koyu }}>
-          Devam et · {ders.oturum === 'tyt' ? 'TYT' : ders.id === 'ydt' ? 'YDT' : 'AYT'} {dersAdi(ders, alan)}
+          Devam et · {ders.ad}
         </span>
         <span className="mt-0.5 block truncate text-[15px] leading-snug font-extrabold">{konu.ad}</span>
       </span>
@@ -606,17 +532,18 @@ function Sayi({ renk, opaklik = 1, sayi, ad }: { renk: string; opaklik?: number;
 }
 
 /**
- * Alan seçilmemişse AYT'de ders yok: hangi derslerin gösterileceğini
- * öğrencinin alanı belirliyor ve bir alan varsaymak onun yerine karar
- * vermek olurdu. Seçim Ayarlar › Alanım'a yazılıyor — iki ayrı alan kaydı
- * birbirini tutmazdı.
+ * Alan seçilmemişse bütün alanların konuları görünüyor (bir alan varsaymak
+ * öğrencinin yerine karar vermek olurdu); listenin altında alan soruluyor.
+ * Seçim Ayarlar › Alanım'a yazılıyor — iki ayrı alan kaydı birbirini
+ * tutmazdı.
  */
 function AlanSorusu({ onSec }: { onSec: (alan: PuanTuru) => void }) {
   return (
-    <Kart className="text-center">
+    <Kart className="mt-4 text-center">
       <p className="font-display text-[17px] font-extrabold tracking-tight">Hangi alandasın?</p>
       <p className="mt-1 text-[13.5px] font-semibold text-pretty text-muted-foreground">
-        AYT’de alanının derslerini göstereceğim. Seçimin Ayarlar › Alanım’a da yazılır.
+        Şimdilik bütün alanların konuları görünüyor; alanını seçersen yalnız seninkiler kalır. Seçimin Ayarlar › Alanım’a
+        da yazılır.
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         {(Object.keys(ALAN_ADLARI) as PuanTuru[]).map((tur) => (
@@ -632,15 +559,13 @@ function AlanSorusu({ onSec }: { onSec: (alan: PuanTuru) => void }) {
 /** Ders listesinin satırı: dersin rengi, segmentli çubuk ve sıradaki konu. */
 function DersSatiri({
   ders,
-  ad,
   ozet,
   siradaki,
   onAc,
 }: {
-  ders: YksDers
-  ad: string
+  ders: TakipDersi
   ozet: DersOzeti
-  siradaki: YksKonu | null
+  siradaki: TakipSatiri | null
   onAc: () => void
 }) {
   const r = renkler(ders.renk)
@@ -661,7 +586,7 @@ function DersSatiri({
       <span className="min-w-0 flex-1">
         <span className="flex items-baseline gap-2">
           <span className="min-w-0 flex-1 truncate font-display text-[16px] leading-tight font-extrabold tracking-tight">
-            {ad}
+            {ders.ad}
           </span>
           <span className="shrink-0 text-[12px] font-bold text-muted-foreground">
             <span className="rakam text-foreground">{ozet.biten}</span>/<span className="rakam">{ozet.toplam}</span> bitti
@@ -697,48 +622,28 @@ function DersCubugu({ ozet, r }: { ozet: DersOzeti; r: Renkler }) {
 
 type Bildirim = { kimlik: number; metin: string; geriAl?: () => void }
 
-/** Bir dersin konu listesi. */
+/** Seçili sınıfta bir okul dersinin konu listesi. */
 function DersEkrani({
   ders,
-  ad,
   ozet,
   takip,
   setTakip,
   ilerlemeler,
   bos,
   hedefKonu,
-  sinif,
   onHaritayaGit,
 }: {
-  ders: YksDers
-  ad: string
+  ders: TakipDersi
   ozet: DersOzeti
   takip: YksTakip
   setTakip: (guncelle: (onceki: YksTakip) => YksTakip) => void
   ilerlemeler: KonuIlerlemeleri
   bos: boolean
   hedefKonu: string | null
-  /** Ayarlardaki `buYilSinif` (mezun 13) — varsayılan sekme ve "sen" işareti. */
-  sinif: number
   onHaritayaGit: (konum: HaritaKonumu) => void
 }) {
   const r = renkler(ders.renk)
   const [acikKonu, setAcikKonu] = useState<string | null>(hedefKonu)
-  /*
-    Sınıf sekmesi yalnızca listeyi süzüyor; özet, Sıradaki ve konfeti bütün
-    dersi sayıyor. Açılış: "Devam et"ten gelindiyse konunun görüneceği sekme,
-    yoksa bu oturumda bu derste en son seçilen, o da yoksa öğrencinin sınıfı.
-  */
-  const [secim, setSecim] = useState<SinifSecimi>(() => {
-    const varsayilan = varsayilanSinifSecimi(ders, sinif)
-    if (hedefKonu) return konuyuGosterenSecim(hedefKonu, varsayilan, sinif)
-    const [dersId, kayitli] = (oturumOku(SINIF_ANAHTARI) ?? '').split(':')
-    if (dersId !== ders.id) return varsayilan
-    const onceki: SinifSecimi = kayitli === 'tumu' ? 'tumu' : (Number(kayitli) as SinifSecimi)
-    // Kayıtlı sekme artık boş ya da pasifse (sınıf değişti, Maarif'te 12) varsayılana dön.
-    return sekmeSecilebilir(ders, onceki, sinif) ? onceki : varsayilan
-  })
-  useEffect(() => oturumYaz(SINIF_ANAHTARI, `${ders.id}:${secim}`), [ders.id, secim])
   const [kutlanan, setKutlanan] = useState<string | null>(null)
   const [bildirim, setBildirim] = useState<Bildirim | null>(null)
   /**
@@ -766,28 +671,26 @@ function DersEkrani({
 
   const durumlar = useMemo(() => {
     const tablo = new Map<string, KonuDurumu>()
-    for (const konu of ders.konular) tablo.set(konu.id, konuDurumu(konu.id, takip, ilerlemeler))
+    for (const konu of ders.konular) tablo.set(konu.id, satirDurumu(konu, takip, ilerlemeler))
     return tablo
   }, [ders, takip, ilerlemeler])
 
   const siradaki = siradakiKonu(ders, takip, ilerlemeler)
-  const sekmeler = useMemo(() => sinifSekmeleri(ders, takip, ilerlemeler, sinif), [ders, takip, ilerlemeler, sinif])
-  const gorunenKonular = useMemo(() => sinifKonulari(ders, secim, sinif), [ders, secim, sinif])
   /**
-   * Görünen konuların hiçbirinin haritada karşılığı yoksa harita yuvası hiç
-   * çizilmiyor: Felsefe, Din, YDT ve her dersin 12. sınıf sekmesi.
+   * Hiçbir satırın haritada karşılığı yoksa harita yuvası hiç çizilmiyor:
+   * Felsefe, Din, Yabancı Dil ve 12. sınıf.
    */
-  const haritaKolonu = gorunenKonular.some((k) => durumlar.get(k.id)!.harita !== null)
-  const gorunenBiten = gorunenKonular.filter((k) => durumlar.get(k.id)!.bitti).length
-  const bitmeyenSayisi = gorunenKonular.length - gorunenBiten
+  const haritaKolonu = ders.konular.some((k) => durumlar.get(k.id)!.harita !== null)
+  const biten = ders.konular.filter((k) => durumlar.get(k.id)!.bitti).length
+  const bitmeyenSayisi = ders.konular.length - biten
 
   /*
-    Konu listesi bloklara ayrılıyor: sınıf sekmesinde bölümler (TYT
-    Matematik → Geometri, Felsefe Grubu → Psikoloji…), "Tümü"de sınıf ve
-    bölüm birlikte. Bölümsüz konular başta; bölüm varsa onların başlığı
-    dersin adı — yapışkan başlık uzun listede nerede olunduğunu söylüyor.
+    Konu listesi bölümlere ayrılıyor (Matematik → Geometri, Türk Dili ve
+    Edebiyatı → Dil ve Anlatım / Edebiyat, Felsefe → Psikoloji…). Bölümsüz
+    konular başta; bölüm varsa onların başlığı dersin adı — yapışkan başlık
+    uzun listede nerede olunduğunu söylüyor.
   */
-  const bloklar = useMemo(() => konuBloklari(ders, secim, sinif), [ders, secim, sinif])
+  const bloklar = useMemo(() => konuBloklari(ders), [ders])
   const cokBlok = bloklar.length > 1
 
   const soyle = (metin: string, geriAl?: () => void) => {
@@ -796,26 +699,27 @@ function DersEkrani({
     sonra(() => setBildirim((o) => (o?.kimlik === kimlik ? null : o)), BILDIRIM_SURESI)
   }
 
-  const yaz = (konuId: string, alan: YazilanAlan, acik: boolean) =>
-    setTakip((onceki) => asamaYaz(onceki, konuId, alan, acik, bugun()))
+  /** Satıra yazar; birleşen satırda iki kaydı birden (`satirYaz`). */
+  const yaz = (satir: TakipSatiri, alan: YazilanAlan, acik: boolean) =>
+    setTakip((onceki) => satirYaz(onceki, satir, alan, acik, bugun()))
 
   /**
    * Daireye basmak "Bitirdim"i aç/kapa yapıyor; onay penceresi yok. Eksik
    * aşama hatırlatması bildirime indi ve konuyu bitirmeyi engellemiyor —
    * öğrenci konuyu dershanede öğrenmiş, haritayı hiç açmamış olabilir.
    *
-   * Konfeti yalnızca **dersin son konusu** bitince: art arda on konu
-   * işaretleyen öğrencinin her dokunuşunda patlayan kutlama listeyi
+   * Konfeti yalnızca **dersin bu sınıftaki son konusu** bitince: art arda on
+   * konu işaretleyen öğrencinin her dokunuşunda patlayan kutlama listeyi
    * kapatıyor ve kutlamayı sıradanlaştırıyordu (oyunlardaki rekor
    * konfetisiyle aynı gerekçe). Tek konunun karşılığı dairenin dolması.
    */
-  const bitirAcKapa = (konu: YksKonu) => {
+  const bitirAcKapa = (konu: TakipSatiri) => {
     const durum = durumlar.get(konu.id)!
     if (durum.bitti) {
-      yaz(konu.id, 'bitti', false)
+      yaz(konu, 'bitti', false)
       return
     }
-    yaz(konu.id, 'bitti', true)
+    yaz(konu, 'bitti', true)
     void Haptics.notification({ type: NotificationType.Success }).catch(() => {})
     const dersBitti = ders.konular.every((k) => k.id === konu.id || durumlar.get(k.id)!.bitti)
     if (dersBitti) {
@@ -824,21 +728,21 @@ function DersEkrani({
     }
     const eksik = eksikAsamalar(durum)
     if (eksik.length > 0) {
-      soyle(`Bitti · eksik: ${eksik.map((a) => ASAMA[a].kisa).join(', ')}`, () => yaz(konu.id, 'bitti', false))
+      soyle(`Bitti · eksik: ${eksik.map((a) => ASAMA[a].kisa).join(', ')}`, () => yaz(konu, 'bitti', false))
     }
   }
 
-  const topluOkul = (konuIdleri: string[]) => {
+  const topluOkul = (satirlar: TakipSatiri[]) => {
     const gun = bugun()
-    setTakip((onceki) => okuluTopluYaz(onceki, konuIdleri, true, gun))
-    soyle(`${konuIdleri.length} konu okulda işlendi`, () =>
-      setTakip((onceki) => okuluTopluYaz(onceki, konuIdleri, false, gun)),
+    const kimlikler = satirlarinKimlikleri(satirlar)
+    setTakip((onceki) => okuluTopluYaz(onceki, kimlikler, true, gun))
+    soyle(`${satirlar.length} konu okulda işlendi`, () =>
+      setTakip((onceki) => okuluTopluYaz(onceki, kimlikler, false, gun)),
     )
   }
 
-  /** Sıradaki konuya git: gerekirse sekmesine geç, satırı aç ve görünür yere kaydır. */
+  /** Sıradaki konuya git: satırı aç ve görünür yere kaydır. */
   const konuyaGit = (konuId: string) => {
-    setSecim((o) => konuyuGosterenSecim(konuId, o, sinif))
     setAcikKonu(konuId)
     requestAnimationFrame(() =>
       document.getElementById(`yks-konu-${konuId}`)?.scrollIntoView({ block: 'center', behavior: 'smooth' }),
@@ -851,7 +755,7 @@ function DersEkrani({
     // Tablette konu satırları tek sütun ama ortada sınırlı genişlikte.
     <div className="tablet:mx-auto tablet:max-w-3xl" style={ders.renk ? dersVurgusu(ders.renk) : undefined}>
       <BaslikSatiri
-        baslik={ad}
+        baslik={ders.ad}
         arac="konu-takibi"
         sag={
           <span
@@ -864,18 +768,13 @@ function DersEkrani({
         }
       />
 
-      {(ders.id === 'ayt-tarih' || ders.id === 'ayt-cografya') && (
-        <Not className="mb-3 py-2 text-[12.5px]">AYT bu derste TYT konularını da sorar; burada yalnızca AYT’ye özgü olanlar var.</Not>
-      )}
-
       {bos && <IlkKullanim haritali={haritaKolonu} />}
 
       <Kart className="mb-3 py-3.5">
-        <OzetCubugu ozet={ozet} r={r} onEk={ders.oturum === 'tyt' ? 'TYT ·' : ders.id === 'ydt' ? 'YDT ·' : 'AYT ·'} />
+        <OzetCubugu ozet={ozet} r={r} onEk={`${ders.sinif}. sınıf ·`} />
       </Kart>
 
-      <SinifSekmesi sekmeler={sekmeler} secili={secim} r={r} onSec={setSecim} />
-      {secim === HARITASIZ_SINIF && (
+      {ders.sinif === HARITASIZ_SINIF && !haritaKolonu && (
         <p role="status" className="-mt-1.5 mb-3 px-1 text-[12.5px] font-bold text-pretty text-muted-foreground">
           12. sınıfın haritası yok; konuları okul ve soru aşamasıyla işaretleyebilirsin.
         </p>
@@ -902,7 +801,7 @@ function DersEkrani({
         açık başlasaydı ilk bitirdiği konu ekrandan kaybolur, liste ders
         kitabındaki sıradan kopardı. Dersin yarısı bittikten sonra işe yarıyor.
       */}
-      {gorunenBiten > 0 && bitmeyenSayisi > 0 && (
+      {biten > 0 && bitmeyenSayisi > 0 && (
         <div className="mb-3 flex">
           <Cip
             secili={suzgec !== null}
@@ -917,22 +816,14 @@ function DersEkrani({
       )}
 
       <div className="space-y-4">
-        {bloklar.map(({ sinif: blokSinifi, bolum, konular }) => {
+        {bloklar.map(({ bolum, konular }) => {
           const gorunen = suzgec ? konular.filter((k) => suzgec.has(k.id)) : konular
           if (gorunen.length === 0) return null
           return (
-            <section key={`${blokSinifi ?? 'sinif'}-${bolum ?? 'ana'}`}>
+            <section key={bolum ?? 'ana'}>
               {(bolum || cokBlok) && (
                 <h2 className="sticky top-[var(--guvenli-ust)] z-10 -mx-1 mb-1 bg-background px-2.5 py-2 text-[12px] font-extrabold tracking-[0.08em] text-muted-foreground uppercase">
-                  {blokSinifi === null
-                    ? (bolum ?? ad)
-                    : `${blokSinifi === HENUZ_YOK ? HARITASIZ_SINIF : blokSinifi}. sınıf${bolum ? ` · ${bolum}` : ''}`}
-                  {blokSinifi === HARITASIZ_SINIF && (
-                    <span className="font-bold tracking-normal normal-case"> · haritası yok</span>
-                  )}
-                  {blokSinifi === HENUZ_YOK && (
-                    <span className="font-bold tracking-normal normal-case"> · program henüz yok</span>
-                  )}
+                  {bolum ?? ders.ad}
                 </h2>
               )}
               <ul className="golge-kart overflow-hidden rounded-[22px] bg-card">
@@ -945,9 +836,9 @@ function DersEkrani({
                       haritaKolonu={haritaKolonu}
                       acik={acikKonu === konu.id}
                       kutlaniyor={kutlanan === konu.id}
-                      oncekiler={acikKonu === konu.id ? oncekiOkulsuzlar(ders, konu.id, takip, { secim, buYilSinif: sinif }) : []}
+                      oncekiler={acikKonu === konu.id ? oncekiOkulsuzlar(ders, konu.id, takip) : []}
                       onAcKapa={() => setAcikKonu((o) => (o === konu.id ? null : konu.id))}
-                      onYaz={(alan, acik) => yaz(konu.id, alan, acik)}
+                      onYaz={(alan, acik) => yaz(konu, alan, acik)}
                       onBitir={() => bitirAcKapa(konu)}
                       onTopluOkul={topluOkul}
                       onHaritayaGit={onHaritayaGit}
@@ -966,14 +857,13 @@ function DersEkrani({
 }
 
 /**
- * Sınıf sekmesi: `9 · 10 · 11 · 12 · Tümü` — haritanın sınıf sekmesinin
- * (`konu-haritasi.tsx` → `SinifSekmesi`) görsel dili: aynı yuva, aynı
- * "sen" işareti, altında küçük yüzde; beşinci sekme "Tümü". 12 müfredata
- * göre: 12. sınıf ve mezunda (2018 programı) **açık**, haritası yok diye
- * "harita yok" yazıyor; 9–11'de (Maarif) haritadaki gibi pasif ve "Yakında"
- * rozetli. Dersin o sınıfta konusu yoksa sekme pasif ve "—". Yüzde
- * satırlardaki dairelerin ortalaması (`sinifSekmeleri`); seçili sekmenin
- * yüzdesi ders renginde.
+ * Ekranın en üstündeki sınıf sekmesi: `9 · 10 · 11 · 12` — haritanın sınıf
+ * sekmesinin (`konu-haritasi.tsx` → `SinifSekmesi`) görsel dili: aynı yuva,
+ * aynı "sen" işareti, altında küçük yüzde. TYT/AYT ayrımı ve "Tümü" yok
+ * (kullanıcı kaldırttı, 2026-10). 12 müfredata göre: 12. sınıf ve mezunda
+ * (2018 programı) **açık**, haritası yok diye "harita yok" yazıyor; 9–11'de
+ * (Maarif) haritadaki gibi pasif ve "Yakında" rozetli. Yüzde o sınıfın
+ * satırlarındaki dairelerin ortalaması (`sinifSekmeleri`).
  */
 function SinifSekmesi({
   sekmeler,
@@ -982,24 +872,23 @@ function SinifSekmesi({
   onSec,
 }: {
   sekmeler: SinifSekmesiVerisi[]
-  secili: SinifSecimi
+  secili: YksSinif
   r: Renkler
-  onSec: (secim: SinifSecimi) => void
+  onSec: (sinif: YksSinif) => void
 }) {
   return (
-    <div role="group" aria-label="Sınıf" className="mb-3 grid grid-cols-5 gap-1 rounded-[18px] bg-muted/70 p-1">
-      {sekmeler.map(({ secim, yuzde, pasif, sen, haritasiz, yakinda }) => {
-        const seciliMi = secim === secili
-        const ad = secim === 'tumu' ? 'Tümü' : `${secim}. sınıf`
-        const etiket = `${ad}${sen ? ', senin sınıfın' : ''}${
-          yakinda ? ', yakında' : pasif ? ', bu derste konu yok' : `, yüzde ${yuzde}`
+    <div role="group" aria-label="Sınıf" className="mb-3 grid grid-cols-4 gap-1 rounded-[18px] bg-muted/70 p-1">
+      {sekmeler.map(({ sinif, yuzde, pasif, sen, haritasiz, yakinda }) => {
+        const seciliMi = sinif === secili
+        const etiket = `${sinif}. sınıf${sen ? ', senin sınıfın' : ''}${
+          yakinda ? ', yakında' : pasif ? ', konu yok' : `, yüzde ${yuzde}`
         }${haritasiz && !pasif ? ', haritası yok' : ''}`
         return (
           <button
-            key={secim}
+            key={sinif}
             type="button"
             disabled={pasif}
-            onClick={() => onSec(secim)}
+            onClick={() => onSec(sinif)}
             aria-pressed={seciliMi}
             aria-label={etiket}
             className={cn(
@@ -1016,14 +905,7 @@ function SinifSekmesi({
                 sen
               </span>
             )}
-            <span
-              className={cn(
-                'font-display leading-tight font-extrabold',
-                secim === 'tumu' ? 'text-[14px]' : 'rakam text-[16px]',
-              )}
-            >
-              {secim === 'tumu' ? 'Tümü' : `${secim}.`}
-            </span>
+            <span className="rakam font-display text-[16px] leading-tight font-extrabold">{sinif}.</span>
             {yakinda ? (
               // Haritanın sınıf sekmesindeki rozetin aynısı (`konu-haritasi.tsx`).
               <span className="mt-0.5 rounded-full bg-background px-1.5 text-[9.5px] leading-[15px] font-extrabold">
@@ -1102,25 +984,25 @@ function KonuSatiri({
   onTopluOkul,
   onHaritayaGit,
 }: {
-  konu: YksKonu
+  konu: TakipSatiri
   durum: KonuDurumu
   r: Renkler
   haritaKolonu: boolean
   acik: boolean
   kutlaniyor: boolean
-  /** Açıkken: "bu ve öncekiler"in işaretleyeceği konular. */
-  oncekiler: string[]
+  /** Açıkken: "bu ve öncekiler"in işaretleyeceği satırlar. */
+  oncekiler: TakipSatiri[]
   onAcKapa: () => void
   onYaz: (alan: YazilanAlan, acik: boolean) => void
   onBitir: () => void
-  onTopluOkul: (konuIdleri: string[]) => void
+  onTopluOkul: (satirlar: TakipSatiri[]) => void
   onHaritayaGit: (konum: HaritaKonumu) => void
 }) {
   const { kayit, harita, bitti } = durum
   const detayId = `yks-detay-${konu.id}`
   // Toplu eylem yalnızca bu konudan başka bir konuyu da işaretleyecekse;
   // yalnızca bu konuysa okul yuvasının işini tekrar eder.
-  const topluVar = oncekiler.some((id) => id !== konu.id)
+  const topluVar = oncekiler.some((s) => s.id !== konu.id)
   const gunler = [
     kayit.okul && `Okul ${gunYazisi(kayit.okul)}`,
     kayit.soru && `Soru ${gunYazisi(kayit.soru)}`,

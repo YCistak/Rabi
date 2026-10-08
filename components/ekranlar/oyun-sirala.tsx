@@ -18,8 +18,10 @@ import {
 } from '@/lib/oyunlar/sirala'
 import {
   guncelSeri,
+  kalanPas,
   rekorKirildiMi,
   turOzeti,
+  yanlisSayisi,
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
@@ -75,14 +77,19 @@ type Asama = 'tanitim' | 'oynaniyor' | 'bitti'
 
 type GeriBildirim = {
   dogruMu: boolean
+  /** Pas geçildi: kartlar doğru sırayla gösteriliyor, puan yok. */
+  pas: boolean
   soru: SiralamaSorusu
   /** Oyuncunun bıraktığı düzen — kartlar bu sırayla işaretleniyor. */
   dizilim: SiraliOlay[]
   puan: number
 }
 
-/** Tur sonunda ve bankada saklanan yanlış: soru ile verilen cevap birlikte. */
-type Yanlis = { soru: SiralamaSorusu; dizilim: SiraliOlay[] }
+/**
+ * Tur sonunda ve bankada saklanan yanlış: soru ile verilen cevap birlikte.
+ * `pas`: soru pas geçildi, `dizilim` bir cevap değil.
+ */
+type Yanlis = { soru: SiralamaSorusu; dizilim: SiraliOlay[]; pas?: boolean }
 
 /** Banka kayıtlarından tur soruları; kayıt olayların tamamını taşıyor. */
 function bankaHavuzu(kayitlar: readonly BankaKaydi[]): SiraliOlay[][] {
@@ -284,7 +291,7 @@ export function SiralaOyunuEkrani({
     const kazanilan = soruPuani(verilen)
     setCevaplar((onceki) => [...onceki, { soru: { soru, dizilim: verilen }, dogruMu }])
     setPuan((onceki) => onceki + kazanilan)
-    setGeriBildirim({ dogruMu, soru, dizilim: verilen, puan: kazanilan })
+    setGeriBildirim({ dogruMu, pas: false, soru, dizilim: verilen, puan: kazanilan })
     geriBildir(dogruMu)
 
     zamanlayiciRef.current = setTimeout(() => {
@@ -297,6 +304,25 @@ export function SiralaOyunuEkrani({
       } else {
         setSira((s) => s + 1)
       }
+    }, CEVAP_BEKLEMESI)
+  }
+
+  /**
+   * Pas hakkı: soru bilinmeyen olarak kaydediliyor (bankaya düşsün) ama
+   * bedelsiz — puan yok, yanlış sayılmıyor, uyuma girmiyor, Sıfır Tolerans'ta
+   * turu bitirmiyor. Kartlar doğru sırayla açılıyor.
+   */
+  const pasGec = () => {
+    if (asama !== 'oynaniyor' || geriBildirim !== null || !soru) return
+    if (kalanPas(cevaplarRef.current) <= 0) return
+    setCevaplar((onceki) => [
+      ...onceki,
+      { soru: { soru, dizilim, pas: true }, dogruMu: false, pas: true },
+    ])
+    setGeriBildirim({ dogruMu: false, pas: true, soru, dizilim: dogruSira(soru), puan: 0 })
+    zamanlayiciRef.current = setTimeout(() => {
+      setGeriBildirim(null)
+      setSira((s) => s + 1)
     }, CEVAP_BEKLEMESI)
   }
 
@@ -335,7 +361,7 @@ export function SiralaOyunuEkrani({
   const { kalan, toplam } = useTurSayaci({
     mod: gecerliMod,
     turNo,
-    yanlisSayisi: cevaplar.filter((c) => !c.dogruMu).length,
+    yanlisSayisi: yanlisSayisi(cevaplar),
     onTurBitti: turSuresiDoldu,
     aktif: asama === 'oynaniyor' && geriBildirim === null && !duraklatilan && soru !== undefined,
     sure: soruSuresi('sirala'),
@@ -356,7 +382,7 @@ export function SiralaOyunuEkrani({
   const dogruSayisi = cevaplar.filter((c) => c.dogruMu).length
   const kilitli = geriBildirim !== null
 
-  const maskotDurumu: MaskotDurumu = geriBildirim
+  const maskotDurumu: MaskotDurumu = geriBildirim && !geriBildirim.pas
     ? geriBildirim.dogruMu
       ? 'kutlama'
       : 'uzgun'
@@ -377,12 +403,17 @@ export function SiralaOyunuEkrani({
                 mod: gecerliMod,
                 seri: guncelSeri(cevaplar),
                 dogru: dogruSayisi,
-                yanlis: cevaplar.length - dogruSayisi,
+                yanlis: yanlisSayisi(cevaplar),
                 enIyiSeri: turOzeti(cevaplar).enIyiSeri,
                 puan,
                 rekor: Math.max(istatistik.enIyiDogru, dogruSayisi),
               }
         }
+        pas={{
+          kalan: kalanPas(cevaplar),
+          kilitli: asama !== 'oynaniyor' || kilitli,
+          onPas: pasGec,
+        }}
         onCik={turdanCik}
         onYardim={yardimAc}
       >
@@ -403,7 +434,7 @@ export function SiralaOyunuEkrani({
             <>
               <div className="flex flex-1 flex-col justify-center gap-2.5 py-2">
                 <div className="flex items-center gap-2.5 px-0.5">
-                  <Rabi durum={maskotDurumu} boyut={36} />
+                  <Rabi durum={maskotDurumu} poz="yapboz" boyut={72} />
                   <div className="min-w-0">
                     <p className="font-display text-[14px] font-extrabold leading-tight">
                       Eskiden yeniye diz
@@ -447,14 +478,19 @@ export function SiralaOyunuEkrani({
               {geriBildirim && (
                 <Bildirim
                   iyi={geriBildirim.dogruMu}
+                  pas={geriBildirim.pas}
                   baslik={
-                    geriBildirim.dogruMu
-                      ? `Tam sıra! +${geriBildirim.puan} puan`
-                      : geriBildirim.puan > 0
-                        ? `Olmadı — yine de +${geriBildirim.puan} puan`
-                        : 'Olmadı'
+                    geriBildirim.pas
+                      ? 'Pas geçtin'
+                      : geriBildirim.dogruMu
+                        ? `Tam sıra! +${geriBildirim.puan} puan`
+                        : geriBildirim.puan > 0
+                          ? `Olmadı — yine de +${geriBildirim.puan} puan`
+                          : 'Olmadı'
                   }
-                  aciklama={komsulukMetni(geriBildirim)}
+                  aciklama={
+                    geriBildirim.pas ? '— doğrusu bu sıra' : komsulukMetni(geriBildirim)
+                  }
                 />
               )}
             </>
@@ -543,12 +579,18 @@ function SonucGorunumu({
             >
               <b className="block font-display text-[12.5px] font-extrabold leading-tight">
                 Doğru sıra
+                {yanlis.pas && (
+                  <span className="ml-1.5 text-[11px] font-semibold text-muted-foreground">
+                    · Pas geçtin
+                  </span>
+                )}
               </b>
               <ol className="mt-1 space-y-0.5">
                 {dogruSira(yanlis.soru).map((olay, yer) => {
                   // Oyuncunun o konuma koyduğu kart tutmuş mu — yanlışın nerede
                   // olduğu, doğru listeyi okumaktan daha çok şey anlatıyor.
-                  const yerinde = yanlis.dizilim[yer]?.olay === olay.olay
+                  // Pas geçilen soruda kartlar oyuncunun cevabı değil, yeşil yok.
+                  const yerinde = !yanlis.pas && yanlis.dizilim[yer]?.olay === olay.olay
                   return (
                     <li
                       key={olay.olay}

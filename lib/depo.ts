@@ -1,8 +1,9 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { TUR_ANAHTARLARI } from './tanitim'
+import { ANA_TUR_SURUM_ANAHTARI, TUR_ANAHTARLARI } from './tanitim'
 import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
+import { CEVAPSIZ_COKME_ANAHTARI } from './cokme-karari'
 import type {
   Ayarlar,
   Deneme,
@@ -187,21 +188,6 @@ export const ANAHTARLAR = {
    * "Turbo sevdim" diyen kullanıcı bunu her oyunda yeniden seçmemeli.
    */
   oyunModu: 'rabi-oyun-modu',
-  /**
-   * Tur öncesi seçilen başlangıç zorluğu — oyun başına ayrı, tek anahtarda
-   * bir tablo (`Record<OyunId, Zorluk>`).
-   *
-   * Oyun başına, çünkü zorluk o oyunun sorduğu şeye ait: biri edebiyatta
-   * kolayda kalırken sesi zorda oynayabiliyor. Eskiden her oyunun kendi
-   * anahtarı vardı (`rabi-zorluk-ses` ve yirmi bir kardeşi) ve yeni bir oyun
-   * eklemek yeni bir anahtar açmak demekti; tablo `tanitimGizli` ile aynı
-   * kalıpta, oyun listesi büyüyünce anahtar sayısı artmıyor.
-   *
-   * Tuttuğu şey turun **başlangıcı**; seviye tur içinde kayıyor
-   * (`lib/oyunlar/uyum.ts`) ve kaydığı yer buraya yazılmıyor — o, kullanıcının
-   * kararı değil turun sonucu.
-   */
-  oyunZorlugu: 'rabi-oyun-zorlugu',
   ayarlar: 'rabi-ayarlar',
   sonBildirim: 'rabi-son-bildirim',
 } as const
@@ -241,12 +227,18 @@ const ESKI_ANAHTARLAR = [
     Mod ve zorluk seçimleri geri geldi ama anahtarları aynı değil:
     `rabi-oyun-modu` yeniden kullanılıyor (aynı şeyi, aynı biçimde tutuyor) ve
     bu yüzden listede **yok**. Zorluk ise oyun başına ayrı anahtarlardan tek
-    bir tabloya taşındı (`ANAHTARLAR.oyunZorlugu`), eski anahtarlar aşağıdaki
+    bir tabloya taşınmıştı (`rabi-oyun-zorlugu`, aşağıda), eski anahtarlar
     desenle siliniyor.
   */
   'rabi-islem-secimi',
   'rabi-yazim-secimi',
   'rabi-bolen-secimi',
+  /*
+    Oyun başına başlangıç zorluğu tablosu (`Record<OyunId, Zorluk>`). Seçim
+    kaldırıldı (kullanıcı istedi): tur hep ortadan başlıyor, seviye tur içinde
+    kayıyor (`lib/oyunlar/uyum.ts`).
+  */
+  'rabi-oyun-zorlugu',
 ]
 
 /**
@@ -254,8 +246,8 @@ const ESKI_ANAHTARLAR = [
  *
  * Zorluk seçimi oyun başına ayrı bir anahtarda duruyordu (`rabi-zorluk-ses`
  * ve yirmi bir kardeşi). Hepsini `ESKI_ANAHTARLAR`a tek tek yazmak, artık
- * hiçbir yerde tanımlı olmayan bir listeyi elle sürdürmek olurdu. Seçim geri
- * geldi ama tek bir tabloda (`ANAHTARLAR.oyunZorlugu`); eski anahtarlar
+ * hiçbir yerde tanımlı olmayan bir listeyi elle sürdürmek olurdu. Seçim bir
+ * süre tek bir tabloda geri geldi (`rabi-oyun-zorlugu`); eski anahtarlar
  * taşınmıyor, siliniyor — aradan geçen sürümlerde seviye zaten tur içinde
  * kayıyordu ve o kayıtlar kullanıcının bugünkü tercihini temsil etmiyor.
  *
@@ -811,10 +803,12 @@ export function elenenSoruSayisi(yedek: Yedek): number {
 export function tumVeriyiSil() {
   /*
     Tanıtım turu bayrakları (ana tur + mini turlar) ve tur animasyon ayarı
-    `ANAHTARLAR` tablosunda değil, `lib/tanitim*.ts` içinde tanımlı; burada
+    (ana turun sürüm kaydı dahil) ve cevaplanmamış çökme bayrağı
+    `ANAHTARLAR` tablosunda değil, `lib/tanitim*.ts` / `lib/cokme-karari.ts`
+    içinde tanımlı; burada
     elle eklenmezse sıfırlanan uygulama turu "görülmüş" sanıp başlatmıyordu.
   */
-  const tanitimAnahtarlari = [...Object.values(TUR_ANAHTARLARI), ANIMASYON_ANAHTARI]
+  const tanitimAnahtarlari = [...Object.values(TUR_ANAHTARLARI), ANA_TUR_SURUM_ANAHTARI, ANIMASYON_ANAHTARI, CEVAPSIZ_COKME_ANAHTARI]
   for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR, ...tanitimAnahtarlari]) {
     try {
       localStorage.removeItem(anahtar)
