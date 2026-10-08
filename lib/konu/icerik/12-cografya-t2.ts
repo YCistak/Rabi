@@ -170,7 +170,7 @@ export const cografya12BeseriB = [
       ['Boğazlar', 'İstanbul ve Çanakkale Boğazları Karadeniz’i Akdeniz’e bağlar.\nBoğazların rejimi Montrö Sözleşmesi ile düzenlenir.'],
       ['Yeni yollar', 'Bakü-Tiflis-Kars demiryolu 2017’de açıldı; Orta Koridor Asya’yı Anadolu’ya bağlar.\nÇin’in Kuşak ve Yol girişimi eski İpek Yolu’nu canlandırmayı hedefler.'],
     ],
-    not: 'Yolların önem kazandığı ve kaybettiği tarihi hatırla: keşifler Anadolu’yu geriletti, Süveyş ve yeni koridorlar öne çıkardı.',
+    not: 'Yolların çağını hatırla: keşifler Anadolu yollarını geriletti, Süveyş ve yeni koridorlar yeniden öne çıkardı.',
     notKarti: 5,
     iddialar: [
       ['İpek Yolu Çin’den Avrupa’ya uzanan ve Anadolu’dan geçen bir ticaret yoludur.', true, 'Orta Asya ve Anadolu üzerinden Avrupa’ya ulaşırdı.'],
@@ -201,7 +201,7 @@ export const cografya12BeseriB = [
       ['Mevsimsellik', 'Kıyı turizmi yaz aylarında yoğunlaşır.\nSezonu uzatmak için kış, termal, kongre ve sağlık turizmi desteklenir.'],
       ['Dağılışın eşitsizliği', 'Turizm kıyılarda toplanmıştır.\nİç ve doğu bölgelerinin turizm potansiyeli yeterince kullanılamamaktadır.'],
     ],
-    not: 'Sembolleri harita üzerinde bir yere iliştir: Ağrı-Doğu, Kapadokya-İç Anadolu, Pamukkale-Ege; sorular genelde bunu yoklar.',
+    not: 'Sembolleri haritaya iliştir: Ağrı-Doğu, Kapadokya-İç Anadolu, Pamukkale-Ege; sorular genelde bunu yoklar.',
     notKarti: 1,
     iddialar: [
       ['Ağrı Dağı, Türkiye’nin en yüksek dağıdır.', true, 'Yüksekliği 5137 metredir.'],
@@ -232,7 +232,7 @@ export const cografya12BeseriB = [
       ['Dış etkilere duyarlılık', 'Güvenlik sorunları, salgın ve kur dalgalanması turist sayısını hızla düşürür.\nCOVID-19 salgını 2020’de turizmi sert vurdu.'],
       ['Sürdürülebilir turizm', 'Bölgenin taşıma kapasitesi aşılmamalı, doğa ve yerel halk gözetilmelidir.\nEkoturizm ve kırsal turizm yükü dağıtır.'],
     ],
-    not: 'Turizmi madalyonun iki yüzüyle oku: aynı faaliyet hem döviz hem de kıyı yapılaşması, su tüketimi ve mevsimsellik getirir.',
+    not: 'Turizmin iki yüzü var: aynı faaliyet döviz getirir, ama kıyı yapılaşması, su tüketimi ve mevsimsellik de getirir.',
     notKarti: 3,
     iddialar: [
       ['Turizm gelirleri cari açığı azaltmaya katkı sağlar.', true, 'Yabancı ziyaretçi döviz getirir.'],
