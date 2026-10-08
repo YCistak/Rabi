@@ -354,16 +354,17 @@ function RabiUygulamasi() {
     konuId: string
   } | null>(null)
   /*
-    Tanıtım turu Harita'nın yeşil ve turuncu kitabını gösteriyor. 12. sınıfın
-    (ya da kartı yazılmamış bir dersin) haritasında kitap yok ve adım
-    hedefsiz kalırdı; tur sürerken kitabı olan ilk programa bakılıyor.
-    Kayda yazılmıyor: tur bitince harita kendi seçimiyle açılıyor.
+    Tanıtım turu Harita'nın yeşil ve turuncu kitabını gösteriyor. Kartı
+    yazılmamış bir dersin (12'de Matematik dışındakiler) haritasında kitap yok
+    ve adım hedefsiz kalırdı; tur sürerken kitabı olan bir programa bakılıyor:
+    aynı sınıfın Matematik'i (her sınıfta var). Kayda yazılmıyor: tur bitince
+    harita kendi seçimiyle açılıyor.
   */
   const turHaritaSecimi = useMemo(() => {
     if (!anaTurda || !tanitim.adim || !HARITA_TUR_ADIMLARI.includes(tanitim.adim.kimlik)) return null
-    if (konuSecimi.sinif !== 12 && programBul(konuSecimi.ders, konuSecimi.sinif)) return null
-    const sinif: HaritaSinifi = konuSecimi.sinif === 12 ? 11 : konuSecimi.sinif
-    return { ders: programBul(konuSecimi.ders, sinif) ? konuSecimi.ders : ('matematik' as const), sinif }
+    if (programBul(konuSecimi.ders, konuSecimi.sinif)) return null
+    const sinif: HaritaSinifi = konuSecimi.sinif
+    return { ders: 'matematik' as const, sinif }
   }, [anaTurda, tanitim.adim, konuSecimi])
   /*
     Depo anahtarı `rabi-notlar` kalıyor: ekran not tahtasından görev listesine

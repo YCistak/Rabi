@@ -12,9 +12,10 @@ describe('haritanın sınıfı', () => {
     expect(haritaSinifiBul(Number.NaN)).toBeNull()
   })
 
-  it('12. sınıf seçicide var ama içeriği yok', () => {
+  it('12. sınıfta yalnız Matematik var (2018 programı)', () => {
     expect(HARITA_SINIFLARI).toEqual([9, 10, 11, 12])
-    expect(sinifDersleri(12)).toEqual([])
-    expect(programBul('matematik', 12)).toBeNull()
+    expect(sinifDersleri(12).map((ders) => ders.id)).toEqual(['matematik'])
+    expect(programBul('matematik', 12)?.sinif).toBe(12)
+    expect(programBul('fizik', 12)).toBeNull()
   })
 })

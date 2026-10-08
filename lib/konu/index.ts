@@ -33,6 +33,8 @@ import { biyoloji11Sorulari } from './icerik/11-biyoloji-sorular'
 import { fizik11Sorulari } from './icerik/11-fizik-sorular'
 import { kimya11Sorulari } from './icerik/11-kimya-sorular'
 import { matematik11Sorulari } from './icerik/11-matematik-sorular'
+import { matematik12 } from './icerik/12-matematik'
+import { matematik12Sorulari } from './icerik/12-matematik-sorular'
 
 export type {
   AkisGorseli,
@@ -87,20 +89,22 @@ export const KONU_DERSLERI: KonuDersTanimi[] = [
   { id: 'ingilizce', ad: 'İngilizce', ikon: '🌐', aile: 'dil' },
 ]
 
-/** Programın kapsadığı sınıflar. */
-export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11]
+/**
+ * Programın kapsadığı sınıflar. 12'de yalnız Matematik yazıldı (2018
+ * programı); öteki dersler 12'de `sinifDersleri` ile gizleniyor.
+ */
+export const KONU_SINIFLARI: KonuSinifi[] = [9, 10, 11, 12]
 
 /**
- * Haritanın sınıf seçicisindeki sınıflar: içeriği olanlar ve **12**.
+ * Haritanın sınıf sekmesindeki sınıflar: `9 · 10 · 11 · 12`, hep görünür.
  *
- * 12. sınıfın kartları henüz yazılmadı; seçici onu yine de gösteriyor ve
- * seçilince harita "yapım aşamasında" diye kapalı duruyor. Kullanıcı istedi:
- * 12. sınıf öğrencisi kendi sınıfını listede hiç görmeyince bölümün kendisine
- * ait olmadığını düşünüyordu. `KonuSinifi` 9–11 kalıyor — içerik tipleri
- * olmayan bir sınıfı taşımasın.
+ * 12 kartları yazılmadan önce de sekmede duruyordu (kullanıcı istedi: 12.
+ * sınıf öğrencisi kendi sınıfını listede görmeyince bölümün kendisine ait
+ * olmadığını düşünüyordu). Matematik 12 yazılınca `KONU_SINIFLARI`na girdi;
+ * ad, ekranların "haritadaki sınıf" diye okuduğu yerlerde kalıyor.
  */
-export type HaritaSinifi = KonuSinifi | 12
-export const HARITA_SINIFLARI: HaritaSinifi[] = [...KONU_SINIFLARI, 12]
+export type HaritaSinifi = KonuSinifi
+export const HARITA_SINIFLARI: HaritaSinifi[] = [...KONU_SINIFLARI]
 
 /**
  * Kullanıcının kayıtlı sınıfından haritanın açılacağı sınıf.
@@ -117,7 +121,7 @@ export function haritaSinifiBul(buYilSinif: number): HaritaSinifi | null {
 function sorulariBagla(program: DersProgrami, havuz: Record<string, Omit<SoruKarti, 'id'>[]>): DersProgrami {
   const konuKimlikleri = new Set(program.temalar.flatMap((tema) => tema.konular.map((konu) => konu.id)))
   for (const kimlik of Object.keys(havuz)) {
-    if (!konuKimlikleri.has(kimlik)) throw new Error(`Bilinmeyen 11. sınıf konu kimliği: ${kimlik}`)
+    if (!konuKimlikleri.has(kimlik)) throw new Error(`Bilinmeyen ${program.sinif}. sınıf konu kimliği: ${kimlik}`)
   }
   return {
     ...program,
@@ -125,7 +129,7 @@ function sorulariBagla(program: DersProgrami, havuz: Record<string, Omit<SoruKar
       ...tema,
       konular: tema.konular.map((konu) => {
         const sorular = havuz[konu.id]
-        if (!sorular?.length) throw new Error(`11. sınıf soruları eksik: ${konu.id}`)
+        if (!sorular?.length) throw new Error(`${program.sinif}. sınıf soruları eksik: ${konu.id}`)
         const baslangic = [...konu.id].reduce((toplam, harf) => toplam + harf.charCodeAt(0), 0) % sorular.length
         // Her konunun ilk sorusunun aynı biçimde ve aynı cevapta başlamasını önler.
         const sirali = [...sorular.slice(baslangic), ...sorular.slice(0, baslangic)]
@@ -174,6 +178,7 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
     { ...ingilizce11Sorulari1, ...ingilizce11Sorulari2,
       ...ingilizce11Sorulari3, ...ingilizce11Sorulari4 },
   ),
+  'matematik-12': sorulariBagla(matematik12, matematik12Sorulari),
 }
 
 /** İçeriği henüz yazılmamış ders/sınıf için `null` döner; ekran bunu yazıyla karşılar. */
@@ -181,7 +186,7 @@ export function programBul(ders: KonuDersId, sinif: HaritaSinifi): DersProgrami 
   return PROGRAMLAR[`${ders}-${sinif}`] ?? null
 }
 
-/** Kısmi sınıf eklemelerinde boş ders seçeneği gösterilmez. 12'de liste boş. */
+/** Kısmi sınıf eklemelerinde boş ders seçeneği gösterilmez. 12'de yalnız Matematik. */
 export function sinifDersleri(sinif: HaritaSinifi): KonuDersTanimi[] {
   return KONU_DERSLERI.filter((ders) => programBul(ders.id, sinif) !== null)
 }

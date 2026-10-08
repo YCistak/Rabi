@@ -26,8 +26,10 @@ const METIN_SINIRI = 240
 const KART_TABANI = 6
 const KART_SINIRI = 16
 
-// İngilizce yalnızca 11'de yazıldı; beklenen programlar eksikse testten süzülmez.
-const beklenenMi = (sinif: number, ders: string) => sinif === 11 || ders !== 'ingilizce'
+// İngilizce yalnızca 11'de, 12'de yalnız Matematik (2018 programı) yazıldı;
+// beklenen programlar eksikse testten süzülmez.
+const beklenenMi = (sinif: number, ders: string) =>
+  sinif === 12 ? ders === 'matematik' : sinif === 11 || ders !== 'ingilizce'
 const programlar = KONU_SINIFLARI.flatMap((sinif) =>
   KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map(
     (ders) => [`${sinif}. sınıf ${ders.ad}`, programBul(ders.id, sinif)] as const,
@@ -36,7 +38,7 @@ const programlar = KONU_SINIFLARI.flatMap((sinif) =>
 const sorulu = programlar
 
 describe('programlar', () => {
-  it('9–10. sınıfta yedi, 11. sınıfta sekiz ders erişilebilir', () => {
+  it('9–10. sınıfta yedi, 11. sınıfta sekiz, 12. sınıfta bir ders erişilebilir', () => {
     for (const sinif of KONU_SINIFLARI) {
       expect(sinifDersleri(sinif).map((ders) => ders.id)).toEqual(
         KONU_DERSLERI.filter((ders) => beklenenMi(sinif, ders.id)).map((ders) => ders.id),
@@ -93,6 +95,24 @@ describe('programlar', () => {
         expect(gorunenMetin(kart.metin).length, `metin uzun: ${kart.baslik}`).toBeLessThanOrEqual(METIN_SINIRI)
         expect(kart.metin.trim().length).toBeGreaterThan(0)
       }
+    }
+  })
+})
+
+describe('12. sınıf Matematik (2018 programı)', () => {
+  const matematik = programBul('matematik', 12)!
+
+  it('her konuda tek Rabi notu var', () => {
+    for (const konu of tumKonular(matematik)) {
+      expect(konu.kartlar.filter((kart) => kart.not !== undefined), `${konu.ad}: Rabi notu`).toHaveLength(1)
+    }
+  })
+
+  it('9–11 haritasında kartı olan konular tekrar yazılmadı', () => {
+    // Üstel-logaritma (11), trigonometrik denklem (11) ve dönüşümler (9) zaten haritada.
+    const adlar = tumKonular(matematik).map((k) => k.ad.toLocaleLowerCase('tr'))
+    for (const yasak of ['logaritma', 'üstel', 'trigonometrik denklem', 'dönüşüm']) {
+      expect(adlar.filter((ad) => ad.includes(yasak)), yasak).toEqual([])
     }
   })
 })
@@ -360,7 +380,7 @@ describe('sorular', () => {
     expect(b).toBeLessThan(0.6)
   })
 
-  it.each(sorulu.filter(([, program]) => program?.sinif === 11))('%s: cevaplar ders içinde dengeli', (_ad, program) => {
+  it.each(sorulu.filter(([, program]) => (program?.sinif ?? 0) >= 11))('%s: cevaplar ders içinde dengeli', (_ad, program) => {
     const sorular = tumKonular(program!).flatMap((konu) => konu.sorular)
     const iddialar = sorular.filter((s) => s.tur !== 'sikli')
     const sikliler = sorular.filter((s) => s.tur === 'sikli')

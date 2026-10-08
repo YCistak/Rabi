@@ -376,9 +376,9 @@ export function KonuHaritasiEkrani({
     Harita öğrencinin kendi sınıfıyla açılıyor (`haritaSinifiBul`). Etki
     yalnızca açılışta ve kayıtlı sınıf değişince çalışıyor: ekranın içinde
     başka bir sınıfa geçen kullanıcının seçimi o ziyaret boyunca kalıyor.
-    12. sınıf öğrencisi 11'de açılıyor (`haritaAcilisSinifi`): 12'nin haritası
-    yazılmadı ve boş bir kartla karşılanmamalı. Eski bir kayıtta seçim 12
-    kalmışsa (sekmede 12 artık seçilemiyor) o da düzeltiliyor.
+    İçeriği olmayan (pasif) sınıfın öğrencisi içeriği olan en büyük sınıfta
+    açılıyor (`haritaAcilisSinifi`); boş bir kartla karşılanmamalı. Eski bir
+    kayıtta seçim pasif bir sınıfta kalmışsa o da düzeltiliyor.
   */
   useEffect(() => {
     // Konu Takibi'nden belirli bir konu istendiyse onun sınıfı kazanıyor:
@@ -393,7 +393,9 @@ export function KonuHaritasiEkrani({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [acilisSinifi])
 
-  const yapimda = secim.sinif === 12
+  // Hiçbir dersi yazılmamış sınıf. 12'de Matematik yazıldı; kart yalnız ileride
+  // içeriği boşalan bir sınıf ya da eski kayıt için duruyor.
+  const yapimda = sinifPasifMi(secim.sinif)
   const ders = dersBul(secim.ders)
   const dersAdi = haritaDersAdi(secim.ders, secim.sinif)
   const sekmeler = useMemo(
@@ -691,7 +693,7 @@ export function KonuHaritasiEkrani({
       )}
 
       {yapimda ? (
-        /* 12. sınıf seçicide duruyor ama içeriği yok: harita kapalı, kilitli
+        /* Sınıf sekmede duruyor ama hiçbir dersi yok: harita kapalı, kilitli
            bir kartla. Patikanın sönük bir kopyası çizilmiyor — açılacakmış
            gibi duran ama dokunulamayan kitaplar, bozuk bir ekran gibi okunurdu. */
         <Kart data-tanitim="konu-haritasi" className="flex flex-col items-center px-6 py-10 text-center">
@@ -699,7 +701,7 @@ export function KonuHaritasiEkrani({
             <Lock size={28} strokeWidth={2.2} aria-hidden />
           </span>
           <p className="mt-4 font-display text-[18px] font-extrabold tracking-tight">
-            12. sınıf yapım aşamasında
+            {secim.sinif}. sınıf yapım aşamasında
           </p>
           <p className="mt-1 text-[13.5px] font-semibold text-pretty text-muted-foreground">
             Bu sınıfın haritası hazırlanıyor. Hazır olunca burada açılacak.
@@ -789,7 +791,7 @@ export function KonuHaritasiEkrani({
  *
  * Her sekmenin altında seçili dersin o sınıftaki ilerlemesi yazıyor; ders o
  * sınıfta yoksa çizgi. Kullanıcının kendi sınıfında küçük bir "sen" işareti
- * var. İçeriği olmayan sınıf (12) pasif ve "Yakında" rozetli: dokunuşu boş
+ * var. İçeriği olmayan sınıf pasif ve "Yakında" rozetli: dokunuşu boş
  * bir ekrana götürmüyor. Hesaplar `lib/konu/sinif-sekmesi.ts`te.
  */
 function SinifSekmesi({
