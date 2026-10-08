@@ -12,7 +12,7 @@
 
 ## Ana akış
 
-Ana tur **26 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz.
+Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz.
 
 1. Sınav geri sayımı ve hedef kartı.
 2. Günlük soru hedefi.
@@ -31,11 +31,10 @@ Ana tur **26 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 15. "Deneme ekle"ye dokunuş.
 16. "Fotoğraftan okut" (etkileşimli; okutmadan İleri denebilir).
 17. **Boş ders**: form bir ders hariç örnekle doldu; o dersin satırı aydınlanır, kullanıcı doğru ve yanlışı yazar. Geçerli giriş olmadan ilerlemez.
-18. "Yanlış soru ekle"ye dokunuş.
-19. Örnek soru: ekleme formu açılır, ders seçilip Kaydet'e dokunulur.
-20. Deneme formunun Kaydet'ine dokunuş (deneme turun belleğine).
-21. İstatistik satırına dokunuş.
-22–26. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır → "Turu Bitir".
+18. "Yanlış soru ekle" düğmesi aydınlanır (bilgi adımı, İleri ile geçilir; düğme turda bir şey açmaz).
+19. Deneme formunun Kaydet'ine dokunuş (deneme turun belleğine).
+20. İstatistik satırına dokunuş.
+21–25. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır → "Turu Bitir".
 
 12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz. Konu Takibi kaydına tur hiçbir şey yazmaz.
 
@@ -44,7 +43,7 @@ Ana tur **26 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 - Okut adımında kullanıcı kâğıdı gerçekten okutabilir (rehber Okut açıkken gizlenir). Okutmadan İleri derse form, şablonun **ilk dersi hariç** örnek sonuçlarla dolar (`turFormuSonuclari`, `turBosDersi` — `lib/tanitim-veri.ts`). Okut bir sonuç yazdıysa forma dokunulmaz.
 - Boş kalan ilk ders: TYT'de **Türkçe**, AYT Sayısal/EA'da Matematik, Sözel'de Edebiyat, YDT'de tek ders. İlk satır "Elle gir" başlığının hemen altında: kaydırmadan görünür, açılan klavye onu örtmez ve öğrencinin netini en iyi bildiği derslerden biri.
 - Satır `data-tanitim="deneme-bos-ders"` ile aydınlanır. Adım `kayit: 'deneme-ders'` bekler; form, iki kutu da yazılmış, en az bir soru cevaplanmış ve toplam soru sayısını aşmıyorsa (`bosDersGirisiGecerli`) son tuştan 0,9 saniye sonra klavyeyi kapatıp bildirir — "12" yazan kullanıcı "1"de ileri atılmasın.
-- "Yanlış soru ekle" turda da görünür (`deneme-yanlis-ekle`). Turda katman kamera açmaz (izin penceresi turla çakışır, fotoğraf gerçek bankaya yazılırdı): ekleme formu doğrudan örnek bir soru görseliyle açılır (`ORNEK_YANLIS_SORU_GORSELI`), aydınlanan alan formun kartı (`yanlis-soru-formu`). Ders seçilip Kaydet'e basılınca hiçbir yere yazılmaz, yalnızca adım geçer (`kayit: 'yanlis-soru'`). Katmanın açıklığı turun adımına bağlı; turun Geri'si ve formun Vazgeç'i katmanı kapatıp bir önceki adıma döner.
+- "Yanlış soru ekle" turda **yalnızca gösterilir** (`deneme-yanlis-ekle`, bilgi adımı, `tiklamali: false`): düğme aydınlanır, "Buradan … ekleyebilirsin" denir, İleri ile geçilir. Turda düğme hiçbir şey açmaz (kamera/izin penceresi turla çakışırdı, fotoğraf gerçek bankaya yazılırdı). Bir süre dokundurulup örnek bir soruyla ekleme formu açtırılıyor ve Kaydet'e bastırılıyordu; Android'de (Mi Note 10 Lite) hatalı bulundu, kullanıcı turda yanlış soru eklettirilmesin, yalnız gösterilsin istedi (2026-10). Formu turda yeniden açtırma; Oyunlar ve Oyun Bankası mini turlarında da yanlış soru ekleme etkileşimi yok.
 - Deneme Kaydet'le turun listesine (`demo.denemeler`, `tanitim-` önekli) gider, cihaz deposuna yazılmaz; İstatistik adımları bu deneme ile örneklerden çizilir (`turIstatistikDenemeleri`). Formun Vazgeç'i "Deneme ekle" adımına döner; kayıttan sonra Geri, forma değil listeye döner.
 
 Ana tur iki kitabı gösterdiyse Konu Haritası, deneme eklemeyi gösterdiyse Denemeler, İstatistik'i gösterdiyse İstatistik mini turu da görülmüş sayılır (`turuBitir`).

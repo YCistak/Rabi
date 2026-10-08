@@ -1122,10 +1122,6 @@ function RabiUygulamasi() {
           // Okut adımı geçilince (İleri) form bir ders hariç örnekle doluyor.
           ornekDoldur: !!tanitim.adim && DENEME_FORMU_ADIMLARI.indexOf(tanitim.adim.kimlik) > 0,
           dersGirildi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'deneme-ders' }),
-          yanlisAcik: tanitim.adim?.kimlik === 'deneme-yanlis-form',
-          yanlisAc: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' }),
-          yanlisEklendi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'yanlis-soru' }),
-          yanlisKapat: tanitim.oncekiAdimaDon,
         } : undefined}
       />
     </div>
