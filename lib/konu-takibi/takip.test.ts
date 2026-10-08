@@ -17,7 +17,6 @@ import {
   takibiCoz,
   devamKonusu,
   okuluTopluYaz,
-  oncekiOkulsuzlar,
   sonIsaretGunu,
   toplamOzet,
   bitirmeyeHazir,
@@ -553,23 +552,9 @@ describe('devamKonusu — en son dokunulan dersin sıradakisi', () => {
 })
 
 describe('toplu okul işareti', () => {
-  const mat = yksDersBul('tyt-matematik')!
-
-  it('bu ve önceki konular, yalnızca okulu boş olanlar', () => {
-    const takip = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', takip).map((k) => k.id)
-    expect(ids).toEqual(['tyt-mat-temel-kavramlar', 'tyt-mat-bolunebilme', 'tyt-mat-ebob-ekok'])
-  })
-
-  it('bölüm sınırını geçmiyor', () => {
-    const geo = mat.konular.find((k) => k.bolum === 'Geometri')!
-    const ids = oncekiOkulsuzlar(mat, geo.id, BOS_TAKIP).map((k) => k.id)
-    expect(ids).toEqual([geo.id])
-  })
-
   it('yazıp geri alınca kayıt eski hâline dönüyor, önceki gün korunuyor', () => {
     const once = asamaYaz(BOS_TAKIP, 'tyt-mat-basamak', 'okul', true, '2026-09-01')
-    const ids = oncekiOkulsuzlar(mat, 'tyt-mat-ebob-ekok', once).map((k) => k.id)
+    const ids = ['tyt-mat-ebob-ekok', 'tyt-mat-bolunebilme']
     const sonra = okuluTopluYaz(once, ids, true, BUGUN)
     expect(sonra.konular['tyt-mat-ebob-ekok']).toEqual({ okul: BUGUN })
     expect(sonra.konular['tyt-mat-basamak']).toEqual({ okul: '2026-09-01' })

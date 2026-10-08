@@ -84,7 +84,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   göre süzülmüyor). `HaritaSinifi` artık `KonuSinifi`nin eşi. 12'de ders şeridinde
   yalnız Matematik; başka dersten 12'ye geçen `sinifDegisimi` ile Matematik'e düşer.
   Kilitli "yapım aşamasında" kartı yalnız pasif sınıf seçili kalmışsa diye duruyor.
-- **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
+- **Konu Takibi yönlendirmesi şerit bırakır:** "Haritada pekiştir" sınıfı değiştirir; kendi
   sınıfından farklıysa patikanın üstünde kapatılabilir şerit ("Trigonometri için 10.
   sınıfa geçildi · Kendi sınıfıma dön", `yonlendirmeMetni`); sınıf elle değişince
   kalkar.
