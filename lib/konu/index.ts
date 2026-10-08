@@ -39,6 +39,8 @@ import { ingilizce12Temalar1 } from './icerik/12-ingilizce-1'
 import { ingilizce12Sorulari1 } from './icerik/12-ingilizce-1-sorular'
 import { ingilizce12Temalar2 } from './icerik/12-ingilizce-2'
 import { ingilizce12Sorulari2 } from './icerik/12-ingilizce-2-sorular'
+import { ingilizce12Temalar3 } from './icerik/12-ingilizce-3'
+import { ingilizce12Sorulari3 } from './icerik/12-ingilizce-3-sorular'
 
 export type {
   AkisGorseli,
@@ -185,9 +187,9 @@ const PROGRAMLAR: Record<string, DersProgrami> = {
   'matematik-12': sorulariBagla(matematik12, matematik12Sorulari),
   'ingilizce-12': sorulariBagla(
     program('ingilizce', 12, 'Müzikten davranış kurallarına, 2018 programı', [
-      ...ingilizce12Temalar1, ...ingilizce12Temalar2,
+      ...ingilizce12Temalar1, ...ingilizce12Temalar2, ...ingilizce12Temalar3,
     ]),
-    { ...ingilizce12Sorulari1, ...ingilizce12Sorulari2 },
+    { ...ingilizce12Sorulari1, ...ingilizce12Sorulari2, ...ingilizce12Sorulari3 },
   ),
 }
 
