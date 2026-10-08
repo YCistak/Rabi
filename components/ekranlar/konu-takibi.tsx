@@ -9,7 +9,6 @@ import type { KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { ALAN_ADLARI } from '@/lib/konu-takibi/liste'
 import { sinifDersleri, type TakipDersi, type TakipSatiri } from '@/lib/konu-takibi/okul-dersleri'
 import {
-  devamKonusu,
   dersOzeti,
   eksikAsamalar,
   okuluTopluYaz,
@@ -202,7 +201,6 @@ export function KonuTakibiEkrani({
     return tablo
   }, [dersler, takip, ilerlemeler])
 
-  const devam = useMemo(() => devamKonusu(dersler, takip, ilerlemeler), [dersler, takip, ilerlemeler])
   /** Hiç işaret yok — ilk kullanım ipucu bundan türüyor, ayrı bir ayar tutulmuyor. */
   const bos = Object.keys(takip.konular).length === 0
 
@@ -319,7 +317,6 @@ export function KonuTakibiEkrani({
       <div data-tanitim="konu-takibi">
         <SinifSekmesi sekmeler={sekmeler} secili={gorunenSinif} r={MARKA_RENGI} onSec={setSeciliSinif} />
 
-        {devam && <DevamKarti ders={devam.ders} konu={devam.konu} onAc={() => dersAc(devam.ders, devam.konu.id)} />}
         {hizliGoster ? (
           <HizliBaslangic
             sinif={gorunenSinif}
@@ -385,36 +382,6 @@ function HizliBaslangic({
         ))}
       </div>
     </Kart>
-  )
-}
-
-/**
- * Seçili sınıfta en son dokunulan dersin sıradaki konusu. Tek kart ve tek
- * iş: oraya dön. Hiç işaret yokken çizilmiyor — dokunulmamış bir konuya
- * "devam" denmez.
- */
-function DevamKarti({ ders, konu, onAc }: { ders: TakipDersi; konu: TakipSatiri; onAc: () => void }) {
-  const r = renkler(ders.renk)
-  return (
-    <button
-      type="button"
-      onClick={onAc}
-      className="golge-kart mb-3 w-full rounded-[18px] px-3.5 py-3.5 text-left transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-      // Dersin zemini karta doğru solarak akıyor (tasarım C); renk derse ait, sabit değil.
-      style={{ background: `linear-gradient(135deg, ${r.zemin}, var(--card))` }}
-    >
-      <span className="block text-[12px] font-extrabold tracking-[0.06em] uppercase" style={{ color: r.koyu }}>
-        Bugün sırada
-      </span>
-      <span className="mt-2.5 flex items-center gap-2.5">
-        <span className="h-[34px] w-2 shrink-0 rounded-full" style={{ background: r.dolgu }} aria-hidden />
-        <span className="min-w-0 flex-1">
-          <span className="block truncate text-[15px] leading-snug font-extrabold">{konu.ad}</span>
-          <span className="block truncate text-[12px] font-bold text-muted-foreground">{ders.ad}</span>
-        </span>
-        <ChevronRight size={18} strokeWidth={2.6} aria-hidden className="shrink-0 text-muted-foreground" />
-      </span>
-    </button>
   )
 }
 

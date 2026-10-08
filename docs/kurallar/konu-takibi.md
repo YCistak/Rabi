@@ -66,10 +66,10 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   bitince.
 - **"Bu ve önceki konuları okulda işlendi say"** (`oncekiOkulsuzlar`): görünen liste
   (seçili sınıf, o ders), yalnız aynı bölüm, yalnız okul aşaması, bildirimde Geri al.
-- **Giriş ekranı (tasarım C):** sınıf sekmesi, "Bugün sırada" kutusu (`DevamKarti`, tek
-  konu — aşağıdaki Devam et kuralı), altında iki sütunlu ders kartları (`DersKarti`: ders
-  simgeli ilerleme halkası, ad, "x/y bitti"). Girişte sınıf özeti çubuğu ve kartta
-  "Sıradaki" satırı yok: ilerleme sekmede yüzde, kartta halka + sayı olarak bir kez
+- **Giriş ekranı (tasarım C):** sınıf sekmesi, altında iki sütunlu ders kartları (`DersKarti`: ders
+  simgeli ilerleme halkası, ad, "x/y bitti"). **Girişte öneri kutusu ("Bugün sırada"/"Devam et") yok:**
+  kullanıcı 2026-10'da kaldırttı, geri getirme. Girişte sınıf özeti çubuğu ve kartta
+  "Sıradaki" satırı da yok: ilerleme sekmede yüzde, kartta halka + sayı olarak bir kez
   yazılır; tekrar ekleme. Halka dolumu bitti 1, soru 0,66, okul 0,33 ağırlıklı (yalnız görsel).
 - **Ders ekranında özet tek segmentli çubuk** (bitti › soru › okul › kalan, her konu en ileri
   aşamasında) + tek satır sayı, seçili sınıfa göre ("10. sınıf · …"); yüzde ve büyük
@@ -77,8 +77,8 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   (10. sınıfın kalan konusunu YKS'ye kalan güne bölmek anlamsız).
 - **Öneri müfredat sırasında, seçili sınıfın içinde** (`siradakiKonu`,
   `devamKonusu`): ders içi Sıradaki, bitmemiş **ve** aşamaları tamamlanmamış ilk satır
-  (harita karşılığı yoksa harita sayılmaz). Girişteki tek "Bugün sırada" kutusu seçili
-  sınıfta en son dokunulan dersin (bitirmek de dokunuş) Sıradaki'si. "En son
+  (harita karşılığı yoksa harita sayılmaz). `devamKonusu` (en son dokunulan dersin Sıradaki'si) lib'de
+  duruyor ama girişte kullanılmıyor; öneri yalnız ders içi Sıradaki'dir. "En son
   işaretlenen yarım konu" kuralına dönme: öneri takılıyor ve zıplıyordu (TestFlight
   geri bildirimi). Aşamaları tamam ama bitmemiş konu (`bitirmeyeHazir`) öneri olmaz;
   dairesi dolu, ortada ders renginde soluk tik. Hiç işaret yokken ipucu ve lejant —
@@ -92,7 +92,7 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   (`rabi-konu-takibi-sekme`), açık ders ve liste kaydırması `sessionStorage`'da
   (oturumluk).
 - **Tanıtım turu** "Konu konu işaretle" adımı `data-tanitim="konu-takibi"` bloğunu
-  aydınlatır: sınıf sekmesi + Devam et + ilk kullanım ipucu. Turda ekran öğrencinin
+  aydınlatır: sınıf sekmesi + ilk kullanım ipucu. Turda ekran öğrencinin
   sınıfında, ders kapalı açılır.
 - **Binom AYT'de**, kimliği `tyt-mat-binom` kalır; taşınan konu kimliğini korur
   (`TASINAN_KONULAR`, `takip.test.ts`).
