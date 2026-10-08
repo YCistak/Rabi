@@ -30,6 +30,16 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   aynı), `poz="el-sallayan"`, yanında ayrıca 👋 yok. Alttaki üç noktanın
   **sonuncusu** dolu. Yeni süs eklemeden sor: adı öne mi çıkarıyor, yarışıyor mu?
 
+- **Kurulum sonu "uygulaman hazır" ekranı** (`kurulum-hazir.tsx`, kutucuklar
+  `lib/kurulum-hazir.ts`). Dolan çubuk/sayaç yok (kullanıcı kaldırttı); ekran
+  kendiliğinden kalkmaz, `onBitir` "Başlayalım"da. Altı kutucuk, her birinin alt
+  satırı bir kurulum cevabından: Konu Anlatımı, Denemeler, Hedefim, Hatırlatma,
+  YKS'ye kalan gün, günlük soru. Oyunlar ve Pomodoro kutucuğu yok (kullanıcı
+  kaldırttı; kurulum cevabına bağlı değiller). Atlanan cevapta kutu boş kalmaz
+  ("Sonra seçebilirsin"); izin yoksa hatırlatma saati yazılmaz; 12/mezuna sınıf
+  konusu vaat edilmez. Konfeti tavşanın ortasından bir kez (Kutlama taslağının
+  konfetisi, kullanıcı istedi), reduced-motion'da yok.
+
 ## Ayarlar
 
 - Satırlar kapalı açılır, tek satır açık (`acikAyar`). Anahtarlı satırlar açılmaz;
