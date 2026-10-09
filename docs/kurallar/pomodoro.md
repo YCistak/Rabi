@@ -65,6 +65,19 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Duraklatmak servisi durdurmaz, dondurur (`odakKilidiniDuraklat`); turdan çıkan
   yollar `odakKilidiniBitir`. Uygulamanın Devam'ının yerli karşılığı yok (`baslat`
   baştan kurar).
+- **Sahipsiz bildirim tuzağı:** kapanan servise (`stopSelf`/`stopService` ile
+  `onDestroy` arası) ya da düğmeden doğan boş örneğe `notify` yaptırma; bildirim ön
+  plan bayrağı olmadan, kaydırılamaz ve hiçbir yolun silmediği hâlde kalıyordu
+  (Sıfırla aynı anda `duraklat`+`bitir` yolluyor). Kurallar: `bildirimiGuncelle`
+  yalnız `turKurulu && !kapaniyor`; tur kurulmamış örneğe gelen düğme komutu
+  kalıntıyı siler, web'e `bitir` der, kapanır; `onDestroy`, `durdurKendini` ve
+  `OdakServisi.durdur` bildirimi `cancel` ile de siler (ayaktaki ön plan bildirimine
+  `cancel` dokunmaz, yalnız kalıntıyı alır).
+- Kapanış ve uzlaştırma: `MainActivity.onDestroy` ve `onTaskRemoved` →
+  `PomodoroKapanis.temizle`; açılışta `app-shell.tsx` koşulsuz `odakKilidiniBitir`
+  (tur kalıcı değil, açılışta çalışan tur yoktur). Hepsi `START_NOT_STICKY`; servis
+  ölünce kendiliğinden geri gelmez. Bildirimdeki "Turu bitir" kullanıcının kaçış yolu,
+  kaldırma.
 - Bildirim izni tur başlarken `izinIste` ile istenir, Ayarlar'daki bildirim
   anahtarından bağımsız (Android 13+ izinsiz ön plan bildirimi görünmez).
 
