@@ -128,7 +128,7 @@
   üçü de sen izin verene kadar gerçekleşmez: <b>(1)</b> hatalı bir soruyu bildirmen,
   <b>(2)</b> uygulama çöktükten sonra çökme kaydını göndermeyi seçmen, <b>(3)</b> Ayarlar'daki
   &ldquo;Öneri ve hata bildir&rdquo; ekranından bize bir mesaj yazıp göndermen. Bunların
-  dışında uygulama açılırken telefonundaki Google Play, Rabi'nin yeni bir sürümü olup
+  dışında Android'de uygulama açılırken telefonundaki Google Play, Rabi'nin yeni bir sürümü olup
   olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi taşımaz
   (bkz. §4b). Reklam yok, analiz (analytics) yok, hesap yok, giriş yok.</p>
 </div>
@@ -150,17 +150,25 @@
   <tr><td>Çalışma sayacı (pomodoro) geçmişi, günlük kayıtlar, rozetler</td><td>Alışkanlık takibi</td></tr>
   <tr><td>Mini oyun istatistikleri, Oyun Bankası, zorluk tercihleri</td><td>Oyunların ilerlemesi</td></tr>
   <tr><td>Yapılacaklar tahtasındaki notlar</td><td>Not tutmak</td></tr>
-  <tr><td>Odak kilidinde seçtiğin uygulama listesi</td><td>Hangi uygulamaların engelleneceği</td></tr>
+  <tr><td>Odak kilidinde seçtiğin uygulama listesi (iPhone'da Apple'ın verdiği, Rabi'nin okuyamadığı kapalı belirteçler olarak)</td><td>Hangi uygulamaların engelleneceği</td></tr>
   <tr><td>Cihazına verilen rastgele takma ad (örn. <code>mavi-tavsan-42</code>)</td><td>Yalnızca hatalı soru bildirimlerini gruplamak (bkz. §3)</td></tr>
 </table>
 </div>
 
 <p>
   Uygulamayı silersen bu verilerin tamamı telefonundan silinir. Uygulama içinden de
-  <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin. Android'in otomatik uygulama
-  yedeği Rabi için <b>kapalıdır</b>: verin Google hesabına ya da telefon yedeğine
-  kopyalanmaz, telefon değiştirdiğinde kendiliğinden taşınmaz. Yedek alırsan
-  (<b>Ayarlar → Yedeği indir</b>) Android'in paylaş penceresi açılır ve dosyayı nereye
+  <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin.
+</p>
+<p>
+  <b>Android'de</b> otomatik uygulama yedeği Rabi için <b>kapalıdır</b>: verin Google
+  hesabına ya da telefon yedeğine kopyalanmaz, telefon değiştirdiğinde kendiliğinden
+  taşınmaz. <b>iPhone'da</b> ise Rabi'nin verisi, iOS'un uygulama verilerini yedekleme
+  biçimi gereği, telefonunun iCloud yedeğine ya da bilgisayara (Finder/iTunes) aldığın
+  yedeğe girebilir; bu yedekler Apple'ın ve senin kontrolündedir, Rabi onlara erişemez ve
+  onları hiçbir yere göndermez.
+</p>
+<p>
+  Yedek dosyası almak istersen (<b>Ayarlar → Yedeği indir</b>) telefonunun paylaş penceresi açılır ve dosyayı nereye
   kaydedeceğine ya da kime göndereceğine yalnızca sen karar verirsin; Rabi dosyayı kendisi
   hiçbir yere göndermez. Seçtiğin uygulama (Drive, Dosyalar, mesajlaşma…) o andan sonra
   dosyayı kendi kurallarıyla saklar.
@@ -350,7 +358,8 @@
 </p>
 <p>
   Rabi Play dışından (doğrudan APK olarak) kurulduysa bu denetim çalışmaz ve şerit hiç
-  görünmez.
+  görünmez. Bu denetim yalnızca Android'dedir; iPhone'da güncellemeleri App Store kendisi
+  yönetir ve Rabi böyle bir sorgu yapmaz.
 </p>
 
 <h2>5. İzinler ve neden isteniyor</h2>
@@ -370,6 +379,29 @@
 </table>
 </div>
 
+<p>
+  Yukarıdaki tablo Android içindir. iPhone'da kullanım verisi, ekran üstü gösterme ve
+  Rahatsız Etme izinleri yoktur; iPhone'da istenebilecek izinler şunlardır:
+</p>
+<div class="sar">
+<table>
+  <tr><th>İzin (iPhone)</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
+  <tr><td>Ekran Süresi (Screen Time / Family Controls)</td><td>Odak kilidi: seçtiğin uygulamaları çalışma turu boyunca engellemek</td><td>Hayır</td></tr>
+  <tr><td>Bildirimler</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
+  <tr><td>Kamera</td><td>Yanlış soru fotoğrafı ve deneme sonuç kâğıdını okutma</td><td>Hayır</td></tr>
+  <tr><td>Fotoğraflara ekleme</td><td>Aylık özet afişini paylaş penceresinden galerine kaydetmen</td><td>Hayır</td></tr>
+</table>
+</div>
+<p>
+  <b>iPhone'da odak kilidi</b> Apple'ın Ekran Süresi (Screen Time / Family Controls)
+  izniyle çalışır; izni ilk kullanımda iOS'un kendi penceresi sorar. Engellenecek
+  uygulamaları <b>Apple'ın kendi seçicisinden</b> seçersin. Rabi'nin eline uygulama adları
+  değil, yalnızca Apple'ın verdiği kapalı belirteçler geçer: Rabi bu listede hangi
+  uygulamaların olduğunu <b>okuyamaz</b>, listeyi hiçbir yere <b>göndermez</b>; belirteçler
+  yalnızca telefonunda, engeli kurmak ve kaldırmak için saklanır. Engeli uygulayan ve
+  engellenen uygulamanın yerine gösterilen ekranı çizen iOS'tur. İzni Ayarlar → Ekran
+  Süresi'nden istediğin zaman geri alabilirsin.
+</p>
 <p>
   Rahatsız Etme erişimi <b>isteğe bağlıdır</b>: vermezsen odak kilidinin geri kalanı
   çalışmaya devam eder, yalnızca telefon susturulmaz. Rabi bu izinle yalnızca modu açıp
