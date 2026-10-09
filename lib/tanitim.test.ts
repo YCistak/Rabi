@@ -16,7 +16,7 @@ import {
   demoSonucu,
   demoVerileriTemizle,
   gorevFormuTurdaAcik,
-  gorevYazilabilir,
+  gorevMenusuTurdaAcik,
   miniTurSec,
   turBitisKayitlari,
   turGorulduOku,
@@ -57,8 +57,9 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(TANITIM_ADIMLARI.map((a) => a.kimlik)).toEqual([
       'sinav-hedefi', 'hedef', 'araclar-ac',
       'soru-ac', 'soru-ekle', 'soru-form', 'soru-kaydedildi',
+      'pomodoro-ac', 'pomodoro-sayac', 'pomodoro-odak',
       'konu-takibi-ac', 'konu-takibi', 'harita-ac', 'harita-ders', 'harita-soru',
-      'deneme-ac', 'deneme-liste', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-kaydet',
+      'deneme-ac', 'deneme-liste', 'deneme-detay', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-kaydet',
       'istatistik-ac', 'istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir',
     ])
   })
@@ -85,7 +86,9 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(tanitimKonumu(bul('harita-ac'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi', denemeFormu: false })
     for (const k of HARITA_TUR_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'harita', ekran: null, denemeFormu: false })
     for (const k of ['deneme-ac', 'istatistik-ac']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: null, denemeFormu: false })
-    for (const k of ['deneme-liste', 'deneme-ekle']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: false })
+    expect(tanitimKonumu(bul('pomodoro-ac'))).toEqual({ sekme: 'daha', ekran: null, denemeFormu: false })
+    for (const k of ['pomodoro-sayac', 'pomodoro-odak']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'pomodoro', denemeFormu: false })
+    for (const k of ['deneme-liste', 'deneme-detay', 'deneme-ekle']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: false })
     for (const k of DENEME_FORMU_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: true })
     for (const k of ['istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir']) {
       expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'istatistik', denemeFormu: false })
@@ -112,7 +115,8 @@ describe('Ana tur kısa ve kritik akışta', () => {
   it('kaydedildi adımından geri, form kapalı "Soru ekle" adımına dönüyor', () => {
     expect(kimlik(tanitimGecisi(adimaKadar('soru-kaydedildi'), { tur: 'geri' }))).toBe('soru-ekle')
     expect(kimlik(tanitimGecisi(adimaKadar('soru-form'), { tur: 'geri' }))).toBe('soru-ekle')
-    expect(kimlik(tanitimGecisi(adimaKadar('konu-takibi-ac'), { tur: 'geri' }))).toBe('soru-kaydedildi')
+    expect(kimlik(tanitimGecisi(adimaKadar('pomodoro-ac'), { tur: 'geri' }))).toBe('soru-kaydedildi')
+    expect(kimlik(tanitimGecisi(adimaKadar('konu-takibi-ac'), { tur: 'geri' }))).toBe('pomodoro-odak')
   })
 
   it('soru kaydından sonra Konu Takibi, ardından Harita’nın iki kitabı', () => {
@@ -295,77 +299,105 @@ describe('Mini turlar', () => {
   })
 })
 
-describe('Yapılacaklar turu: görev ekleme gösteriliyor, eklettirilmiyor', () => {
+describe('Yapılacaklar turu: görev gerçekten ekleniyor', () => {
   const adimlar = TUR_ADIMLARI.yapilacaklar
 
-  it('"+", ekleme sayfasının dört alanı, sonra liste', () => {
-    expect(adimlar.map((a) => a.kimlik)).toEqual(['gorev-ekle', 'gorev-ad', 'gorev-saat', 'gorev-pomodoro', 'gorev-kaydet', 'gorev-liste-bilgi'])
-    expect(GOREV_FORMU_ADIMLARI).toEqual(['gorev-ad', 'gorev-saat', 'gorev-pomodoro', 'gorev-kaydet'])
-    // Yalnızca "+" dokunuş istiyor; form adımları İleri ile geçiliyor, yazı ya da seçim beklemiyor.
-    expect(adimlar.filter((a) => a.tiklamali).map((a) => a.kimlik)).toEqual(['gorev-ekle'])
+  it('"+", form (kayıt bekler), Pomodoro düğmesi, ⋯ menüsü', () => {
+    expect(adimlar.map((a) => a.kimlik)).toEqual(['gorev-ekle', 'gorev-form', 'gorev-pomodoro-baslat', 'gorev-menu-ac', 'gorev-menu'])
+    expect(GOREV_FORMU_ADIMLARI).toEqual(['gorev-form'])
+    expect(adimlar.filter((a) => a.tiklamali).map((a) => a.kimlik)).toEqual(['gorev-ekle', 'gorev-form', 'gorev-menu-ac'])
+    expect(adimlar.find((a) => a.kimlik === 'gorev-form')!.kayit).toBe('gorev')
+    expect(adimlar.find((a) => a.kimlik === 'gorev-pomodoro-baslat')!.aciklama).toBe('Bu görevden Pomodoro başlatabilirsin.')
+  })
+
+  it('ekleme sayfası yalnızca form adımında, ⋯ menüsü yalnızca menü adımında açık', () => {
     for (const adim of adimlar) {
-      expect(adim.kayit, adim.kimlik).toBeUndefined()
-      expect(adim.etkilesimli, adim.kimlik).toBeFalsy()
+      expect(gorevFormuTurdaAcik('yapilacaklar', adim.kimlik), adim.kimlik).toBe(adim.kimlik === 'gorev-form')
+      expect(gorevMenusuTurdaAcik('yapilacaklar', adim.kimlik), adim.kimlik).toBe(adim.kimlik === 'gorev-menu')
     }
+    expect(gorevFormuTurdaAcik(null, 'gorev-form')).toBe(false)
+    expect(gorevFormuTurdaAcik('ana_tur', 'gorev-form')).toBe(false)
+    expect(gorevMenusuTurdaAcik(null, 'gorev-menu')).toBe(false)
   })
 
-  it('ekleme sayfası yalnızca form adımlarında açık', () => {
-    for (const adim of adimlar) expect(gorevFormuTurdaAcik('yapilacaklar', adim.kimlik), adim.kimlik).toBe(GOREV_FORMU_ADIMLARI.includes(adim.kimlik))
-    expect(gorevFormuTurdaAcik(null, 'gorev-ad')).toBe(false)
-    expect(gorevFormuTurdaAcik('ana_tur', 'gorev-ad')).toBe(false)
-  })
-
-  it('"+" sayfayı açıyor; son alandan İleri sayfayı kaydetmeden kapatıyor', () => {
+  it('form ancak görev kaydedilince ilerliyor; İleri ya da dokunuş geçirmiyor', () => {
     let durum = tanitimGecisi(demoVerileriTemizle(), { tur: 'baslat', turAdi: 'yapilacaklar' })
     expect(tanitimGecisi(durum, { tur: 'ileri' })).toBe(durum)
     durum = tanitimGecisi(durum, { tur: 'hedefe-dokun', hedef: 'gorev-ekle' })
-    expect(kimlik(durum)).toBe('gorev-ad')
-    for (const beklenen of ['gorev-saat', 'gorev-pomodoro', 'gorev-kaydet', 'gorev-liste-bilgi']) {
-      durum = tanitimGecisi(durum, { tur: 'ileri' })
-      expect(kimlik(durum)).toBe(beklenen)
-    }
-    expect(gorevFormuTurdaAcik(durum.aktifTur, kimlik(durum))).toBe(false)
-    // Tur boyunca hiçbir görev oluşmadı; Kaydet dokunuşu adımı geçmiyor.
+    expect(kimlik(durum)).toBe('gorev-form')
+    expect(tanitimGecisi(durum, { tur: 'ileri' })).toBe(durum)
+    expect(tanitimGecisi(durum, { tur: 'hedefe-dokun', hedef: 'gorev-formu' })).toBe(durum)
+    expect(tanitimGecisi(durum, { tur: 'kayit-eklendi', kayit: 'soru' })).toBe(durum)
+    durum = tanitimGecisi(durum, { tur: 'kayit-eklendi', kayit: 'gorev' })
+    expect(kimlik(durum)).toBe('gorev-pomodoro-baslat')
+    durum = tanitimGecisi(durum, { tur: 'ileri' })
+    expect(kimlik(durum)).toBe('gorev-menu-ac')
+    expect(tanitimGecisi(durum, { tur: 'ileri' })).toBe(durum)
+    durum = tanitimGecisi(durum, { tur: 'hedefe-dokun', hedef: 'gorev-eylem-ac' })
+    expect(kimlik(durum)).toBe('gorev-menu')
+    // Son adım: çıkış yalnız Turu Bitir.
+    expect(tanitimGecisi(durum, { tur: 'ileri' })).toBe(durum)
+    // Görev gerçek listeye yazılıyor, turun geçici listesine değil.
     expect(durum.demo.gorevler).toEqual([])
-    const kaydet = adimaKadar('gorev-kaydet', 'yapilacaklar')
-    expect(tanitimGecisi(kaydet, { tur: 'hedefe-dokun', hedef: 'gorev-kaydet' })).toBe(kaydet)
-    expect(tanitimGecisi(kaydet, { tur: 'kayit-eklendi', kayit: 'gorev' })).toBe(kaydet)
-    expect(tanitimGecisi(kaydet, { tur: 'demo-veri', alan: 'gorevler', guncelle: (o) => o })).toBe(kaydet)
   })
 
-  it('tur sürerken gerçek görev listesine yazılmıyor', () => {
-    expect(gorevYazilabilir('yapilacaklar')).toBe(false)
-    expect(gorevYazilabilir(null)).toBe(true)
-    expect(gorevYazilabilir('pomodoro')).toBe(true)
-  })
-
-  it('geri: ilk alandan sayfa kapanıp "+"ya, öteki alanlardan bir önceki alana', () => {
-    const ad = adimaKadar('gorev-ad', 'yapilacaklar')
-    const geri = tanitimGecisi(ad, { tur: 'geri' })
-    expect(kimlik(geri)).toBe('gorev-ekle')
-    expect(gorevFormuTurdaAcik(geri.aktifTur, kimlik(geri))).toBe(false)
-    expect(kimlik(tanitimGecisi(adimaKadar('gorev-saat', 'yapilacaklar'), { tur: 'geri' }))).toBe('gorev-ad')
-    // Listeden geri: sayfa Kaydet adımında yeniden açılıyor (yine kayıtsız).
-    expect(kimlik(tanitimGecisi(adimaKadar('gorev-liste-bilgi', 'yapilacaklar'), { tur: 'geri' }))).toBe('gorev-kaydet')
-    // Turda geri tuşu katman kapatmıyor, adımı geri alıyor (sayfa adıma bağlı kapanıyor).
-    expect(tanitimGeriKarari({ tanitimdaMi: true, rehberGizli: false, adimKimligi: 'gorev-ad', katmanVar: true })).toBe('adim-geri')
+  it('geri: formdan "+"ya; kayıttan sonra forma dönülmüyor; menüden ⋯ adımına', () => {
+    const form = tanitimGecisi(adimaKadar('gorev-form', 'yapilacaklar'), { tur: 'geri' })
+    expect(kimlik(form)).toBe('gorev-ekle')
+    expect(gorevFormuTurdaAcik(form.aktifTur, kimlik(form))).toBe(false)
+    // Görev kaydedildi: geri ikinci bir ekleme formu açmasın.
+    const pomodoro = adimaKadar('gorev-pomodoro-baslat', 'yapilacaklar')
+    expect(TUR_ADIMLARI.yapilacaklar[pomodoro.aktifAdim!].geriKapali).toBe(true)
+    expect(tanitimGecisi(pomodoro, { tur: 'geri' })).toBe(pomodoro)
+    expect(kimlik(tanitimGecisi(adimaKadar('gorev-menu-ac', 'yapilacaklar'), { tur: 'geri' }))).toBe('gorev-pomodoro-baslat')
+    const menu = tanitimGecisi(adimaKadar('gorev-menu', 'yapilacaklar'), { tur: 'geri' })
+    expect(kimlik(menu)).toBe('gorev-menu-ac')
+    expect(gorevMenusuTurdaAcik(menu.aktifTur, kimlik(menu))).toBe(false)
+    // Turda Android geri tuşu katman kapatmıyor, adımı geri alıyor (sayfa ve menü adıma bağlı kapanıyor).
+    expect(tanitimGeriKarari({ tanitimdaMi: true, rehberGizli: false, adimKimligi: 'gorev-form', katmanVar: true })).toBe('adim-geri')
+    expect(tanitimGeriKarari({ tanitimdaMi: true, rehberGizli: false, adimKimligi: 'gorev-menu', katmanVar: true })).toBe('adim-geri')
   })
 
   it('sayfanın kapatılması (✕, aşağı kaydırma) "+" adımına dönüyor; formun dışında yok sayılıyor', () => {
-    for (const adim of GOREV_FORMU_ADIMLARI) {
-      expect(kimlik(tanitimGecisi(adimaKadar(adim, 'yapilacaklar'), { tur: 'hedefe-dokun', hedef: GOREV_VAZGEC })), adim).toBe('gorev-ekle')
-    }
-    const liste = adimaKadar('gorev-liste-bilgi', 'yapilacaklar')
-    expect(tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: GOREV_VAZGEC })).toBe(liste)
+    expect(kimlik(tanitimGecisi(adimaKadar('gorev-form', 'yapilacaklar'), { tur: 'hedefe-dokun', hedef: GOREV_VAZGEC }))).toBe('gorev-ekle')
+    const menuAc = adimaKadar('gorev-menu-ac', 'yapilacaklar')
+    expect(tanitimGecisi(menuAc, { tur: 'hedefe-dokun', hedef: GOREV_VAZGEC })).toBe(menuAc)
     // Ana turun deneme vazgeçi bu turda işlemiyor.
-    const ad = adimaKadar('gorev-ad', 'yapilacaklar')
-    expect(tanitimGecisi(ad, { tur: 'hedefe-dokun', hedef: DENEME_VAZGEC })).toBe(ad)
+    const form = adimaKadar('gorev-form', 'yapilacaklar')
+    expect(tanitimGecisi(form, { tur: 'hedefe-dokun', hedef: DENEME_VAZGEC })).toBe(form)
   })
 
-  it('anahtar v2: v1 turunu görenler yeni hâli bir kez görüyor', () => {
-    expect(TUR_ANAHTARLARI.yapilacaklar).toBe('rabi-mini-tur-yapilacaklar-v2')
-    expect(turGorulduOku('yapilacaklar', (a) => (a === 'rabi-mini-tur-yapilacaklar-v1' ? 'true' : null))).toBe(false)
-    expect(turGorulduOku('yapilacaklar', (a) => (a === 'rabi-mini-tur-yapilacaklar-v2' ? 'true' : null))).toBe(true)
+  it('anahtar v3: v1 ve v2 turunu görenler yeni hâli bir kez görüyor', () => {
+    expect(TUR_ANAHTARLARI.yapilacaklar).toBe('rabi-mini-tur-yapilacaklar-v3')
+    for (const eski of ['rabi-mini-tur-yapilacaklar-v1', 'rabi-mini-tur-yapilacaklar-v2']) {
+      expect(turGorulduOku('yapilacaklar', (a) => (a === eski ? 'true' : null)), eski).toBe(false)
+    }
+    expect(turGorulduOku('yapilacaklar', (a) => (a === 'rabi-mini-tur-yapilacaklar-v3' ? 'true' : null))).toBe(true)
+  })
+})
+
+describe('Ana turda Denemeler: örnek deneme açtırılıyor', () => {
+  it('örnek karta dokunmadan geçilmiyor; açılan netler bilgi adımı', () => {
+    const liste = adimaKadar('deneme-liste')
+    expect(tanitimGecisi(liste, { tur: 'ileri' })).toBe(liste)
+    expect(tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: 'deneme-listesi' })).toBe(liste)
+    const detay = tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: 'deneme-ornek' })
+    expect(kimlik(detay)).toBe('deneme-detay')
+    expect(kimlik(tanitimGecisi(detay, { tur: 'ileri' }))).toBe('deneme-ekle')
+    expect(kimlik(tanitimGecisi(detay, { tur: 'geri' }))).toBe('deneme-liste')
+    expect(kimlik(tanitimGecisi(adimaKadar('deneme-ekle'), { tur: 'geri' }))).toBe('deneme-detay')
+  })
+})
+
+describe('Ana turda Pomodoro', () => {
+  it('Araçlar’dan Pomodoro’ya dokunuş, sayaç ve odak koruması, sonra Konu Takibi', () => {
+    const ac = adimaKadar('pomodoro-ac')
+    expect(tanitimGecisi(ac, { tur: 'ileri' })).toBe(ac)
+    const sayac = tanitimGecisi(ac, { tur: 'hedefe-dokun', hedef: 'arac-pomodoro' })
+    expect(kimlik(sayac)).toBe('pomodoro-sayac')
+    const odak = tanitimGecisi(sayac, { tur: 'ileri' })
+    expect(kimlik(odak)).toBe('pomodoro-odak')
+    expect(kimlik(tanitimGecisi(odak, { tur: 'ileri' }))).toBe('konu-takibi-ac')
   })
 })
 

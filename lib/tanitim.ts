@@ -11,9 +11,10 @@ import type { Gorev } from './yapilacaklar'
   kullanıcı değerlendirmesinde uzun bulundu. Önce 12 adıma indi (ana sayfa,
   soru ekleme, Konu Takibi, Harita), deneme ekleme ve İstatistik mini turlara
   taştı; kullanıcı o ikisini mini turda zayıf buldu ve ana tura geri istedi.
-  Şimdi 25 adım: Harita'dan sonra deneme ekleme ve İstatistik. Gerisi
-  (Pomodoro, Yapılacaklar, Oyunlar, Oyun Bankası) ekran bazlı mini turlarda —
-  ilgili ekran **ilk kez** açıldığında 1–6 adımlık kısa bir tur (`miniTurSec`).
+  Şimdi 28 adım: soru eklemeden sonra Pomodoro'ya kısa bir değinme, Harita'dan
+  sonra deneme ekleme ve İstatistik. Gerisi (Pomodoro'nun ayrıntısı,
+  Yapılacaklar, Oyunlar, Oyun Bankası) ekran bazlı mini turlarda —
+  ilgili ekran **ilk kez** açıldığında 1–5 adımlık kısa bir tur (`miniTurSec`).
   Mini turlar da ana tur gibi atlanamıyor ve her biri bir kez görülüyor.
 */
 export type TanitimTuru =
@@ -37,8 +38,10 @@ export const TUR_ANAHTARLARI: Record<TanitimTuru, string> = {
   denemeler: 'rabi_deneme_turu_tamamlandi',
   konu_haritasi: 'rabi_harita_turu_tamamlandi',
   pomodoro: 'rabi-mini-tur-pomodoro-v1',
-  // v2: tur görev eklemeyi adım adım gösteriyor; v1'i görenler de bir kez görsün.
-  yapilacaklar: 'rabi-mini-tur-yapilacaklar-v2',
+  // v3: tur görevi gerçekten ekletiyor, Pomodoro düğmesini ve ⋯ menüsünü
+  // gösteriyor. v2 (yalnız gösteren, alanları kilitli) "bozuk" bulundu;
+  // onu görenler de yeni hâli bir kez görsün (v1, v2 `ESKI_ANAHTARLAR`da).
+  yapilacaklar: 'rabi-mini-tur-yapilacaklar-v3',
   istatistik: 'rabi-mini-tur-istatistik-v1',
   oyunlar: 'rabi-mini-tur-oyunlar-v1',
   oyun_bankasi: 'rabi-mini-tur-oyun-bankasi-v1',
@@ -124,6 +127,12 @@ export type TanitimAdimi = {
   kisa?: boolean
   /** Balondaki Rabi'nin pozu; verilmezse `adimPozu` içeriğe göre seçer. */
   poz?: MaskotPozu
+  /**
+   * Bu adımdan geri dönülmez (balonun Geri'si pasif, Android geri tuşu
+   * yutulur): önceki adım bir kayıt formuydu ve kayıt gerçek; forma dönmek
+   * ikinci bir kayıt açardı.
+   */
+  geriKapali?: boolean
 }
 
 /** Adım kimliğine göre varsayılan poz; burada olmayan adım dokunmalıysa işaret eden, değilse tam boy poz alır. */
@@ -131,8 +140,8 @@ const ADIM_POZLARI: Record<string, MaskotPozu> = {
   'sinav-hedefi': 'selamlayan', hedef: 'basparmak',
   'pomodoro-prova': 'saatli', pomodoro: 'saatli', 'pomodoro-kilit': 'elleri-belde',
   'soru-form': 'defterli', 'soru-kaydedildi': 'sevinen',
-  'gorev-ad': 'defterli', 'gorev-saat': 'saatli', 'gorev-pomodoro': 'elleri-belde', 'gorev-kaydet': 'basparmak', 'gorev-liste-bilgi': 'sevinen',
-  'deneme-liste': 'buyutecli', 'deneme-okut': 'fotografci', 'deneme-elle': 'defterli', 'deneme-yanlis': 'dusunen', 'deneme-kaydet': 'defterli',
+  'gorev-form': 'defterli', 'gorev-pomodoro-baslat': 'saatli', 'gorev-menu': 'basparmak',
+  'deneme-liste': 'buyutecli', 'deneme-detay': 'okuyan', 'pomodoro-sayac': 'saatli', 'pomodoro-odak': 'elleri-belde', 'deneme-okut': 'fotografci', 'deneme-elle': 'defterli', 'deneme-yanlis': 'dusunen', 'deneme-kaydet': 'defterli',
   'konu-takibi': 'okuyan', 'harita-ders': 'haritali', 'harita-soru': 'kitapli', 'konu-haritasi': 'haritali',
   'istatistik-tur': 'buyutecli', 'istatistik-son': 'tahtali', 'istatistik-ilerleyen': 'ziplayan', 'istatistik-kutular': 'durbunlu', 'istatistik-karsilastir': 'abakuslu',
   zorluk: 'elleri-belde', 'oyun-sayac': 'saatli', 'soru-bir': 'dusunen', sonuc: 'sevinen',
@@ -147,7 +156,8 @@ export function adimPozu(adim: TanitimAdimi, tur: TanitimTuru | null, sonAdimMi:
 }
 
 /**
- * Ana tur — 25 adım. Sıra: ana sayfa, soru ekleme, Konu Takibi, Harita, sonra
+ * Ana tur — 28 adım. Sıra: ana sayfa, soru ekleme, Pomodoro (iki adım: sayaç
+ * ve odak koruması), Konu Takibi, Harita, sonra
  * deneme ekleme ve İstatistik (kullanıcı ikisini mini turda değil ana turda
  * istedi; sayaç yok, atlanamaz). "Turu Bitir" son İstatistik adımında.
  *
@@ -171,13 +181,21 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'soru-ekle', hedef: 'soru-ekle', baslik: 'İlk kaydın', aciklama: 'Soru ekle’ye dokun. Kayıt tur bitince silinir.', tiklamali: true },
   { kimlik: 'soru-form', hedef: 'soru-formu', kayit: 'soru', kisa: true, baslik: 'Ders ve sayılar', aciklama: 'Dersi seç, toplam, doğru ve yanlış sayını yaz.', ipucu: 'Kaydet’e dokun', tiklamali: true },
   { kimlik: 'soru-kaydedildi', hedef: 'soru-listesi', baslik: 'Hedefe işlendi', aciklama: 'Kaydın günlük hedefine eklendi.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
+  // Pomodoro ana turda yalnız tanıtılıyor (kullanıcı istedi, 2026-10); ayrıntısı
+  // (iki mod, ayarlar) ekranın kendi mini turunda. Sayaç turda başlatılmıyor.
+  { kimlik: 'pomodoro-ac', hedef: 'arac-pomodoro', baslik: 'Odaklı çalış', aciklama: 'Pomodoro’ya dokun.', tiklamali: true },
+  { kimlik: 'pomodoro-sayac', hedef: 'pomodoro-sayaci', baslik: 'Pomodoro', aciklama: 'Sayaç çalışma ve molayı sırayla tutar; dersini seçip başlatırsın.', tiklamali: false },
+  { kimlik: 'pomodoro-odak', hedef: 'pomodoro-kilit', baslik: 'Odak koruması', aciklama: 'Açarsan çalışırken dikkat dağıtan uygulamalar engellenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'konu-takibi-ac', hedef: 'arac-konu-takibi', baslik: 'Konu Takibi', aciklama: 'Konu Takibi’ne dokun.', tiklamali: true },
   { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'Dersi açınca konuya dokunup kartta Okul, Soru ve Bitti’yi işaretlersin.', tiklamali: false },
   { kimlik: 'harita-ac', hedef: 'harita-ac', baslik: 'Konu haritası', aciklama: 'Alt menüde Harita’ya dokun.', tabletAciklama: 'Sağdaki menüde Harita’ya dokun.', tiklamali: true },
   { kimlik: 'harita-ders', hedef: 'harita-kart', dolgu: 14, baslik: 'Yeşil kitap', aciklama: 'Konuyu kısa kartlarla buradan çalışırsın.', tiklamali: false },
   { kimlik: 'harita-soru', hedef: 'harita-soru', dolgu: 14, baslik: 'Turuncu kitap', aciklama: 'Konunun sorularını çöz; biten konu takipte işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'deneme-ac', hedef: 'arac-deneme', baslik: 'Denemelerin', aciklama: 'Denemeler’e dokun; iki örnek deneme hazırladık.', tiklamali: true },
-  { kimlik: 'deneme-liste', hedef: 'deneme-listesi', baslik: 'Örnek denemeler', aciklama: 'Karta dokunursan ders ders netlerin açılır.', tiklamali: false },
+  // Örnek denemenin kartı açtırılıyor (kullanıcı istedi, 2026-10): bakmak
+  // yerine dokunup ders ders netleri görsün. Örnekler turun belleğinde.
+  { kimlik: 'deneme-liste', hedef: 'deneme-ornek', baslik: 'Örnek denemeler', aciklama: 'Örnek denemeye dokun; ders ders netleri açılsın.', tiklamali: true },
+  { kimlik: 'deneme-detay', hedef: 'deneme-detay', baslik: 'Ders ders netler', aciklama: 'Her dersin doğru, yanlış, boş ve net sayısı burada.', tiklamali: false },
   { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun.', tiklamali: true },
   { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Kâğıdı okut', aciklama: 'Okut’la kâğıdı fotoğrafla, Rabi forma yazsın. İleri dersen biri hariç örnekle dolar.', tiklamali: false },
   { kimlik: 'deneme-elle', hedef: 'deneme-bos-ders', kayit: 'deneme-ders', kisa: true, baslik: 'Bu ders sende', aciklama: 'Bu dersin doğru ve yanlış sayısını kendin yaz.', ipucu: 'Doğru ve yanlışı yaz', tiklamali: true },
@@ -209,42 +227,38 @@ export const POMODORO_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Odak koruması', aciklama: 'Dikkat dağıtan uygulamaları engeller, bildirimleri susturur; izin ister.', tiklamali: false },
 ]
 /*
-  Yapılacaklar: "+"ya dokunulunca ekleme sayfası açılıyor, alanları bilgi
-  adımlarıyla (İleri) tek tek gösteriliyor; son alandan İleri deyince sayfa
-  **kaydetmeden** kapanıyor (`GOREV_FORMU_ADIMLARI`). Turda gerçek görev
-  oluşmuyor — kullanıcı yanlış soru eklemede de "göster, ekletme" istemişti
-  (2026-10). Bilgi adımlarında hedefe dokunma ve odak rehberde kilitli:
-  klavye açılmıyor, Kaydet'e basılamıyor.
+  Yapılacaklar: kullanıcı görevi **gerçekten** ekliyor (kullanıcı istedi,
+  2026-10). Bir süre form alanları bilgi adımlarıyla gösteriliyor, kayıt
+  kapalıydı; rehber alanları kilitlediği için "yazı yazılamıyor, hiçbir şey
+  yapılamıyor" diye bozuk bulundu. Şimdi form adımı Soru ekle'deki gibi bir
+  kayıt adımı: form serbest, tur Kaydet'i bekliyor. Görev gerçek listeye
+  yazılıyor ve tur bitince listede kalıyor (kullanıcının kendi eylemi). Sonra
+  satırdaki Pomodoro düğmesi ve ⋯ menüsü (düzenle, ertele, sil) gösteriliyor.
 */
 export const YAPILACAKLAR_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'gorev-ekle', hedef: 'gorev-ekle', baslik: 'Gününü planla', aciklama: '+ düğmesine dokun; görev ekleme sayfası açılsın.', tiklamali: true },
-  { kimlik: 'gorev-ad', hedef: 'gorev-ad', kisa: true, baslik: 'Görevin adı', aciklama: 'Ne yapacağını yaz.', tiklamali: false },
-  { kimlik: 'gorev-saat', hedef: 'gorev-saat', kisa: true, baslik: 'Saat ekle', aciklama: 'İstersen saat ver; 5 dk önce hatırlatırım.', tiklamali: false },
-  { kimlik: 'gorev-pomodoro', hedef: 'gorev-pomodoro', kisa: true, baslik: 'Pomodoro ile çalış', aciklama: 'Açarsan görevden tek dokunuşla sayaç başlar.', tiklamali: false },
-  { kimlik: 'gorev-kaydet', hedef: 'gorev-kaydet', kisa: true, baslik: 'Kaydet', aciklama: 'Kaydet’e dokununca görev listene eklenir.', tiklamali: false },
-  { kimlik: 'gorev-liste-bilgi', hedef: 'gorev-listesi', baslik: 'Görevlerin', aciklama: 'Bitince işaretle. Pomodoro ile çalış’ı açtığın görevi satırdan başlat.', tiklamali: false },
+  { kimlik: 'gorev-form', hedef: 'gorev-formu', kayit: 'gorev', kisa: true, baslik: 'İlk görevin', aciklama: 'Ne yapacağını yaz, kategori ve renk seç.', ipucu: 'Kaydet’e dokun', tiklamali: true },
+  { kimlik: 'gorev-pomodoro-baslat', hedef: 'gorev-satir-pomodoro', geriKapali: true, baslik: 'Pomodoro ile başlat', aciklama: 'Bu görevden Pomodoro başlatabilirsin.', tiklamali: false },
+  { kimlik: 'gorev-menu-ac', hedef: 'gorev-eylem-ac', baslik: 'Diğer işlemler', aciklama: 'Görevin ⋯ düğmesine dokun.', tiklamali: true },
+  { kimlik: 'gorev-menu', hedef: 'gorev-eylemleri', baslik: 'Düzenle, ertele, sil', aciklama: 'Görevi buradan düzenler, yarına erteler ya da silersin.', tiklamali: false },
 ]
 /** Yapılacaklar turunun ekleme sayfası açıkken geçen adımları. */
-export const GOREV_FORMU_ADIMLARI = ['gorev-ad', 'gorev-saat', 'gorev-pomodoro', 'gorev-kaydet']
+export const GOREV_FORMU_ADIMLARI = ['gorev-form']
 /** Ekleme sayfasının turda kapatılması (✕, aşağı kaydırma): "+" adımına dönülüyor. */
 export const GOREV_VAZGEC = 'gorev-vazgec'
 
 /**
  * Yapılacaklar turunda ekleme sayfası açık mı. Sayfa turda kullanıcının
- * dokunuşuna değil **adıma** bağlı: adım formdan çıkınca (son alandan İleri,
- * Geri, tur bitişi) sayfa kaydedilmeden kalkıyor.
+ * dokunuşuna değil **adıma** bağlı: Geri ya da ✕ formdan çıkınca sayfa
+ * kaydedilmeden kalkıyor; Kaydet'le de adım ilerleyip sayfa kapanıyor.
  */
 export function gorevFormuTurdaAcik(tur: TanitimTuru | null, adimKimligi: string | null): boolean {
   return tur === 'yapilacaklar' && adimKimligi !== null && GOREV_FORMU_ADIMLARI.includes(adimKimligi)
 }
 
-/**
- * Görev listesine yazılabilir mi. Yapılacaklar turu sürerken hayır: tur
- * görev eklemeyi yalnızca gösteriyor, kayıt oluşturmuyor. (Ana tur kendi
- * geçici listesine yazıyor, gerçek kayda değil — o ayrı yol.)
- */
-export function gorevYazilabilir(tur: TanitimTuru | null): boolean {
-  return tur !== 'yapilacaklar'
+/** Yapılacaklar turunda görevin ⋯ menüsü açık mı (menü de adıma bağlı). */
+export function gorevMenusuTurdaAcik(tur: TanitimTuru | null, adimKimligi: string | null): boolean {
+  return tur === 'yapilacaklar' && adimKimligi === 'gorev-menu'
 }
 export const ISTATISTIK_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türü', aciklama: 'Örnek denemelerle gösteriyoruz. Her tür ayrı hesaplanır.', tiklamali: false },
@@ -443,7 +457,7 @@ export function tanitimGecisi(durum: TanitimDurumu, eylem: TanitimEylemi): Tanit
       yeniAdim++
       break
     case 'geri': {
-      if (adim.kimlik === 'soru-bir') return durum
+      if (adim.kimlik === 'soru-bir' || adim.geriKapali) return durum
       yeniAdim = Math.max(0, yeniAdim - 1)
       if (durum.aktifTur === 'ana_tur' && GERI_HEDEFI[adim.kimlik]) yeniAdim = sira(GERI_HEDEFI[adim.kimlik])
       const zorluk = adimlar.findIndex((oge) => oge.kimlik === 'zorluk')
@@ -463,11 +477,12 @@ export type TanitimKonumu = { sekme: Sekme; ekran: Ekran | null; denemeFormu: bo
 const ARAC_EKRANLARI: Record<string, Ekran> = {
   'soru-ekle': 'soru', 'soru-form': 'soru', 'soru-kaydedildi': 'soru',
   'konu-takibi': 'konu-takibi', 'harita-ac': 'konu-takibi',
-  'deneme-liste': 'deneme', 'deneme-ekle': 'deneme',
+  'deneme-liste': 'deneme', 'deneme-detay': 'deneme', 'deneme-ekle': 'deneme',
+  'pomodoro-sayac': 'pomodoro', 'pomodoro-odak': 'pomodoro',
   ...Object.fromEntries(DENEME_FORMU_ADIMLARI.map((kimlik) => [kimlik, 'deneme' as const])),
   'istatistik-tur': 'istatistik', 'istatistik-son': 'istatistik', 'istatistik-ilerleyen': 'istatistik', 'istatistik-kutular': 'istatistik', 'istatistik-karsilastir': 'istatistik',
 }
-const ARACLAR_SEKMESI = ['soru-ac', 'konu-takibi-ac', 'deneme-ac', 'istatistik-ac']
+const ARACLAR_SEKMESI = ['soru-ac', 'pomodoro-ac', 'konu-takibi-ac', 'deneme-ac', 'istatistik-ac']
 /** Ana turun Harita sekmesinde geçen adımları — iki kitap. */
 export const HARITA_TUR_ADIMLARI = ['harita-ders', 'harita-soru']
 

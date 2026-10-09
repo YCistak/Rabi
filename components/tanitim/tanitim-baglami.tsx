@@ -5,6 +5,7 @@ import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, t
 
 import { SAYIM_KORUMA_MS, gecisteEylemKarari, kuyrugaEkle, kuyruktanCikar, rehberAnahtari, rehberGizliMi, sayimKorumasiGerekli } from '@/lib/tanitim-rehber'
 import { taniKaydet } from '@/lib/tanitim-tani'
+import { TANITIM_TERCIH_ANAHTARI, eskiTurKaydiVar, tanitimBaslangici, tercihOku, turlarAcik, type TanitimTercihi } from '@/lib/tanitim-tercih'
 import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonKaydi, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
 function useTanitimDurumu(deneyMi: boolean) {
@@ -104,14 +105,28 @@ function useTanitimDurumu(deneyMi: boolean) {
   useEffect(() => () => { if (gecisRef.current) clearTimeout(gecisRef.current); if (kapanisRef.current) clearTimeout(kapanisRef.current) }, [])
   const [gorulenler, setGorulenler] = useState<Record<TanitimTuru, boolean> | null>(null)
   const [kayitUyarisi, setKayitUyarisi] = useState('')
+  /** Başlangıç sorusunun cevabı ve sorudan önceki tur kayıtları (`lib/tanitim-tercih.ts`). */
+  const [tercih, setTercih] = useState<TanitimTercihi | null>(null)
+  const [eskiKayit, setEskiKayit] = useState(false)
   useEffect(() => {
     const kayitlar = {} as Record<TanitimTuru, boolean>
     for (const turAdi of Object.keys(TUR_ANAHTARLARI) as TanitimTuru[]) {
       try { kayitlar[turAdi] = turGorulduOku(turAdi, (anahtar) => localStorage.getItem(anahtar)) }
       catch { kayitlar[turAdi] = false }
     }
+    try {
+      setTercih(tercihOku(localStorage.getItem(TANITIM_TERCIH_ANAHTARI)))
+      setEskiKayit(eskiTurKaydiVar((anahtar) => localStorage.getItem(anahtar)))
+    } catch {}
     setGorulenler(kayitlar)
   }, [])
+  /** Cevap kalıcı; depo yazılamazsa oturum boyunca geçerli kalır. */
+  const tercihKaydet = useCallback((yeni: TanitimTercihi) => {
+    setTercih(yeni)
+    if (deneyMi) return
+    try { localStorage.setItem(TANITIM_TERCIH_ANAHTARI, yeni) } catch {}
+  }, [deneyMi])
+  const baslangic = gorulenler === null ? null : tanitimBaslangici({ tercih, anaTurGoruldu: gorulenler.ana_tur, eskiKayitVar: eskiKayit })
   const turGorulduMu = useCallback((turAdi: TanitimTuru) => gorulenler?.[turAdi] ?? null, [gorulenler])
   const turuKaydet = useCallback((turAdi: TanitimTuru) => {
     if (deneyMi) return
@@ -120,8 +135,9 @@ function useTanitimDurumu(deneyMi: boolean) {
     catch { setKayitUyarisi('Tanıtım temizlendi. Cihaz depolaması kullanılamadığı için uygulamayı yeniden açınca tur tekrar görünebilir.') }
   }, [deneyMi])
   const turuBaslat = useCallback((turAdi: TanitimTuru) => {
-    if (!durum.aktifTur && (deneyMi || turGorulduMu(turAdi) === false)) { setGizliAnahtar(null); gonder({ tur: 'baslat', turAdi }) }
-  }, [durum.aktifTur, turGorulduMu, gonder, deneyMi])
+    // Başlangıç sorusuna Hayır diyen kullanıcıda hiçbir tur (ana ya da mini) başlamıyor.
+    if (!durum.aktifTur && (deneyMi || (turlarAcik(tercih) && turGorulduMu(turAdi) === false))) { setGizliAnahtar(null); gonder({ tur: 'baslat', turAdi }) }
+  }, [durum.aktifTur, turGorulduMu, gonder, deneyMi, tercih])
   /*
     Turda eklenen soru/görev/deneme turun kendi listesine yazılıyor (cihaz
     deposuna değil). Veri beklemeden işleniyor; ardından gelen "kayıt
@@ -167,7 +183,7 @@ function useTanitimDurumu(deneyMi: boolean) {
     adim: durum.aktifAdim === null ? null : TUR_ADIMLARI[durum.aktifTur!][durum.aktifAdim],
     tanitimdaMi: durum.aktifAdim !== null,
     tamamlandi: gorulenler?.ana_tur ?? null,
-    turGorulduMu, turuKaydet, turuBaslat,
+    turGorulduMu, turuKaydet, turuBaslat, baslangic, tercihKaydet,
     adimSayisi: durum.aktifTur ? TUR_ADIMLARI[durum.aktifTur].length : 0,
     kayitUyarisi, gecisSuruyor,
     gonder,
@@ -175,7 +191,7 @@ function useTanitimDurumu(deneyMi: boolean) {
     turuBitir,
     sonrakiAdimaGec: () => gonder({ tur: 'ileri' }),
     oncekiAdimaDon: () => gonder({ tur: 'geri' }),
-  }), [animasyon, animasyonuAyarla, deneyMi, rehberGizli, setRehberGizli, kapanisSuruyor, durum, gorulenler, turGorulduMu, turuKaydet, turuBaslat, kayitUyarisi, gecisSuruyor, turuBitir, gonder, demoGuncelle])
+  }), [animasyon, animasyonuAyarla, deneyMi, rehberGizli, setRehberGizli, kapanisSuruyor, durum, gorulenler, turGorulduMu, turuKaydet, turuBaslat, kayitUyarisi, gecisSuruyor, turuBitir, gonder, demoGuncelle, baslangic, tercihKaydet])
 }
 
 export const TanitimBaglami = createContext<ReturnType<typeof useTanitimDurumu> | null>(null)

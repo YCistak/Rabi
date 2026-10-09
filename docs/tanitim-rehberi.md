@@ -10,9 +10,19 @@
 
 `data-tanitim` hedefleri ilgili bileşenlerde bulunur: ana sayfa, alt menü, Araçlar satırları, Soru Takibi, Pomodoro, Yapılacaklar, İstatistik, oyun bankası, Denemeler, Konu Takibi ve konu haritası.
 
+## Başlangıç sorusu
+
+Kurulum ve açılış bitince yeni kullanıcıya bir kez **"Tanıtım ister misin?"** sorulur (`components/tanitim/tanitim-sorusu.tsx`; karar `lib/tanitim-tercih.ts`, testli; kullanıcı istedi, 2026-10). Pencerede Rabi var, ✕ yok; zemine dokunma ve Android geri tuşu kapatmaz.
+
+- **Evet** → ana tur başlar; mini turlar eskisi gibi ekranlara ilk girişte çıkar.
+- **Hayır** → hiçbir tur yok: ne ana tur ne mini turlar (`turuBaslat` hepsini keser, `turlarAcik`).
+- Cevap `rabi-tanitim-tercihi-v1` anahtarında (`evet` / `hayir`) kalıcı. "Tüm verileri sil" anahtarı siler, soru yeniden gelir. Ayarlar'da turu yeniden başlatma seçeneği **yok**.
+- Cihazda herhangi bir tur kaydı olan (ana turun sürümü, eski `'true'` anahtarları ya da bir mini turun bayrağı — `eskiTurKaydiVar`) mevcut kullanıcıya soru sorulmaz; davranışı aynı kalır.
+- Soru, tur başlayabileceği koşullarda çıkar (çökme sorusu açıkken çıkmaz).
+
 ## Ana akış
 
-Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz. Balon bir düğme/sekme/satır adı anıyorsa ekrandaki yazıyı harfi harfine kullanır (büyük-küçük harf dahil); kesme işaretiyle ek almış adlar (`Kaydet’e`, `Soru Takibi’ne`) hedefin kaynak dosyasında aranır (`lib/tanitim-metin.test.ts`, yeni hedef o testin `KAYNAK` tablosuna da eklenir). Bilgi adımında (`tiklamali: false`, `etkilesimli` yok) hedef dokunmaya kilitlidir: balon orada "…’e dokun" diye buyurmaz, "…’le yaparsın" diye anlatır.
+Ana tur **28 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz. Balon bir düğme/sekme/satır adı anıyorsa ekrandaki yazıyı harfi harfine kullanır (büyük-küçük harf dahil); kesme işaretiyle ek almış adlar (`Kaydet’e`, `Soru Takibi’ne`) hedefin kaynak dosyasında aranır (`lib/tanitim-metin.test.ts`, yeni hedef o testin `KAYNAK` tablosuna da eklenir). Bilgi adımında (`tiklamali: false`, `etkilesimli` yok) hedef dokunmaya kilitlidir: balon orada "…’e dokun" diye buyurmaz, "…’le yaparsın" diye anlatır.
 
 1. Sınav geri sayımı ve hedef kartı.
 2. Günlük soru hedefi.
@@ -21,13 +31,17 @@ Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 5. "Soru ekle"ye dokunuş.
 6. Form: ders ve sayılar; Kaydet'le (kayıt turun belleğinde, tur bitince siliniyor).
 7. "Kaydın günlük hedefine eklendi" → "Araçlara dön".
+7a. Pomodoro satırına dokunuş (`pomodoro-ac`).
+7b. Sayaç (`pomodoro-sayaci`, bilgi adımı): çalışma-mola sayacı.
+7c. Odak koruması (`pomodoro-kilit`, bilgi adımı) → "Araçlara dön". Sayaç turda başlamaz; ekran `demoVeri` ile açılır (odak kilidi tanıtımı çıkmaz, ayar yazılmaz). Pomodoro'nun mini turu (iki mod, ayarlar) ayrıca ilk gerçek ziyarette çıkar.
 8. Konu Takibi satırına dokunuş.
 9. Girişin üstü (sınıf sekmesi ve giriş açıklaması; konu satırları bu adımda görünmez) → "İleri" (özel düğme yazısı yok). Balon bu adımda dokunulacak bir şey göstermez: "Dersi açınca konuya dokunup kartta Okul, Soru ve Bitti’yi işaretlersin."
 10. Aynı ekranda alt menüden Harita'ya dokunuş.
 11. İlk bölümün ilk yeşil kitabı (konu anlatımı) — bilgi adımı, İleri ile geçilir; balon "dokun" demez ("Konuyu kısa kartlarla buradan çalışırsın.").
 12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön". Bilgi adımı. Kitap kilitli/yazılmamış olsa da bu adımda gerçek turuncu rengiyle çizilir (gri ve soluklaştırma yok, kilit rozeti kalır); yalnızca tur sırasında ve yalnızca bu kitap için (`Dugum`, `konu-haritasi.tsx`).
 13. Denemeler satırına dokunuş (iki örnek deneme hazır).
-14. Örnek deneme listesi (karta dokununca ders ders netler açılır; balon "ayrıntılı rapor" demez).
+14. Örnek denemenin kartına dokunuş (`deneme-ornek`, listedeki ilk kart). Kart turda adıma bağlı açılır (`DenemelerEkrani` → `tanitim.ornekAcik`); öteki kartlar kilitli.
+14a. Ders ders netler (`deneme-detay`, açılan tablo; bilgi adımı): doğru, yanlış, boş, net. Balon "ayrıntılı rapor" demez. Örnekler turun belleğinde (`demoDenemeleri`), cihaz deposuna yazılmaz.
 15. "Deneme ekle"ye dokunuş.
 16. "Okut" düğmesi (balon başlığı "Kâğıdı okut"; etkileşimli, okutmadan İleri denebilir).
 17. **Boş ders**: form bir ders hariç örnekle doldu; o dersin satırı aydınlanır, kullanıcı doğru ve yanlışı yazar. Geçerli giriş olmadan ilerlemez.
@@ -57,7 +71,7 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
 | Denemeler | Denemeler açılınca (form kapalıyken), ana turda görülmediyse | Deneme ekle (elle ya da fotoğrafla okut) |
 | Konu Haritası | Harita sekmesi açılınca | Patikanın başı: yeşil kitap, turuncu kitap |
 | Pomodoro | Pomodoro açılınca, sayaç işlemiyorken | İki mod · Çalışma ayarları · Odak koruması (satırın adı) |
-| Yapılacaklar | Yapılacaklar açılınca | "+"ya dokun · Görevin adı · Saat ekle · Pomodoro ile çalış · Kaydet · Görevlerin (işaretle, Pomodoro ile başlat) |
+| Yapılacaklar | Yapılacaklar açılınca | "+"ya dokun · Görevi yaz ve kaydet · Pomodoro ile başlat · ⋯'ye dokun · Düzenle/ertele/sil |
 | İstatistik | İstatistik açılınca, ana turda görülmediyse | Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır |
 | Oyunlar | Oyunlar sekmesi açılınca | Tanıtım oyunu kartı · Oyun modu · Başla · Bir işlem · Sonuç |
 | Oyun Bankası | Oyun Bankası açılınca | Yanlışların · Liste · Genel test · Öğrendim (bilgi adımı: düğme kilitli, balon "dokun" demez) |
@@ -65,15 +79,14 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
 - **Denemeler** ve **İstatistik** mini turları ana turla örtüşür: ana turu (sürüm 2) bitirende ikisi de görülmüş sayılır. Eski turu bitirmiş kullanıcı da artık önce yeni ana turu gördüğünden (mini turlar ana tur bitmeden başlamaz) bu iki mini tur pratikte bir daha çıkmaz. Denemeler tek adımlı: mini turlar kayıt eklettirmiyor (turun geçici verisi yalnızca ana turda yazılıyor).
 - **İstatistik** ve **Oyun Bankası** gerçek veri olmadan boş durum çiziyor; tur kendi örnek verisini gösteriyor (İstatistik'te alana göre iki örnek deneme ve gerekiyorsa geçici eşi — `istatistikTuruDenemeleri`; bankada üç örnek soru — tur başlarken kuruluyor). Örnekler yalnızca bellekte, tur bitince siliniyor.
 - **Pomodoro** turu sayaç işlerken (tam ekran sahne) ya da Yapılacaklar'dan "Pomodoro ile başlat" ile gelinmişken başlamıyor; bir sonraki boş ziyarette çıkıyor. İlk girişteki odak kilidi tanıtımı (Android) tur bitene kadar bekliyor.
-- **Yapılacaklar** turu görev eklemeyi **gösterir, eklettirmez** (yanlış soru eklemedeki kullanıcı kararıyla aynı, 2026-10). Altı adım:
-  1. `gorev-ekle` — "+" (`data-tanitim="gorev-ekle"`) dokunmalı: "+ düğmesine dokun; görev ekleme sayfası açılsın." Turda dolu günde de basılabilir.
-  2. `gorev-ad` — "Ne yapacağını yaz." (başlık + kutu)
-  3. `gorev-saat` — "İstersen saat ver; 5 dk önce hatırlatırım."
-  4. `gorev-pomodoro` — "Açarsan görevden tek dokunuşla sayaç başlar."
-  5. `gorev-kaydet` — "Kaydet’e dokununca görev listene eklenir." (turda soluk çizilmez)
-  6. `gorev-liste-bilgi` — "Bitince işaretle. Pomodoro ile çalış’ı açtığın görevi satırdan başlat." → "Turu Bitir".
+- **Yapılacaklar** turu görevi **gerçekten ekletir** (kullanıcı istedi, 2026-10). Bir süre form alanları bilgi adımlarıyla gösteriliyor, kayıt kapalıydı; rehber bilgi adımında hedefe dokunmayı ve odağı kilitlediği için "+"dan sonra yazı yazılamıyor, kullanıcı "bozuk" buldu. Beş adım:
+  1. `gorev-ekle` — "+" dokunmalı: "+ düğmesine dokun; görev ekleme sayfası açılsın." Turda dolu günde de basılabilir.
+  2. `gorev-form` — bütün sayfa (`gorev-formu`), Soru ekle'deki gibi **kayıt adımı** (`kayit: 'gorev'`, `tiklamali`): form serbest, klavye açılır; tur Kaydet'le gelen kaydı bekler. Eksik alanla Kaydet her zamanki gibi eksikleri kırmızı gösterir, tur ilerlemez. Turda "Pomodoro ile çalış" açık başlar (sonraki adım o düğmeyi gösterir) ve sayfa balona yer bıraksın diye biraz kısadır.
+  3. `gorev-pomodoro-baslat` — eklenen görevin satırındaki Pomodoro düğmesi (bilgi adımı, düğme kilitli): "Bu görevden Pomodoro başlatabilirsin." Kullanıcı formda Pomodoro'yu kapattıysa satırın kendisi aydınlanır. Bu adımdan **geri yok** (`geriKapali`): kayıt gerçek, forma dönmek ikinci görev açardı.
+  4. `gorev-menu-ac` — satırın ⋯ düğmesi (dokunmalı).
+  5. `gorev-menu` — açılan alt sayfa (`gorev-eylemleri`, bilgi adımı): "Görevi buradan düzenler, yarına erteler ya da silersin." → "Turu Bitir".
 
-  2–5 bilgi adımı (`GOREV_FORMU_ADIMLARI`, kısa balon): yazı ya da seçim beklenmez, İleri ile geçilir. Rehber bu adımlarda hedefe dokunmayı ve odağı kilitler: klavye açılmaz, Kaydet'e basılamaz; form da kendiliğinden odak vermez ("Saat ekle"nin seçicisi yalnız dokunuşla açılır). Ekleme sayfası turda kullanıcının dokunuşuna değil **adıma** bağlıdır (`gorevFormuTurdaAcik`): son alandan İleri, Geri ya da tur bitişi sayfayı kaydetmeden kaldırır. Kayıt üç kat kapalı: hiçbir adım `kayit` beklemez, ekranın `kaydet`i `tanitim` varken hiçbir şey yapmaz, `AppShell` turda görev listesine boş yazıcı verir (`gorevYazilabilir`). Geri (balon ya da Android tuşu, karar `adim-geri`): ilk alandan "+"ya döner ve sayfa kapanır, öteki alanlardan bir önceki alana, listeden Kaydet adımına (sayfa yeniden, boş açılır). ✕ ya da aşağı kaydırma (`GOREV_VAZGEC`) "+" adımına döndürür.
+  Sayfa ve ⋯ menüsü turda kullanıcının dokunuşuna değil **adıma** bağlı (`gorevFormuTurdaAcik`, `gorevMenusuTurdaAcik`). Görev **gerçek listeye** yazılır ve tur bitince **kalır**: kullanıcının kendi eylemi. Ana turun temizlik deseni (`tanitim-` önekli kayıtları ayıklamak) yalnız ana turun geçici verisi için; bu görevin kimliği sıradan (`yeniId`), dokunulmaz. Gün doluysa ekleme olmaz, uyarı çıkar ve tur listenin ilk göreviyle sürer. Geri (balon ya da Android tuşu, karar `adim-geri`): formdan "+"ya (sayfa kaydetmeden kapanır), menüden ⋯ adımına (menü kapanır). ✕ ya da aşağı kaydırma (`GOREV_VAZGEC`) "+" adımına döndürür; turda ✕ onay sormaz.
 - **Oyunlar** turu beş adım:
   1. `demo-ac` — Tanıtım oyunu kartı (dokunmalı): "Tanıtım oyunu kartına dokun; skor tanıtımda kalır."
   2. `zorluk` — Oyun modu penceresinin mod ızgarası (bilgi adımı, mod seçilebilir; Başla bu adımda aydınlanmaz): "Her oyun bu pencereyle açılır. İstersen başka bir mod seç."
@@ -94,7 +107,8 @@ Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **M
 | Denemeler | `rabi_deneme_turu_tamamlandi` |
 | Konu Haritası | `rabi_harita_turu_tamamlandi` |
 | Pomodoro | `rabi-mini-tur-pomodoro-v1` |
-| Yapılacaklar | `rabi-mini-tur-yapilacaklar-v2` (v1 `ESKI_ANAHTARLAR`da) |
+| Yapılacaklar | `rabi-mini-tur-yapilacaklar-v3` (v1, v2 `ESKI_ANAHTARLAR`da) |
+| Başlangıç sorusu | `rabi-tanitim-tercihi-v1` (`evet` / `hayir`; tur değil, tercih) |
 | İstatistik | `rabi-mini-tur-istatistik-v1` |
 | Oyunlar | `rabi-mini-tur-oyunlar-v1` |
 | Oyun Bankası | `rabi-mini-tur-oyun-bankasi-v1` |

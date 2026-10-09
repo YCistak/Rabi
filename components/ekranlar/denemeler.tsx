@@ -35,6 +35,7 @@ export function DenemelerEkrani({
   onSil,
   onDuzenle,
   onYeniyeGit,
+  tanitim,
 }: {
   denemeler: Deneme[]
   sablonlar: Sablon[]
@@ -42,6 +43,12 @@ export function DenemelerEkrani({
   onSil: (id: string) => void
   onDuzenle: (deneme: Deneme) => void
   onYeniyeGit: () => void
+  /**
+   * Ana tur: listedeki ilk (örnek) denemenin kartı tura bağlı. Dokunuş tura
+   * bildiriliyor, kart adım `deneme-detay`dayken açık; öteki kartlar o
+   * sırada rehberin kilidinde.
+   */
+  tanitim?: { ornekAcik: boolean; ornegeDokun: () => void }
 }) {
   const [acikId, setAcikId] = useState<string | null>(null)
   const [silinecek, setSilinecek] = useState<Deneme | null>(null)
@@ -106,15 +113,17 @@ export function DenemelerEkrani({
         />
       ) : (
         <ul data-tanitim="deneme-listesi" className="space-y-3">
-          {kartlar.map(({ deneme, sablon, ozet, degisim }) => {
-            const acik = acikId === deneme.id
+          {kartlar.map(({ deneme, sablon, ozet, degisim }, sira) => {
+            const turOrnegi = !!tanitim && sira === 0
+            const acik = tanitim ? turOrnegi && tanitim.ornekAcik : acikId === deneme.id
 
             return (
               <li key={deneme.id}>
                 <Kart className="p-0">
                   <button
                     type="button"
-                    onClick={() => setAcikId(acik ? null : deneme.id)}
+                    data-tanitim={turOrnegi ? 'deneme-ornek' : undefined}
+                    onClick={() => (tanitim ? turOrnegi && tanitim.ornegeDokun() : setAcikId(acik ? null : deneme.id))}
                     className="flex w-full items-center gap-3 p-4 text-left"
                   >
                     {/* Tür ile tarih ayrı iki vurgu (`tasarim/denemeler-etiket.dc.html`,
@@ -186,6 +195,7 @@ export function DenemelerEkrani({
                             başlığı tek harf olduğu için renk okumayı hızlandırıyor. */}
                         <div
                           role="table"
+                          data-tanitim={turOrnegi ? 'deneme-detay' : undefined}
                           className="rakam grid grid-cols-[minmax(0,1fr)_40px_40px_44px_60px] text-sm leading-5"
                         >
                           <div role="row" className="contents">

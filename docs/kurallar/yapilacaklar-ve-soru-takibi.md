@@ -54,11 +54,13 @@ listesi**.
   `Ayarlar.gorevHatirlatma` (varsayılan açık), günlük hatırlatmadan bağımsız.
 - Renkler ayrı palet (`--gorev-*`), ders aileleri değil; beyaz kartta en az 4,6:1 —
   yeni tonda kontrastı ölç. Kayıtta rengin **adı**.
-- **Mini tur** ekleme sayfasını alan alan gösterir ama görev **oluşturmaz**: sayfa
-  turda adıma bağlı, Kaydet turda yazmaz (ayrıntı: `docs/tanitim-rehberi.md`).
-  Sayfaya yeni alan eklersen turun hedefleri (`data-tanitim="gorev-*"`) ve
-  `YAPILACAKLAR_ADIMLARI` birlikte değişir; forma otomatik odak verme (turda klavye
-  açılıp spotu bozar).
+- **Mini tur** görevi kullanıcıya **gerçekten ekletir** (kullanıcı istedi, 2026-10;
+  yalnız gösteren eski hâli "yazı yazılamıyor" diye bozuk bulundu): sayfa ve ⋯
+  menüsü turda adıma bağlı, form serbest, tur Kaydet'i bekler; görev gerçek listeye
+  yazılır ve tur bitince kalır (ayrıntı: `docs/tanitim-rehberi.md`). Turun
+  hedefleri (`gorev-formu`, `gorev-satir-pomodoro`, `gorev-eylem-ac`,
+  `gorev-eylemleri`) ve `YAPILACAKLAR_ADIMLARI` birlikte değişir; forma otomatik
+  odak verme (turda klavye açılıp spotu bozar).
 - Dosya adı `notlar.*` **olamaz**: `.gitignore` deseni yakalar (depoya ve Tailwind
   taramasına girmez). Yeniden adlandırmadan sonra `npm run build`'i tekrar çalıştır.
 
