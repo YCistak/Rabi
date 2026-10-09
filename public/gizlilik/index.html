@@ -169,8 +169,10 @@
 <h2>2. Kamera ve fotoğraflar</h2>
 
 <p>
-  Yanlış soru eklerken telefonunun kamerası ya da galerisi <b>sistemin kendi seçicisiyle</b>
-  açılır; Rabi kameraya doğrudan erişmez ve kamera izni istemez.
+  Yanlış soru eklerken ve deneme sonuç kâğıdını okuturken telefonunun kamerası ya da
+  galerisi <b>sistemin kendi seçicisiyle</b> açılır. Android'de Rabi kameraya doğrudan
+  erişmez ve kamera izni istemez. iPhone'da kamera ilk açıldığında iOS senden kamera izni
+  ister; izni vermezsen yine galeriden fotoğraf seçebilirsin.
 </p>
 <ul>
   <li>Çektiğin ya da seçtiğin fotoğraf küçültülüp uygulamanın kendi deposuna kaydedilir ve
@@ -178,6 +180,20 @@
   <li>Hiçbir fotoğraf, hiçbir zaman internete yüklenmez — ne bize, ne bir bulut servisine.</li>
   <li>Rabi galerinin geri kalanını taramaz; yalnızca sistem seçicisinde senin seçtiğin
       fotoğrafı alır.</li>
+</ul>
+
+<h3>Deneme sonuç kâğıdını okutma (&ldquo;Okut&rdquo;)</h3>
+<p>
+  Deneme eklerken <b>&ldquo;Okut&rdquo;</b> ile sonuç kâğıdının fotoğrafını çekebilir ya da
+  galeriden seçebilirsin. Kâğıttaki yazılar <b>telefonunun içinde</b>, uygulamayla birlikte
+  gelen metin tanıma modeliyle okunur; okuma için hiçbir sunucuya bağlanılmaz.
+</p>
+<ul>
+  <li>Okutma fotoğrafı <b>kaydedilmez</b>: Rabi onu kendi deposuna yazmaz, okuma bitince
+      bırakır (kameranın çekim sırasında oluşturduğu geçici dosyayı telefonun sistemi
+      yönetir).</li>
+  <li>Fotoğraf da, okunan metin de <b>hiçbir yere gönderilmez</b>.</li>
+  <li>Okunan netler yalnızca forma doldurulur; sen kaydedene kadar hiçbir şey saklanmaz.</li>
 </ul>
 
 <h2>3. Telefonundan çıkan ilk şey — hatalı soru bildirimi</h2>
@@ -344,7 +360,7 @@
   <tr><th>İzin</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
   <tr><td>İnternet</td><td>§3, §4 ve §4a'daki üç gönderim ile Play'in güncelleme denetimi (§4b)</td><td>Yalnızca izin verirsen</td></tr>
   <tr><td>Bildirim gönderme</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
-  <tr><td>Kamera / galeri (sistem seçicisi üzerinden)</td><td>Yanlış soru fotoğrafı</td><td>Hayır</td></tr>
+  <tr><td>Kamera / galeri (sistem seçicisi üzerinden; iPhone'da kamera izni)</td><td>Yanlış soru fotoğrafı ve deneme sonuç kâğıdını okutma</td><td>Hayır</td></tr>
   <tr><td>Kullanım verisi erişimi (<code>PACKAGE_USAGE_STATS</code>)</td><td>Odak kilidi sırasında hangi uygulamanın ön planda olduğunu anlamak</td><td>Hayır — okunan bilgi telefondan çıkmaz</td></tr>
   <tr><td>Diğer uygulamaların üzerinde gösterme</td><td>Kilitli bir uygulamayı açtığında uyarı katmanını göstermek</td><td>Hayır</td></tr>
   <tr><td>Ön plan servisi</td><td>Pomodoro turu boyunca sayacı ve odak kilidini ayakta tutmak</td><td>Hayır</td></tr>
