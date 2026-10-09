@@ -10,6 +10,10 @@ import type {
 import { enUzunSeri, enUzunYukselis, gunOzeti, haftalikToplamlar } from './hesap'
 import { oyunToplami } from './oyunlar/tanim'
 import { tariheYaz } from './utils'
+import type { KonuIlerlemeleri } from './konu/ilerleme'
+import type { OkumaSeansi } from './konu/okuma-suresi'
+import type { YksTakip } from './konu-takibi/kayit'
+import { BIRLESEN_KONULAR } from './konu-takibi/okul-dersleri'
 
 /**
  * Rozetler — saf mantık.
@@ -49,6 +53,9 @@ export type RozetTuru =
   | 'oyun-hatasiz'
   | 'oyun-dogru'
   | 'oyun-seri'
+  | 'konu-bitti'
+  | 'harita-konu'
+  | 'konu-okuma'
 
 /**
  * Rozetin nadirliği. Hepsi aynı görünürken 100 saatlik odak ile ilk pomodoro
@@ -165,6 +172,20 @@ export const ROZETLER: Rozet[] = [
   { id: 'oyun-rekor-40', tur: 'oyun-rekor', esik: 40, kademe: 'altin', ikon: '🧠', ad: 'Tek turda 40', aciklama: 'Bir turda 40 doğru bildin' },
   { id: 'oyun-dogru-1000', tur: 'oyun-dogru', esik: 1000, kademe: 'altin', ikon: '📜', ad: '1000 doğru', aciklama: 'Mini oyunlarda toplam 1000 doğru cevap' },
   { id: 'oyun-seri-25', tur: 'oyun-seri', esik: 25, kademe: 'efsane', ikon: '☄️', ad: '25 seri', aciklama: 'Üst üste 25 doğru cevap verdin' },
+
+  // --- Konu haritası ---
+  // Deste ancak kartları tek tek geçilerek biter; okuma süresi de yalnız
+  // uygulama öndeyken akar. İkisi de elle yazılamıyor, bu yüzden altına kadar
+  // kademe alabiliyor.
+  { id: 'harita-10', tur: 'harita-konu', esik: 10, kademe: 'bronz', ikon: '🗺️', ad: 'Haritada on konu', aciklama: 'Haritada 10 konunun kartlarını sonuna kadar okudun' },
+  { id: 'harita-50', tur: 'harita-konu', esik: 50, kademe: 'altin', ikon: '🧭', ad: 'Haritada elli konu', aciklama: 'Haritada 50 konunun kartlarını sonuna kadar okudun' },
+  { id: 'okuma-10s', tur: 'konu-okuma', esik: 600, kademe: 'gumus', ikon: '📘', ad: '10 saat konu okuma', aciklama: 'Haritada kart okuyarak toplam 10 saat geçirdin' },
+
+  // --- Konu Takibi ---
+  // "Bitirdim" tek dokunuşla işaretleniyor; uydurulabilir bir ölçü olduğu
+  // için kademe gümüşte kalıyor.
+  { id: 'konu-bitti-10', tur: 'konu-bitti', esik: 10, kademe: 'bronz', ikon: '📌', ad: 'On konu bitti', aciklama: 'Konu Takibi’nde 10 konuyu bitirdin' },
+  { id: 'konu-bitti-50', tur: 'konu-bitti', esik: 50, kademe: 'gumus', ikon: '🗃️', ad: 'Elli konu bitti', aciklama: 'Konu Takibi’nde 50 konuyu bitirdin' },
 ]
 
 export const TUR_ADI: Record<RozetTuru, string> = {
@@ -186,6 +207,9 @@ export const TUR_ADI: Record<RozetTuru, string> = {
   'oyun-hatasiz': 'Mini oyun — hatasız tur',
   'oyun-dogru': 'Mini oyun — toplam doğru',
   'oyun-seri': 'Mini oyun — ardışık doğru',
+  'konu-bitti': 'Konu Takibi — biten konu',
+  'harita-konu': 'Konu haritası — okunan deste',
+  'konu-okuma': 'Konu haritası — okuma süresi',
 }
 
 /**
@@ -213,6 +237,28 @@ export type RozetDurumu = {
   oyunHatasiz: number
   oyunDogru: number
   oyunSerisi: number
+  konuBitti: number
+  haritaKonu: number
+  /** Konu kartlarında geçen toplam süre, dakika. */
+  konuOkumaDakikasi: number
+}
+
+/**
+ * Konu Takibi'nde "Bitti" işaretli konu sayısı.
+ *
+ * Birleşen satır (`BIRLESEN_KONULAR`, ör. TYT + AYT Fonksiyonlar) iki kimliği
+ * birlikte yazıyor; ikisi de bitmişse ekranda tek satır, sayımda da tek konu.
+ */
+export function bitenKonuSayisi(takip: YksTakip): number {
+  const bitenler = new Set(
+    Object.entries(takip.konular)
+      .filter(([, kayit]) => kayit.bitti !== undefined)
+      .map(([id]) => id),
+  )
+  for (const [ilk, ikinci] of BIRLESEN_KONULAR) {
+    if (bitenler.has(ilk) && bitenler.has(ikinci)) bitenler.delete(ikinci)
+  }
+  return bitenler.size
 }
 
 export function rozetDurumu({
@@ -226,6 +272,9 @@ export function rozetDurumu({
   oyunlar = {},
   bankaDusen = 0,
   bankaBoyutu = 0,
+  yksTakip,
+  haritaIlerleme = {},
+  okumaGecmisi = [],
 }: {
   denemeler: Deneme[]
   sablonlar?: Sablon[]
@@ -239,6 +288,11 @@ export function rozetDurumu({
   bankaDusen?: number
   /** Bankada şu an duran soru sayısı. */
   bankaBoyutu?: number
+  /** Konu Takibi kaydı (`takibiCoz`dan geçmiş). */
+  yksTakip?: YksTakip
+  /** Konu haritasının deste kayıtları. */
+  haritaIlerleme?: KonuIlerlemeleri
+  okumaGecmisi?: OkumaSeansi[]
 }): RozetDurumu {
   const oyun = oyunToplami(oyunlar)
 
@@ -275,6 +329,14 @@ export function rozetDurumu({
     oyunHatasiz: oyun.hatasizTur,
     oyunDogru: oyun.toplamDogru,
     oyunSerisi: oyun.enIyiSeri,
+    konuBitti: yksTakip ? bitenKonuSayisi(yksTakip) : 0,
+    // Deste sonuna kadar okunmuş konular. Yoklama oranı içerik dosyası
+    // gerektiriyor (`konuTamam`); rozet bu yüzden yalnız desteye bakıyor ve
+    // açıklaması da "kartlarını okudun" diyor, "konuyu bitirdin" değil.
+    haritaKonu: Object.values(haritaIlerleme).filter((k) => k?.bitti === true).length,
+    // Geçmiş `OKUMA_GECMIS_SINIRI` kadar seans tutuyor; çok eski seanslar
+    // düşünce toplam azalabilir ama kazanılmış rozet geri alınmıyor.
+    konuOkumaDakikasi: Math.floor(okumaGecmisi.reduce((t, s) => t + s.saniye, 0) / 60),
   }
 }
 
@@ -317,6 +379,12 @@ export function rozetDegeri(rozet: Rozet, durum: RozetDurumu): number {
       return durum.oyunDogru
     case 'oyun-seri':
       return durum.oyunSerisi
+    case 'konu-bitti':
+      return durum.konuBitti
+    case 'harita-konu':
+      return durum.haritaKonu
+    case 'konu-okuma':
+      return durum.konuOkumaDakikasi
   }
 }
 
