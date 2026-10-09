@@ -91,7 +91,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Eşit yurttaşlık fikri ile milliyetçilik Osmanlı’da aynı sonucu doğurmadı.', true, 'Biri birleştirme, diğeri ayrılık talebine yol açabildi.'],
-      ['Osmanlıcılık, Balkan milletlerinin bağımsızlık taleplerini destekleyen bir akımdı.', false, 'Osmanlıcılık ortak yurttaşlıkla dağılmayı önlemeyi amaçladı.'],
+      ['Aydınlanma düşüncesinin 1789’daki değişim taleplerinde bir etkisi olmadı.', false, 'Aydınlanma düşüncesi değişim taleplerini besledi.'],
     ],
     secimler: [
       ['Vergi yüküne itiraz hangi daha geniş soruya bağlandı?', 'Siyasal temsile', 'Ticaretin serbestleşmesine', 'Vergi verenlerin söz hakkı tartışıldı.'],

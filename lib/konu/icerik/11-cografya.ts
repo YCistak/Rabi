@@ -62,7 +62,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
     {
       id: 'cog11-turkiye-su', ad: 'Türkiye’deki Su Kaynaklarının Etkileri',
       kartlar: [
-        ['Dağılış farklıdır', 'Yağış ve akış Türkiye’nin her yerinde aynı değildir.\nKurak ve nemli bölgelerin su yönetimi ayrışır.'],
+        ['Dağılış farklıdır', 'Yağış ve akış Türkiye’nin her yerinde aynı değildir.\nDoğu Karadeniz en yağışlı, İç Anadolu en kurak kesimlerdendir.\nKurak ve nemli bölgelerin su yönetimi ayrışır.'],
         ['Tarım ve sulama', 'Sulama üretimi artırabilir.\nYanlış yöntem su kaybı ve toprakta tuzlanma doğurabilir.'],
         ['Enerji üretimi', 'Akarsu ve barajlardan hidroelektrik elde edilir.\nÜretim ile ekosistem etkisi birlikte tartılmalıdır.'],
         ['Kentlerin ihtiyacı', 'İçme suyu nüfus artışı ve kuraklıkla baskı altına girer.\nKayıp-kaçak azaltımı da çözümün parçasıdır.'],
@@ -73,7 +73,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       iddialar: [
         ['Türkiye’de en az yağış alan kesimlerden biri Doğu Karadeniz kıyılarıdır.', false, 'Doğu Karadeniz en çok yağış alan kesimdir; İç Anadolu en kuraklardandır.'],
         ['Yanlış sulama toprakta tuzlanmaya yol açabilir.', true, 'Buharlaşma ve drenaj sorunu tuzu biriktirir.'],
-        ['Toprakta tuzlanma en çok yağışlı bölgelerde, iyi drene edilen arazilerde görülür.', false, 'Tuzlanma kurak alanlarda yanlış sulama ve zayıf drenajla oluşur.'],
+        ['Kentlerde içme suyu sorununda kayıp-kaçağı azaltmak çözümün parçası sayılmaz.', false, 'Şebekedeki kayıp-kaçak azaltılırsa aynı kaynak daha çok ihtiyacı karşılar.'],
         ['Sınır aşan sular ülkeler arasında iş birliği gerektirebilir.', true, 'Akarsu birden çok ülkeyi etkiler.'],
       ],
     },
@@ -110,9 +110,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Bir ilçenin idari sınırı ile hizmet verdiği gerçek alanı karıştırma.',
       iddialar: [
         ['Uzman hastane çevre yerleşmelerden hasta çekebilir.', true, 'Özel hizmetin etki alanı geniştir.'],
-        ['İnsanlar uzman hastane ve üniversite gibi hizmetler için genellikle daha alt kademedeki merkezlere gider.', false, 'Üst düzey hizmet için insanlar büyük, üst kademe merkezlere gider.'],
+        ['Köy, ilçe ve büyük kent aynı düzeyde hizmet sunduğu için aralarında kademelenme yoktur.', false, 'Yerleşmeler farklı hizmet düzeyleri sunar; bazı ihtiyaçlar için üst merkeze gidilir.'],
         ['Ulaşım süresi etki alanını değiştirebilir.', true, 'Erişim kolaylaşınca daha uzak yerler bağlanır.'],
-        ['Bir mahalle bakkalının etki alanı, bir üniversiteninkinden daha geniştir.', false, 'Günlük hizmetin alanı dardır; nadir hizmet uzaktan kullanıcı çeker.'],
+        ['Nüfusu büyük her kent aynı hizmetleri sunduğu için etki alanları da aynıdır.', false, 'Her büyük kent aynı hizmetleri sunmaz; işlevler etki alanını farklılaştırır.'],
       ],
     },
   ],
@@ -130,9 +130,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Gıda güvencesi “ülkede gıda var” cümlesinden daha geniştir: herkesin erişimi gerekir.',
       iddialar: [
         ['Gıdaya erişim, gıda güvencesinin parçasıdır.', true, 'Üretim olsa da erişim engeli olabilir.'],
-        ['Gıda bulunduğu hâlde fiyatı çok yükselmişse sorun gıda güvencesinin bulunabilirlik boyutundadır.', false, 'Gıda var ama pahalıysa sorun erişim boyutundadır.'],
+        ['Toprak ve suyun aşırı kullanımı yalnız bugünkü üretimi etkiler; gelecekteki üretime etkisi olmaz.', false, 'Aşırı kullanım toprağı ve suyu tüketir, gelecekteki üretimi azaltır.'],
         ['Kuraklık hasat miktarını etkileyebilir.', true, 'Su eksikliği verimi düşürebilir.'],
-        ['Gıda güvencesinin süreklilik boyutu, gıdanın yalnızca hasat mevsiminde yeterli olmasını anlatır.', false, 'Süreklilik, erişimin yıl boyunca ve kriz dönemlerinde de sürmesidir.'],
+        ['Hasadı yalnız kuraklık tehdit eder; don ve aşırı yağış hasadı etkilemez.', false, 'Kuraklık, don ve aşırı yağış hasadı etkiler.'],
       ],
     },
     {
@@ -159,14 +159,14 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['İki terim', 'Stratejik maden ekonomi ve güvenlik için önem taşır.\nKritiklikte arz kesintisi riski de öne çıkar.'],
         ['Neden önemli?', 'Batarya, elektronik ve savunma üretimi çeşitli minerallere bağlıdır.\nTedarik zinciri ülkeleri birbirine bağlar.'],
         ['Dağılış', 'Yataklar dünyaya eşit dağılmamıştır.\nÇıkarma ile işleme çoğu zaman farklı ülkelerde yapılır.'],
-        ['Türkiye örneği', 'Bor mineralleri Türkiye için önemli bir kaynaktır.\nHam madeni katma değerli ürüne dönüştürmek ayrı aşamadır.'],
+        ['Türkiye örneği', 'Dünya bor rezervlerinin en büyük payı Türkiye’dedir.\nHam madeni katma değerli ürüne dönüştürmek ayrı aşamadır.'],
         ['Çevresel maliyet', 'Madencilik su, toprak ve habitat üzerinde baskı yaratabilir.\nRehabilitasyon planı çıkarma kadar önemlidir.'],
         ['Tedarik güvenliği', 'Geri dönüşüm, çeşitlendirme ve teknoloji arz riskini azaltabilir.\nTek kaynağa bağımlılık kırılgandır.'],
       ],
       not: '“Maden var” demek “işlenmiş üründe güçlü” demek değildir; değer zincirine bak.',
       iddialar: [
         ['Maden yatağı ile işleme tesisi farklı ülkelerde olabilir.', true, 'Tedarik zinciri birden çok ülkeye yayılır.'],
-        ['Bir madenin kritik sayılmasında arz kesintisi riskine değil, yalnız rezerv büyüklüğüne bakılır.', false, 'Kritiklik değerlendirmesinde arz kesintisi riski öne çıkar.'],
+        ['Batarya, elektronik ve savunma üretimi ülkeleri maden tedarik zincirinde birbirine bağlamaz.', false, 'Bu üretimler çeşitli minerallere bağlıdır; tedarik zinciri ülkeleri birbirine bağlar.'],
         ['Geri dönüşüm bazı madenlerde tedarik baskısını azaltabilir.', true, 'Birincil kaynağa bağımlılığı düşürebilir.'],
         ['Türkiye, bor minerallerinde dünyanın en küçük rezervlerinden birine sahiptir.', false, 'Türkiye dünya bor rezervlerinde en büyük paya sahiptir.'],
       ],
@@ -224,7 +224,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Habitat kaybı canlı çeşitliliğini etkileyebilir.', true, 'Yaşam alanı türlerin sürmesi için gereklidir.'],
         ['Arazi değişimi yalnız yerel etkisi olan, küresel sonuç doğurmayan bir süreçtir.', false, 'Yerel arazi ve su değişimleri küresel sonuç doğurabilir.'],
         ['Azotun aşırı kullanımı su ekosistemlerini bozabilir.', true, 'Besin yükü artışı kirlilik yaratabilir.'],
-        ['Gezegen sınırı kavramı, bir eşik aşıldığı anda bütün çevre sistemlerinin birden çöktüğünü anlatır.', false, 'Kavram artan sistem riskini anlatır; tek eşikte her şeyin bitmesi değildir.'],
+        ['Canlı çeşitliliğinde yalnız tür sayısı önemlidir; türler arasındaki ilişkiler önemsizdir.', false, 'Ekosistem işlevi türler arasındaki ilişkilere de bağlıdır.'],
       ],
     },
     {
@@ -241,7 +241,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       iddialar: [
         ['Erken sel uyarısı iklim değişikliğine uyum örneğidir.', true, 'Mevcut riske hazırlık sağlar.'],
         ['Emisyon azaltımı uyumla aynı anlama gelir.', false, 'Azaltım nedeni, uyum etkiyi hedefler.'],
-        ['Kuraklığa dayanıklı tohum geliştirmek, iklim değişikliğinde azaltım örneğidir.', false, 'Bu bir uyum örneğidir; azaltım emisyonu düşürür.'],
+        ['İklim değişikliğinin etkileri bütün bölgelerde aynı biçimde ve aynı şiddette görülür.', false, 'Sıcak hava dalgası, yağış ve su erişimindeki değişim bölgeden bölgeye farklıdır.'],
         ['Enerji verimliliği emisyon azaltımına katkı verebilir.', true, 'Aynı hizmet daha az enerjiyle sağlanır.'],
       ],
     },
@@ -249,9 +249,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       id: 'cog11-su-surdurulebilir', ad: 'Türkiye’de Suyun Sürdürülebilir Kullanımı',
       kartlar: [
         ['Su bütçesi', 'Çekilen su, kaynağın yenilenme ve ekosistem ihtiyacıyla karşılaştırılır.\nYıllık ortalama tek başına yeterli değildir.'],
-        ['Tarımda kullanım', 'Sulama büyük su talebi doğurur.\nÜrün seçimi ve doğru zamanlama tasarruf sağlar.'],
+        ['Tarımda kullanım', 'Türkiye’de suyun en büyük payını tarımsal sulama kullanır.\nÜrün seçimi ve doğru zamanlama tasarruf sağlar.'],
         ['Şehir şebekesi', 'Boru kayıpları ve kaçaklar giderilirse yeni kaynak arama baskısı azalır.\nÖlçüm ve bakım gerekir.'],
-        ['Yer altı suyu', 'Aşırı çekim seviye düşüşüne ve bazı alanlarda çökme riskine yol açar.\nİzin ve izleme önemlidir.'],
+        ['Yer altı suyu', 'Aşırı çekim seviye düşüşüne ve bazı alanlarda çökme (obruk) riskine yol açar.\nİzin ve izleme önemlidir.'],
         ['Kirlilik', 'Atık su arıtımı kullanılabilir suyu korur.\nKirlenen kaynağı temizlemek çoğu zaman pahalıdır.'],
         ['Havza yaklaşımı', 'Yukarı ve aşağı kesimdeki kararlar birbirini etkiler.\nYönetim havza bütününde yapılmalıdır.'],
       ],
@@ -298,7 +298,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Toplam üretim ile birim alan verimi farklıdır.', true, 'Alan büyüklüğü toplam miktarı etkiler.'],
         ['Bir ülkenin tarım ürünlerinde kendine yetmesi, tohum, gübre ve enerjide de dışa bağımlı olmadığını gösterir.', false, 'Ürün bağımsızlığı girdi bağımsızlığı değildir.'],
         ['İşlenmiş ürün tarımın katma değerini artırabilir.', true, 'Ham ürüne işlem ve hizmet eklenir.'],
-        ['İki ülkenin tarımsal üretimini karşılaştırırken farklı yılların verilerini kullanmak güvenilirliği etkilemez.', false, 'Aynı yılın güvenilir verileri kullanılmalıdır.'],
+        ['Tarımın ekonomiye katkısı yalnız gıda üretimidir; iş ve sanayiye girdi sağlamaz.', false, 'Tarım iş, ihracat ve sanayiye girdi de sağlar.'],
       ],
     },
     {
@@ -324,7 +324,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       kartlar: [
         ['Kaynağı bul', 'Hangi maden, nerede ve ne miktarda çıkarılıyor?\nRezerv ile yıllık üretimi ayrı oku.'],
         ['Değer zinciri', 'Çıkarma, zenginleştirme, işleme ve ihracat farklı aşamalardır.\nGelir aşamaya göre değişir.'],
-        ['Grafik seçimi', 'Yıllara göre üretim çizgi; maden payları sütun grafikle gösterilebilir.\nBirim ve kaynak yaz.'],
+        ['Grafik seçimi', 'Yıllara göre üretim çizgi; bir yılın maden payları pasta grafikle gösterilebilir.\nBirim ve kaynak yaz.'],
         ['Ekonomik etki', 'İstihdam ve ihracat geliri yaratabilir.\nFiyat değişimi geliri oynatır.'],
         ['Çevresel etki', 'Atık, su kullanımı ve arazi bozulması izlenmelidir.\nKapanış sonrası rehabilitasyon planı gerekir.'],
         ['Yorum sınırı', 'Rezervin büyük olması o yıl üretimin yüksek olduğunu kanıtlamaz.\nİki göstergeyi ayrı değerlendir.'],

@@ -55,7 +55,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       iddialar: [
         ['Lizbon’da depremden sonra tsunami ve yangınlar da yıkımı artırdı.', true, 'İkincil tehlikeler can ve mal kaybını büyüttü.'],
         ['1766 İstanbul depreminden sonra artçı sarsıntı yaşanmadığı için onarımlar kolayca tamamlandı.', false, 'Artçı sarsıntılar onarımı güçleştirdi.'],
-        ['Lizbon’un liman kenti olması, 1755 depreminde kıyıdaki hasarı azaltan bir etkendi.', false, 'Tsunami yüzünden liman konumu kıyıdaki hasarı ağırlaştırdı.'],
+        ['Lizbon yeniden inşa edilirken sokak düzeni ve yapı tekniği değiştirilmeden eski plan korundu.', false, 'Lizbon’da sokak düzeni ve yapı tekniği yeniden düşünüldü.'],
         ['İki kentte de yeniden inşa ve barınma sorunu ortaya çıktı.', true, 'Yıkımın ardından onarım ve barınma gerekti.'],
       ],
     },
@@ -94,7 +94,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['İhtilal, egemenliğin kaynağını tartışmaya açtı.', true, 'Millet egemenliği düşüncesi güçlendi.'],
         ['Milliyetçiliğin Osmanlı’daki ilk ayrılıkçı etkisi Anadolu’da görüldü.', false, 'İlk ayrılıkçı hareketler Balkanlarda (Sırp, Yunan isyanları) görüldü.'],
         ['Osmanlıcılık farklı toplulukları ortak yurttaşlıkta birleştirmeyi amaçladı.', true, 'Dağılmayı önlemeye dönük bir düşünceydi.'],
-        ['İhtilal fikirlerinin Avrupa’ya yayılmasında Napolyon savaşlarının etkisi olmadı.', false, 'Napolyon savaşları fikirlerin yayılmasını hızlandırdı.'],
+        ['İhtilal ve Napolyon savaşlarından sonra Avrupa’da sınırlar ve ittifaklar değişmeden kaldı.', false, 'Savaşlar sınırları ve ittifakları değiştirdi.'],
       ],
     },
     {
@@ -128,9 +128,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Teknoloji yalnızca araç eklemedi; haberleşme hızı yönetim ilişkilerini de değiştirdi.',
       iddialar: [
         ['Telgraf haberleşme süresini kısalttı.', true, 'Merkez ile taşra arasındaki iletişim hızlandı.'],
-        ['Telgraf Osmanlı’da yalnız ticari haberleşmede kullanıldı; yönetim ve ordu için önem taşımadı.', false, 'Telgraf merkez-taşra yönetimi ve ordu için önemliydi.'],
+        ['Buharlı gemiler yolculuk ve taşıma süresini kısaltmadı.', false, 'Demiryolu ve buharlı gemi yolculuk ile taşımayı hızlandırdı.'],
         ['Gazeteler fikirlerin yayılmasına katkı sağladı.', true, 'Basın kamuoyu oluşumunda rol oynadı.'],
-        ['Tanzimat’la gelişen roman ve tiyatro, Batı’dan yapılan çevirilerden bağımsız olarak doğdu.', false, 'Çeviri eserler yeni türleri ve anlatım biçimlerini besledi.'],
+        ['Batı etkili üsluplar yayılınca geleneksel mimari biçimler tamamen ortadan kalktı.', false, 'Batı etkili üsluplar görülse de geleneksel biçimler yaşamayı sürdürdü.'],
       ],
     },
     {
@@ -184,7 +184,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Göç yalnızca nüfus sayısı değildir; barınma, sağlık ve geçim sorunlarını birlikte getirir.',
       iddialar: [
         ['Balkan Savaşları Anadolu’ya göçü artırdı.', true, 'Rumeli’den büyük nüfus hareketi yaşandı.'],
-        ['Göç yollarındaki hareketlilik, bulaşıcı hastalıkların yayılmasını sınırladı.', false, 'Göç yolları hastalığın taşınmasını kolaylaştırdı, sağlık hizmetini zorladı.'],
+        ['Rumeli’den gelen göçmenler yerleştikleri yerlerin kültür ve ekonomisini etkilemedi.', false, 'Göçmenler gittikleri yerin kültür ve ekonomisini etkiledi.'],
         ['Göç, yerleşmelerin nüfus yapısını değiştirebilir.', true, 'Gelen ve giden nüfus mekânı etkiler.'],
         ['Rumeli’den gelen göçmenler yalnız kentlere yerleşti; kırsal yerleşmelerin nüfusu değişmedi.', false, 'Kent ve kırsal yerleşmelerin nüfusu birlikte değişti.'],
       ],
