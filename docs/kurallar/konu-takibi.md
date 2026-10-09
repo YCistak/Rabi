@@ -43,12 +43,16 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   - **9–11 ve bilinmeyen** (Maarif): eşliyse destelerin önekinden (çoğunluk, eşitlikte
     en erken; `mat12-*` öneki okunmaz), değilse `MAARIF_SINIF`. Maarif 9–11'de karşılığı olmayan konu
     `HENUZ_YOK`: **hiçbir sekmede görünmez** ("Tümü" kalktığı için; Maarif 12
-    yayımlanınca `MAARIF_SINIF`ta sınıf alır). 12 sekmesi haritadaki gibi pasif,
-    "Yakında" rozetli. YDT bu yüzden Maarif öğrencisinde hiç çıkmaz. Felsefe/Din
+    yayımlanınca `MAARIF_SINIF`ta sınıf alır). **12 sekmesi hiç görünmez**
+    (kullanıcı istedi, 2026-10; eski "Yakında" rozetli pasif sekme kalktı, geri
+    getirme): sekme listesi "o sınıfta görünen satır var mı"dan türer
+    (`sinifSekmeleri`), `MAARIF_SINIF`a ilk 12 yazıldığında kod değişmeden açılır.
+    YDT bu yüzden Maarif öğrencisinde hiç çıkmaz. Felsefe/Din
     iskelette yok; 2018 sınıflarıyla durur.
   - Varsayılan sekme öğrencinin sınıfı, mezun 12, bilinmeyen 9 (`varsayilanSinif`);
-    oturumdan dönen sekme pasifse varsayılan, o da pasifse ilk açık sekme.
-- **Sınıf sekmesi** gri dörtlü segment (haritanın eski sınıf sekmesinin dili): yüzde
+    oturumdan dönen sekme listede yoksa varsayılan, o da yoksa ilk sekme.
+- **Sınıf sekmesi** gri segment (haritanın eski sınıf sekmesinin dili; sütun sayısı
+  listelenen sınıf sayısı — Maarif'te üç, 12/mezunda dört): yüzde
   = o sınıftaki görünen bütün satırların dairelerinin ortalaması (`sinifSekmeleri`),
   kendi sınıfında "sen".
 - **"Haritada çalıştım" elle işaretlenmez:** `harita-eslemesi.ts`teki açık tablo YKS
@@ -133,4 +137,5 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   `dersVurgusu` ile geçer; Felsefe ve Din, Yanlış Soru Bankası'ndaki gibi nötr.
 - Testler: `okul-dersleri.test.ts` (eski programda her konu tam bir kez, Maarif'te
   "henüz yok" dışı her konu tam bir kez, alan süzgeci, birleşen satırın okuma/yazması),
-  `sinif.test.ts` (tablolar, sekmeler, varsayılan sınıf), `takip.test.ts`.
+  `sinif.test.ts` (tablolar, sekmeler — Maarif'te 12 yok, veri eklenince
+  kendiliğinden gelir —, varsayılan sınıf), `takip.test.ts`.

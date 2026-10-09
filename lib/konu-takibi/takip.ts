@@ -353,11 +353,9 @@ export type SinifSekmesi = {
    * O sınıfın bütün satırlarının (görünen bütün dersler) ortalama yol oranı,
    * yüzde (0–100) — satırlardaki dairelerin ortalaması. Yalnızca
    * "Bitirdim"i saymak, okulda işaretlemeye başlayan öğrenciye haftalarca
-   * %0 gösterirdi. Sekmede konu yoksa ya da "Yakında"ysa `null`.
+   * %0 gösterirdi.
    */
-  yuzde: number | null
-  /** Sınıfta konu yok ya da sınıf "Yakında": sekme seçilemiyor. */
-  pasif: boolean
+  yuzde: number
   /** Öğrencinin kendi sınıfı — küçük "sen" işareti. */
   sen: boolean
   /**
@@ -367,11 +365,16 @@ export type SinifSekmesi = {
    * (XX. yüzyıl başları) 9–11 destelerine eşli.
    */
   haritasiz: boolean
-  /** Maarif öğrencisinde (9–11) 12: programı yayımlanmadı, pasif ve "Yakında". */
-  yakinda: boolean
 }
 
-/** Ekranın en üstündeki sekmeler: `9 · 10 · 11 · 12`, haritanın sınıf sekmesinin dili. */
+/**
+ * Ekranın en üstündeki sekmeler: `9 · 10 · 11 · 12`, haritanın sınıf
+ * sekmesinin dili. **Yalnız konusu olan sınıf listelenir** (kullanıcı istedi,
+ * 2026-10): Maarif öğrencisinde (9–11) 12. sınıfın konu verisi yok, sekme
+ * "Yakında" diye durmak yerine hiç çıkmıyor; `MAARIF_SINIF`a 12 yazılınca
+ * kod değişmeden kendiliğinden gelir. Eski programda (12/mezun) dört sınıf da
+ * dolu, sekmeler aynı.
+ */
 export function sinifSekmeleri(
   alan: PuanTuru | null,
   buYilSinif: number,
@@ -379,22 +382,21 @@ export function sinifSekmeleri(
   ilerlemeler: KonuIlerlemeleri,
 ): SinifSekmesi[] {
   const maarif = ogrenciMufredati(buYilSinif) === 'maarif'
-  return YKS_SINIFLARI.map((sinif): SinifSekmesi => {
+  return YKS_SINIFLARI.flatMap((sinif): SinifSekmesi[] => {
     const satirlar = sinifDersleri(sinif, alan, buYilSinif).flatMap((d) => d.konular)
-    const yakinda = maarif && sinif === HARITASIZ_SINIF
+    if (satirlar.length === 0) return []
     const toplam = satirlar.reduce((t, s) => t + konuOrani(satirDurumu(s, takip, ilerlemeler)), 0)
-    const bos = satirlar.length === 0 || yakinda
-    return {
-      sinif,
-      yuzde: bos ? null : Math.round((toplam / satirlar.length) * 100),
-      pasif: bos,
-      sen: sinif === buYilSinif,
-      haritasiz:
-        !maarif &&
-        sinif === HARITASIZ_SINIF &&
-        !satirlar.some((s) => satirKimlikleri(s).some((id) => HARITA_ESLEMESI[id] !== undefined)),
-      yakinda,
-    }
+    return [
+      {
+        sinif,
+        yuzde: Math.round((toplam / satirlar.length) * 100),
+        sen: sinif === buYilSinif,
+        haritasiz:
+          !maarif &&
+          sinif === HARITASIZ_SINIF &&
+          !satirlar.some((s) => satirKimlikleri(s).some((id) => HARITA_ESLEMESI[id] !== undefined)),
+      },
+    ]
   })
 }
 
