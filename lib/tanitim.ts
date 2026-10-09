@@ -172,14 +172,14 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'soru-form', hedef: 'soru-formu', kayit: 'soru', kisa: true, baslik: 'Ders ve sayılar', aciklama: 'Dersi seç, toplam, doğru ve yanlış sayını yaz.', ipucu: 'Kaydet’e dokun', tiklamali: true },
   { kimlik: 'soru-kaydedildi', hedef: 'soru-listesi', baslik: 'Hedefe işlendi', aciklama: 'Kaydın günlük hedefine eklendi.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'konu-takibi-ac', hedef: 'arac-konu-takibi', baslik: 'Konu Takibi', aciklama: 'Konu Takibi’ne dokun.', tiklamali: true },
-  { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'Öğrendiğin konunun solundaki daireye dokunup işaretle.', tiklamali: false },
+  { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'Dersi açınca konunun solundaki daireyle Bitirdim’i işaretlersin.', tiklamali: false },
   { kimlik: 'harita-ac', hedef: 'harita-ac', baslik: 'Konu haritası', aciklama: 'Alt menüde Harita’ya dokun.', tabletAciklama: 'Sağdaki menüde Harita’ya dokun.', tiklamali: true },
   { kimlik: 'harita-ders', hedef: 'harita-kart', dolgu: 14, baslik: 'Yeşil kitap', aciklama: 'Konuyu kısa kartlarla buradan çalışırsın.', tiklamali: false },
   { kimlik: 'harita-soru', hedef: 'harita-soru', dolgu: 14, baslik: 'Turuncu kitap', aciklama: 'Konunun sorularını çöz; biten konu takipte işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'deneme-ac', hedef: 'arac-deneme', baslik: 'Denemelerin', aciklama: 'Denemeler’e dokun; iki örnek deneme hazırladık.', tiklamali: true },
-  { kimlik: 'deneme-liste', hedef: 'deneme-listesi', baslik: 'Örnek denemeler', aciklama: 'Karta dokunursan ayrıntılı rapor açılır.', tiklamali: false },
+  { kimlik: 'deneme-liste', hedef: 'deneme-listesi', baslik: 'Örnek denemeler', aciklama: 'Karta dokunursan ders ders netlerin açılır.', tiklamali: false },
   { kimlik: 'deneme-ekle', hedef: 'deneme-ekle', baslik: 'Şimdi sıra sende', aciklama: 'Deneme ekle’ye dokun.', tiklamali: true },
-  { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Fotoğraftan okut', aciklama: 'Kâğıdı fotoğrafla, Rabi forma yazsın. İleri dersen biri hariç örnekle dolar.', tiklamali: false },
+  { kimlik: 'deneme-okut', hedef: 'deneme-okut', etkilesimli: true, baslik: 'Kâğıdı okut', aciklama: 'Okut’la kâğıdı fotoğrafla, Rabi forma yazsın. İleri dersen biri hariç örnekle dolar.', tiklamali: false },
   { kimlik: 'deneme-elle', hedef: 'deneme-bos-ders', kayit: 'deneme-ders', kisa: true, baslik: 'Bu ders sende', aciklama: 'Bu dersin doğru ve yanlış sayısını kendin yaz.', ipucu: 'Doğru ve yanlışı yaz', tiklamali: true },
   { kimlik: 'deneme-yanlis', hedef: 'deneme-yanlis-ekle', baslik: 'Yanlışını sakla', aciklama: 'Buradan yanlış sorularını fotoğraflayıp soru bankana ekleyebilirsin.', tiklamali: false },
   { kimlik: 'deneme-kaydet', hedef: 'deneme-kaydet', kayit: 'deneme', kisa: true, baslik: 'Denemeni kaydet', aciklama: 'Net hesaplandı. Kaydet’e dokun.', ipucu: 'Kaydet’e dokun', tiklamali: true },
@@ -187,8 +187,8 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türü', aciklama: 'Her tür ayrı hesaplanır; iki denemeden sonra açılır.', tiklamali: false },
   { kimlik: 'istatistik-son', hedef: 'istatistik-son-net', baslik: 'Son net', aciklama: 'Son netini ve bir öncekine göre farkını görürsün.', tiklamali: false },
   { kimlik: 'istatistik-ilerleyen', hedef: 'istatistik-ilerleyen', baslik: 'En çok ilerleyenler', aciklama: 'Son iki denemede neti en çok artan dersler.', tiklamali: false },
-  { kimlik: 'istatistik-kutular', hedef: 'istatistik-kutular', baslik: 'Güçlü ve zayıf yanların', aciklama: 'En güçlü ve en zayıf dersin, en yüksek ve en düşük netin.', tiklamali: false },
-  { kimlik: 'istatistik-karsilastir', hedef: 'istatistik-karsilastir', baslik: 'Denemeleri karşılaştır', aciklama: 'İki deneme seç, hangi derste kazandığını gör.', tiklamali: false },
+  { kimlik: 'istatistik-kutular', hedef: 'istatistik-kutular', baslik: 'Güçlü ve zayıf yanların', aciklama: 'En güçlü ve en kötü dersin, en yüksek ve en düşük netin.', tiklamali: false },
+  { kimlik: 'istatistik-karsilastir', hedef: 'istatistik-karsilastir', baslik: 'Deneme karşılaştır', aciklama: 'İki deneme seç, hangi derste kazandığını gör.', tiklamali: false },
 ]
 
 /*
@@ -206,7 +206,7 @@ export const HARITA_ADIMLARI: readonly TanitimAdimi[] = [
 export const POMODORO_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'pomodoro-prova', hedef: 'pomodoro-prova', baslik: 'İki çalışma modu', aciklama: 'Pomodoro çalışma-mola içindir, Deneme provası sınav süresi için.', tiklamali: false },
   { kimlik: 'pomodoro', hedef: 'pomodoro-calisma', baslik: 'Çalışma ayarları', aciklama: 'Dersi, süreleri ve ekranın açık kalmasını buradan ayarlarsın.', tiklamali: false },
-  { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Odak kilidi', aciklama: 'Dikkat dağıtan uygulamaları engeller, bildirimleri susturur; izin ister.', tiklamali: false },
+  { kimlik: 'pomodoro-kilit', hedef: 'pomodoro-kilit', baslik: 'Odak koruması', aciklama: 'Dikkat dağıtan uygulamaları engeller, bildirimleri susturur; izin ister.', tiklamali: false },
 ]
 /*
   Yapılacaklar: "+"ya dokunulunca ekleme sayfası açılıyor, alanları bilgi
@@ -250,8 +250,8 @@ export const ISTATISTIK_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'istatistik-tur', hedef: 'istatistik-turler', baslik: 'Deneme türü', aciklama: 'Örnek denemelerle gösteriyoruz. Her tür ayrı hesaplanır.', tiklamali: false },
   { kimlik: 'istatistik-son', hedef: 'istatistik-son-net', baslik: 'Son net', aciklama: 'Son netini ve bir öncekine göre farkını görürsün.', tiklamali: false },
   { kimlik: 'istatistik-ilerleyen', hedef: 'istatistik-ilerleyen', baslik: 'En çok ilerleyenler', aciklama: 'Son iki denemede neti en çok artan dersler.', tiklamali: false },
-  { kimlik: 'istatistik-kutular', hedef: 'istatistik-kutular', baslik: 'Güçlü ve zayıf yanların', aciklama: 'En güçlü ve en zayıf dersin, en yüksek ve en düşük netin.', tiklamali: false },
-  { kimlik: 'istatistik-karsilastir', hedef: 'istatistik-karsilastir', baslik: 'Denemeleri karşılaştır', aciklama: 'İki deneme seç, hangi derste kazandığını gör.', tiklamali: false },
+  { kimlik: 'istatistik-kutular', hedef: 'istatistik-kutular', baslik: 'Güçlü ve zayıf yanların', aciklama: 'En güçlü ve en kötü dersin, en yüksek ve en düşük netin.', tiklamali: false },
+  { kimlik: 'istatistik-karsilastir', hedef: 'istatistik-karsilastir', baslik: 'Deneme karşılaştır', aciklama: 'İki deneme seç, hangi derste kazandığını gör.', tiklamali: false },
 ]
 /*
   Tanıtım oyunu. Eskiden "Süre ve skor" adımı da vardı (sayaç dururken
@@ -268,13 +268,13 @@ export const OYUN_ADIMLARI: readonly TanitimAdimi[] = [
   // Tanıtım oyununda pas yok (`oyun-islem.tsx`, `pas` demoda tanımsız): 0.9.14'te
   // tuş takımındaki "Pas geç" kalktı, ortak pas demoya verilmedi. Rehber pas önermesin.
   { kimlik: 'soru-bir', hedef: 'demo-soru', ekHedefler: ['demo-islem'], baslik: 'Bir işlemi çöz', aciklama: 'Sonucu yaz ve Onayla’ya dokun.', tiklamali: true },
-  { kimlik: 'sonuc', hedef: 'demo-sonuc', baslik: 'Sonucun', aciklama: 'Doğru ve yanlışların burada. Bilemediklerin Oyun Bankası’na düşer.', tiklamali: false },
+  { kimlik: 'sonuc', hedef: 'demo-sonuc', baslik: 'Sonucun', aciklama: 'Bu turdaki doğru sayın burada. Bilemediklerin Oyun Bankası’na düşer.', tiklamali: false },
 ]
 export const BANKA_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'banka', hedef: 'demo-banka', baslik: 'Yanlışların burada', aciklama: 'Bilemediğin sorular buraya düşer; üç örnek hazırladık.', tiklamali: false },
   { kimlik: 'banka-liste', hedef: 'banka-liste', baslik: 'Soru listesi', aciklama: 'Her kartta soru, cevap ve yanlış sayın var; çiplerle süzersin.', tiklamali: false },
   { kimlik: 'banka-test', hedef: 'banka-genel-test', baslik: 'Genel test', aciklama: 'Bankadaki soruları karışık sorar; doğru bildiğin kalkar.', tiklamali: false },
-  { kimlik: 'banka-ogrendim', hedef: 'banka-ogrendim', baslik: 'Öğrendiysen kaldır', aciklama: 'Eminsen Öğrendim’e dokun. Örnekler tur bitince silinir.', tiklamali: false },
+  { kimlik: 'banka-ogrendim', hedef: 'banka-ogrendim', baslik: 'Öğrendiysen kaldır', aciklama: 'Eminsen Öğrendim’le soruyu kaldırırsın. Örnekler tur bitince silinir.', tiklamali: false },
 ]
 export const TUR_ADIMLARI: Record<TanitimTuru, readonly TanitimAdimi[]> = {
   ana_tur: TANITIM_ADIMLARI,
