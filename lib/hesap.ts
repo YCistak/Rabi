@@ -232,7 +232,12 @@ export function ilerlemisSinif(sinif: number, kayitliYil: number, buYil: number)
 
 /** "4 yılın üçü" gibi ifadelerde sayının Türkçe belirtme eki: 3 → "üçü". */
 export function yilSayisiYaz(sayi: number): string {
-  const yaziyla: Record<number, string> = { 1: 'biri', 2: 'ikisi', 3: 'üçü', 4: 'dördü' }
+  const yaziyla: Record<number, string> = {
+    1: 'biri',
+    2: 'ikisi',
+    3: 'üçü',
+    4: 'dördü',
+  }
   return yaziyla[sayi] ?? `${sayi} tanesi`
 }
 
@@ -334,7 +339,10 @@ export function elleObpKilitliMi(yillar: OkulYili[], elleGirilen: number | null)
  * kilit hiç devreye girmez, OBP de notlardan değil o sayıdan çıkardı. Girilen
  * not geçersizse (boş ya da sayı değil) hiçbir şey değişmiyor.
  */
-export function yilNotuSonrasiElleObp(elleGirilen: number | null, yeniNot: number | null): number | null {
+export function yilNotuSonrasiElleObp(
+  elleGirilen: number | null,
+  yeniNot: number | null,
+): number | null {
   return yeniNot !== null && Number.isFinite(yeniNot) ? null : elleGirilen
 }
 
@@ -422,9 +430,9 @@ export function hedefSerisi(kayitlar: GunlukKayit[], hedef: number, bugunIso: st
 
 // ---------------------------------------------------------------------------
 // Devamsızlık
-// Sınırlar kullanıcının kararı (2026-10): özürsüz 20, özürlü 10 gün; ikisi
-// birlikte 30. Not: MEB Ortaöğretim Kurumları Yönetmeliği MADDE 36 özürsüzü 10,
-// toplamı 30 gün sınırlıyor — sabitler bilerek kullanıcının istediği değerde.
+// MEB Ortaöğretim Kurumları Yönetmeliği MADDE 36: özürsüz devamsızlık 10 gün,
+// özürlü + özürsüz toplam 30 günü geçemez. Özürlüye ayrı sabit sınır yok; onun
+// payı toplamdan özürsüz kullanılanın çıkarılmasıyla kalır.
 // ---------------------------------------------------------------------------
 
 /**
@@ -492,15 +500,14 @@ export function enUzunYukselis(denemeler: Deneme[], sablonlar: Sablon[]): number
   return enIyi
 }
 
-/** Özürsüz devamsızlık sınırı (kullanıcı kararı, 2026-10). */
-export const OZURSUZ_SINIR = 20
-/** Özürlü (raporlu) devamsızlık sınırı (kullanıcı kararı, 2026-10). */
-export const OZURLU_SINIR = 10
+/** Özürsüz devamsızlık sınırı — MEB Ortaöğretim Kurumları Yönetmeliği Madde 36. */
+export const OZURSUZ_SINIR = 10
 /**
- * Özürlü ve özürsüz birlikte en fazla 30 gün.
+ * Özürlü ve özürsüz birlikte en fazla 30 gün (Madde 36).
  *
- * Bugünkü iki sınırın toplamına eşit; ayrı tutuluyor çünkü ana sayfa ve
- * ekranın başlığı "toplam" üzerinden konuşuyor.
+ * Özürlünün kendine ait sabit sınırı yok: özürlü çubuğunun sınırı
+ * `TOPLAM_SINIR - kullanılan özürsüz gün`, yani her özürsüz gün özürlü hakkını
+ * da düşürür.
  */
 export const TOPLAM_SINIR = 30
 
@@ -512,7 +519,9 @@ export type DevamsizlikOzeti = {
   ozursuz: number
   /** Özürsüz devamsızlıktan kalan gün. */
   ozursuzKalan: number
-  /** Özürlü devamsızlıktan kalan gün. */
+  /** Özürlü çubuğunun sınırı: `TOPLAM_SINIR` - kullanılan özürsüz gün. */
+  ozurluSinir: number
+  /** Özürlü devamsızlıktan kalan gün (toplamdan kalanla aynı). */
   ozurluKalan: number
   /** Toplam devamsızlıktan (özürlü + özürsüz) kalan gün. */
   toplamKalan: number
@@ -549,21 +558,22 @@ export function devamsizlikOzeti(kayitlar: Devamsizlik[]): DevamsizlikOzeti {
 
   const toplam = ozurlu + ozursuz
   const ozursuzKalan = yuvarla(OZURSUZ_SINIR - ozursuz, 1)
-  const ozurluKalan = yuvarla(OZURLU_SINIR - ozurlu, 1)
+  const ozurluSinir = yuvarla(TOPLAM_SINIR - ozursuz, 1)
+  const ozurluKalan = yuvarla(ozurluSinir - ozurlu, 1)
   const toplamKalan = yuvarla(TOPLAM_SINIR - toplam, 1)
-  const asildi = ozursuzKalan < 0 || ozurluKalan < 0 || toplamKalan < 0
+  const asildi = ozursuzKalan < 0 || toplamKalan < 0
 
   return {
     ozurlu: yuvarla(ozurlu, 1),
     ozursuz: yuvarla(ozursuz, 1),
     ozursuzKalan,
+    ozurluSinir,
     ozurluKalan,
     toplamKalan,
     asildi,
     uyari:
       !asildi &&
       (toplam >= TOPLAM_SINIR * DEVAMSIZLIK_UYARI_ORANI ||
-        ozursuz >= OZURSUZ_SINIR * DEVAMSIZLIK_UYARI_ORANI ||
-        ozurlu >= OZURLU_SINIR * DEVAMSIZLIK_UYARI_ORANI),
+        ozursuz >= OZURSUZ_SINIR * DEVAMSIZLIK_UYARI_ORANI),
   }
 }

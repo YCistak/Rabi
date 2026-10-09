@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import { AlertTriangle, CalendarDays, ChevronDown, Plus, X } from 'lucide-react'
 import type { Devamsizlik, DevamsizlikTuru } from '@/lib/types'
 import {
-  OZURLU_SINIR,
   OZURSUZ_SINIR,
   TOPLAM_SINIR,
   dersYilininKayitlari,
@@ -14,7 +13,16 @@ import {
   tarihYaz,
 } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, tariheYaz, yediGunlukSerit, yeniId } from '@/lib/utils'
-import { Alan, BaslikSatiri, Buton, Kart, Not, Onay, SecimSatiri, useKapatmaOnayi } from '@/components/ui'
+import {
+  Alan,
+  BaslikSatiri,
+  Buton,
+  Kart,
+  Not,
+  Onay,
+  SecimSatiri,
+  useKapatmaOnayi,
+} from '@/components/ui'
 import { AY_ADLARI, HaftaSeridi, Takvim, type GunIsareti } from '@/components/takvim'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
@@ -117,7 +125,13 @@ export function DevamsizlikEkrani({
     if (gelecekGun || seciliGununKaydi) return
     setKayitlar((onceki) => [
       ...onceki,
-      { id: yeniId(), tarih: secili, tur, yarimGun, not: not.trim() || undefined },
+      {
+        id: yeniId(),
+        tarih: secili,
+        tur,
+        yarimGun,
+        not: not.trim() || undefined,
+      },
     ])
     setPanelAcik(false)
   }
@@ -155,11 +169,12 @@ export function DevamsizlikEkrani({
             </p>
           </div>
 
-          {/* Özürlü üstte, özürsüz altta (kullanıcı istedi); ikisi aynı çubuk. */}
+          {/* Özürlü üstte, özürsüz altta (kullanıcı istedi). Özürlünün sınırı toplam 30
+          günden özürsüz kullanılanın düşülmesiyle kalır (MEB Madde 36). */}
           <HakCubugu
             baslik="Özürlü"
             kullanilan={ozet.ozurlu}
-            sinir={OZURLU_SINIR}
+            sinir={ozet.ozurluSinir}
             asildi={ozet.ozurluKalan < 0}
           />
           <div className="mt-3">
@@ -280,7 +295,9 @@ export function DevamsizlikEkrani({
             aria-expanded={tumKayitlarAcik}
             className="flex w-full items-center gap-2 px-4 py-3.5 text-left active:bg-muted/40"
           >
-            <span className="font-display text-[15px] font-extrabold tracking-tight">Tüm kayıtlar</span>
+            <span className="font-display text-[15px] font-extrabold tracking-tight">
+              Tüm kayıtlar
+            </span>
             <span className="rakam ml-auto text-[12.5px] font-bold text-muted-foreground">
               {siraliKayitlar.length} kayıt
             </span>
@@ -317,6 +334,8 @@ export function DevamsizlikEkrani({
       {panelAcik && (
         <DevamsizlikEkleSayfasi
           tarih={secili}
+          ozursuzKalan={ozet.ozursuzKalan}
+          ozurluKalan={ozet.ozurluKalan}
           onKapat={() => setPanelAcik(false)}
           onKaydet={ekle}
         />
@@ -429,7 +448,7 @@ function HakCubugu({
   sinir: number
   asildi: boolean
 }) {
-  const oran = Math.min(1, kullanilan / sinir)
+  const oran = sinir > 0 ? Math.min(1, kullanilan / sinir) : 1
 
   return (
     <div className="flex items-center gap-2.5">
@@ -445,7 +464,10 @@ function HakCubugu({
       </div>
       <p className="rakam shrink-0 text-[15px] font-black text-primary">
         {gunYaz(kullanilan)}
-        <span className="rakam text-xs font-bold text-muted-foreground"> / {sinir}</span>
+        <span className="rakam text-xs font-bold text-muted-foreground">
+          {' '}
+          / {gunYaz(Math.max(0, sinir))}
+        </span>
       </p>
     </div>
   )
@@ -454,10 +476,14 @@ function HakCubugu({
 /** Ekleme alt sayfası: tür, yarım gün ve not. */
 function DevamsizlikEkleSayfasi({
   tarih,
+  ozursuzKalan,
+  ozurluKalan,
   onKapat,
   onKaydet,
 }: {
   tarih: string
+  ozursuzKalan: number
+  ozurluKalan: number
   onKapat: () => void
   onKaydet: (tur: DevamsizlikTuru, yarimGun: boolean, not: string) => void
 }) {
@@ -467,7 +493,9 @@ function DevamsizlikEkleSayfasi({
   const [yarimGun, setYarimGun] = useState(false)
   const [not, setNot] = useState('')
   // Yalnız yazılmış not kaybolacaksa sorar; tür seçimi bir dokunuşla geri gelir.
-  const kapatmaOnayi = useKapatmaOnayi({ aciklama: 'Yazdığın not kaydedilmeden pencere kapanır.' })
+  const kapatmaOnayi = useKapatmaOnayi({
+    aciklama: 'Yazdığın not kaydedilmeden pencere kapanır.',
+  })
 
   return (
     <div
@@ -499,13 +527,13 @@ function DevamsizlikEkleSayfasi({
         <div className="flex flex-col gap-2">
           <SecimSatiri
             ad="Özürsüz"
-            ornek={`Kalan ${OZURSUZ_SINIR} günden düşer`}
+            ornek={`Kalan ${gunYaz(Math.max(0, ozursuzKalan))} günden düşer`}
             secili={tur === 'ozursuz'}
             onClick={() => setTur('ozursuz')}
           />
           <SecimSatiri
             ad="Özürlü (raporlu)"
-            ornek={`Kalan ${OZURLU_SINIR} günden düşer`}
+            ornek={`Kalan ${gunYaz(Math.max(0, ozurluKalan))} günden düşer`}
             secili={tur === 'ozurlu'}
             onClick={() => setTur('ozurlu')}
           />
