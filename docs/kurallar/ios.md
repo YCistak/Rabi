@@ -66,8 +66,11 @@ reddedildi.
 - Ses oturumu `.playback` + `.mixWithOthers` (`AppDelegate.swift`): sessizde de çalar,
   arkadaki müziği kesmez. Sayfa ve iç kutularda kaydırma çubuğu yok
   (`showsVerticalScrollIndicator`, `globals.css`).
-- iPhone + iPad (`TARGETED_DEVICE_FAMILY = "1,2"`); iPad'de `--olcek` zoom,
-  `UIRequiresFullScreen` yok, dört yön açık; iPhone yalnız dikey.
+- **1.0.0 yalnız iPhone** (`TARGETED_DEVICE_FAMILY = 1`, ana hedef ve uzantılar;
+  kullanıcı kararı, 2026-10): iPad desteği sonra eklenebilir (tersi App Store'da yasak:
+  iPad'i bir kez destekleyen uygulama geri çekemez). iPhone yalnız dikey. iPad'e özgü
+  kalıntılar (`--olcek` zoom, Info.plist'te `~ipad` yönleri) zararsız, iPad açılırsa
+  oradan devam edilir.
 - **Windows'ta derlenmez:** CI `.github/workflows/ios.yml`. `npm run sync:ios` (Windows
   yollarını `scripts/ios-yol-duzelt.mjs` düzeltir), çıplak `cap sync ios` değil.
 - **Yayın:** `v*` etiketi Play'e (varsayılan kapalı test) otomatik yükler (kurulum ve

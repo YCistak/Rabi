@@ -105,10 +105,9 @@ describe('Maarif tablosu', () => {
     }
   })
 
-  it('Maarif 12 vermiyor; "henüz yok" olan hiçbir konu 9–11 haritasına eşli değil', () => {
+  it('"henüz yok" olan hiçbir konu 9–11 haritasına eşli değil', () => {
     const yok = tumYksKonulari().filter((k) => maarifSinifi(k.id) === HENUZ_YOK)
     expect(yok.length).toBeGreaterThan(0)
-    for (const k of tumYksKonulari()) expect(maarifSinifi(k.id), k.id).not.toBe(12)
     for (const k of yok) expect(eslemeSinifi(HARITA_ESLEMESI[k.id] ?? []), k.id).toBeNull()
   })
 
@@ -219,34 +218,49 @@ describe('varsayılan sınıf', () => {
 })
 
 describe('sinifSekmeleri — ekranın üstü', () => {
-  it('dört sekme (TYT/AYT ve "Tümü" yok); kendi sınıfında "sen"', () => {
-    const sekmeler = sinifSekmeleri('say', 10, BOS_TAKIP, {})
+  it('sınıf sekmeleri (TYT/AYT ve "Tümü" yok); kendi sınıfında "sen"', () => {
+    const sekmeler = sinifSekmeleri('say', 12, BOS_TAKIP, {})
     expect(sekmeler.map((s) => s.sinif)).toEqual([9, 10, 11, 12])
-    expect(sekmeler.filter((s) => s.sen).map((s) => s.sinif)).toEqual([10])
+    expect(sekmeler.filter((s) => s.sen).map((s) => s.sinif)).toEqual([12])
+    expect(sinifSekmeleri('say', 10, BOS_TAKIP, {}).filter((s) => s.sen).map((s) => s.sinif)).toEqual([10])
     expect(sinifSekmeleri('say', 13, BOS_TAKIP, {}).some((s) => s.sen)).toBe(false)
   })
 
-  it('9–11 (Maarif): 12 pasif ve "Yakında", öteki sınıflar açık', () => {
-    for (const ogrenci of [9, 10, 11]) {
+  it('9–11 ve bilinmeyen (Maarif): 12. sınıf verisi yokken 12 sekmesi hiç listelenmiyor', () => {
+    // Bugünkü veri: Maarif'te hiçbir konu 12'ye atanmadı.
+    expect(tumYksKonulari().some((k) => maarifSinifi(k.id) === 12)).toBe(false)
+    for (const ogrenci of [9, 10, 11, Number.NaN]) {
       for (const alan of ['say', 'ea', 'soz', 'dil', null] as const) {
         const sekmeler = sinifSekmeleri(alan, ogrenci, BOS_TAKIP, {})
-        expect(sekmeler.find((s) => s.sinif === 12), `${alan} ${ogrenci}`).toMatchObject({
-          pasif: true,
-          yakinda: true,
-          haritasiz: false,
-          yuzde: null,
-        })
-        expect(sekmeler.filter((s) => s.sinif !== 12).every((s) => !s.pasif)).toBe(true)
+        expect(sekmeler.map((s) => s.sinif), `${alan} ${ogrenci}`).toEqual([9, 10, 11])
       }
     }
   })
 
-  it('12 ve mezun (eski program): 12 açık, "Yakında" yok; harita yalnız Matematik görünüyorsa var', () => {
+  it('Maarif 12 verisi eklenince 12 sekmesi kod değişmeden kendiliğinden görünüyor', () => {
+    // Veri eklenmiş gibi: "henüz yok" bir TYT konusu geçici olarak 12'ye yazılıyor.
+    const tablo = MAARIF_SINIF as Record<string, (typeof MAARIF_SINIF)[string]>
+    const id = 'tyt-trk-ogeler'
+    const eski = tablo[id]
+    expect(eski).toBe(HENUZ_YOK)
+    tablo[id] = 12
+    try {
+      const sekmeler = sinifSekmeleri('say', 10, BOS_TAKIP, {})
+      expect(sekmeler.map((s) => s.sinif)).toEqual([9, 10, 11, 12])
+      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ yuzde: 0, sen: false, haritasiz: false })
+    } finally {
+      tablo[id] = eski
+    }
+  })
+
+  it('12 ve mezun (eski program): dört sekme de açık; harita yalnız Matematik görünüyorsa var', () => {
     for (const ogrenci of [12, 13]) {
+      for (const alan of ['say', 'ea', 'soz', 'dil', null] as const) {
+        expect(sinifSekmeleri(alan, ogrenci, BOS_TAKIP, {}).map((s) => s.sinif)).toEqual([9, 10, 11, 12])
+      }
       const sekmeler = sinifSekmeleri('ea', ogrenci, BOS_TAKIP, {})
-      expect(sekmeler.some((s) => s.yakinda)).toBe(false)
       // EA'da AYT Matematik görünüyor ve 12. sınıf konuları mat12 destelerine eşli.
-      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ pasif: false, haritasiz: false, yuzde: 0 })
+      expect(sekmeler.find((s) => s.sinif === 12)).toMatchObject({ haritasiz: false, yuzde: 0 })
     }
   })
 

@@ -29,9 +29,10 @@ export type YksSinif = 9 | 10 | 11 | 12
 export const YKS_SINIFLARI: readonly YksSinif[] = [9, 10, 11, 12]
 
 /**
- * Haritası (Maarif'te programı) olmayan sınıf — Maarif'te "Yakında". Eski
- * programda 12 açık; harita yalnız Matematik'te var, sekmedeki "harita yok"
- * görünen satırlardan hiçbiri haritaya eşli değilse yazılır (`takip.ts`).
+ * Haritası tam olmayan sınıf. Eski programda 12 açık; harita yalnız bazı
+ * derslerde var, sekmedeki "harita yok" görünen satırlardan hiçbiri haritaya
+ * eşli değilse yazılır (`takip.ts`). Maarif'te 12'nin konu verisi yok, sekme
+ * hiç listelenmiyor (`sinifSekmeleri`).
  */
 export const HARITASIZ_SINIF: YksSinif = 12
 
@@ -90,12 +91,13 @@ export function eslemeSinifi(desteler: readonly string[]): YksSinif | null {
  * `lib/konu/maarif/iskelet.json`; eşleme ölçüsüne yetmese de). `HENUZ_YOK`
  * Maarif 9–11'de bulunamayan konu: 2018'de 9–11'de okunup Maarif'e girmeyen
  * konular (Polinomlar, Mitoz-Mayoz, Kalıtım, Tork, Tanzimat…) büyük olasılıkla
- * Maarif'in 12. sınıfına kaydı. Program yayımlanınca bu satırlar sınıf alır.
+ * Maarif'in 12. sınıfına kaydı. Program yayımlanınca bu satırlar sınıf alır;
+ * ilk 12 yazıldığında 12 sekmesi kod değişmeden açılır (`sinifSekmeleri`).
  *
  * Felsefe ve Din Kültürü iskelette yok (Maarif programları uygulamaya
  * alınmadı); 2018'deki sınıflarıyla duruyorlar — 12. sınıf yarıları hariç.
  */
-export const MAARIF_SINIF: Readonly<Record<string, Exclude<YksSinif, 12> | typeof HENUZ_YOK>> = {
+export const MAARIF_SINIF: Readonly<Record<string, YksSinif | typeof HENUZ_YOK>> = {
   // --- TYT Türkçe --------------------------------------------------------
   // Maarif 10 Sözcük Türleri ve Fiiller destesinin yanında; cümle bilgisi
   // ve anlatım bozuklukları Maarif 9–11 dil bilgisinde yok.
@@ -708,7 +710,7 @@ export function sinifAtamasi(konuId: string, ogrenciSinifi: number): SinifYeri {
 
 /**
  * Bir YKS dersinin seçili sınıftaki konuları, müfredat sırasıyla. Maarif'te
- * 12 boş (sekme "Yakında") ve "henüz yok" konular hiçbir sınıfta yok.
+ * 12 boş (sekme listelenmiyor) ve "henüz yok" konular hiçbir sınıfta yok.
  */
 export function sinifKonulari(ders: YksDers, sinif: YksSinif, ogrenciSinifi: number): YksKonu[] {
   return ders.konular.filter((k) => sinifAtamasi(k.id, ogrenciSinifi) === sinif)

@@ -174,13 +174,13 @@ export function KonuTakibiEkrani({
 
   const sekmeler = useMemo(() => sinifSekmeleri(alan, sinif, takip, ilerlemeler), [alan, sinif, takip, ilerlemeler])
   /*
-    Görünen sınıf: seçilen, ama pasifse (oturumdan dönen sekme artık boş,
-    Maarif'te 12) önce öğrencinin sınıfı, o da olmazsa ilk açık sekme.
-    Tanıtım turu her zaman öğrencinin sınıfında.
+    Görünen sınıf: seçilen, ama listede yoksa (oturumdan dönen sekme artık
+    boş; Maarif'te 12 hiç listelenmiyor) önce öğrencinin sınıfı, o da yoksa
+    ilk sekme. Tanıtım turu her zaman öğrencinin sınıfında.
   */
-  const secilebilir = (s: YksSinif) => sekmeler.some((x) => x.sinif === s && !x.pasif)
+  const secilebilir = (s: YksSinif) => sekmeler.some((x) => x.sinif === s)
   const varsayilan = varsayilanSinif(sinif)
-  const yedek = secilebilir(varsayilan) ? varsayilan : (sekmeler.find((x) => !x.pasif)?.sinif ?? varsayilan)
+  const yedek = secilebilir(varsayilan) ? varsayilan : (sekmeler[0]?.sinif ?? varsayilan)
   const gorunenSinif: YksSinif = !tanitimda && secilebilir(seciliSinif) ? seciliSinif : yedek
 
   const dersler = useMemo(() => sinifDersleri(gorunenSinif, alan, sinif), [gorunenSinif, alan, sinif])
@@ -1002,9 +1002,10 @@ function KonuKarti({
  * aynı "sen" işareti, altında küçük yüzde. TYT/AYT ayrımı ve "Tümü" yok
  * (kullanıcı kaldırttı, 2026-10). 12 müfredata göre: 12. sınıf ve mezunda
  * (2018 programı) **açık**; görünen satırların hiçbiri haritaya eşli değilse
- * "harita yok" yazıyor (12'de harita yalnız Matematik'te); 9–11'de
- * (Maarif) haritadaki gibi pasif ve "Yakında" rozetli. Yüzde o sınıfın
- * satırlarındaki dairelerin ortalaması (`sinifSekmeleri`).
+ * "harita yok" yazıyor. 9–11'de (Maarif) 12'nin konu verisi yok, sekme hiç
+ * çizilmiyor ("Yakında" rozeti kullanıcının isteğiyle kalktı, 2026-10); sütun
+ * sayısı listelenen sekme sayısı. Yüzde o sınıfın satırlarındaki dairelerin
+ * ortalaması (`sinifSekmeleri`).
  */
 function SinifSekmesi({
   sekmeler,
@@ -1018,24 +1019,27 @@ function SinifSekmesi({
   onSec: (sinif: YksSinif) => void
 }) {
   return (
-    <div role="group" aria-label="Sınıf" className="mb-3 grid grid-cols-4 gap-1 rounded-[18px] bg-muted/70 p-1">
-      {sekmeler.map(({ sinif, yuzde, pasif, sen, haritasiz, yakinda }) => {
+    <div
+      role="group"
+      aria-label="Sınıf"
+      className="mb-3 grid gap-1 rounded-[18px] bg-muted/70 p-1"
+      style={{ gridTemplateColumns: `repeat(${sekmeler.length}, minmax(0, 1fr))` }}
+    >
+      {sekmeler.map(({ sinif, yuzde, sen, haritasiz }) => {
         const seciliMi = sinif === secili
-        const etiket = `${sinif}. sınıf${sen ? ', senin sınıfın' : ''}${
-          yakinda ? ', yakında' : pasif ? ', konu yok' : `, yüzde ${yuzde}`
-        }${haritasiz && !pasif ? ', haritası yok' : ''}`
+        const etiket = `${sinif}. sınıf${sen ? ', senin sınıfın' : ''}, yüzde ${yuzde}${
+          haritasiz ? ', haritası yok' : ''
+        }`
         return (
           <button
             key={sinif}
             type="button"
-            disabled={pasif}
             onClick={() => onSec(sinif)}
             aria-pressed={seciliMi}
             aria-label={etiket}
             className={cn(
               'relative flex min-h-[52px] min-w-0 flex-col items-center justify-center rounded-[14px] transition',
               seciliMi ? 'golge-kart bg-card text-foreground' : 'text-muted-foreground active:bg-card/60',
-              pasif && (yakinda ? 'opacity-60' : 'opacity-50'),
             )}
           >
             {sen && (
@@ -1047,20 +1051,13 @@ function SinifSekmesi({
               </span>
             )}
             <span className="rakam font-display text-[16px] leading-tight font-extrabold">{sinif}.</span>
-            {yakinda ? (
-              // Haritanın sınıf sekmesindeki rozetin aynısı (`konu-haritasi.tsx`).
-              <span className="mt-0.5 rounded-full bg-background px-1.5 text-[9.5px] leading-[15px] font-extrabold">
-                Yakında
-              </span>
-            ) : (
-              <span
-                className="rakam mt-0.5 text-[11px] leading-[15px] font-bold"
-                style={seciliMi && !pasif ? { color: r.koyu } : undefined}
-              >
-                {pasif ? '—' : `%${yuzde}`}
-              </span>
-            )}
-            {haritasiz && !pasif && (
+            <span
+              className="rakam mt-0.5 text-[11px] leading-[15px] font-bold"
+              style={seciliMi ? { color: r.koyu } : undefined}
+            >
+              %{yuzde}
+            </span>
+            {haritasiz && (
               <span aria-hidden className="text-[9px] leading-[11px] font-extrabold opacity-80">
                 harita yok
               </span>
