@@ -11,7 +11,8 @@
     - Uygulama sürümü + telefon modeli → diğer tanılama verisi (OtherDiagnosticData)
     - Rastgele kalıcı cihaz adı (`mavi-tavsan-42`, lib/cihaz-adi.ts) → cihaz
       kimliği (DeviceID); Play Data Safety'de de "cihaz veya diğer kimlikler".
-  Hesap/giriş olmadığı için hiçbiri kimliğe bağlı (Linked) değil.
+  Hesap/giriş yok ama bildirimler kalıcı takma adla (cihaz adı) birbirine
+  ilişkilendirilebildiği için üçü de bağlı (Linked) beyan edildi; izleme yok.
 
   Gerekçe isteyen API'ler (required reason API):
     - UserDefaults: EkranSuresiEklentisi.swift (odak seçimi), CanliSayacEklentisi.swift
@@ -37,7 +38,7 @@
 			<key>NSPrivacyCollectedDataType</key>
 			<string>NSPrivacyCollectedDataTypeOtherUserContent</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<false/>
+			<true/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypePurposes</key>
@@ -49,7 +50,7 @@
 			<key>NSPrivacyCollectedDataType</key>
 			<string>NSPrivacyCollectedDataTypeOtherDiagnosticData</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<false/>
+			<true/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypePurposes</key>
@@ -61,7 +62,7 @@
 			<key>NSPrivacyCollectedDataType</key>
 			<string>NSPrivacyCollectedDataTypeDeviceID</string>
 			<key>NSPrivacyCollectedDataTypeLinked</key>
-			<false/>
+			<true/>
 			<key>NSPrivacyCollectedDataTypeTracking</key>
 			<false/>
 			<key>NSPrivacyCollectedDataTypePurposes</key>
