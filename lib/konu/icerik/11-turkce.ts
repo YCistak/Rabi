@@ -25,12 +25,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Karagöz ile Hacivat’ın farklı dil kullanımı mizah yaratır.', true, 'Sözler sık sık yanlış anlaşılır.'],
         ['Oyundaki bütün tipler aynı söz varlığını kullanır.', false, 'Tiplerin dili çevre ve kişilik farkı taşır.'],
       ],
-      secimler: [
-        ['Asıl olayların işlendiği bölüm?', 'Fasıl', 'Mukaddime', 'Fasıl oyunun ana bölümüdür.'],
-        ['Daha süslü konuşan ana tip?', 'Hacivat', 'Karagöz', 'Hacivat’ın dili daha ağdalıdır.'],
-        ['Karagöz’de mizahı sık doğuran şey?', 'Yanlış anlama', 'Sabit dekor', 'Dil farkı söz oyunlarına yol açar.'],
-      ],
-      kontrol: ['Karagöz ile Hacivat arasındaki belirgin fark?', 'Dil kullanımı', 'Perdenin rengi', 'Konuşma biçimleri çatışmayı kurar.'], kontrolKarti: 2,
     },
     {
       id: 'trk11-mektup', ad: 'Mektup ve Dilekçe',
@@ -49,12 +43,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Hitap ve imza mektubun yapısında işlev taşır.', true, 'Alıcı ve göndereni belirginleştirir.'],
         ['Özel mektup yalnız resmî kurumlara yazılır.', false, 'Kişisel alıcıya yöneliktir.'],
       ],
-      secimler: [
-        ['Kuruma talep ileten metin?', 'Dilekçe', 'Masal', 'Dilekçe kuruma başvuru biçimidir.'],
-        ['Yakın arkadaşa yazılan mektupta ne öne çıkar?', 'Kişisel ses', 'Resmî kalıp', 'Alıcıyla ilişki üslubu belirler.'],
-        ['Dilekçede temel bilgi hangisidir?', 'Açık istek', 'Olay örgüsü', 'Kurum ne istendiğini anlamalıdır.'],
-      ],
-      kontrol: ['Dilekçede istek nasıl yazılmalı?', 'Açık ve ölçülü', 'Kapalı ve dolaylı', 'Başvuru amacının anlaşılması gerekir.'], kontrolKarti: 4,
     },
     {
       id: 'trk11-eposta', ad: 'E-posta ve İletişim',
@@ -73,12 +61,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Göndermeden önce ekleri kontrol etmek yararlıdır.', true, 'Unutulan ek iletiyi eksik bırakır.'],
         ['Belirsiz sözler iletişimi her zaman kolaylaştırır.', false, 'Yanlış anlamaya yol açabilir.'],
       ],
-      secimler: [
-        ['E-postanın amacını ilk gösteren yer?', 'Konu satırı', 'İmza rengi', 'Konu satırı içeriği özetler.'],
-        ['İletişim engeli örneği?', 'Eksik bağlam', 'Açık istek', 'Bağlam eksikse alıcı farklı anlayabilir.'],
-        ['Gönderim öncesi ne denetlenir?', 'Alıcı ve ekler', 'Yalnız yazı tipi', 'Yanlış alıcı ve eksik ek sorun yaratır.'],
-      ],
-      kontrol: ['E-postada üslubu ne belirler?', 'Alıcı ve amaç', 'Ekran boyu', 'İletinin tonu yazılan kişiye ve amaca uyar.'], kontrolKarti: 1,
     },
   ],
   [
@@ -99,12 +81,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Anlatıcı ile kahraman aynı kavram değildir.', true, 'Anlatıcı olayı aktaran sestir.'],
         ['İki metni karşılaştırırken metinden kanıt aramak gereksizdir.', false, 'Yorum somut örnekle desteklenir.'],
       ],
-      secimler: [
-        ['Hikâyenin yapı unsuru hangisi?', 'Mekân', 'Yazı tipi', 'Olayın geçtiği yer yapı unsurudur.'],
-        ['Kültür izini hangi ayrıntı taşıyabilir?', 'Tören ve deyim', 'Sayfa numarası', 'Yaşam biçimi dilde ve olayda görünür.'],
-        ['Metinleri karşılaştırmada ne gerekir?', 'Metinden kanıt', 'Yalnız izlenim', 'Yorum ayrıntıyla temellendirilir.'],
-      ],
-      kontrol: ['Hikâyede olayı aktaran ses?', 'Anlatıcı', 'Okur', 'Anlatıcı olayları okura aktarır.'], kontrolKarti: 2,
     },
     {
       id: 'trk11-orhun', ad: 'Orhun Yazıtları',
@@ -123,12 +99,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Metni tarihî bağlamında okumak anlamayı kolaylaştırır.', true, 'Dönemin koşulları sözün anlamını etkiler.'],
         ['Yazıtlarda halka seslenme bulunmaz.', false, 'Doğrudan hitap belirgin anlatım özelliğidir.'],
       ],
-      secimler: [
-        ['Orhun Yazıtları hangi yüzeye yazıldı?', 'Taşa', 'Kâğıt gazeteye', 'Anıt taşlar üzerindedir.'],
-        ['Yazıtlarda öne çıkan düşünce?', 'Birlik ve yönetim', 'Yalnız moda', 'Halka devlet ve birlik üzerine seslenilir.'],
-        ['Metni yorumlarken neye bakılır?', 'Tarihî bağlama', 'Yalnız bugünkü kullanıma', 'Olay ve söz kendi döneminde değerlendirilir.'],
-      ],
-      kontrol: ['Orhun’da metnin hedef kitlesi kimdir?', 'Türk halkı', 'Yalnız yabancı elçiler', 'Yazıtlar halka ve yöneticilere öğüt verir.'], kontrolKarti: 3,
     },
     {
       id: 'trk11-divan-ani', ad: 'Dîvânu Lugâti’t-Türk ve Anı',
@@ -147,12 +117,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Anlatıcının bakış açısı anıyı etkileyebilir.', true, 'Hatırlama ve seçim anlatıda rol oynar.'],
         ['Sözlük ve anı aynı yazılış amacına sahiptir.', false, 'Biri sözcüğü açıklar, diğeri yaşantıyı anlatır.'],
       ],
-      secimler: [
-        ['Dîvânu Lugâti’t-Türk’ün yazarı?', 'Kâşgarlı Mahmud', 'Bilge Kağan', 'Eseri Kâşgarlı Mahmud hazırladı.'],
-        ['Yaşanmış olayı sonradan anlatan tür?', 'Anı', 'Dilekçe', 'Anı geçmiş yaşantıya döner.'],
-        ['Anıyı incelerken neyi sorgularız?', 'Bakış açısını', 'Yalnız kâğıt rengini', 'Anlatıcı olayları seçerek aktarır.'],
-      ],
-      kontrol: ['Sözlükte atasözü ne gösterir?', 'Kültür ve dil ilişkisini', 'Yalnız sayfa sayısını', 'Atasözü kullanım ve kültür hakkında ipucu verir.'], kontrolKarti: 1,
     },
     {
       id: 'trk11-asik', ad: 'Âşık Geleneği ve Atışma',
@@ -171,12 +135,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Hece ölçüsü halk şiirinde sık kullanılır.', true, 'Âşık şiirinde de yaygındır.'],
         ['Âşık geleneği yalnız yazılı kitaplarla aktarılır.', false, 'Sözlü icra temel bir yoldur.'],
       ],
-      secimler: [
-        ['Şairin şiirde kullandığı takma ad?', 'Mahlas', 'Redif', 'Mahlas şairin adıdır.'],
-        ['Atışmanın ayırt edici yanı?', 'Karşılıklı söyleyiş', 'Tek kişinin sessiz okuması', 'Âşıklar birbirine yanıt verir.'],
-        ['Halk şiirinde sık ölçü?', 'Hece', 'Metre', 'Hece ölçüsü yaygındır.'],
-      ],
-      kontrol: ['Atışmada neyi izlemek gerekir?', 'Karşılıklı yanıtı', 'Yalnız sahne boyunu', 'Anlam soru-cevap ilişkisiyle ilerler.'], kontrolKarti: 2,
     },
     {
       id: 'trk11-muze', ad: 'Müze İzlenimi ve Kültürel Anlatım',
@@ -195,12 +153,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Eserin kaynak bilgisini belirtmek gerekir.', true, 'Bilgi ve görselin kaynağı görünür olmalıdır.'],
         ['Eser adlarını sıralamak tek başına izlenim yazısıdır.', false, 'Seçim ve değerlendirme gerekir.'],
       ],
-      secimler: [
-        ['İzlenim yazısında hangi ikili gerekir?', 'Gözlem ve yorum', 'Yalnız eser sayısı', 'Görülenle etkisi birlikte anlatılır.'],
-        ['Doğrulanmış bilgi nereden alınır?', 'Müze açıklamasından', 'Rastgele tahminden', 'Kaynak açıklaması kullanılmalıdır.'],
-        ['Sonuç bölümünde ne yapılır?', 'Öğrenilen değerlendirilir', 'Yeni konu açılır', 'Gezinin anlamı sonuçta toplanır.'],
-      ],
-      kontrol: ['İzlenimi eser listesinden ne ayırır?', 'Kişisel değerlendirme', 'Daha çok sayı', 'Yazar gördüğünü neden önemli bulduğunu açıklar.'], kontrolKarti: 1,
     },
   ],
   [
@@ -221,12 +173,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Yazarın yaşamı romanın üslubunu etkileyebilir.', true, 'Deneyimler anlatıma yansıyabilir.'],
         ['Her roman doğrudan yazarının anısıdır.', false, 'Roman kurmaca bir anlatıdır.'],
       ],
-      secimler: [
-        ['Roman olayını aktaran ses?', 'Anlatıcı', 'Okur', 'Anlatıcı metnin içindeki sestir.'],
-        ['Kişi çözümlemesinde ne aranır?', 'Amaç ve çatışma', 'Yalnız saç rengi', 'Davranışı yönlendiren etkenler incelenir.'],
-        ['Yaşam-eser bağını ne destekler?', 'Metin örneği', 'Yalnız söylenti', 'Yorum metinle kanıtlanır.'],
-      ],
-      kontrol: ['Romandaki “ben” kimdir?', 'Anlatıcı', 'Her zaman yazar', 'Birinci kişi anlatıcı yazar olmak zorunda değildir.'], kontrolKarti: 2,
     },
     {
       id: 'trk11-biyografi', ad: 'Biyografi ve Tezkire',
@@ -245,12 +191,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Kronoloji yaşamın değişimini görmeye yardım eder.', true, 'Olayların sırası anlam kurar.'],
         ['Biyografi ile tezkire tamamen aynı üslupla yazılmak zorundadır.', false, 'Dönem ve amaçları farklıdır.'],
       ],
-      secimler: [
-        ['Şairler hakkında eski derleme türü?', 'Tezkire', 'Dilekçe', 'Tezkire edebiyat kişilerini tanıtır.'],
-        ['Biyografide güvenilirliği ne artırır?', 'Kaynak karşılaştırma', 'Tahmini kesinleştirme', 'Farklı belgeler bilgiyi sınar.'],
-        ['Yaşam olaylarını sıraya koymak?', 'Kronoloji', 'Mahlas', 'Kronoloji zaman düzenidir.'],
-      ],
-      kontrol: ['Tezkirelerde kimler tanıtılır?', 'Şair ve yazarlar', 'Yalnız sporcular', 'Edebiyat kişileri hakkında bilgi verir.'], kontrolKarti: 4,
     },
     {
       id: 'trk11-radyo', ad: 'Radyo Tiyatrosu',
@@ -269,12 +209,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Tonlama aynı cümlenin anlamını etkileyebilir.', true, 'Vurgu ve ses rengi yorum değiştirir.'],
         ['Radyo tiyatrosunda konuşmaların işlevi yoktur.', false, 'Diyalog çatışmayı taşır.'],
       ],
-      secimler: [
-        ['Görünmeyen sahneyi ne kurar?', 'Ses ve diyalog', 'Kamera açısı', 'Radyo tiyatrosu işitseldir.'],
-        ['Yağmur sesi ne olabilir?', 'Mekân ipucu', 'Dipnot numarası', 'Efekt olay çevresini kurar.'],
-        ['Diyaloğu öyküye çevirirken ne korunur?', 'Olayın anlamı', 'Yalnız ses dosyası', 'Biçim değişir, temel olay korunur.'],
-      ],
-      kontrol: ['Radyo tiyatrosunun temel anlatım aracı?', 'Ses', 'Sahne dekoru', 'Dinleyici sahneyi sesle kurar.'], kontrolKarti: 1,
     },
     {
       id: 'trk11-mulakat', ad: 'Roman Kişisiyle Hayalî Mülakat',
@@ -293,12 +227,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Açık uçlu soru kişinin gerekçesini anlatmasını sağlayabilir.', true, 'Neden ve nasıl soruları yanıtı açar.'],
         ['Kişinin dili ve dönemi yanıtları hiç etkilemez.', false, 'Karakterin sesi inandırıcılığı kurar.'],
       ],
-      secimler: [
-        ['Daha açıklayıcı soru hangisi?', 'Neden böyle karar verdin?', 'Evet mi?', 'Neden sorusu gerekçe ister.'],
-        ['Kişi yanıtı neye uymalı?', 'Roman bağlamına', 'Yalnız okurun isteğine', 'Kişinin bilgisi ve dönemi sınır çizer.'],
-        ['Kişi yorumunu ne destekler?', 'Metindeki sahne', 'Rastgele tahmin', 'Karar romandan örnekle açıklanır.'],
-      ],
-      kontrol: ['Hayalî mülakatın dayanağı?', 'Roman metni', 'Yazarın fotoğrafı', 'Kişinin söz ve eylemi romanda aranır.'], kontrolKarti: 4,
     },
   ],
   [
@@ -319,12 +247,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Canlandırmada beden dili anlamı etkileyebilir.', true, 'Söz dışı ifade önemlidir.'],
         ['Tiyatro metni sahnede hiç oynanamaz.', false, 'Sahnelenmek için yazılır.'],
       ],
-      secimler: [
-        ['Oyuncuya hareketi bildiren bölüm?', 'Sahne yönergesi', 'Kaynakça', 'Yönerge oyun bilgisini verir.'],
-        ['Kişilerin karşılıklı sözleri?', 'Diyalog', 'Lejant', 'Diyalog çatışmayı taşır.'],
-        ['Canlandırmada hangi öge anlamı destekler?', 'Beden dili', 'Yalnız sayfa sayısı', 'Hareket ve vurgu sözü tamamlar.'],
-      ],
-      kontrol: ['Parantez içindeki “kapıya yönelir” ne?', 'Sahne yönergesi', 'Karakterin repliği', 'Oyuncunun hareketini belirtir.'], kontrolKarti: 4,
     },
     {
       id: 'trk11-kucurek', ad: 'Küçürek Hikâye',
@@ -343,12 +265,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Başlık metne ek anlam katabilir.', true, 'Okurun yorumunu yönlendirebilir.'],
         ['Metinden kanıt göstermeden her yorum eşit derecede geçerlidir.', false, 'Yorum ayrıntıyla desteklenmelidir.'],
       ],
-      secimler: [
-        ['Küçürek hikâyede okurun görevi?', 'İpuçlarından çıkarım', 'Yalnız kelime saymak', 'Söylenmeyeni metne dayanarak tamamlar.'],
-        ['Metnin odağı genelde nedir?', 'Bir an veya kırılma', 'Çok sayıda yan olay', 'Kısa yapı tek odak kurar.'],
-        ['Yorumu ne güçlendirir?', 'Metin ayrıntısı', 'Rastgele tahmin', 'Kanıtlı çıkarım gerekir.'],
-      ],
-      kontrol: ['Küçürek hikâyede boşluğu kim tamamlar?', 'Okur', 'Yalnız yayıncı', 'Okur metnin ipuçlarından anlam kurar.'], kontrolKarti: 2,
     },
     {
       id: 'trk11-belgesel', ad: 'Belgesel ve Afiş',
@@ -367,12 +283,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Afişte kısa ve açık mesaj okunmayı kolaylaştırır.', true, 'Görsel hiyerarşi anlaşılmayı sağlar.'],
         ['Afiş belgeselde olmayan bilgiyi kesin gerçek diye eklemelidir.', false, 'Mesaj doğrulanmış içeriğe dayanmalıdır.'],
       ],
-      secimler: [
-        ['Belgeselde güvenilirlik için ne sorulur?', 'Kaynak ve tarih', 'Yalnız müzik türü', 'Kaynak bilgi değerini belirler.'],
-        ['Afişte ilk okunacak öge?', 'Açık başlık', 'Uzun dipnot', 'Başlık ana mesajı verir.'],
-        ['Belgesel afişe nasıl aktarılır?', 'Doğrulanmış mesajla', 'Rastgele iddiayla', 'İçerik çarpıtılmamalıdır.'],
-      ],
-      kontrol: ['Belgeselde müzik ne değildir?', 'Tek başına kanıt', 'Anlatım aracı', 'Duyguyu etkiler ama iddiayı kanıtlamaz.'], kontrolKarti: 3,
     },
   ],
 ]

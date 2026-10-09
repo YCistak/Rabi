@@ -21,12 +21,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       ['Araştırma ölçeği seçilen veriyi etkiler.', true, 'Mahalle ve ülke farklı ayrıntı gerektirir.'],
       ['Mekânsal sorunlarda başka bilimlerin verileri kullanılamaz.', false, 'Coğrafya farklı alanlardan veri alır.'],
     ],
-    secimler: [
-      ['Coğrafyanın ilk mekânsal sorusu?', 'Nerede?', 'Kaç heceli?', 'Dağılış ve konum önce belirlenir.'],
-      ['Mahalle seli için hangi ölçek uygundur?', 'Yerel ölçek', 'Kıta ölçeği', 'Mahalle düzeyindeki ayrıntı gerekir.'],
-      ['Çözüm önerisi neyle desteklenir?', 'Harita ve veriyle', 'Yalnız tahminle', 'Kanıt neden-sonuç bağını sınar.'],
-    ],
-    kontrol: ['Mekânsal dağılışı hangi araç gösterir?', 'Harita', 'Sözlük', 'Harita konumlar arasındaki örüntüyü gösterir.'], kontrolKarti: 2,
   }],
   [{
     id: 'cog11-cbs', ad: 'Web Tabanlı CBS Uygulamaları',
@@ -45,12 +39,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       ['CBS verisinin tarihi ve kaynağı denetlenmelidir.', true, 'Eski veri yanlış çıkarıma yol açabilir.'],
       ['İki katmanın çakışması neden-sonuç ilişkisini kesin kanıtlar.', false, 'Ek karşılaştırma ve kanıt gerekir.'],
     ],
-    secimler: [
-      ['Nüfus ve yol bilgisi CBS’de nasıl tutulur?', 'Ayrı katmanlarda', 'Aynı başlık metninde', 'Katmanlar karşılaştırılabilir.'],
-      ['Haritadaki renkleri açıklayan öge?', 'Lejant', 'Önsöz', 'Lejant simge ve aralıkları açıklar.'],
-      ['Güvenilir harita için ne gerekir?', 'Kaynak ve tarih', 'Yalnız canlı renk', 'Verinin nereden ve ne zaman alındığı bilinmelidir.'],
-    ],
-    kontrol: ['CBS’de akarsu ve yollar ne olabilir?', 'Ayrı katmanlar', 'Aynı veri satırı', 'Katmanlar farklı mekânsal verileri taşır.'], kontrolKarti: 2,
   }],
   [
     {
@@ -70,12 +58,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Buzullar tatlı su depolayabilir.', true, 'Kar ve buz önemli depolardır.'],
         ['Okyanus suyu doğrudan içme suyu olarak kullanılabilir.', false, 'Tuzludur; arıtma gerekir.'],
       ],
-      secimler: [
-        ['Geçirgen katmanda biriken kaynak?', 'Yer altı suyu', 'Okyanus akıntısı', 'Sızan su akiferlerde depolanır.'],
-        ['Akarsu hangi gruptadır?', 'Yüzey suyu', 'Derin yer altı suyu', 'Yeryüzünde akar.'],
-        ['Suyu karşılaştırmak için hangi ölçüt uygundur?', 'Tuzluluk', 'Ülke adı', 'Tuzluluk kullanımı etkiler.'],
-      ],
-      kontrol: ['Aşırı çekim yer altı suyunda ne yapar?', 'Seviyeyi düşürebilir', 'Depoyu sınırsız büyütür', 'Çekim yenilenmeyi aşarsa seviye azalır.'], kontrolKarti: 3,
     },
     {
       id: 'cog11-turkiye-su', ad: 'Türkiye’deki Su Kaynaklarının Etkileri',
@@ -94,12 +76,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Hidroelektrik üretiminin çevresel etkisi yoktur.', false, 'Akış ve habitat değişebilir.'],
         ['Sınır aşan sular ülkeler arasında iş birliği gerektirebilir.', true, 'Akarsu birden çok ülkeyi etkiler.'],
       ],
-      secimler: [
-        ['Kentlerde su tasarrufu için ne azaltılır?', 'Kayıp-kaçak', 'Arıtma', 'Şebekedeki kayıp gereksiz tüketimdir.'],
-        ['Akarsudan elde edilen enerji?', 'Hidroelektrik', 'Jeotermal', 'Hidroelektrik su akışından yararlanır.'],
-        ['Yanlış sulamanın olası sonucu?', 'Tuzlanma', 'Sınırsız verim', 'Toprakta tuz birikimi görülebilir.'],
-      ],
-      kontrol: ['Sınır aşan akarsu ne gerektirir?', 'Ülkeler arası iş birliği', 'Tek kentin kararı', 'Aynı su farklı ülkeleri etkiler.'], kontrolKarti: 5,
     },
   ],
   [
@@ -120,12 +96,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Kentte farklı işlevler farklı alanlarda yoğunlaşabilir.', true, 'Konut, ticaret ve sanayi bölgeleri ayrışabilir.'],
         ['Taşkın yatakları yerleşim planlamasında önemsizdir.', false, 'Afet riski yer seçimini belirler.'],
       ],
-      secimler: [
-        ['Yerleşme seçiminde doğal etken?', 'Suya erişim', 'Banka kredisi', 'Su doğal koşullardan biridir.'],
-        ['Beşerî etken hangisi?', 'Ulaşım', 'Yükselti', 'Ulaşım insan yapımı ağdır.'],
-        ['Riskli yer seçimi örneği?', 'Taşkın yatağı', 'Güvenli yüksek alan', 'Taşkın yatağı sel tehlikesi taşır.'],
-      ],
-      kontrol: ['Konut ve iş alanlarının dizilişi neyi anlatır?', 'Mekânsal organizasyonu', 'Yalnız iklimi', 'İşlevlerin alandaki dağılışına bakılır.'], kontrolKarti: 1,
     },
     {
       id: 'cog11-etki-alani', ad: 'Yerleşmelerin Etki Alanları',
@@ -144,12 +114,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Ulaşım süresi etki alanını değiştirebilir.', true, 'Erişim kolaylaşınca daha uzak yerler bağlanır.'],
         ['Bakkal ile üniversitenin etki alanı daima aynıdır.', false, 'Hizmetin niteliği alanı etkiler.'],
       ],
-      secimler: [
-        ['Daha geniş etki alanı hangisinde beklenir?', 'Uzman hastane', 'Mahalle bakkalı', 'Nadir hizmet daha uzak yerden talep çeker.'],
-        ['Etki alanını ölçmek için hangi veri kullanılır?', 'Yolculuk akışı', 'Yalnız kent adı', 'İnsanların nereden geldiği alanı gösterir.'],
-        ['Ulaşım iyileşirse ne olabilir?', 'Etki alanı genişler', 'Tüm hizmetler kapanır', 'Erişim süresi kısalabilir.'],
-      ],
-      kontrol: ['Etki alanı neyi gösterir?', 'Hizmetin uzandığı çevreyi', 'Yalnız idari sınırı', 'Hizmet akışı idari sınırdan farklı olabilir.'], kontrolKarti: 1,
     },
   ],
   [
@@ -170,12 +134,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Kuraklık hasat miktarını etkileyebilir.', true, 'Su eksikliği verimi düşürebilir.'],
         ['Soğuk zincir gıda kayıplarını artırmak için kurulur.', false, 'Bozulmayı azaltmaya yarar.'],
       ],
-      secimler: [
-        ['Gıdanın pahalı olması hangi boyutu zorlar?', 'Erişim', 'Jeolojik yapı', 'Gıda mevcut olsa da satın alınamayabilir.'],
-        ['Hasat sonrası kaybı ne azaltır?', 'Uygun depolama', 'Açıkta bekletme', 'Depolama ve soğuk zincir korur.'],
-        ['Tek ürüne bağlılık ne yapar?', 'Riski artırır', 'Riski yok eder', 'Bir afet tüm hasadı etkileyebilir.'],
-      ],
-      kontrol: ['Gıda güvencesinde üretim dışında ne gerekir?', 'Sürekli erişim', 'Yalnız ihracat', 'İnsanların gıdaya ulaşması gerekir.'], kontrolKarti: 2,
     },
     {
       id: 'cog11-surdurulebilir-tarim', ad: 'Tarım Uygulamalarında Sürdürülebilirlik',
@@ -194,12 +152,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Erozyon toprağın verimli katmanını götürebilir.', true, 'Toprak koruma bu yüzden önemlidir.'],
         ['Yüksek ürün miktarı sürdürülebilirliği tek başına kanıtlar.', false, 'Su ve toprak üzerindeki etkiler de incelenir.'],
       ],
-      secimler: [
-        ['Suyu kök bölgesine veren yöntem?', 'Damla sulama', 'Salma sulama', 'Damla yöntemi hedefli su verir.'],
-        ['Eğimli yerde erozyonu ne azaltır?', 'Teraslama', 'Bitki örtüsünü kaldırma', 'Teras suyun hızını düşürür.'],
-        ['Sürdürülebilirlikte hangisi birlikte ölçülür?', 'Verim ve su tüketimi', 'Yalnız ürün ağırlığı', 'Kaynak kullanımı da önemlidir.'],
-      ],
-      kontrol: ['Ekim nöbetinin yararı?', 'Riski dağıtmak', 'Toprağı çıplak bırakmak', 'Farklı ürünler tek ürüne bağımlılığı azaltır.'], kontrolKarti: 4,
     },
     {
       id: 'cog11-maden', ad: 'Stratejik ve Kritik Madenler',
@@ -218,12 +170,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Geri dönüşüm bazı madenlerde tedarik baskısını azaltabilir.', true, 'Birincil kaynağa bağımlılığı düşürebilir.'],
         ['Madenciliğin çevresel etkisi bulunmaz.', false, 'Su, toprak ve habitat etkilenebilir.'],
       ],
-      secimler: [
-        ['Türkiye için öne çıkan mineral örneği?', 'Bor', 'Kömür gazı', 'Bor mineralleri önemli kaynaktır.'],
-        ['Arz riskini ne azaltabilir?', 'Kaynak çeşitlendirme', 'Tek tedarikçiye bağlanma', 'Çeşitlilik kesinti riskini dağıtır.'],
-        ['Madenden sonra katma değeri ne artırır?', 'İşleme', 'Yalnız depolama', 'İşlenmiş ürün daha yüksek değer taşıyabilir.'],
-      ],
-      kontrol: ['Madenin kritik sayılmasında ne önemlidir?', 'Arz kesintisi riski', 'Yalnız rengi', 'Tedarik güvenliği kritikliği belirler.'], kontrolKarti: 1,
     },
     {
       id: 'cog11-enerji', ad: 'Enerji Kaynakları',
@@ -242,12 +188,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Enerji verimliliği kaynak ihtiyacını azaltabilir.', true, 'Aynı işi daha az enerjiyle yapmak mümkündür.'],
         ['Bütün enerji kaynaklarının çevresel etkisi aynıdır.', false, 'Etkiler kaynağa ve yere göre değişir.'],
       ],
-      secimler: [
-        ['Fosil kaynak hangisi?', 'Doğal gaz', 'Rüzgâr', 'Doğal gaz fosil yakıttır.'],
-        ['Değişken üretim için ne gerekir?', 'Depolama ve şebeke', 'Yalnız tabela', 'Arz-talep dengesi yönetilmelidir.'],
-        ['Enerji güvenliğinde ne yararlıdır?', 'Kaynak çeşitliliği', 'Tek kaynağa bağımlılık', 'Çeşitlilik kesinti riskini azaltır.'],
-      ],
-      kontrol: ['Güneş ve rüzgârın ortak sınırı?', 'Havaya bağlı üretim', 'Fosil yakıt olmaları', 'Üretimleri hava ve zamana göre değişir.'], kontrolKarti: 4,
     },
     {
       id: 'cog11-sanayi-mekan', ad: 'Sanayileşmenin Mekânsal Etkileri',
@@ -266,12 +206,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Arıtma, sanayi atığının etkisini azaltabilir.', true, 'Su ve hava üzerindeki baskı azaltılabilir.'],
         ['Sanayinin etkisi yalnız tesis binasında kalır.', false, 'Konut, ulaşım ve çevreye yayılır.'],
       ],
-      secimler: [
-        ['Yakın tesislerin ortak yararı?', 'Tedarikçi paylaşımı', 'Ulaşımı kaldırmak', 'Kümelenme girdi ve uzmanlık sağlar.'],
-        ['Sanayi göçü neyi artırabilir?', 'Konut ihtiyacını', 'Yalnız yükseltiyi', 'Yeni çalışanların barınması gerekir.'],
-        ['Sanayi atığı için hangi önlem?', 'Arıtma', 'Denetimi kaldırma', 'Arıtma kirliliği azaltabilir.'],
-      ],
-      kontrol: ['Sanayi yer seçiminde hangi bağlantı önemlidir?', 'Ham madde ve pazar', 'Yalnız bina rengi', 'Taşıma maliyeti üretimi etkiler.'], kontrolKarti: 1,
     },
   ],
   [
@@ -292,12 +226,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Azotun aşırı kullanımı su ekosistemlerini bozabilir.', true, 'Besin yükü artışı kirlilik yaratabilir.'],
         ['Gezegen sınırları yalnız iklim değişikliğinden oluşur.', false, 'Su, arazi ve canlı çeşitliliği de vardır.'],
       ],
-      secimler: [
-        ['Habitat kaybı önce neyi etkiler?', 'Canlı çeşitliliğini', 'Boylam çizgilerini', 'Yaşam alanı daralır.'],
-        ['Aşırı gübre hangi döngüyle ilişkilidir?', 'Azot-fosfor', 'Gelgit', 'Besin maddeleri suya taşınabilir.'],
-        ['Sınırları korumak için ne gerekir?', 'Birlikte çözüm', 'Tek göstergeye bakmak', 'Çevresel süreçler birbirine bağlıdır.'],
-      ],
-      kontrol: ['Gezegen sınırı neyi anlatır?', 'Çevresel süreçlerin riskini', 'Ülke sınırını', 'İnsan etkisinin güvenli işleyişi zorlamasına bakar.'], kontrolKarti: 1,
     },
     {
       id: 'cog11-iklim', ad: 'Küresel İklim Değişikliği',
@@ -316,12 +244,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['İklim etkileri her bölgede aynı düzeyde yaşanır.', false, 'Coğrafi ve toplumsal koşullar değişir.'],
         ['Enerji verimliliği emisyon azaltımına katkı verebilir.', true, 'Aynı hizmet daha az enerjiyle sağlanır.'],
       ],
-      secimler: [
-        ['Emisyonu düşürmek hangi strateji?', 'Azaltım', 'Uyum', 'Nedeni sınırlamaya yöneliktir.'],
-        ['Kuraklığa dayanıklı ürün kullanmak?', 'Uyum', 'Emisyon ticareti', 'Kuraklık etkisine hazırlanmadır.'],
-        ['Sıcak hava dalgası hangi tür etkidir?', 'İklim riski', 'Jeolojik levha', 'Isınmayla ilişkili aşırı olaydır.'],
-      ],
-      kontrol: ['Sel erken uyarısı neye örnek?', 'Uyuma', 'Fosil yakıta', 'Var olan tehlikenin zararını azaltır.'], kontrolKarti: 3,
     },
     {
       id: 'cog11-su-surdurulebilir', ad: 'Türkiye’de Suyun Sürdürülebilir Kullanımı',
@@ -340,12 +262,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Atık su arıtımı kaynakların korunmasına katkı verir.', true, 'Kirlilik baskısı azalır.'],
         ['Havzanın yukarısındaki kullanım aşağı kesimi etkilemez.', false, 'Aynı akış sistemi bağlıdır.'],
       ],
-      secimler: [
-        ['Kentsel kaybı ne azaltır?', 'Şebeke bakımı', 'Boru kaçağını artırma', 'Sızıntılar onarılmalıdır.'],
-        ['Bir akarsuyu hangi ölçekte yönetmek uygundur?', 'Havza ölçeğinde', 'Yalnız tek sokakta', 'Yukarı ve aşağı kesim ilişkilidir.'],
-        ['Kirli suyun etkisini hangi işlem azaltır?', 'Arıtma', 'Doğrudan boşaltma', 'Arıtma kirletici yükünü düşürür.'],
-      ],
-      kontrol: ['Aşırı yer altı suyu çekimi ne yapar?', 'Seviyeyi düşürür', 'Kaynağı çoğaltır', 'Çekim yenilenmeyi aşınca su seviyesi iner.'], kontrolKarti: 4,
     },
   ],
   [
@@ -366,12 +282,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Balkanlarla göç ve aile bağları etkileşimi etkileyebilir.', true, 'Tarihî ve güncel bağlantılar vardır.'],
         ['Türk dünyasındaki bütün toplumlar tamamen aynıdır.', false, 'Farklı tarih ve kültür özellikleri bulunur.'],
       ],
-      secimler: [
-        ['Kültürel etkileşim yolu hangisi?', 'Eğitim ve medya', 'Yalnız sınır taşı', 'İnsan ve bilgi akışı bağ kurar.'],
-        ['Hinterland neyi anlatır?', 'İlişkilerin uzandığı çevreyi', 'Yalnız yüzölçümünü', 'Merkezin çevresiyle bağını gösterir.'],
-        ['Balkanlarla bağlardan biri?', 'Göç geçmişi', 'Okyanus akıntısı', 'Göç tarihî ve aile bağları oluşturur.'],
-      ],
-      kontrol: ['Kültürel hinterland ne değildir?', 'Siyasi egemenlik sınırı', 'Etkileşim ağı', 'Kültürel bağ yönetim sınırıyla aynı değildir.'], kontrolKarti: 1,
     },
     {
       id: 'cog11-tarim-ulke', ad: 'Tarımsal Üretim: Örnek Ülke',
@@ -390,12 +300,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['İşlenmiş ürün tarımın katma değerini artırabilir.', true, 'Ham ürüne işlem ve hizmet eklenir.'],
         ['Tarımsal üretim iklimden bağımsızdır.', false, 'Sıcaklık ve yağış ürün yetişmesini etkiler.'],
       ],
-      secimler: [
-        ['Hektar başına üretim neyi ölçer?', 'Verimi', 'Toplam nüfusu', 'Birim alan verimidir.'],
-        ['Üretim ile ne karşılaştırılmalı?', 'Tüketim ve nüfus', 'Yalnız bayrak rengi', 'Gıda yeterliliği için talep gerekir.'],
-        ['Tarım geliri neyle artabilir?', 'İşleme ve lojistik', 'Hasadı bozma', 'Katma değer zinciri önemlidir.'],
-      ],
-      kontrol: ['Büyük tarım alanı neyi kesin göstermez?', 'Yüksek verimi', 'Üretim alanını', 'Verim birim alandaki üründür.'], kontrolKarti: 2,
     },
     {
       id: 'cog11-sanayi-ulke', ad: 'Sanayileşme Süreci: Örnek Ülkeler',
@@ -414,12 +318,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Nitelikli işgücü sanayinin türünü etkiler.', true, 'Teknoloji yoğun üretim uzmanlık ister.'],
         ['Sanayileşmeyi yalnız fabrika sayısıyla açıklamak yeterlidir.', false, 'Sektör ve etkiler de incelenmelidir.'],
       ],
-      secimler: [
-        ['Ülkeleri karşılaştırırken hangi veri gerekir?', 'Sektör ve zaman', 'Yalnız ülke adı', 'Sanayileşme süreci tarih ve yapı içerir.'],
-        ['Nitelikli işgücünü ne destekler?', 'Eğitim', 'Veri gizlemek', 'Uzmanlık eğitimle gelişir.'],
-        ['Sanayinin çevreye etkisi nasıl incelenir?', 'Emisyon ve kaynakla', 'Yalnız iş sayısıyla', 'Üretimin çevresel maliyeti vardır.'],
-      ],
-      kontrol: ['Erken sanayi için yararlı iki kaynak?', 'Kömür ve demir', 'Yalnız güneş ışığı', 'İlk sanayi bölgelerinde kömür ve demir önemliydi.'], kontrolKarti: 2,
     },
     {
       id: 'cog11-madencilik-ulke', ad: 'Madencilik Faaliyetleri: Örnek Ülke',
@@ -438,12 +336,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Maden fiyatı ihracat gelirini etkileyebilir.', true, 'Miktar aynı kalsa fiyat değişebilir.'],
         ['Madencilikten sonra araziyi iyileştirmeye gerek yoktur.', false, 'Rehabilitasyon çevresel zararları azaltır.'],
       ],
-      secimler: [
-        ['Yer altındaki potansiyeli anlatan gösterge?', 'Rezerv', 'Yıllık çıkarım', 'Rezerv çıkarılabilir kaynağın tahminidir.'],
-        ['Yıllara göre üretim için uygun grafik?', 'Çizgi', 'Yalnız pasta', 'Zaman içindeki değişim çizgiyle izlenir.'],
-        ['Maden sahası kapatılırken ne gerekir?', 'Rehabilitasyon', 'Atığı bırakma', 'Arazi ve su için iyileştirme planı gerekir.'],
-      ],
-      kontrol: ['Grafikte sayıların yanına ne yazılır?', 'Ölçü birimi', 'Yalnız renk adı', 'Ton veya kilogram gibi birim yorum için gerekir.'], kontrolKarti: 3,
     },
     {
       id: 'cog11-enerji-ulke', ad: 'Enerji Kaynakları: Örnek Ülkeler',
@@ -462,12 +354,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Tek kaynağa bağımlılık tedarik riskini artırabilir.', true, 'Kesinti için yedek azalır.'],
         ['Bir yıllık veri kalıcı eğilimi kanıtlar.', false, 'Yıllar arası değişime bakılmalıdır.'],
       ],
-      secimler: [
-        ['Elektrik kaynak payları neyi gösterir?', 'Enerji karmasını', 'Yalnız nüfusu', 'Kaynakların üretimdeki ağırlığıdır.'],
-        ['İthalata bağımlılık hangi riski artırır?', 'Tedarik kesintisi', 'Yer şekli değişimi', 'Dış piyasaya bağlılık artar.'],
-        ['Uzun dönem eğilimi görmek için?', 'Birden çok yıl', 'Tek rastgele gün', 'Zaman serisi gerekir.'],
-      ],
-      kontrol: ['Santral kapasitesini gösteren ölçü?', 'Kurulu güç', 'Yıllık nüfus', 'Kurulu güç potansiyeldir; gerçek üretim ayrı ölçülür.'], kontrolKarti: 5,
     },
   ],
 ]

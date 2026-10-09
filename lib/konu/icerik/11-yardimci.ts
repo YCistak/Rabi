@@ -3,16 +3,16 @@ import { kart, konu, sikli, soru, type Konu } from '../tip'
 export type Secim = [soru: string, dogru: string, yanlis: string, aciklama: string]
 export type Iddia = [ifade: string, dogru: boolean, aciklama: string]
 
-/** 11. sınıfın kısa desteleri için ortak yazım kalıbı; metinlerin tamamı ders dosyalarında yazılır. */
+/**
+ * 11. sınıfın kısa desteleri için ortak yazım kalıbı; metinlerin tamamı ders dosyalarında yazılır.
+ * Şıklı sorular ve hızlı kontroller yalnız `KonuDerinligi`nden gelir; taslakta tutulmaz.
+ */
 export type OnBirinciSinifKonusu = {
   id: string
   ad: string
   kartlar: [baslik: string, metin: string][]
   not: string
   iddialar: Iddia[]
-  secimler: Secim[]
-  kontrol: Secim
-  kontrolKarti: number
 }
 
 /** Ek kartlar bir kavramın nedenini, kullanımını veya sınırını açar; sorular bilgi aktarımını yoklar. */
