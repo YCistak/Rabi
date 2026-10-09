@@ -52,3 +52,16 @@ export function tanitimBaslangici(d: { tercih: TanitimTercihi | null; anaTurGoru
 export function turlarAcik(tercih: TanitimTercihi | null): boolean {
   return tercih !== 'hayir'
 }
+
+/**
+ * Ayarlar'dan "Tanıtımı yeniden başlat": hangi anahtarlar silinir, hangisi
+ * yazılır. Saf — depoya dokunmaz. Yalnız tanıtım kayıtları: ana turun sürümü
+ * ve eski `'true'` anahtarı, bütün mini tur bayrakları. Kullanıcının verisine
+ * (görevler, denemeler…) dokunmaz. Tercih "evet" olur: önceki "Hayır" kalkar.
+ */
+export function tanitimiSifirlaKayitlari(): { sil: string[]; yaz: [anahtar: string, deger: TanitimTercihi][] } {
+  return {
+    sil: [...Object.values(TUR_ANAHTARLARI), ANA_TUR_SURUM_ANAHTARI, ESKI_ANA_TUR_ANAHTARI],
+    yaz: [[TANITIM_TERCIH_ANAHTARI, 'evet']],
+  }
+}

@@ -12,6 +12,7 @@ import {
   GraduationCap,
   Images,
   MessageSquare,
+  RotateCcw,
   Shield,
   Target,
   Trash2,
@@ -115,6 +116,7 @@ export function AyarlarEkrani({
   bekleyenBildirim,
   onYasalAc,
   onGeriBildirimAc,
+  onTanitimiBaslat,
   bekleyenGeriBildirim,
   yedeklenecek,
 }: {
@@ -126,6 +128,8 @@ export function AyarlarEkrani({
   /** Gizlilik ve Koşullar ekranını açar. */
   onYasalAc: () => void
   onGeriBildirimAc: () => void
+  /** Tanıtım kayıtlarını sıfırlar ve ana turu başlatır. */
+  onTanitimiBaslat: () => void
   bekleyenGeriBildirim: number
   setAyarlar: (guncelleyici: Ayarlar | ((onceki: Ayarlar) => Ayarlar)) => void
   /** Yedeğe girecek bütün veri — fotoğraflar hariç. */
@@ -178,6 +182,7 @@ export function AyarlarEkrani({
   const adMetni = adTaslagi ?? ayarlar.ad
   const adUyarisi = adTaslagi !== null && !adGecerliMi(adTaslagi)
   const [sifirlamaAcik, setSifirlamaAcik] = useState(false)
+  const [tanitimOnayi, setTanitimOnayi] = useState(false)
   const [yedekSecimiAcik, setYedekSecimiAcik] = useState(false)
   const [durum, setDurum] = useState<string | null>(null)
   const [izinReddedildi, setIzinReddedildi] = useState(false)
@@ -605,6 +610,12 @@ export function AyarlarEkrani({
             onClick={onGeriBildirimAc}
             sag={<ChevronRight size={18} className="shrink-0 text-muted-foreground/50" aria-hidden />}
           />
+          <Satir
+            Simge={RotateCcw}
+            baslik="Tanıtımı yeniden başlat"
+            onClick={() => setTanitimOnayi(true)}
+            sag={<ChevronRight size={18} className="shrink-0 text-muted-foreground/50" aria-hidden />}
+          />
           {bekleyenGeriBildirim > 0 && (
             <GenisAlan tam>
               <AlanNotu>
@@ -698,6 +709,19 @@ export function AyarlarEkrani({
           window.location.reload()
         }}
         onIptal={() => setSifirlamaAcik(false)}
+      />
+
+      <Onay
+        acik={tanitimOnayi}
+        baslik="Tanıtım baştan başlasın mı?"
+        aciklama="Ana tur hemen başlar, ekran turları da ilk girişte yeniden çıkar. Verilerine dokunulmaz."
+        onayMetni="Başlat"
+        tehlikeli={false}
+        onOnayla={() => {
+          setTanitimOnayi(false)
+          onTanitimiBaslat()
+        }}
+        onIptal={() => setTanitimOnayi(false)}
       />
 
       <YedekSecimi

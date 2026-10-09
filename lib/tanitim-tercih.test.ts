@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ANA_TUR_SURUM_ANAHTARI, ESKI_ANA_TUR_ANAHTARI, TUR_ANAHTARLARI } from './tanitim'
-import { eskiTurKaydiVar, tanitimBaslangici, tercihOku, turlarAcik } from './tanitim-tercih'
+import { eskiTurKaydiVar, tanitimBaslangici, tanitimiSifirlaKayitlari, tercihOku, turlarAcik, TANITIM_TERCIH_ANAHTARI } from './tanitim-tercih'
 
 const depo = (kayitlar: Record<string, string>) => (anahtar: string) => kayitlar[anahtar] ?? null
 
@@ -50,5 +50,27 @@ describe('tanitimBaslangici', () => {
     expect(tanitimBaslangici({ tercih: null, anaTurGoruldu: false, eskiKayitVar: true })).toBe('ana-tur')
     // Güncel turu bitirmiş: hiçbir şey değişmiyor.
     expect(tanitimBaslangici({ tercih: null, anaTurGoruldu: true, eskiKayitVar: true })).toBe('bitti')
+  })
+})
+
+describe('tanitimiSifirlaKayitlari', () => {
+  const { sil, yaz } = tanitimiSifirlaKayitlari()
+  it('ana tur ve bütün mini tur kayıtlarını siliyor', () => {
+    for (const anahtar of Object.values(TUR_ANAHTARLARI)) expect(sil).toContain(anahtar)
+    expect(sil).toContain(ANA_TUR_SURUM_ANAHTARI)
+    expect(sil).toContain(ESKI_ANA_TUR_ANAHTARI)
+  })
+  it('tercihi evet yapıyor ve silmiyor', () => {
+    expect(yaz).toEqual([[TANITIM_TERCIH_ANAHTARI, 'evet']])
+    expect(sil).not.toContain(TANITIM_TERCIH_ANAHTARI)
+  })
+  it('sıfırlanınca ana tur görülmedi, mini turlar görülmedi, Hayır kalkmış olur', () => {
+    const kayit: Record<string, string> = { [TANITIM_TERCIH_ANAHTARI]: 'hayir', [ANA_TUR_SURUM_ANAHTARI]: '2', [TUR_ANAHTARLARI.pomodoro]: 'true', rabi_gorevler: 'x' }
+    for (const a of sil) delete kayit[a]
+    for (const [a, d] of yaz) kayit[a] = d
+    const oku = (a: string) => kayit[a] ?? null
+    expect(eskiTurKaydiVar(oku)).toBe(false)
+    expect(tanitimBaslangici({ tercih: tercihOku(oku(TANITIM_TERCIH_ANAHTARI)), anaTurGoruldu: false, eskiKayitVar: false })).toBe('ana-tur')
+    expect(kayit.rabi_gorevler).toBe('x')
   })
 })
