@@ -5,7 +5,7 @@ import { demoVerileriTemizle, TANITIM_ADIMLARI, TUR_ADIMLARI, TUR_ANAHTARLARI, t
 
 import { SAYIM_KORUMA_MS, gecisteEylemKarari, kuyrugaEkle, kuyruktanCikar, rehberAnahtari, rehberGizliMi, sayimKorumasiGerekli } from '@/lib/tanitim-rehber'
 import { taniKaydet } from '@/lib/tanitim-tani'
-import { TANITIM_TERCIH_ANAHTARI, eskiTurKaydiVar, tanitimBaslangici, tercihOku, turlarAcik, type TanitimTercihi } from '@/lib/tanitim-tercih'
+import { TANITIM_TERCIH_ANAHTARI, eskiTurKaydiVar, tanitimBaslangici, tanitimiSifirlaKayitlari, tercihOku, turlarAcik, type TanitimTercihi } from '@/lib/tanitim-tercih'
 import { ANIMASYON_ANAHTARI, VARSAYILAN_ANIMASYON, animasyonKaydi, animasyonuDogrula, type TanitimAnimasyonu } from '@/lib/tanitim-animasyonu'
 
 function useTanitimDurumu(deneyMi: boolean) {
@@ -126,6 +126,23 @@ function useTanitimDurumu(deneyMi: boolean) {
     if (deneyMi) return
     try { localStorage.setItem(TANITIM_TERCIH_ANAHTARI, yeni) } catch {}
   }, [deneyMi])
+  /** Ayarlar'dan: kayıtlar silinir, tercih Evet olur; ana tur kabuktaki etkiyle başlar. */
+  const tanitimiSifirla = useCallback(() => {
+    const { sil, yaz } = tanitimiSifirlaKayitlari()
+    setTercih('evet')
+    setEskiKayit(false)
+    setGorulenler((onceki) => {
+      if (!onceki) return onceki
+      const yeni = { ...onceki }
+      for (const turAdi of Object.keys(yeni) as TanitimTuru[]) yeni[turAdi] = false
+      return yeni
+    })
+    if (deneyMi) return
+    try {
+      for (const anahtar of sil) localStorage.removeItem(anahtar)
+      for (const [anahtar, deger] of yaz) localStorage.setItem(anahtar, deger)
+    } catch {}
+  }, [deneyMi])
   const baslangic = gorulenler === null ? null : tanitimBaslangici({ tercih, anaTurGoruldu: gorulenler.ana_tur, eskiKayitVar: eskiKayit })
   const turGorulduMu = useCallback((turAdi: TanitimTuru) => gorulenler?.[turAdi] ?? null, [gorulenler])
   const turuKaydet = useCallback((turAdi: TanitimTuru) => {
@@ -183,7 +200,7 @@ function useTanitimDurumu(deneyMi: boolean) {
     adim: durum.aktifAdim === null ? null : TUR_ADIMLARI[durum.aktifTur!][durum.aktifAdim],
     tanitimdaMi: durum.aktifAdim !== null,
     tamamlandi: gorulenler?.ana_tur ?? null,
-    turGorulduMu, turuKaydet, turuBaslat, baslangic, tercihKaydet,
+    turGorulduMu, turuKaydet, turuBaslat, baslangic, tercihKaydet, tanitimiSifirla,
     adimSayisi: durum.aktifTur ? TUR_ADIMLARI[durum.aktifTur].length : 0,
     kayitUyarisi, gecisSuruyor,
     gonder,
@@ -191,7 +208,7 @@ function useTanitimDurumu(deneyMi: boolean) {
     turuBitir,
     sonrakiAdimaGec: () => gonder({ tur: 'ileri' }),
     oncekiAdimaDon: () => gonder({ tur: 'geri' }),
-  }), [animasyon, animasyonuAyarla, deneyMi, rehberGizli, setRehberGizli, kapanisSuruyor, durum, gorulenler, turGorulduMu, turuKaydet, turuBaslat, kayitUyarisi, gecisSuruyor, turuBitir, gonder, demoGuncelle, baslangic, tercihKaydet])
+  }), [animasyon, animasyonuAyarla, deneyMi, rehberGizli, setRehberGizli, kapanisSuruyor, durum, gorulenler, turGorulduMu, turuKaydet, turuBaslat, kayitUyarisi, gecisSuruyor, turuBitir, gonder, demoGuncelle, baslangic, tercihKaydet, tanitimiSifirla])
 }
 
 export const TanitimBaglami = createContext<ReturnType<typeof useTanitimDurumu> | null>(null)

@@ -16,7 +16,7 @@ Kurulum ve açılış bitince yeni kullanıcıya bir kez **"Tanıtım ister misi
 
 - **Evet** → ana tur başlar; mini turlar eskisi gibi ekranlara ilk girişte çıkar.
 - **Hayır** → hiçbir tur yok: ne ana tur ne mini turlar (`turuBaslat` hepsini keser, `turlarAcik`).
-- Cevap `rabi-tanitim-tercihi-v1` anahtarında (`evet` / `hayir`) kalıcı. "Tüm verileri sil" anahtarı siler, soru yeniden gelir. Ayarlar'da turu yeniden başlatma seçeneği **yok**.
+- Cevap `rabi-tanitim-tercihi-v1` anahtarında (`evet` / `hayir`) kalıcı. "Tüm verileri sil" anahtarı siler, soru yeniden gelir. Ayarlar > Destek > **"Tanıtımı yeniden başlat"** (onay penceresiyle; `tanitimiSifirlaKayitlari`, `lib/tanitim-tercih.ts`, testli): tercihi Evet yapar, ana tur sürümü ve mini tur bayraklarını siler, ana sayfaya dönüp ana turu hemen başlatır; kullanıcı verisine dokunmaz.
 - Cihazda herhangi bir tur kaydı olan (ana turun sürümü, eski `'true'` anahtarları ya da bir mini turun bayrağı — `eskiTurKaydiVar`) mevcut kullanıcıya soru sorulmaz; davranışı aynı kalır.
 - Soru, tur başlayabileceği koşullarda çıkar (çökme sorusu açıkken çıkmaz).
 

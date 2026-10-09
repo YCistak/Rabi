@@ -1469,6 +1469,12 @@ function RabiUygulamasi() {
                 bekleyenBildirim={bekleyenSayisi(hataBildirimi.bildirimler)}
                 onYasalAc={() => setEkran('yasal')}
                 onGeriBildirimAc={() => setEkran('geri-bildirim')}
+                onTanitimiBaslat={() => {
+                  // Kayıtlar sıfırlanır, ana sayfaya dönülür; ana tur `baslangic === 'ana-tur'` etkisiyle başlar.
+                  tanitim.tanitimiSifirla()
+                  setEkran(null)
+                  setSekme('ana')
+                }}
                 bekleyenGeriBildirim={geriBildirim.bekleyen}
                 yedeklenecek={{
                   denemeler,
