@@ -174,46 +174,48 @@ describe('devamsizlikOzeti', () => {
   })
 
   it('yarım günü 0,5 sayar', () => {
-    const ozet = devamsizlikOzeti([kayit('ozursuz'), kayit('ozursuz', true)])
+    const ozet = devamsizlikOzeti([kayit('ozursuz'), kayit('ozursuz', true), kayit('ozurlu', true)])
     expect(ozet.ozursuz).toBe(1.5)
-    expect(ozet.ozursuzKalan).toBe(8.5)
+    expect(ozet.ozursuzKalan).toBe(18.5)
+    expect(ozet.ozurlu).toBe(0.5)
+    expect(ozet.ozurluKalan).toBe(9.5)
   })
 
-  it('sınır aşılınca asildi true olur', () => {
-    const ozet = devamsizlikOzeti(Array.from({ length: 11 }, () => kayit('ozursuz')))
+  it('özürsüz 20 günü geçince asildi true olur', () => {
+    const sinirda = devamsizlikOzeti(Array.from({ length: 20 }, () => kayit('ozursuz')))
+    expect(sinirda.asildi).toBe(false)
+    const ozet = devamsizlikOzeti(Array.from({ length: 21 }, () => kayit('ozursuz')))
     expect(ozet.asildi).toBe(true)
     expect(ozet.uyari).toBe(false)
   })
 
+  it('özürlü 10 günü geçince asildi true olur', () => {
+    const sinirda = devamsizlikOzeti(Array.from({ length: 10 }, () => kayit('ozurlu')))
+    expect(sinirda.asildi).toBe(false)
+    expect(sinirda.ozurluKalan).toBe(0)
+    const ozet = devamsizlikOzeti([
+      ...Array.from({ length: 10 }, () => kayit('ozurlu')),
+      kayit('ozurlu', true),
+    ])
+    expect(ozet.asildi).toBe(true)
+    expect(ozet.ozurluKalan).toBe(-0.5)
+  })
+
   it('sınırın %70inde uyarı verir', () => {
-    const ozet = devamsizlikOzeti(Array.from({ length: 7 }, () => kayit('ozursuz')))
-    expect(ozet.uyari).toBe(true)
-    expect(ozet.asildi).toBe(false)
+    const ozursuz = devamsizlikOzeti(Array.from({ length: 14 }, () => kayit('ozursuz')))
+    expect(ozursuz.uyari).toBe(true)
+    expect(ozursuz.asildi).toBe(false)
+    const ozurlu = devamsizlikOzeti(Array.from({ length: 7 }, () => kayit('ozurlu')))
+    expect(ozurlu.uyari).toBe(true)
+    expect(devamsizlikOzeti(Array.from({ length: 6 }, () => kayit('ozurlu'))).uyari).toBe(false)
   })
 
   it('kayıt yoksa uyarı vermez', () => {
     const ozet = devamsizlikOzeti([])
     expect(ozet.uyari).toBe(false)
+    expect(ozet.ozursuzKalan).toBe(20)
+    expect(ozet.ozurluKalan).toBe(10)
     expect(ozet.toplamKalan).toBe(30)
-  })
-
-  /**
-   * Gerileme testi: özürlü devamsızlık ayrı bir 20 günlük sınırla ölçülüyordu.
-   * Yönetmelik (MADDE 36) yalnızca özürsüzü (10) ve toplamı (30) sınırlıyor.
-   */
-  it('özürlü devamsızlık toplam sınırla ölçülür', () => {
-    const icinde = devamsizlikOzeti([
-      ...Array.from({ length: 3 }, () => kayit('ozursuz')),
-      ...Array.from({ length: 25 }, () => kayit('ozurlu')),
-    ])
-    expect(icinde.asildi).toBe(false)
-    expect(icinde.toplamKalan).toBe(2)
-
-    const disinda = devamsizlikOzeti([
-      ...Array.from({ length: 5 }, () => kayit('ozursuz')),
-      ...Array.from({ length: 26 }, () => kayit('ozurlu')),
-    ])
-    expect(disinda.asildi).toBe(true)
   })
 })
 

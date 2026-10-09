@@ -422,9 +422,9 @@ export function hedefSerisi(kayitlar: GunlukKayit[], hedef: number, bugunIso: st
 
 // ---------------------------------------------------------------------------
 // Devamsızlık
-// MEB Ortaöğretim Kurumları Yönetmeliği MADDE 36: özürsüz devamsızlığı 10
-// günü **ya da** toplam (özürlü + özürsüz) devamsızlığı 30 günü geçen öğrenci
-// başarısız sayılır. Özürlü devamsızlığın kendi başına bir sınırı yok.
+// Sınırlar kullanıcının kararı (2026-10): özürsüz 20, özürlü 10 gün; ikisi
+// birlikte 30. Not: MEB Ortaöğretim Kurumları Yönetmeliği MADDE 36 özürsüzü 10,
+// toplamı 30 gün sınırlıyor — sabitler bilerek kullanıcının istediği değerde.
 // ---------------------------------------------------------------------------
 
 /**
@@ -492,14 +492,15 @@ export function enUzunYukselis(denemeler: Deneme[], sablonlar: Sablon[]): number
   return enIyi
 }
 
-export const OZURSUZ_SINIR = 10
+/** Özürsüz devamsızlık sınırı (kullanıcı kararı, 2026-10). */
+export const OZURSUZ_SINIR = 20
+/** Özürlü (raporlu) devamsızlık sınırı (kullanıcı kararı, 2026-10). */
+export const OZURLU_SINIR = 10
 /**
- * Özürlü ve özürsüz birlikte en fazla 30 gün (MADDE 36).
+ * Özürlü ve özürsüz birlikte en fazla 30 gün.
  *
- * Bir süre özürlü devamsızlık ayrı bir 20 günlük sınırla ölçülüyordu
- * ("özürsüz 10 + özürlü 20"). Yönetmelik öyle demiyor: 3 gün özürsüz, 25 gün
- * raporlu devamsızlığı olan öğrenci 28 günde ve sınırın içinde, ama ekran ona
- * "hakkını aştın" diyordu.
+ * Bugünkü iki sınırın toplamına eşit; ayrı tutuluyor çünkü ana sayfa ve
+ * ekranın başlığı "toplam" üzerinden konuşuyor.
  */
 export const TOPLAM_SINIR = 30
 
@@ -511,6 +512,8 @@ export type DevamsizlikOzeti = {
   ozursuz: number
   /** Özürsüz devamsızlıktan kalan gün. */
   ozursuzKalan: number
+  /** Özürlü devamsızlıktan kalan gün. */
+  ozurluKalan: number
   /** Toplam devamsızlıktan (özürlü + özürsüz) kalan gün. */
   toplamKalan: number
   /** Herhangi bir sınır aşıldı mı. */
@@ -546,18 +549,21 @@ export function devamsizlikOzeti(kayitlar: Devamsizlik[]): DevamsizlikOzeti {
 
   const toplam = ozurlu + ozursuz
   const ozursuzKalan = yuvarla(OZURSUZ_SINIR - ozursuz, 1)
+  const ozurluKalan = yuvarla(OZURLU_SINIR - ozurlu, 1)
   const toplamKalan = yuvarla(TOPLAM_SINIR - toplam, 1)
-  const asildi = ozursuzKalan < 0 || toplamKalan < 0
+  const asildi = ozursuzKalan < 0 || ozurluKalan < 0 || toplamKalan < 0
 
   return {
     ozurlu: yuvarla(ozurlu, 1),
     ozursuz: yuvarla(ozursuz, 1),
     ozursuzKalan,
+    ozurluKalan,
     toplamKalan,
     asildi,
     uyari:
       !asildi &&
       (toplam >= TOPLAM_SINIR * DEVAMSIZLIK_UYARI_ORANI ||
-        ozursuz >= OZURSUZ_SINIR * DEVAMSIZLIK_UYARI_ORANI),
+        ozursuz >= OZURSUZ_SINIR * DEVAMSIZLIK_UYARI_ORANI ||
+        ozurlu >= OZURLU_SINIR * DEVAMSIZLIK_UYARI_ORANI),
   }
 }
