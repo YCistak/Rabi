@@ -524,7 +524,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
     ], [
       soru('Ankara Savaşı\'ndan sonra Osmanlı Devleti Fetret Devri\'ne girmiştir.', true, 'Şehzadeler arasındaki mücadele yaklaşık on bir yıl sürdü.'),
       soru('İstanbul\'un fethi Orta Çağ\'ın sonu kabul edilir.', true, 'Surların top ateşiyle yıkılması çağ değiştiren bir gelişme sayılıyor.'),
-      soru('Fetret Devri nde Balkanlardaki topraklar tümüyle kaybedilmiştir.', false, 'İskân ve istimalet politikaları sayesinde Balkanlardaki düzen ayakta kaldı.'),
+      soru('Fetret Devri\'nde Balkanlardaki topraklar tümüyle kaybedilmiştir.', false, 'İskân ve istimalet politikaları sayesinde Balkanlardaki düzen ayakta kaldı.'),
       soru('Osmanlı, Rumeli\'ye Ankara Savaşı\'ndan sonra geçmiştir.', false, 'Rumeli\'ye geçiş 14. yüzyıl ortasında, Ankara Savaşı\'ndan çok önce oldu.'),
       sikli('Osmanlı Rumeli\'ye hangi kalenin alınmasıyla geçti?', ['Çimpe (1353)', 'Niğbolu'], 0, 'Balkanlara ilk adım.'),
       sikli('Ankara Savaşı\'nda Osmanlı kime yenildi?', ['Timur', 'Bizans'], 0, '1402; Anadolu birliği bozuldu.'),
@@ -600,7 +600,7 @@ export const tarih10 = program('tarih', 10, 'Türkistan’dan cihan devletine', 
       ),
       kart(
         'Dirlik türleri',
-        'Gelirine göre üçe ayrılırdı:\n- **Has:** en büyük; padişah, sadrazam, beylerbeyi\n- **Zeamet:** orta; sancakbeyi, ileri gelenler\n- **Tımar:** en küçük; sipahi',
+        'Gelirine göre üçe ayrılırdı:\n- **Has:** en büyük; padişah, vezirler, beylerbeyi ve sancakbeyleri\n- **Zeamet:** orta; subaşı, alaybeyi gibi orta dereceli görevliler\n- **Tımar:** en küçük; sipahi',
       ),
       kart(
         'Divan-ı Hümayun üyeleri',
