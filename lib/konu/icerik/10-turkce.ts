@@ -884,7 +884,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         },
       ),
       soru('Millî Edebiyat döneminde hece ölçüsü benimsenmiştir.', true, 'Halk şiirinin ölçüsü olarak görüldüğü için tercih edildi.'),
-      soru('Millî Edebiyat ta konular Anadolu ve halk hayatından seçilmiştir.', true, 'Edebiyatın kapısı İstanbul dışına açıldı.'),
+      soru('Millî Edebiyat\'ta konular Anadolu ve halk hayatından seçilmiştir.', true, 'Edebiyatın kapısı İstanbul dışına açıldı.'),
       soru('Ömer Seyfettin, Millî Edebiyat\'ın şiir alanındaki temsilcisidir.', false, 'Hikâyenin temsilcisidir; şiirde Ziya Gökalp ve Mehmet Emin Yurdakul öne çıkar.'),
       sikli('Genç Kalemler dergisi hangi şehirde çıktı?', ['Selanik', 'İstanbul'], 0, 'Akım 1911\'de Selanik\'te başladı.'),
       sikli('Yeni Lisan makalesi neyi amaçladı?', ['Konuşma dilini yazı dili yapmak', 'Arapça öğretmek'], 0, 'Sadeleşme.'),
@@ -966,7 +966,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
         '- **Kaşağı:** vicdan ve pişmanlık\n- **Pembe İncili Kaftan:** onur, tarihî olay\n- **Forsa:** kahramanlık\nHikâyeleri kısa, olay merkezli ve sade dillidir.',
       ),
     ], [
-      soru('Millî Edebiyat döneminde roman ve hikâyede Anadolu insanı işlenmiştir.', true, 'Mekân İstanbul dan Anadolu ya taşındı.'),
+      soru('Millî Edebiyat döneminde roman ve hikâyede Anadolu insanı işlenmiştir.', true, 'Mekân İstanbul\'dan Anadolu\'ya taşındı.'),
       soru('Ömer Seyfettin dönemin hikâye türündeki önemli adlarındandır.', true, 'Sade dille yazdığı hikâyeler dönemin dil anlayışını yansıtıyor.'),
       soru('Millî Edebiyat sanatçıları toplumsal konulardan uzak durmuştur.', false, 'Toplumsal sorunları doğrudan ele aldılar.'),
       soru('Bu dönemin birikimi Cumhuriyet Dönemi edebiyatını etkilememiştir.', false, 'Dil ve konu anlayışı Cumhuriyet edebiyatına doğrudan miras kaldı.'),

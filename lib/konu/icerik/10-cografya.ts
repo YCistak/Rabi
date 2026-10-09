@@ -1109,10 +1109,10 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
         'Güneydoğu Anadolu Projesi Fırat ve Dicle üzerindeki barajlarla sulama ve enerji sağlar.\nAtatürk Barajı projenin en büyük yapısıdır; Harran Ovası sulamaya açıldı.',
       ),
     ], [
-      soru('Türkiye de sanayi tesislerinin en çok yoğunlaştığı bölge Marmara dır.', true, 'Ulaşım, pazar ve iş gücü orada bir arada.'),
-      soru('Türkiye de hizmet sektörünün millî gelirdeki payı en yüksektir.', true, 'Turizm ve ticaret bu payın büyük kısmını oluşturuyor.'),
-      soru('Türkiye de tarımda çalışan nüfusun payı, tarımın millî gelirdeki payından düşüktür.', false, 'Tersi geçerli; bu da tarımda verimin düşük olduğunu gösteriyor.'),
-      soru('Türkiye de ekonomik faaliyetler bölgeler arasında dengeli dağılmıştır.', false, 'Batı ile doğu arasında belirgin bir gelişmişlik farkı var.'),
+      soru('Türkiye\'de sanayi tesislerinin en çok yoğunlaştığı bölge Marmara\'dır.', true, 'Ulaşım, pazar ve iş gücü orada bir arada.'),
+      soru('Türkiye\'de hizmet sektörünün millî gelirdeki payı en yüksektir.', true, 'Turizm ve ticaret bu payın büyük kısmını oluşturuyor.'),
+      soru('Türkiye\'de tarımda çalışan nüfusun payı, tarımın millî gelirdeki payından düşüktür.', false, 'Tersi geçerli; bu da tarımda verimin düşük olduğunu gösteriyor.'),
+      soru('Türkiye\'de ekonomik faaliyetler bölgeler arasında dengeli dağılmıştır.', false, 'Batı ile doğu arasında belirgin bir gelişmişlik farkı var.'),
       sikli('Türkiye\'de tarımın temel sorunu?', ['Verimlilik', 'Toprak yokluğu'], 0, 'Küçük parçalı arazi.'),
       sikli('Döviz girdisinde önemli hizmet kalemi?', ['Turizm', 'Madencilik'], 0, 'Hizmetler başı çekiyor.'),
       sikli('Türkiye\'de öne çıkan sanayi kollarından biri?', ['Kakao işleme', 'Otomotiv'], 1, 'Otomotiv, tekstil, beyaz eşya ve gıda öne çıkıyor.'),
@@ -1196,7 +1196,7 @@ export const cografya10 = program('cografya', 10, 'Yer şekillerinden ekonomiye'
     ], [
       soru('Japonya da deprem eğitimleri ve tatbikatlar düzenli olarak yapılır.', true, 'Hazırlık, günlük hayatın parçası hâline getirilmiş durumda.'),
       soru('Erken uyarı sistemleri can kaybını azaltır.', true, 'Saniyeler bile korunma davranışı için yeterli olabiliyor.'),
-      soru('Hollanda nın su yönetimi deneyimi yalnızca baraj yapımına dayanır.', false, 'Suya alan bırakan planlama ve arazi kullanımı da bu deneyimin parçası.'),
+      soru('Hollanda\'nın su yönetimi deneyimi yalnızca baraj yapımına dayanır.', false, 'Suya alan bırakan planlama ve arazi kullanımı da bu deneyimin parçası.'),
       soru('İyi uygulama örneklerinin ortak yanı, afet sonrasına odaklanmalarıdır.', false, 'Ortak yanları afet öncesine, yani hazırlığa yatırım yapmaları.'),
       sikli('Türkiye\'de afet koordinasyonunu yürüten kurum?', ['Yargıtay', 'AFAD'], 1, 'Zorunlu deprem sigortası ve kentsel dönüşüm de uygulamalardan.'),
       sikli('Hollanda\'nın yaklaşık ne kadarı deniz seviyesinin altındadır?', ['Dörtte biri', 'Tamamı'], 0, 'Setler ve suya yer bırakan planlamayla taşkın yönetiliyor.'),

@@ -1087,8 +1087,8 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       ),
     ], [
       soru('Durum hikâyesinde serim-düğüm-çözüm sıralaması belirgin değildir.', true, 'Bir anı ve durumu aktarır; olay örgüsü zayıftır.'),
-      soru('Durum hikâyesinin öncüsü Maupassant tır.', false, 'Maupassant olay hikâyesinin, Çehov durum hikâyesinin öncüsü.'),
-      soru('Türk edebiyatının ilk romanı Taaşşuk-ı Talat ve Fitnat kabul edilir.', true, 'Şemsettin Sami nin bu eseri ilk yerli roman sayılıyor.'),
+      soru('Durum hikâyesinin öncüsü Maupassant\'tır.', false, 'Maupassant olay hikâyesinin, Çehov durum hikâyesinin öncüsü.'),
+      soru('Türk edebiyatının ilk romanı Taaşşuk-ı Talat ve Fitnat kabul edilir.', true, 'Şemsettin Sami\'nin bu eseri ilk yerli roman sayılıyor.'),
       soru('Roman ile hikâye arasındaki tek fark uzunluktur.', false, 'Roman daha çok kişiyi, mekânı ve olayı daha geniş bir zamanda işler.'),
       sikli('İlk edebî roman sayılan İntibah kimindir?', ['Şemsettin Sami', 'Namık Kemal'], 1, 'Şemsettin Sami ilk yerli roman Taaşşuk-ı Talat ve Fitnat\'ın yazarı.'),
       sikli('Türk edebiyatında olay hikâyesinin temsilcisi?', ['Sait Faik', 'Ömer Seyfettin'], 1, 'Sait Faik durum hikâyesinin temsilcisi.'),
