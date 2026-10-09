@@ -113,7 +113,7 @@
 <p class="ust">
   Uygulama: <b>Rabi</b> (<code>com.fluxifyinteractive.rabi</code>) &middot;
   Geliştirici: <b>Fluxify Interactive</b><br>
-  Yürürlük tarihi: <b>12 Eylül 2026</b> &middot; Son güncelleme: 13 Eylül 2026
+  Yürürlük tarihi: <b>12 Eylül 2026</b> &middot; Son güncelleme: 9 Ekim 2026
 </p>
 
 <p>
@@ -126,9 +126,9 @@
   <p><b>Kısaca:</b> Rabi'nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve
   adın <b>telefonundan hiç çıkmaz</b>. Rabi'nin ağa çıktığı yalnızca üç durum vardır ve
   üçü de sen izin verene kadar gerçekleşmez: <b>(1)</b> hatalı bir soruyu bildirmen,
-  <b>(2)</b> uygulama çöktükten sonra çökme kaydını göndermeyi seçmen, <b>(3)</b> Ayarlar'daki
+  <b>(2)</b> Android'de uygulama çöktükten sonra çökme kaydını göndermeyi seçmen, <b>(3)</b> Ayarlar'daki
   &ldquo;Öneri ve hata bildir&rdquo; ekranından bize bir mesaj yazıp göndermen. Bunların
-  dışında uygulama açılırken telefonundaki Google Play, Rabi'nin yeni bir sürümü olup
+  dışında Android'de uygulama açılırken telefonundaki Google Play, Rabi'nin yeni bir sürümü olup
   olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi taşımaz
   (bkz. §4b). Reklam yok, analiz (analytics) yok, hesap yok, giriş yok.</p>
 </div>
@@ -150,17 +150,25 @@
   <tr><td>Çalışma sayacı (pomodoro) geçmişi, günlük kayıtlar, rozetler</td><td>Alışkanlık takibi</td></tr>
   <tr><td>Mini oyun istatistikleri, Oyun Bankası, zorluk tercihleri</td><td>Oyunların ilerlemesi</td></tr>
   <tr><td>Yapılacaklar tahtasındaki notlar</td><td>Not tutmak</td></tr>
-  <tr><td>Odak kilidinde seçtiğin uygulama listesi</td><td>Hangi uygulamaların engelleneceği</td></tr>
+  <tr><td>Odak kilidinde seçtiğin uygulama listesi (iPhone'da Apple'ın verdiği, Rabi'nin okuyamadığı kapalı belirteçler olarak)</td><td>Hangi uygulamaların engelleneceği</td></tr>
   <tr><td>Cihazına verilen rastgele takma ad (örn. <code>mavi-tavsan-42</code>)</td><td>Yalnızca hatalı soru bildirimlerini gruplamak (bkz. §3)</td></tr>
 </table>
 </div>
 
 <p>
   Uygulamayı silersen bu verilerin tamamı telefonundan silinir. Uygulama içinden de
-  <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin. Android'in otomatik uygulama
-  yedeği Rabi için <b>kapalıdır</b>: verin Google hesabına ya da telefon yedeğine
-  kopyalanmaz, telefon değiştirdiğinde kendiliğinden taşınmaz. Yedek alırsan
-  (<b>Ayarlar → Yedeği indir</b>) Android'in paylaş penceresi açılır ve dosyayı nereye
+  <b>Ayarlar → Tüm veriyi sil</b> ile temizleyebilirsin.
+</p>
+<p>
+  <b>Android'de</b> otomatik uygulama yedeği Rabi için <b>kapalıdır</b>: verin Google
+  hesabına ya da telefon yedeğine kopyalanmaz, telefon değiştirdiğinde kendiliğinden
+  taşınmaz. <b>iPhone'da</b> ise Rabi'nin verisi, iOS'un uygulama verilerini yedekleme
+  biçimi gereği, telefonunun iCloud yedeğine ya da bilgisayara (Finder/iTunes) aldığın
+  yedeğe girebilir; bu yedekler Apple'ın ve senin kontrolündedir, Rabi onlara erişemez ve
+  onları hiçbir yere göndermez.
+</p>
+<p>
+  Yedek dosyası almak istersen (<b>Ayarlar → Yedeği indir</b>) telefonunun paylaş penceresi açılır ve dosyayı nereye
   kaydedeceğine ya da kime göndereceğine yalnızca sen karar verirsin; Rabi dosyayı kendisi
   hiçbir yere göndermez. Seçtiğin uygulama (Drive, Dosyalar, mesajlaşma…) o andan sonra
   dosyayı kendi kurallarıyla saklar.
@@ -169,8 +177,10 @@
 <h2>2. Kamera ve fotoğraflar</h2>
 
 <p>
-  Yanlış soru eklerken telefonunun kamerası ya da galerisi <b>sistemin kendi seçicisiyle</b>
-  açılır; Rabi kameraya doğrudan erişmez ve kamera izni istemez.
+  Yanlış soru eklerken ve deneme sonuç kâğıdını okuturken telefonunun kamerası ya da
+  galerisi <b>sistemin kendi seçicisiyle</b> açılır. Android'de Rabi kameraya doğrudan
+  erişmez ve kamera izni istemez. iPhone'da kamera ilk açıldığında iOS senden kamera izni
+  ister; izni vermezsen yine galeriden fotoğraf seçebilirsin.
 </p>
 <ul>
   <li>Çektiğin ya da seçtiğin fotoğraf küçültülüp uygulamanın kendi deposuna kaydedilir ve
@@ -178,6 +188,20 @@
   <li>Hiçbir fotoğraf, hiçbir zaman internete yüklenmez — ne bize, ne bir bulut servisine.</li>
   <li>Rabi galerinin geri kalanını taramaz; yalnızca sistem seçicisinde senin seçtiğin
       fotoğrafı alır.</li>
+</ul>
+
+<h3>Deneme sonuç kâğıdını okutma (&ldquo;Okut&rdquo;)</h3>
+<p>
+  Deneme eklerken <b>&ldquo;Okut&rdquo;</b> ile sonuç kâğıdının fotoğrafını çekebilir ya da
+  galeriden seçebilirsin. Kâğıttaki yazılar <b>telefonunun içinde</b>, uygulamayla birlikte
+  gelen metin tanıma modeliyle okunur; okuma için hiçbir sunucuya bağlanılmaz.
+</p>
+<ul>
+  <li>Okutma fotoğrafı <b>kaydedilmez</b>: Rabi onu kendi deposuna yazmaz, okuma bitince
+      bırakır (kameranın çekim sırasında oluşturduğu geçici dosyayı telefonun sistemi
+      yönetir).</li>
+  <li>Fotoğraf da, okunan metin de <b>hiçbir yere gönderilmez</b>.</li>
+  <li>Okunan netler yalnızca forma doldurulur; sen kaydedene kadar hiçbir şey saklanmaz.</li>
 </ul>
 
 <h2>3. Telefonundan çıkan ilk şey — hatalı soru bildirimi</h2>
@@ -235,27 +259,41 @@
 <h2>4. Telefonundan çıkan ikinci şey — çökme raporu</h2>
 
 <p>
-  Uygulama beklenmedik şekilde kapanırsa ya da kapanmadan bir hata yakalarsa (ekrandaki bir
-  bölümün çizilememesi, yüklenemeyen bir dosya gibi), hatanın kaydı <b>telefonunda</b> tutulur.
-  Kendiliğinden hiçbir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak
-  kapalıdır.
+  <b>Çökme raporu yalnızca Android'de vardır.</b> iPhone sürümünde çökme raporlama aracı
+  bulunmaz; iPhone'dan çökme kaydı gönderilmez ve bu soru orada hiç çıkmaz.
+</p>
+<p>
+  Android'de uygulama beklenmedik şekilde kapanırsa hatanın kaydı <b>telefonunda</b> tutulur.
+  Uygulama kapanmadan yakalanan küçük hatalar da (ekrandaki bir bölümün çizilememesi,
+  yüklenemeyen bir dosya gibi) aynı yerde geçici olarak kaydedilir. Hiçbiri kendiliğinden
+  bir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak kapalıdır.
 </p>
 <ul>
-  <li>Bir sonraki açılışta sana sorulur. <b>&ldquo;Gönder&rdquo;</b> dersen kayıt gider;
-      <b>&ldquo;Gönderme&rdquo;</b> dersen telefonundan silinir.</li>
-  <li>Bu soru her kayıttan sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.</li>
+  <li>Soru <b>yalnızca uygulama gerçekten çöktüyse</b>, bir sonraki açılışta sorulur.
+      <b>&ldquo;Gönder&rdquo;</b> dersen kayıt gider; <b>&ldquo;Gönderme&rdquo;</b> dersen
+      telefonundan silinir. Soruyu cevaplamadan uygulamayı kapatırsan bir sonraki açılışta
+      yeniden sorulur.</li>
+  <li>Çökmeye yol açmayan hatalar için soru sorulmaz: bu kayıtlar <b>gönderilmeden</b>,
+      açılışta telefonundan silinir.</li>
+  <li><b>&ldquo;Gönder&rdquo;</b> dediğinde o an telefonunda gönderilmeyi bekleyen bütün
+      kayıtlar birlikte gider: çökmenin kendisi ve ondan önce kaydedilip henüz silinmemiş
+      küçük hata kayıtları.</li>
+  <li>Bu soru her çökmeden sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.</li>
 </ul>
 
 <p><b>Gönderdiğinde giden kayıt şunları içerir:</b></p>
 <ul>
-  <li>Hatanın teknik dökümü ve hata mesajı (hangi kodun, hangi satırda kırıldığı; yüklenemeyen
-      bir dosya söz konusuysa o dosyanın uygulama içindeki adresi)</li>
+  <li>Hatanın teknik dökümü, hata mesajı ve zamanı (hangi kodun, hangi satırda kırıldığı;
+      yüklenemeyen bir dosya söz konusuysa o dosyanın ya da isteğin adresi ve satır numarası)</li>
+  <li>Hatadan hemen önce uygulamanın kendi yazdığı kısa teknik günlük satırları (hata
+      mesajlarının kendisi; senin yazdığın içerik değil)</li>
   <li>Uygulama sürümü ve derleme türü</li>
   <li>Android sürümü ve cihazdaki Android System WebView sürümü</li>
   <li>Telefonun üreticisi ve modeli</li>
-  <li>Çökme aracının kendi eklediği teknik bilgiler: cihaza özel rastgele bir kurulum
-      numarası, cihaz durumu (bellek ve disk doluluğu, ekran yönü, root/jailbreak durumu,
-      işlemci mimarisi)</li>
+  <li>Uygulamanın görüntü katmanı (WebView) kapandıysa bunun sebebine dair teknik bilgi</li>
+  <li>Çökme aracının (Crashlytics) kendi eklediği teknik bilgiler: bu kuruluma özel rastgele
+      bir kurulum numarası ve cihaz durumu (boş bellek ve disk alanı, ekran yönü,
+      root durumu, işlemci mimarisi gibi)</li>
 </ul>
 
 <p>
@@ -320,7 +358,8 @@
 </p>
 <p>
   Rabi Play dışından (doğrudan APK olarak) kurulduysa bu denetim çalışmaz ve şerit hiç
-  görünmez.
+  görünmez. Bu denetim yalnızca Android'dedir; iPhone'da güncellemeleri App Store kendisi
+  yönetir ve Rabi böyle bir sorgu yapmaz.
 </p>
 
 <h2>5. İzinler ve neden isteniyor</h2>
@@ -330,7 +369,7 @@
   <tr><th>İzin</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
   <tr><td>İnternet</td><td>§3, §4 ve §4a'daki üç gönderim ile Play'in güncelleme denetimi (§4b)</td><td>Yalnızca izin verirsen</td></tr>
   <tr><td>Bildirim gönderme</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
-  <tr><td>Kamera / galeri (sistem seçicisi üzerinden)</td><td>Yanlış soru fotoğrafı</td><td>Hayır</td></tr>
+  <tr><td>Kamera / galeri (sistem seçicisi üzerinden; iPhone'da kamera izni)</td><td>Yanlış soru fotoğrafı ve deneme sonuç kâğıdını okutma</td><td>Hayır</td></tr>
   <tr><td>Kullanım verisi erişimi (<code>PACKAGE_USAGE_STATS</code>)</td><td>Odak kilidi sırasında hangi uygulamanın ön planda olduğunu anlamak</td><td>Hayır — okunan bilgi telefondan çıkmaz</td></tr>
   <tr><td>Diğer uygulamaların üzerinde gösterme</td><td>Kilitli bir uygulamayı açtığında uyarı katmanını göstermek</td><td>Hayır</td></tr>
   <tr><td>Ön plan servisi</td><td>Pomodoro turu boyunca sayacı ve odak kilidini ayakta tutmak</td><td>Hayır</td></tr>
@@ -340,6 +379,29 @@
 </table>
 </div>
 
+<p>
+  Yukarıdaki tablo Android içindir. iPhone'da kullanım verisi, ekran üstü gösterme ve
+  Rahatsız Etme izinleri yoktur; iPhone'da istenebilecek izinler şunlardır:
+</p>
+<div class="sar">
+<table>
+  <tr><th>İzin (iPhone)</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
+  <tr><td>Ekran Süresi (Screen Time / Family Controls)</td><td>Odak kilidi: seçtiğin uygulamaları çalışma turu boyunca engellemek</td><td>Hayır</td></tr>
+  <tr><td>Bildirimler</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
+  <tr><td>Kamera</td><td>Yanlış soru fotoğrafı ve deneme sonuç kâğıdını okutma</td><td>Hayır</td></tr>
+  <tr><td>Fotoğraflara ekleme</td><td>Aylık özet afişini paylaş penceresinden galerine kaydetmen</td><td>Hayır</td></tr>
+</table>
+</div>
+<p>
+  <b>iPhone'da odak kilidi</b> Apple'ın Ekran Süresi (Screen Time / Family Controls)
+  izniyle çalışır; izni ilk kullanımda iOS'un kendi penceresi sorar. Engellenecek
+  uygulamaları <b>Apple'ın kendi seçicisinden</b> seçersin. Rabi'nin eline uygulama adları
+  değil, yalnızca Apple'ın verdiği kapalı belirteçler geçer: Rabi bu listede hangi
+  uygulamaların olduğunu <b>okuyamaz</b>, listeyi hiçbir yere <b>göndermez</b>; belirteçler
+  yalnızca telefonunda, engeli kurmak ve kaldırmak için saklanır. Engeli uygulayan ve
+  engellenen uygulamanın yerine gösterilen ekranı çizen iOS'tur. İzni Ayarlar → Ekran
+  Süresi'nden istediğin zaman geri alabilirsin.
+</p>
 <p>
   Rahatsız Etme erişimi <b>isteğe bağlıdır</b>: vermezsen odak kilidinin geri kalanı
   çalışmaya devam eder, yalnızca telefon susturulmaz. Rabi bu izinle yalnızca modu açıp
@@ -366,8 +428,15 @@
   <li><b>Firebase Crashlytics</b> — gönderdiğin çökme raporlarının toplandığı yer.</li>
 </ul>
 <p>İkisi de aynı Firebase projesinin parçasıdır.</p>
-<ul>
-</ul>
+
+<h3>Yurt dışına aktarım</h3>
+<p>
+  Bu kayıtlar Google LLC'nin Türkiye dışındaki sunucularında saklanır; yani gönderdiğin
+  bildirim, mesaj ya da çökme raporu yurt dışına aktarılmış olur. Bu aktarım, her gönderimden
+  önce ekranda ne gideceği gösterilerek senden alınan <b>açık onaya</b>
+  (&ldquo;Gönder&rdquo; düğmesine basman) dayanır (6698 sayılı KVKK md. 9).
+  &ldquo;Gönder&rdquo; demezsen hiçbir şey yurt dışına aktarılmaz.
+</p>
 <p>
   Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (§4b)
   bunlardan ayrıdır: o sorguyu telefonundaki Google Play kendi adına yapar ve Play'in
@@ -435,17 +504,47 @@
   yazdığın ad telefondan çıkmaz.
 </p>
 <p>
+  <b>18 yaşından küçüksen bildirim ya da mesaj göndermeden önce velinden izin al.</b>
+</p>
+<p>
   Veli veya vasiysen ve çocuğuna ait bir kaydın silinmesini istiyorsan §8'deki adrese
   yazman yeterlidir.
 </p>
 
 <h2>10. Haklarınız</h2>
 <p>
-  6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve ilgili mevzuat kapsamında;
-  hakkında veri işlenip işlenmediğini öğrenme, işlenmişse bilgi talep etme, düzeltilmesini
-  veya silinmesini isteme haklarına sahipsin. Bu haklarını kullanmak için
+  <b>Veri sorumlusu:</b> Ziya Bertizlioğlu (Fluxify Interactive adıyla) &middot; E-posta:
+  <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a>
+</p>
+<p>
+  <b>Hukuki sebep:</b> Telefonundan çıkan üç kayıt (§3, §4, §4a) yalnızca sen
+  &ldquo;Gönder&rdquo; dediğinde, yani <b>açık rızana</b> dayanarak işlenir (KVKK md. 5/1);
+  yurt dışına aktarım da aynı açık rızaya dayanır (KVKK md. 9, bkz. §6). Rızanı her zaman
+  geri alabilirsin: bundan sonra &ldquo;Gönder&rdquo; demediğinde hiçbir şey gitmez, daha
+  önce gönderdiklerinin silinmesini de §8'deki adresten isteyebilirsin.
+</p>
+<p>
+  6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) md. 11 kapsamında şu haklara
+  sahipsin:
+</p>
+<ol>
+  <li>Hakkında kişisel veri işlenip işlenmediğini öğrenme,</li>
+  <li>İşlenmişse buna ilişkin bilgi isteme,</li>
+  <li>İşlenme amacını ve verilerin amacına uygun kullanılıp kullanılmadığını öğrenme,</li>
+  <li>Yurt içinde veya yurt dışında verilerin aktarıldığı üçüncü kişileri bilme,</li>
+  <li>Eksik veya yanlış işlenmişse düzeltilmesini isteme,</li>
+  <li>KVKK md. 7'deki şartlar çerçevesinde silinmesini veya yok edilmesini isteme,</li>
+  <li>Düzeltme, silme ve yok etme işlemlerinin verilerin aktarıldığı üçüncü kişilere
+      bildirilmesini isteme,</li>
+  <li>İşlenen verilerin yalnızca otomatik sistemlerle analiz edilmesi sonucu aleyhine bir
+      sonuç çıkmasına itiraz etme,</li>
+  <li>Verilerin kanuna aykırı işlenmesi sebebiyle zarara uğraman hâlinde zararın
+      giderilmesini talep etme.</li>
+</ol>
+<p>
+  Bu haklarını kullanmak için
   <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a> adresine
-  yazabilirsin.
+  yazabilirsin; talebin en geç <b>30 gün</b> içinde sonuçlandırılır.
 </p>
 <p>
   Rabi ad, e-posta veya hesap bilgisi toplamadığı için, bize ulaşan kayıtların hangisinin
@@ -457,13 +556,14 @@
 <p>
   Uygulamaya veri gönderen yeni bir özellik eklenirse bu sayfa güncellenir, en üstteki
   &ldquo;son güncelleme&rdquo; tarihi değişir ve uygulamanın Google Play'deki Data Safety
-  beyanı da aynı anda güncellenir. Önemli bir değişiklik olursa uygulama içinde de duyurulur.
+  ile App Store'daki App Privacy (Uygulama Gizliliği) beyanları da aynı anda güncellenir. Önemli bir değişiklik olursa uygulama içinde de duyurulur.
 </p>
 
 <h2>12. İletişim</h2>
 <p>
   Uygulama: <b>Rabi</b> &middot; Paket adı: <code>com.fluxifyinteractive.rabi</code><br>
   Geliştirici: <b>Fluxify Interactive</b><br>
+  Veri sorumlusu: <b>Ziya Bertizlioğlu</b> (Fluxify Interactive adıyla)<br>
   E-posta: <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a>
 </p>
 <p>Gizlilik, veri silme veya bu politikayla ilgili her soru için bu adrese yazabilirsin.</p>

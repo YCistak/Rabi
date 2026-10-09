@@ -51,13 +51,17 @@ export function CokmeSorusu({ kol }: { kol: CokmeKolu }) {
               Gönderilecekler
             </p>
             <ul className="mt-1.5 list-disc pl-4 text-[11.5px] font-medium leading-snug text-muted-foreground">
-              <li>hatanın uygulamanın hangi satırında olduğu</li>
-              <li>telefonunun modeli ve Android sürümü</li>
+              <li>hatanın hangi satırda olduğu, hata mesajı ve zamanı</li>
+              <li>hatadan hemen önceki teknik günlük satırları</li>
+              <li>telefonunun üreticisi ve modeli, Android ve WebView sürümü</li>
               <li>uygulama sürümü</li>
+              <li>bu kuruluma özel rastgele bir kurulum numarası</li>
+              <li>cihaz durumu: boş bellek ve disk alanı, ekran yönü, root durumu, işlemci türü</li>
             </ul>
             <p className="mt-1.5 text-[11.5px] font-medium leading-snug text-muted-foreground">
-              Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>.
-              &ldquo;Gönderme&rdquo; dersen rapor telefonundan silinir.
+              Bekleyen başka hata kayıtları varsa onlar da birlikte gider. Adın, netlerin,
+              notların ve fotoğrafların <b>gönderilmez</b>. &ldquo;Gönderme&rdquo; dersen
+              kayıtlar telefonundan silinir.
             </p>
           </div>
         </div>

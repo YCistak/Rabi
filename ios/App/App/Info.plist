@@ -28,9 +28,9 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>Yanlış sorunun fotoğrafını çekip Yanlış Soru Bankası'na eklemek için.</string>
+	<string>Yanlış sorunun fotoğrafını çekmek ve deneme sonuç kâğıdını okutmak için. Fotoğraf telefonunda kalır, hiçbir yere gönderilmez.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Galerideki bir soru fotoğrafını Yanlış Soru Bankası'na eklemek için.</string>
+	<string>Galeriden bir soru fotoğrafı ya da deneme sonuç kâğıdı seçmek için. Fotoğraf telefonunda kalır, hiçbir yere gönderilmez.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Paylaşım penceresinden aylık özet afişini galerine kaydedebilmen için.</string>
 	<key>UIStatusBarStyle</key>

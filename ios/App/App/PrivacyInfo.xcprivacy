@@ -1,14 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!--
-  Uygulamanın gizlilik bildirimi. Eklentilerin kendi bildirimleri kendi
-  paketlerinde; bu dosya yalnızca Rabi'nin kendi topladığını sayıyor.
+  Uygulamanın gizlilik bildirimi (privacy manifest).
 
-  Ağa çıkan tek şey hatalı soru ve öneri/hata bildirimleri (lib/hata-gonder.ts):
-  kullanıcı "Gönder"e basınca, kimliğe bağlanmadan, izleme için değil. Serbest
-  metin "diğer kullanıcı içeriği", sürüm ve telefon modeli "diğer tanılama
-  verisi". Alan eklenirse AGENTS.md'deki listeyle birlikte burası ve App Store
-  Connect'teki App Privacy beyanı da değişmeli.
+  Toplanan veri: iOS'ta ağa çıkan tek şey hatalı soru ve öneri/hata
+  bildirimleri (lib/hata-gonder.ts → Firestore); kullanıcı "Gönder"e basınca,
+  hesaba bağlanmadan, izleme için değil. Çökme raporu (Crashlytics) iOS'ta YOK
+  (lib/cokme.ts yalnız Android), Play güncelleme denetimi de yok.
+    - Serbest metin + "Başka" notu → diğer kullanıcı içeriği (OtherUserContent)
+    - Uygulama sürümü + telefon modeli → diğer tanılama verisi (OtherDiagnosticData)
+    - Rastgele kalıcı cihaz adı (`mavi-tavsan-42`, lib/cihaz-adi.ts) → cihaz
+      kimliği (DeviceID); Play Data Safety'de de "cihaz veya diğer kimlikler".
+  Hesap/giriş olmadığı için hiçbiri kimliğe bağlı (Linked) değil.
+
+  Gerekçe isteyen API'ler (required reason API):
+    - UserDefaults: EkranSuresiEklentisi.swift (odak seçimi), CanliSayacEklentisi.swift
+      (kilit bayrağı) — yalnız uygulamanın kendi verisi → CA92.1.
+    - Dosya zaman damgası: @capacitor/filesystem eklentisi stat() sonucunda
+      ctime/mtime üretiyor (IONFileStructures+Converters.swift) ve paketinde
+      kendi bildirim dosyası yok → C617.1 (uygulama kabındaki dosyalar).
+  Disk alanı ve sistem açılış süresi API'leri ne kodda ne eklentilerde
+  kullanılıyor; beyan edilmedi.
+
+  Alan veya eklenti eklenirse AGENTS.md / docs/kurallar/ag-ve-gizlilik.md'deki
+  listeyle birlikte burası ve App Store Connect'teki App Privacy beyanı da değişmeli.
 -->
 <plist version="1.0">
 <dict>
@@ -42,8 +57,37 @@
 				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
 			</array>
 		</dict>
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeDeviceID</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
 	</array>
 	<key>NSPrivacyAccessedAPITypes</key>
-	<array/>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
