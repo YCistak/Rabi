@@ -1,9 +1,10 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { AlertTriangle, CalendarDays, Plus, X } from 'lucide-react'
+import { AlertTriangle, CalendarDays, ChevronDown, Plus, X } from 'lucide-react'
 import type { Devamsizlik, DevamsizlikTuru } from '@/lib/types'
 import {
+  OZURLU_SINIR,
   OZURSUZ_SINIR,
   TOPLAM_SINIR,
   dersYilininKayitlari,
@@ -58,6 +59,9 @@ export function DevamsizlikEkrani({
   const [takvimAcik, setTakvimAcik] = useState(false)
   const [panelAcik, setPanelAcik] = useState(false)
   const [silinecek, setSilinecek] = useState<Devamsizlik | null>(null)
+  // Tüm kayıtlar varsayılan kapalı (kullanıcı istedi): ekranın işi kalan hak
+  // ve seçili gün; uzun liste en altta, istenince açılıyor.
+  const [tumKayitlarAcik, setTumKayitlarAcik] = useState(false)
 
   // Devamsızlık hakkı her ders yılında sıfırlanır; geçmiş yılların kaydı
   // listede durur ama sayaca girmez.
@@ -98,7 +102,11 @@ export function DevamsizlikEkrani({
    * yarım gün "bir gün" değil, aynı günün iki kaydı. Değiştirmek isteyen
    * mevcut kaydı siliyor — kaydın kendi çöp kutusu listedeki satırın yanında.
    */
-  const seciliGununKaydi = kayitlar.find((k) => k.tarih === secili)
+  const seciliGununKayitlari = useMemo(
+    () => kayitlar.filter((k) => k.tarih === secili),
+    [kayitlar, secili],
+  )
+  const seciliGununKaydi = seciliGununKayitlari[0]
 
   const gunSec = (iso: string) => {
     setSecili(iso)
@@ -147,19 +155,20 @@ export function DevamsizlikEkrani({
             </p>
           </div>
 
+          {/* Özürlü üstte, özürsüz altta (kullanıcı istedi); ikisi aynı çubuk. */}
           <HakCubugu
-            baslik="Özürsüz"
-            kullanilan={ozet.ozursuz}
-            sinir={OZURSUZ_SINIR}
-            asildi={ozet.ozursuzKalan < 0}
+            baslik="Özürlü"
+            kullanilan={ozet.ozurlu}
+            sinir={OZURLU_SINIR}
+            asildi={ozet.ozurluKalan < 0}
           />
           <div className="mt-3">
-            {/* Özürlü günler ayrı sayılır; toplam sınır üst satırda kalır. */}
-            <div className="flex items-center gap-2.5">
-              <p className="w-16 shrink-0 text-[12.5px] font-bold text-muted-foreground">Özürlü</p>
-              <span aria-hidden className="h-px flex-1 bg-border" />
-              <p className="rakam shrink-0 text-[12.5px] font-bold">{gunYaz(ozet.ozurlu)} gün</p>
-            </div>
+            <HakCubugu
+              baslik="Özürsüz"
+              kullanilan={ozet.ozursuz}
+              sinir={OZURSUZ_SINIR}
+              asildi={ozet.ozursuzKalan < 0}
+            />
           </div>
         </Kart>
 
@@ -222,13 +231,34 @@ export function DevamsizlikEkrani({
           )}
         </HaftaSeridi>
 
+        {/* Seçili günün kaydı — takvimin hemen altında, tüm kayıtlardan bağımsız.
+            Gelecek gün için gösterilmiyor; altındaki şerit zaten söylüyor. */}
+        {!gelecekGun && (
+          <Kart className="overflow-hidden rounded-3xl p-0">
+            <p className="px-4 pb-2.5 pt-3 font-display text-[15px] font-extrabold tracking-tight">
+              {kisaYaz(secili)}
+            </p>
+            {seciliGununKayitlari.length === 0 ? (
+              <p className="border-t border-border px-4 py-2.5 text-[13px] font-bold text-muted-foreground">
+                Bu gün kayıt yok
+              </p>
+            ) : (
+              <ul>
+                {seciliGununKayitlari.map((kayit) => (
+                  <KayitSatiri key={kayit.id} kayit={kayit} onSil={() => setSilinecek(kayit)} />
+                ))}
+              </ul>
+            )}
+          </Kart>
+        )}
+
         {gelecekGun ? (
           <Not tur="uyari" className="rounded-2xl text-center text-[13px] font-extrabold">
             Bu gün henüz gelmedi
           </Not>
         ) : seciliGununKaydi ? (
           // Dolu günde düğme yerine şerit: pasif bir düğme neden basılamadığını
-          // söylemiyor, kaydı değiştirmenin yolu da aşağıdaki listede.
+          // söylemiyor, kaydı değiştirmenin yolu da hemen üstteki gün kartında.
           <Not tur="bilgi" className="rounded-2xl text-center text-[13px] font-extrabold">
             {kisaYaz(secili)} zaten kayıtlı
           </Not>
@@ -242,74 +272,45 @@ export function DevamsizlikEkrani({
           </Buton>
         )}
 
+        {/* Tüm kayıtlar ekranın en altında, açılır-kapanır; varsayılan kapalı. */}
         <Kart className="overflow-hidden rounded-3xl p-0">
-          <div className="flex items-baseline gap-2 px-4 pb-3 pt-3.5">
-            <p className="font-display text-[15px] font-extrabold tracking-tight">Tüm kayıtlar</p>
-            <p className="rakam ml-auto text-[12.5px] font-bold text-muted-foreground">
+          <button
+            type="button"
+            onClick={() => setTumKayitlarAcik((o) => !o)}
+            aria-expanded={tumKayitlarAcik}
+            className="flex w-full items-center gap-2 px-4 py-3.5 text-left active:bg-muted/40"
+          >
+            <span className="font-display text-[15px] font-extrabold tracking-tight">Tüm kayıtlar</span>
+            <span className="rakam ml-auto text-[12.5px] font-bold text-muted-foreground">
               {siraliKayitlar.length} kayıt
-            </p>
-          </div>
+            </span>
+            <ChevronDown
+              size={18}
+              aria-hidden
+              className={cn(
+                'shrink-0 text-muted-foreground transition-transform',
+                tumKayitlarAcik && 'rotate-180',
+              )}
+            />
+          </button>
 
-          {siraliKayitlar.length === 0 ? (
-            <p className="px-4 pb-4 text-[13px] leading-relaxed text-muted-foreground">
-              Bu ders yılında hiç devamsızlığın yok. Takvimden bir gün seçip ekleyebilirsin.
-            </p>
-          ) : (
-            <ul>
-              {siraliKayitlar.map((kayit) => {
-                const ozursuz = kayit.tur === 'ozursuz'
-                return (
-                  <li
+          {tumKayitlarAcik &&
+            (siraliKayitlar.length === 0 ? (
+              <p className="acilir-giris px-4 pb-4 text-[13px] leading-relaxed text-muted-foreground">
+                Bu ders yılında hiç devamsızlığın yok. Takvimden bir gün seçip ekleyebilirsin.
+              </p>
+            ) : (
+              <ul className="acilir-giris">
+                {siraliKayitlar.map((kayit) => (
+                  <KayitSatiri
                     key={kayit.id}
-                    className={cn(
-                      'flex items-center gap-2.5 border-t border-border px-4 py-2.5',
-                      ozursuz ? 'bg-danger-soft/40' : 'bg-warning-soft/40',
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'w-[62px] shrink-0 rounded-full py-1 text-center text-[11px] font-extrabold',
-                        ozursuz
-                          ? 'bg-danger/12 text-danger'
-                          : 'bg-warning/14 text-warning',
-                      )}
-                    >
-                      {ozursuz ? 'Özürsüz' : 'Özürlü'}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          'block truncate text-[13.5px] font-extrabold',
-                          ozursuz ? 'text-danger' : 'text-warning',
-                        )}
-                      >
-                        {tarihYaz(kayit.tarih)}
-                      </span>
-                      {kayit.not && (
-                        <span className="mt-px block truncate text-[11.5px] font-bold text-muted-foreground">
-                          {kayit.not}
-                        </span>
-                      )}
-                    </span>
-                    <span className="rakam shrink-0 text-xs font-bold text-muted-foreground">
-                      {kayit.yarimGun ? '0,5' : '1'} gün
-                    </span>
-                    <button
-                      type="button"
-                      aria-label="Kaydı sil"
-                      onClick={() => setSilinecek(kayit)}
-                      /* Görsel 28 piksel; `::after` dokunma alanını 44'e çıkarıyor. Sol
-                         boşluk silmenin "1 gün" yazısına yapışmasını önlüyor —
-                         satıra dokunmak isterken kaydı silmeye basılıyordu. */
-                      className="relative ml-1.5 inline-flex size-7 shrink-0 items-center justify-center rounded-[10px] text-muted-foreground/70 after:absolute after:-inset-2 active:bg-danger-soft active:text-danger"
-                    >
-                      <X size={16} aria-hidden />
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
+                    kayit={kayit}
+                    tarihli
+                    onSil={() => setSilinecek(kayit)}
+                  />
+                ))}
+              </ul>
+            ))}
         </Kart>
       </div>
 
@@ -337,6 +338,75 @@ export function DevamsizlikEkrani({
         onIptal={() => setSilinecek(null)}
       />
     </div>
+  )
+}
+
+/**
+ * Bir devamsızlık kaydının satırı: tür, tarih/not, gün ve sil.
+ *
+ * Seçili günün kartı ve tüm kayıtlar listesi aynı satırı kullanıyor. Gün
+ * kartında başlık zaten tarihi söylediği için orada tarih yerine not ya da
+ * tür yazılıyor (`tarihli` kapalı).
+ */
+function KayitSatiri({
+  kayit,
+  tarihli = false,
+  onSil,
+}: {
+  kayit: Devamsizlik
+  tarihli?: boolean
+  onSil: () => void
+}) {
+  const ozursuz = kayit.tur === 'ozursuz'
+  const anaMetin = tarihli
+    ? tarihYaz(kayit.tarih)
+    : (kayit.not ?? (ozursuz ? 'Özürsüz devamsızlık' : 'Özürlü devamsızlık'))
+  const altMetin = tarihli ? kayit.not : undefined
+  return (
+    <li
+      className={cn(
+        'flex items-center gap-2.5 border-t border-border px-4 py-2.5',
+        ozursuz ? 'bg-danger-soft/40' : 'bg-warning-soft/40',
+      )}
+    >
+      <span
+        className={cn(
+          'w-[62px] shrink-0 rounded-full py-1 text-center text-[11px] font-extrabold',
+          ozursuz ? 'bg-danger/12 text-danger' : 'bg-warning/14 text-warning',
+        )}
+      >
+        {ozursuz ? 'Özürsüz' : 'Özürlü'}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span
+          className={cn(
+            'block truncate text-[13.5px] font-extrabold',
+            ozursuz ? 'text-danger' : 'text-warning',
+          )}
+        >
+          {anaMetin}
+        </span>
+        {altMetin && (
+          <span className="mt-px block truncate text-[11.5px] font-bold text-muted-foreground">
+            {altMetin}
+          </span>
+        )}
+      </span>
+      <span className="rakam shrink-0 text-xs font-bold text-muted-foreground">
+        {kayit.yarimGun ? '0,5' : '1'} gün
+      </span>
+      <button
+        type="button"
+        aria-label="Kaydı sil"
+        onClick={onSil}
+        /* Görsel 28 piksel; `::after` dokunma alanını 44'e çıkarıyor. Sol
+           boşluk silmenin "1 gün" yazısına yapışmasını önlüyor —
+           satıra dokunmak isterken kaydı silmeye basılıyordu. */
+        className="relative ml-1.5 inline-flex size-7 shrink-0 items-center justify-center rounded-[10px] text-muted-foreground/70 after:absolute after:-inset-2 active:bg-danger-soft active:text-danger"
+      >
+        <X size={16} aria-hidden />
+      </button>
+    </li>
   )
 }
 
@@ -435,7 +505,7 @@ function DevamsizlikEkleSayfasi({
           />
           <SecimSatiri
             ad="Özürlü (raporlu)"
-            ornek={`Toplam ${TOPLAM_SINIR} günden düşer`}
+            ornek={`Kalan ${OZURLU_SINIR} günden düşer`}
             secili={tur === 'ozurlu'}
             onClick={() => setTur('ozurlu')}
           />
