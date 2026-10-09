@@ -1444,7 +1444,7 @@ export const biyoloji10 = program('biyoloji', 10, 'Enerjiden ekosisteme', [
       ),
     ], [
       soru(
-        'Bir besin zincirinde enerjinin yaklaşık %10 u bir üst basamağa aktarılır.',
+        'Bir besin zincirinde enerjinin yaklaşık %10\'u bir üst basamağa aktarılır.',
         true,
         'Kalanı solunum ve ısı olarak kaybediliyor.',
         {

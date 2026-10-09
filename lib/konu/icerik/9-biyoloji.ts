@@ -587,9 +587,9 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
       ),
     ], [
       soru(
-        'pH değeri 7 den büyük olan çözeltiler asit özelliği gösterir.',
+        'pH değeri 7\'den büyük olan çözeltiler asit özelliği gösterir.',
         false,
-        '7 den büyük değerler bazik bölgede; asitler 7 nin altında kalıyor.',
+        '7\'den büyük değerler bazik bölgede; asitler 7\'nin altında kalıyor.',
         {
           tur: 'sayiDogrusu',
           aralik: [0, 14],
@@ -1495,7 +1495,7 @@ export const biyoloji9 = program('biyoloji', 9, 'Yaşamdan hücreye', [
     ], [
       soru('Endemik tür, yalnızca belirli bir bölgede doğal olarak yaşayan türdür.', true, 'Başka yerde bulunmadığı için yok olması geri dönülmez.'),
       soru('Biyoçeşitlilik gen, tür ve ekosistem düzeylerinde incelenir.', true, 'Aynı türün içindeki gen farkları da çeşitliliğin parçası.'),
-      soru('Türkiye biyoçeşitlilik bakımından Avrupa nın en fakir ülkelerindendir.', false, 'Farklı iklim ve bitki bölgeleri sayesinde en zengin ülkelerinden biri.'),
+      soru('Türkiye biyoçeşitlilik bakımından Avrupa\'nın en fakir ülkelerindendir.', false, 'Farklı iklim ve bitki bölgeleri sayesinde en zengin ülkelerinden biri.'),
       soru('Bir türün yok olması ekosistemin işleyişini etkilemez.', false, 'Besin ağındaki her tür başka türlere bağlı; kopan halka zinciri etkiliyor.'),
       sikli('Aynı türün bireyleri arasındaki farklılık?', ['Ekosistem çeşitliliği', 'Gen çeşitliliği'], 1, 'Hastalığa direnç burada saklı.'),
       sikli('Türkiye\'de bitki türlerinin yaklaşık ne kadarı endemiktir?', ['Üçte biri', 'Yüzde biri'], 0, 'Üç bitki bölgesinin kesişimi, çok sayıda yerel tür doğurmuş.'),

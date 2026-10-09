@@ -82,7 +82,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Sabunun yağı çözmesinin sebebi?', ['Yağı buharlaştırır', 'Bir ucu suyu, bir ucu yağı sever'], 1, 'Yağı kavrayıp suya taşır.'),
       soru('Ekmeğin kızarması kimyasal bir değişimdir.', true, 'Şeker ile protein tepkimeye girip yeni maddeler oluşturuyor.'),
       soru('Sütün ekşimesi kimyasal bir değişimdir.', true, 'Laktoz laktik aside dönüşür; yeni madde oluşur.'),
-      soru('Buzun erimesi kimyasal bir değişimdir.', false, 'Molekül değişmez; fiziksel değişim.'),
+      soru('Suyun kaynaması kimyasal bir değişimdir.', false, 'Buhar da H₂O; hâl değişimi fizikseldir.'),
       soru('Şekerin suda çözünmesi fiziksel bir değişimdir.', true, 'Su buharlaşınca şeker geri kalır.'),
       sikli('Hangisi kimyasal değişimdir?', ['Camın kırılması', 'Odunun yanması'], 1, 'Yanmada yeni maddeler oluşur.'),
     ], [
@@ -446,7 +446,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
         '⁵⁶₂₆Fe³⁺ için:\n- Proton 26, nötron 56 − 26 = 30\n- Elektron 26 − 3 = 23',
       ),
     ], [
-      soru('Rutherford un deneyi, atom kütlesinin büyük kısmının küçük bir çekirdekte toplandığını gösterdi.', true, 'Işınların çok azının geri sekmesi bunun kanıtıydı.'),
+      soru('Rutherford\'un deneyi, atom kütlesinin büyük kısmının küçük bir çekirdekte toplandığını gösterdi.', true, 'Işınların çok azının geri sekmesi bunun kanıtıydı.'),
       soru('İzotop atomların proton sayıları farklıdır.', false, 'Proton sayıları aynı, nötron sayıları farklıdır; proton değişseydi element değişirdi.'),
       soru('Bir elementin kimliğini kütle numarası belirler.', false, 'Kimliği atom numarası, yani proton sayısı belirler.'),
       soru('Elektron üst enerji seviyesinden alt seviyeye inerken ışık yayar.', true, 'Aradaki enerji farkı ışık olarak salınıyor; emisyon spektrumu böyle oluşuyor.'),

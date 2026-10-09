@@ -1125,7 +1125,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
     ], [
       soru('Basınç, kuvvetin uygulandığı yüzey alanıyla ters orantılıdır.', true, 'Aynı kuvvet küçük alana uygulanınca basınç büyüyor.'),
       soru('Kar ayakkabısı, kişinin ağırlığını azalttığı için batmayı önler.', false, 'Ağırlık aynı kalıyor; temas alanı büyüdüğü için basınç azalıyor.'),
-      soru('Basıncın SI birimi pascaldır.', true, '1 Pa, 1 m² ye uygulanan 1 N luk kuvvet demek.'),
+      soru('Basıncın SI birimi pascaldır.', true, '1 Pa, 1 m²\'ye uygulanan 1 N\'luk kuvvet demek.'),
       soru('Bıçağın keskin olması uyguladığı kuvveti artırır.', false, 'Kuvvet aynı; alan küçüldüğü için basınç artıyor.'),
       sikli('Aynı kutu geniş yüzeyi üstüne yatırılınca basıncı ne olur?', ['Azalır', 'Artar'], 0, 'Ağırlık aynı, alan büyüdü; basınç küçüldü.'),
       sikli('Katılar basıncı hangi yönde iletir?', ['Yalnızca aşağı, temas yüzeyine', 'Her yöne eşit'], 0, 'Her yöne ileten sıvı ve gazlar.'),
@@ -2048,7 +2048,7 @@ export const fizik9 = program('fizik', 9, 'Fizik bilimi ve enerji', [
       ),
     ], [
       soru(
-        'Güneş ten Dünya ya enerji ışıma yoluyla ulaşır.',
+        'Güneş\'ten Dünya\'ya enerji ışıma yoluyla ulaşır.',
         true,
         'Aradaki uzay boşluğunda madde yok; yalnızca ışıma ortam gerektirmiyor.',
         {
