@@ -30,7 +30,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Aynı durumu kuruma ve dosta anlatan iki metnin sözcük seçimi farklı olabilir.', true, 'Alıcı ile amaç üslubu belirler.'],
-      ['Dilekçede olayın tarihi verilmesi talebin anlaşılmasını zorlaştırır.', false, 'Somut tarih durumu açıklar.'],
+      ['Dilekçede iletişim bilgisi bulunmaması, kurumun yanıt vermesini zorlaştırmaz.', false, 'İletişim bilgisi kurumun dönüş yapabilmesini sağlar.'],
     ],
     secimler: [
       ['Okul yönetimine başvuruda önce ne açık olmalı?', 'Olay ve talep', 'Yazanın duyguları', 'Kurum hangi işlem istendiğini anlamalı.'],
@@ -210,7 +210,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Tren sesi, yer adı söylenmese de mekân hakkında ipucu verebilir.', true, 'Ses sahneyi düşündürür.'],
-      ['Tonlama değişse de aynı repliğin kişiler arası anlamı daima aynıdır.', false, 'Vurgu duygu ve niyeti değiştirebilir.'],
+      ['“Ne güzel!” repliği alaycı bir tonla söylendiğinde de yalnızca beğeni anlamı taşır.', false, 'Tonlama sözü tersine çevirebilir; alay beğeninin tersini iletir.'],
     ],
     secimler: [
       ['Uzaktan tren sesi duyuluyorsa hangi çıkarım temkinli?', 'Bir ulaşım mekânı yakın olabilir', 'Kişiler kesin vagondadır', 'Ses konum ipucu verir, kesin yer değil.'],
@@ -230,7 +230,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Roman kişisi olayın ortasında görüşülüyorsa sonraki bölümü biliyormuş gibi konuşturulamaz.', true, 'Kurulan zaman bilgiyi sınırlar.'],
-      ['Açık uçlu sorunun değeri her zaman yalnız daha uzun olmasından gelir.', false, 'Gerekçeli yanıt açması önemlidir.'],
+      ['Roman kişisine kararının nedenini soran açık uçlu soru, evet/hayır ile yanıtlanan sorudan daha az bilgi açar.', false, 'Neden sorusu gerekçeyi konuşturur; evet/hayır sorusu sınırlı kalır.'],
     ],
     secimler: [
       ['Kişinin karar gerekçesini açan soru hangisi?', 'Neyi kaybetmekten korktun?', 'Evet mi, hayır mı?', 'Açık soru nedenleri konuşturur.'],
@@ -250,7 +250,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Sahne yönergesindeki hareket, kişinin repliğini yorumlamaya yardım edebilir.', true, 'Beden dili sözün anlamını tamamlar.'],
-      ['İki kişinin zıt amaçları varken aralarındaki konuşmada çatışma bulunamaz.', false, 'Zıt amaç dramatik gerilim yaratır.'],
+      ['İki kişi aynı şeyi isteyip ona nasıl ulaşılacağında anlaşamıyorsa aralarında çatışma doğmaz.', false, 'Yöntem ayrılığı da karşıtlık ve dramatik gerilim yaratır.'],
     ],
     secimler: [
       ['“Bir adım geri çekilir” ifadesi nasıl yorumlanmalı?', 'Replik bağlamıyla', 'Korkunun kesin işareti olarak', 'Aynı hareket farklı niyet taşıyabilir.'],

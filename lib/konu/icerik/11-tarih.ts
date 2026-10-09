@@ -54,8 +54,8 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Depremden sonra yangın veya tsunami varsa etkiler depremin şiddetiyle tek başına açıklanamaz.',
       iddialar: [
         ['Lizbon’da depremden sonra tsunami ve yangınlar da yıkımı artırdı.', true, 'İkincil tehlikeler can ve mal kaybını büyüttü.'],
-        ['1766 depremi İstanbul’daki yapıları etkilememiştir.', false, 'Konutlar ve anıtsal yapılar zarar gördü.'],
-        ['Afetlerin etkisi yalnızca sarsıntının büyüklüğüne bağlıdır.', false, 'Yapı, yerleşim ve ikincil tehlikeler de belirleyicidir.'],
+        ['1766 İstanbul depreminden sonra artçı sarsıntı yaşanmadığı için onarımlar kolayca tamamlandı.', false, 'Artçı sarsıntılar onarımı güçleştirdi.'],
+        ['Lizbon’un liman kenti olması, 1755 depreminde kıyıdaki hasarı azaltan bir etkendi.', false, 'Tsunami yüzünden liman konumu kıyıdaki hasarı ağırlaştırdı.'],
         ['İki kentte de yeniden inşa ve barınma sorunu ortaya çıktı.', true, 'Yıkımın ardından onarım ve barınma gerekti.'],
       ],
     },
@@ -74,7 +74,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Makineleşme üretim miktarını artırdı.', true, 'Fabrika üretimi büyük ölçeğe ulaştı.'],
         ['Sanayi Devrimi kırdan kente göçü azaltmıştır.', false, 'Fabrika işleri göçü artırdı.'],
         ['Sanayi devletlerinin ham madde arayışı sömürgecilikle ilişkilidir.', true, 'Üretimin girdileri ve pazar ihtiyacı rekabeti büyüttü.'],
-        ['Osmanlı atölyeleri fabrika mallarından hiç etkilenmemiştir.', false, 'Ucuz ithal mallar yerel üretimi zorladı.'],
+        ['Avrupa’dan gelen ucuz fabrika malları, Osmanlı’daki yerel el tezgâhlarının satışlarını artırdı.', false, 'Ucuz ithal mallar yerel atölyelerle rekabet ederek üretimi zorladı.'],
       ],
     },
   ],
@@ -92,9 +92,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Milliyetçilik ile eşit yurttaşlık aynı şey değil; Osmanlı’da etkileri farklı siyasal arayışlar doğurdu.',
       iddialar: [
         ['İhtilal, egemenliğin kaynağını tartışmaya açtı.', true, 'Millet egemenliği düşüncesi güçlendi.'],
-        ['Milliyetçilik çok uluslu devletleri hiç etkilemedi.', false, 'Ayrılıkçı talepleri güçlendirdi.'],
+        ['Milliyetçiliğin Osmanlı’daki ilk ayrılıkçı etkisi Anadolu’da görüldü.', false, 'İlk ayrılıkçı hareketler Balkanlarda (Sırp, Yunan isyanları) görüldü.'],
         ['Osmanlıcılık farklı toplulukları ortak yurttaşlıkta birleştirmeyi amaçladı.', true, 'Dağılmayı önlemeye dönük bir düşünceydi.'],
-        ['İhtilalin bütün hakları tüm topluma hemen eşit uygulandı.', false, 'Hakların kapsamı ve uygulanması zamanla değişti.'],
+        ['İhtilal fikirlerinin Avrupa’ya yayılmasında Napolyon savaşlarının etkisi olmadı.', false, 'Napolyon savaşları fikirlerin yayılmasını hızlandırdı.'],
       ],
     },
     {
@@ -128,9 +128,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Teknoloji yalnızca araç eklemedi; haberleşme hızı yönetim ilişkilerini de değiştirdi.',
       iddialar: [
         ['Telgraf haberleşme süresini kısalttı.', true, 'Merkez ile taşra arasındaki iletişim hızlandı.'],
-        ['Demiryolu taşımacılığı etkilemedi.', false, 'Mal ve yolcu taşınmasını değiştirdi.'],
+        ['Telgraf Osmanlı’da yalnız ticari haberleşmede kullanıldı; yönetim ve ordu için önem taşımadı.', false, 'Telgraf merkez-taşra yönetimi ve ordu için önemliydi.'],
         ['Gazeteler fikirlerin yayılmasına katkı sağladı.', true, 'Basın kamuoyu oluşumunda rol oynadı.'],
-        ['Tanzimat döneminde roman ve tiyatro tümüyle yasaklandı.', false, 'Bu türlerde eserler verildi.'],
+        ['Tanzimat’la gelişen roman ve tiyatro, Batı’dan yapılan çevirilerden bağımsız olarak doğdu.', false, 'Çeviri eserler yeni türleri ve anlatım biçimlerini besledi.'],
       ],
     },
     {
@@ -146,7 +146,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Sanayileşme için bina değil, makine, sermaye, uzman ve pazarın birlikte işlemesi gerekir.',
       iddialar: [
         ['Ucuz ithal fabrika malları yerel atölyeleri zorladı.', true, 'Rekabet koşulları üreticilerin aleyhine değişti.'],
-        ['Osmanlı Devleti hiç fabrika kurmadı.', false, 'Devlet çeşitli alanlarda fabrikalar kurdu.'],
+        ['Osmanlı Devleti’nin kurduğu fabrikalar yalnız lüks tüketim malı üretti; dokuma ve silah üretilmedi.', false, 'Devlet dokuma ve silah gibi alanlarda fabrika kurdu.'],
         ['Düyun-ı Umumiye mali bağımsızlığı güçlendirdi.', false, 'Bazı gelirler dış alacaklıların denetimine geçti.'],
         ['Islah-ı Sanayi girişimleri yerli üretimi geliştirmeyi amaçladı.', true, 'Esnaf ve üretim düzeni uyarlanmaya çalışıldı.'],
       ],
@@ -184,9 +184,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Göç yalnızca nüfus sayısı değildir; barınma, sağlık ve geçim sorunlarını birlikte getirir.',
       iddialar: [
         ['Balkan Savaşları Anadolu’ya göçü artırdı.', true, 'Rumeli’den büyük nüfus hareketi yaşandı.'],
-        ['Kalabalık barınma koşulları salgın riskini azaltır.', false, 'Bulaşma ve temiz su sorunu riski artırır.'],
+        ['Göç yollarındaki hareketlilik, bulaşıcı hastalıkların yayılmasını sınırladı.', false, 'Göç yolları hastalığın taşınmasını kolaylaştırdı, sağlık hizmetini zorladı.'],
         ['Göç, yerleşmelerin nüfus yapısını değiştirebilir.', true, 'Gelen ve giden nüfus mekânı etkiler.'],
-        ['Göçmenler için barınma ve geçim sorunu oluşmadı.', false, 'Konut, iş ve gıda temel ihtiyaçtı.'],
+        ['Rumeli’den gelen göçmenler yalnız kentlere yerleşti; kırsal yerleşmelerin nüfusu değişmedi.', false, 'Kent ve kırsal yerleşmelerin nüfusu birlikte değişti.'],
       ],
     },
     {
@@ -203,8 +203,8 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       iddialar: [
         ['Vakıflar sağlık ve eğitim hizmetlerini destekledi.', true, 'Gelirleri toplumsal hizmetlere ayrılabildi.'],
         ['Pîrî Reis denizcilik haritalarıyla tanınır.', true, 'Haritaları dönemin denizcilik bilgisini taşır.'],
-        ['Darüşşifalar yalnızca askerî kışlaydı.', false, 'Tedavi ve bakım sunan sağlık kurumlarıydı.'],
-        ['Osmanlı mirası yalnızca saray yapılarından oluşur.', false, 'Köprü, külliye, vakıf ve sanat eserleri de vardır.'],
+        ['Darüşşifa, Osmanlı’da gök cisimlerinin gözlendiği bilim kurumunun adıdır.', false, 'Darüşşifa tedavi ve bakım sunan sağlık kurumudur; gözlem rasathanede yapılır.'],
+        ['Pîrî Reis’in haritasının önemi, eski haritalardan hiç yararlanmamasından gelir.', false, 'Haritası farklı kaynaklardaki denizcilik bilgisini bir araya getirdi.'],
       ],
     },
   ],

@@ -71,7 +71,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Ulaşımın hızlanması fabrikanın uzak pazarlara satışını kolaylaştırdı.', true, 'Demiryolu taşıma maliyetini ve süresini etkiledi.'],
-      ['Fabrika üretimindeki artış, işçi hakları tartışmalarını gereksiz kıldı.', false, 'Çalışma koşulları hak arayışlarını artırdı.'],
+      ['Sanayi Devrimi döneminde fabrikalarda çocuk işçi çalıştırılmadı.', false, 'Çocuk işçiliği yaygındı ve hak arayışlarını güçlendirdi.'],
     ],
     secimler: [
       ['Buharlı tren üretim zincirinin hangi halkasını etkiledi?', 'Taşıma', 'Ham madde çıkarımı', 'Mal ve ham maddeyi hızlı taşıdı.'],
@@ -91,7 +91,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Eşit yurttaşlık fikri ile milliyetçilik Osmanlı’da aynı sonucu doğurmadı.', true, 'Biri birleştirme, diğeri ayrılık talebine yol açabildi.'],
-      ['Mali kriz siyasal temsil tartışmalarından tamamen bağımsızdı.', false, 'Vergi ve temsil sorunu birlikte yaşandı.'],
+      ['Osmanlıcılık, Balkan milletlerinin bağımsızlık taleplerini destekleyen bir akımdı.', false, 'Osmanlıcılık ortak yurttaşlıkla dağılmayı önlemeyi amaçladı.'],
     ],
     secimler: [
       ['Vergi yüküne itiraz hangi daha geniş soruya bağlandı?', 'Siyasal temsile', 'Ticaretin serbestleşmesine', 'Vergi verenlerin söz hakkı tartışıldı.'],
@@ -191,7 +191,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Göç kaydındaki nüfus sayısı, göçmenin yaşadığı sağlık sorununu tek başına açıklamaz.', true, 'Nitel tanıklık da gerekir.'],
-      ['Salgın riskini değerlendirmek için yalnız gelen kişi sayısı yeterlidir.', false, 'Su ve barınma koşulları da önemlidir.'],
+      ['Göçmen sayısı eşit iki kampta temiz suya erişim farklı olsa da salgın riski aynıdır.', false, 'Su ve temizlik koşulları salgın riskini değiştirir.'],
     ],
     secimler: [
       ['Aynı göçü iki aile farklı anlatıyorsa ne yapılır?', 'Kaynakları karşılaştırmak', 'Resmî olanı doğru saymak', 'Bakış açısı ve kayıt koşulları incelenir.'],
