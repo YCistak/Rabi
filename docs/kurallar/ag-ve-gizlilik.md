@@ -9,7 +9,7 @@ hataları öğrenmenin başka yolu yok.
 - Ağa çıkan tek dosya `lib/hata-gonder.ts`. İkisi de **Firestore**'a, SDK değil REST
   ile (`lib/veri/firestore-adresi.ts`, koleksiyonlar `hatali-sorular`,
   `geri-bildirimler`). Güvenlik anahtarda değil kuralda: yalnız `create`, alan adları
-  ve boyları sayılı (`PLANNED.md` → "Firestore kuralları").
+  ve boyları sayılı (`firestore.rules`; konsolda elle yayınlanır, talimat `docs/firestore-kurallari.md`).
 - Hatalı soru: `formVerisi()` içindeki yedi alan (soru kimliği, oyun, soru metni,
   doğru sanılan cevap, sebep, sürüm, cihaz alanı). "Başka" sebebinin notu (en çok 32
   harf) yeni alan değil, `sebep` içinde ("Başka: …") — kural `sebep`e 40 harf veriyor,

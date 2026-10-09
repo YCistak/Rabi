@@ -1,0 +1,81 @@
+rules_version = '2';
+
+// Rabi — Cloud Firestore güvenlik kuralları.
+//
+// Bu dosya yalnız depoda durur; dağıtılmaz (firebase deploy YOK). Konsola elle
+// yapıştırma talimatı: docs/firestore-kurallari.md.
+//
+// Uygulama Firestore'a SDK değil REST ile, API anahtarıyla yazıyor
+// (lib/hata-gonder.ts, lib/veri/firestore-adresi.ts). Anahtar APK'dan
+// sökülebilir; bu yüzden bütün güvenlik buradaki kurala dayanıyor:
+//   - yalnız iki koleksiyona, yalnız `create`;
+//   - okuma, güncelleme, silme herkese kapalı (uygulama kendi yazdığını bile
+//     okuyamıyor; kayıtları geliştirici konsoldan görüyor);
+//   - alan adları sayılı, her alan metin ve boyu sınırlı;
+//   - başka her yol kapalı.
+//
+// Alan listeleri koddaki formVerisi() (lib/hata-bildirimi.ts) ve
+// geriBildirimFormVerisi() (lib/geri-bildirim.ts) ile BİREBİR aynı olmalı;
+// biri değişince bu dosya da değişmeli, yoksa gönderim 403 ile düşer ve
+// kayıtlar telefonlarda birikir.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Alan metin mi ve boyu [enAz, enCok] aralığında mı.
+    function metin(veri, alan, enAz, enCok) {
+      return veri[alan] is string
+        && veri[alan].size() >= enAz
+        && veri[alan].size() <= enCok;
+    }
+
+    // Hatalı soru bildirimi — formVerisi(), yedi alan.
+    match /hatali-sorular/{belge} {
+      allow read, update, delete: if false;
+      allow create: if hataliSoruGecerli(request.resource.data);
+
+      function hataliSoruGecerli(v) {
+        return v.keys().hasOnly(['kimlik', 'oyun', 'soru', 'cevap', 'sebep', 'surum', 'cihaz'])
+          && v.keys().hasAll(['kimlik', 'oyun', 'soru', 'cevap', 'sebep', 'surum', 'cihaz'])
+          // bankaKimligi(): "oyun:..." biçiminde, oyunun cümlesini içerebiliyor.
+          && metin(v, 'kimlik', 1, 500)
+          // OyunId (lib/types.ts): küçük harf, rakam, tire.
+          && metin(v, 'oyun', 1, 40) && v.oyun.matches('^[a-z0-9-]+$')
+          && metin(v, 'soru', 1, 2000)
+          && metin(v, 'cevap', 0, 500)
+          // sebepMetni(): SEBEP_ADI'ndan biri ya da "Başka: <en çok 32 harf>".
+          && metin(v, 'sebep', 1, 40)
+          && (v.sebep in ['Belirtilmedi', 'Cevap yanlış', 'Anlaşılmıyor', 'Yazım hatası', 'Başka']
+              || v.sebep.matches('^Başka: .+$'))
+          && metin(v, 'surum', 1, 40)
+          // cihazAlani(): "Üretici Model (mavi-tavsan-42)" ya da "web (...)".
+          && metin(v, 'cihaz', 1, 120);
+      }
+    }
+
+    // Öneri ve hata bildirimi — geriBildirimFormVerisi(), beş alan.
+    match /geri-bildirimler/{belge} {
+      allow read, update, delete: if false;
+      allow create: if geriBildirimGecerli(request.resource.data);
+
+      function geriBildirimGecerli(v) {
+        return v.keys().hasOnly(['tur', 'metin', 'surum', 'cihaz', 'tarih'])
+          && v.keys().hasAll(['tur', 'metin', 'surum', 'cihaz', 'tarih'])
+          // TUR_ADI (lib/geri-bildirim.ts).
+          && v.tur is string && v.tur in ['Öneri', 'Hata', 'Başka']
+          // METIN_EN_COK = 1000; alt sınır uygulamada 10, burada emoji
+          // (JS'te iki birim) payı için 1.
+          && metin(v, 'metin', 1, 1000)
+          && metin(v, 'surum', 1, 40)
+          && metin(v, 'cihaz', 1, 120)
+          // Date.toISOString(): 2026-10-09T12:34:56.789Z
+          && metin(v, 'tarih', 20, 40)
+          && v.tarih.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$');
+      }
+    }
+
+    // Başka her yol kapalı.
+    match /{diger=**} {
+      allow read, write: if false;
+    }
+  }
+}

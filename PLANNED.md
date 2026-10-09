@@ -517,6 +517,10 @@ uygulamada çökme raporu hiç çalışmaz.**
 
 ## Firestore kuralları — bildirimler
 
+> **Güncel kural artık depoda: `firestore.rules`** (9 Ekim 2026; tür, tarih ve sebep
+> değerleri de denetleniyor). Aşağıdaki metin eski taslaktır; konsola `firestore.rules`
+> yapıştırılır, talimat `docs/firestore-kurallari.md`.
+
 **Durum: kod hazır, konsol tarafı bekliyor (12 Eylül 2026).** Hatalı soru
 bildirimleri ve öneri/hata mesajları Google Form yerine Firestore'a
 yazılıyor (`lib/hata-gonder.ts`, `lib/veri/firestore-adresi.ts`). Kod
