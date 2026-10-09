@@ -180,12 +180,12 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       ),
     ], [
       soru('Anonim halk edebiyatı ürünlerinin söyleyeni belli değildir.', true, 'Ürün zamanla halkın ortak malı hâline gelmiş.'),
-      soru('Mani dört dizeden oluşur ve uyak düzeni aaxa dır.', true, 'İlk iki dize çoğu zaman asıl sözü hazırlar.'),
+      soru('Mani dört dizeden oluşur ve uyak düzeni aaxa biçimindedir.', true, 'İlk iki dize çoğu zaman asıl sözü hazırlar.'),
       soru('Varyant, bir ürünün tek ve değişmez biçimidir.', false, 'Varyant, aynı ürünün yörelere göre değişen biçimleri.'),
       soru('Türküler yalnızca yazılı olarak aktarılmıştır.', false, 'Sözlü olarak aktarıldılar; derleme çalışmalarıyla yazıya geçirildiler.'),
-      sikli('Türkünün nakarat bölümüne ne denir?', ['Bent', 'Kavuştak'], 1, 'Bent ve kavuştak.'),
+      sikli('Türkünün nakarat bölümüne ne denir?', ['Bent', 'Kavuştak'], 1, 'Bent asıl sözler; kavuştak her bendin ardından dönen nakarat.'),
       sikli('Hangisi anonim halk edebiyatı ürünüdür?', ['Gazel', 'Bilmece'], 1, 'Bilmece sözlü gelenekten gelir; gazel divan şiirinin nazım biçimi.'),
-      sikli('Söyleyeni unutulan bir ürünü halk nasıl sahiplenir?', ['Tekrarlarken değiştirerek', 'Hiç değiştirmeden'], 0, 'Her anlatımda biraz değişir; ürün böylece halkın ortak malı olur.'),
+      sikli('Söyleyeni unutulan bir ürünü halk nasıl sahiplenir?', ['Tekrarlarken değiştirerek', 'Yazıya geçirerek'], 0, 'Her anlatımda biraz değişir; ürün böylece halkın ortak malı olur.'),
       soru('Manide asıl anlam ilk iki dizededir.', false, 'Son ikisinde; ilk ikisi doldurma.'),
       soru('Âşık edebiyatında ürünün söyleyeni bellidir.', true, 'Karacaoğlan, Köroğlu gibi âşıklar adını son dörtlükte söyler.'),
       soru('Anonim halk şiirinde çoğunlukla aruz ölçüsü kullanılır.', false, 'Hece ölçüsü kullanılır; aruz divan şiirinin ölçüsü.'),
@@ -280,7 +280,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Ahengi sağlayan tek araç ölçüdür.', false, 'Uyak, redif, ses tekrarları ve vurgu da ahenge katkı sağlıyor.'),
       soru('Ses tekrarlarının şiirin anlamıyla bir ilgisi yoktur.', false, 'Tekrarlanan ses çoğu zaman anlatılan duyguyu destekliyor.'),
       sikli('Dize sonunda tekrar eden aynı ek ya da sözcüğe ne denir?', ['Uyak', 'Redif'], 1, 'Redif aynı görevdeki ek ya da sözcük; uyak redifin önündeki ses benzerliği.'),
-      sikli('Ağır sesler ne duygusu üretir?', ['Kıvraklık', 'Ağırlık'], 1, 'Ses ve anlam birlikte.'),
+      sikli('Kalın ve ağır seslerin yoğunlaştığı dize hangi duyguyu destekler?', ['Kıvraklık', 'Ağırlık'], 1, 'İnce, hızlı sesler kıvraklık; ağır sesler ağırlık duygusu verir.'),
       soru('Ölçülü şiirde ritmi ölçü kurar.', true, 'Serbest şiirde ise ritmi söyleyiş, tekrar ve dize uzunluğu sağlar.'),
       soru('Seci, düzyazıda cümle sonlarının uyaklı olmasıdır.', true, 'Düzyazıya şiirin sesini katar.'),
       soru('Nakarat, şiirde yalnızca bir kez geçen dizedir.', false, 'Nakarat her bölümün sonunda aynen döner.'),
@@ -291,7 +291,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
     ], [
       {
         soru: '"Sessiz sedasız süzüldü" dizesinde hangi ahenk ögesi var?',
-        siklar: ['Asonans', 'Aliterasyon (s tekrarı)'],
+        siklar: ['Asonans', 'Aliterasyon'],
         dogru: 1,
         aciklama: {
           dogru: 'Aynı ünsüzün tekrarı aliterasyon; ünlü tekrarı asonans olurdu.',
@@ -478,8 +478,8 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       sikli('Fiili etkileyen sözcük?', ['Sıfat', 'Zarf'], 1, 'Sıfat isme bağlanır.'),
       sikli('"gibi, kadar, için" hangi türdendir?', ['Zamir', 'Edat'], 1, 'Tek başına anlamları yok; sözcükler arasında ilgi kurarlar.'),
       sikli('"Sürü" sözcüğü hangi tür isimdir?', ['Topluluk ismi', 'Soyut isim'], 0, 'Tekil biçimde bir topluluğu karşılıyor; somut bir varlık.'),
-      sikli('"ve, ile, ama" sözcükleri hangi türdendir?', ['Bağlaç', 'Edat'], 0, 'Sözcükleri ya da cümleleri bağlarlar; çıkarılınca anlam bozulmaz.'),
-      soru('"Kitabınki daha yeni" cümlesindeki -ki, ilgi zamiridir.', true, '"Kitabınki" = kitabının kitabı; -ki bir ismin yerini tutuyor.'),
+      sikli('"ve, fakat, ama" sözcükleri hangi türdendir?', ['Bağlaç', 'Edat'], 0, 'Sözcükleri ya da cümleleri bağlarlar; çıkarılınca anlam bozulmaz.'),
+      soru('"Benim kalemim kırık, seninki sağlam." cümlesindeki -ki, ilgi zamiridir.', true, '"Seninki" = senin kalemin; -ki "kalem" isminin yerini tutuyor.'),
       soru('"Okulun bahçesi" belirtisiz isim tamlamasıdır.', false, 'İki ek de var (-un, -si): belirtili isim tamlaması.'),
       soru('"İkişer" sözcüğü üleştirme sayı sıfatıdır.', true, 'Eşit paylaştırmayı bildirir.'),
       sikli('"Yarın gelir" cümlesinde "yarın" hangi zarftır?', ['Zaman zarfı', 'Durum zarfı'], 0, '"Ne zaman?" sorusuna cevap veriyor.'),
@@ -790,7 +790,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Köroğlu bir aşk hikâyesidir.', false, 'Köroğlu kahramanlık hikâyesi; Kerem ile Aslı aşk hikâyesi.'),
       sikli('Mevlid\'in yazarı kimdir?', ['Şeyhi', 'Süleyman Çelebi'], 1, 'Şeyhi\'nin mizahi mesnevisi Harname.'),
       sikli('Eserin yazılış sebebinin anlatıldığı bölüm?', ['Hatime', 'Sebeb-i telif'], 1, 'Hatime sonuç ve dua bölümü.'),
-      sikli('Halk hikâyesi nasıl biter?', ['Dua ile', 'Soru ile'], 0, 'Âşık dinleyene iyi dileklerde bulunur.'),
+      sikli('Halk hikâyesi nasıl biter?', ['Dua ile', 'Tekerleme ile'], 0, 'Tekerlemeyle (döşeme) başlar; âşık dinleyene dua ederek bitirir.'),
     ], [
       {
         soru: 'Mesnevinin uyak düzeni nasıldır?',
@@ -887,7 +887,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Millî Edebiyat\'ta konular Anadolu ve halk hayatından seçilmiştir.', true, 'Edebiyatın kapısı İstanbul dışına açıldı.'),
       soru('Ömer Seyfettin, Millî Edebiyat\'ın şiir alanındaki temsilcisidir.', false, 'Hikâyenin temsilcisidir; şiirde Ziya Gökalp ve Mehmet Emin Yurdakul öne çıkar.'),
       sikli('Genç Kalemler dergisi hangi şehirde çıktı?', ['Selanik', 'İstanbul'], 0, 'Akım 1911\'de Selanik\'te başladı.'),
-      sikli('Yeni Lisan makalesi neyi amaçladı?', ['Konuşma dilini yazı dili yapmak', 'Arapça öğretmek'], 0, 'Sadeleşme.'),
+      sikli('Yeni Lisan makalesi neyi amaçladı?', ['Konuşma dilini yazı dili yapmak', 'Aruzu Türkçeye uydurmak'], 0, 'Sadeleşme.'),
       sikli('Ziya Gökalp hangi akımın temsilcisidir?', ['Millî Edebiyat', 'Servetifünun'], 0, 'Ömer Seyfettin de.'),
       soru('Millî Edebiyat, savaşlar ve toprak kayıplarının doğurduğu kimlik arayışıyla güçlendi.', true, 'Edebiyat bu dönemde halka ve kendi diline döndü.'),
       soru('Mehmet Âkif Ersoy şiirlerinde hece ölçüsünü kullanmıştır.', false, 'Âkif aruzu kullandı ama dili sade tuttu.'),
