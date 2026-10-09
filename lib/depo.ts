@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ANA_TUR_SURUM_ANAHTARI, TUR_ANAHTARLARI } from './tanitim'
 import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
+import { TANITIM_TERCIH_ANAHTARI } from './tanitim-tercih'
 import { CEVAPSIZ_COKME_ANAHTARI } from './cokme-karari'
 import type {
   Ayarlar,
@@ -242,6 +243,8 @@ const ESKI_ANAHTARLAR = [
   // Yapılacaklar mini turu v2'ye geçti (görev eklemeyi adım adım gösteriyor);
   // v1 bayrağı artık okunmuyor ama eski kurulumlarda duruyor.
   'rabi-mini-tur-yapilacaklar-v1',
+  // v3'e geçti: tur görevi gerçekten ekletiyor (v2 yalnız gösteriyordu).
+  'rabi-mini-tur-yapilacaklar-v2',
 ]
 
 /**
@@ -811,7 +814,7 @@ export function tumVeriyiSil() {
     içinde tanımlı; burada
     elle eklenmezse sıfırlanan uygulama turu "görülmüş" sanıp başlatmıyordu.
   */
-  const tanitimAnahtarlari = [...Object.values(TUR_ANAHTARLARI), ANA_TUR_SURUM_ANAHTARI, ANIMASYON_ANAHTARI, CEVAPSIZ_COKME_ANAHTARI]
+  const tanitimAnahtarlari = [...Object.values(TUR_ANAHTARLARI), ANA_TUR_SURUM_ANAHTARI, TANITIM_TERCIH_ANAHTARI, ANIMASYON_ANAHTARI, CEVAPSIZ_COKME_ANAHTARI]
   for (const anahtar of [...Object.values(ANAHTARLAR), ...ESKI_ANAHTARLAR, ...tanitimAnahtarlari]) {
     try {
       localStorage.removeItem(anahtar)
