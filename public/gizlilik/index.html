@@ -235,27 +235,41 @@
 <h2>4. Telefonundan çıkan ikinci şey — çökme raporu</h2>
 
 <p>
-  Uygulama beklenmedik şekilde kapanırsa ya da kapanmadan bir hata yakalarsa (ekrandaki bir
-  bölümün çizilememesi, yüklenemeyen bir dosya gibi), hatanın kaydı <b>telefonunda</b> tutulur.
-  Kendiliğinden hiçbir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak
-  kapalıdır.
+  <b>Çökme raporu yalnızca Android'de vardır.</b> iPhone sürümünde çökme raporlama aracı
+  bulunmaz; iPhone'dan çökme kaydı gönderilmez ve bu soru orada hiç çıkmaz.
+</p>
+<p>
+  Android'de uygulama beklenmedik şekilde kapanırsa hatanın kaydı <b>telefonunda</b> tutulur.
+  Uygulama kapanmadan yakalanan küçük hatalar da (ekrandaki bir bölümün çizilememesi,
+  yüklenemeyen bir dosya gibi) aynı yerde geçici olarak kaydedilir. Hiçbiri kendiliğinden
+  bir yere gitmez: otomatik gönderim uygulamanın içinde kalıcı olarak kapalıdır.
 </p>
 <ul>
-  <li>Bir sonraki açılışta sana sorulur. <b>&ldquo;Gönder&rdquo;</b> dersen kayıt gider;
-      <b>&ldquo;Gönderme&rdquo;</b> dersen telefonundan silinir.</li>
-  <li>Bu soru her kayıttan sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.</li>
+  <li>Soru <b>yalnızca uygulama gerçekten çöktüyse</b>, bir sonraki açılışta sorulur.
+      <b>&ldquo;Gönder&rdquo;</b> dersen kayıt gider; <b>&ldquo;Gönderme&rdquo;</b> dersen
+      telefonundan silinir. Soruyu cevaplamadan uygulamayı kapatırsan bir sonraki açılışta
+      yeniden sorulur.</li>
+  <li>Çökmeye yol açmayan hatalar için soru sorulmaz: bu kayıtlar <b>gönderilmeden</b>,
+      açılışta telefonundan silinir.</li>
+  <li><b>&ldquo;Gönder&rdquo;</b> dediğinde o an telefonunda gönderilmeyi bekleyen bütün
+      kayıtlar birlikte gider: çökmenin kendisi ve ondan önce kaydedilip henüz silinmemiş
+      küçük hata kayıtları.</li>
+  <li>Bu soru her çökmeden sonra tek tek sorulur; önceden verilmiş kalıcı bir izin yoktur.</li>
 </ul>
 
 <p><b>Gönderdiğinde giden kayıt şunları içerir:</b></p>
 <ul>
-  <li>Hatanın teknik dökümü ve hata mesajı (hangi kodun, hangi satırda kırıldığı; yüklenemeyen
-      bir dosya söz konusuysa o dosyanın uygulama içindeki adresi)</li>
+  <li>Hatanın teknik dökümü, hata mesajı ve zamanı (hangi kodun, hangi satırda kırıldığı;
+      yüklenemeyen bir dosya söz konusuysa o dosyanın ya da isteğin adresi ve satır numarası)</li>
+  <li>Hatadan hemen önce uygulamanın kendi yazdığı kısa teknik günlük satırları (hata
+      mesajlarının kendisi; senin yazdığın içerik değil)</li>
   <li>Uygulama sürümü ve derleme türü</li>
   <li>Android sürümü ve cihazdaki Android System WebView sürümü</li>
   <li>Telefonun üreticisi ve modeli</li>
-  <li>Çökme aracının kendi eklediği teknik bilgiler: cihaza özel rastgele bir kurulum
-      numarası, cihaz durumu (bellek ve disk doluluğu, ekran yönü, root/jailbreak durumu,
-      işlemci mimarisi)</li>
+  <li>Uygulamanın görüntü katmanı (WebView) kapandıysa bunun sebebine dair teknik bilgi</li>
+  <li>Çökme aracının (Crashlytics) kendi eklediği teknik bilgiler: bu kuruluma özel rastgele
+      bir kurulum numarası ve cihaz durumu (boş bellek ve disk alanı, ekran yönü,
+      root durumu, işlemci mimarisi gibi)</li>
 </ul>
 
 <p>
