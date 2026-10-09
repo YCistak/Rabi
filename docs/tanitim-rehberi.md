@@ -12,7 +12,7 @@
 
 ## Ana akış
 
-Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz.
+Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz. Balon bir düğme/sekme/satır adı anıyorsa ekrandaki yazıyı harfi harfine kullanır (büyük-küçük harf dahil); kesme işaretiyle ek almış adlar (`Kaydet’e`, `Soru Takibi’ne`) hedefin kaynak dosyasında aranır (`lib/tanitim-metin.test.ts`, yeni hedef o testin `KAYNAK` tablosuna da eklenir). Bilgi adımında (`tiklamali: false`, `etkilesimli` yok) hedef dokunmaya kilitlidir: balon orada "…’e dokun" diye buyurmaz, "…’le yaparsın" diye anlatır.
 
 1. Sınav geri sayımı ve hedef kartı.
 2. Günlük soru hedefi.
@@ -22,19 +22,19 @@ Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 6. Form: ders ve sayılar; Kaydet'le (kayıt turun belleğinde, tur bitince siliniyor).
 7. "Kaydın günlük hedefine eklendi" → "Araçlara dön".
 8. Konu Takibi satırına dokunuş.
-9. Girişin üstü (TYT/AYT seçici, aşama lejantı; tur sürerken ekran TYT girişinde açılır) → "İleri" (özel düğme yazısı yok).
+9. Girişin üstü (sınıf sekmesi ve aşama lejantı; konu satırları bu adımda görünmez) → "İleri" (özel düğme yazısı yok). Balon daireye "dokun" demez: "Dersi açınca konunun solundaki daireyle Bitirdim’i işaretlersin."
 10. Aynı ekranda alt menüden Harita'ya dokunuş.
 11. İlk bölümün ilk yeşil kitabı (konu anlatımı) — bilgi adımı, İleri ile geçilir; balon "dokun" demez ("Konuyu kısa kartlarla buradan çalışırsın.").
 12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön". Bilgi adımı. Kitap kilitli/yazılmamış olsa da bu adımda gerçek turuncu rengiyle çizilir (gri ve soluklaştırma yok, kilit rozeti kalır); yalnızca tur sırasında ve yalnızca bu kitap için (`Dugum`, `konu-haritasi.tsx`).
 13. Denemeler satırına dokunuş (iki örnek deneme hazır).
-14. Örnek deneme listesi.
+14. Örnek deneme listesi (karta dokununca ders ders netler açılır; balon "ayrıntılı rapor" demez).
 15. "Deneme ekle"ye dokunuş.
-16. "Fotoğraftan okut" (etkileşimli; okutmadan İleri denebilir).
+16. "Okut" düğmesi (balon başlığı "Kâğıdı okut"; etkileşimli, okutmadan İleri denebilir).
 17. **Boş ders**: form bir ders hariç örnekle doldu; o dersin satırı aydınlanır, kullanıcı doğru ve yanlışı yazar. Geçerli giriş olmadan ilerlemez.
 18. "Yanlış soru ekle" düğmesi aydınlanır (bilgi adımı, İleri ile geçilir; düğme turda bir şey açmaz).
 19. Deneme formunun Kaydet'ine dokunuş (deneme turun belleğine).
 20. İstatistik satırına dokunuş.
-21–25. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır → "Turu Bitir".
+21–25. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf (kutuların adıyla "en güçlü / en kötü ders") · Deneme karşılaştır (düğmenin adı) → "Turu Bitir".
 
 12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz. Konu Takibi kaydına tur hiçbir şey yazmaz.
 
@@ -56,11 +56,11 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
 |---|---|---|
 | Denemeler | Denemeler açılınca (form kapalıyken), ana turda görülmediyse | Deneme ekle (elle ya da fotoğrafla okut) |
 | Konu Haritası | Harita sekmesi açılınca | Patikanın başı: yeşil kitap, turuncu kitap |
-| Pomodoro | Pomodoro açılınca, sayaç işlemiyorken | İki mod · Çalışma ayarları · Odak kilidi |
+| Pomodoro | Pomodoro açılınca, sayaç işlemiyorken | İki mod · Çalışma ayarları · Odak koruması (satırın adı) |
 | Yapılacaklar | Yapılacaklar açılınca | "+"ya dokun · Görevin adı · Saat ekle · Pomodoro ile çalış · Kaydet · Görevlerin (işaretle, Pomodoro ile başlat) |
 | İstatistik | İstatistik açılınca, ana turda görülmediyse | Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf · Karşılaştır |
 | Oyunlar | Oyunlar sekmesi açılınca | Tanıtım oyunu kartı · Oyun modu · Başla · Bir işlem · Sonuç |
-| Oyun Bankası | Oyun Bankası açılınca | Yanlışların · Liste · Genel test · Öğrendim |
+| Oyun Bankası | Oyun Bankası açılınca | Yanlışların · Liste · Genel test · Öğrendim (bilgi adımı: düğme kilitli, balon "dokun" demez) |
 
 - **Denemeler** ve **İstatistik** mini turları ana turla örtüşür: ana turu (sürüm 2) bitirende ikisi de görülmüş sayılır. Eski turu bitirmiş kullanıcı da artık önce yeni ana turu gördüğünden (mini turlar ana tur bitmeden başlamaz) bu iki mini tur pratikte bir daha çıkmaz. Denemeler tek adımlı: mini turlar kayıt eklettirmiyor (turun geçici verisi yalnızca ana turda yazılıyor).
 - **İstatistik** ve **Oyun Bankası** gerçek veri olmadan boş durum çiziyor; tur kendi örnek verisini gösteriyor (İstatistik'te alana göre iki örnek deneme ve gerekiyorsa geçici eşi — `istatistikTuruDenemeleri`; bankada üç örnek soru — tur başlarken kuruluyor). Örnekler yalnızca bellekte, tur bitince siliniyor.
@@ -79,7 +79,7 @@ Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTu
   2. `zorluk` — Oyun modu penceresinin mod ızgarası (bilgi adımı, mod seçilebilir; Başla bu adımda aydınlanmaz): "Her oyun bu pencereyle açılır. İstersen başka bir mod seç."
   3. `oyun-baslat` — "Başla" (dokunmalı): "Başla’ya dokun; 3, 2, 1 sayımından sonra soru gelir."
   4. `soru-bir` — soru ve tuş takımı: "Sonucu yaz ve Onayla’ya dokun." (demoda pas yok, balon pas önermez)
-  5. `sonuc` — "Doğru ve yanlışların burada. Bilemediklerin Oyun Bankası’na düşer." → "Turu Bitir".
+  5. `sonuc` — "Bu turdaki doğru sayın burada. Bilemediklerin Oyun Bankası’na düşer." → "Turu Bitir". Hedef yalnız puan kartı; Yanlış kutusu aydınlığın dışında, balon yanlışı anlatmaz.
 
   Kimlik `zorluk` eski Hazırlık adımından kaldı; geri dönüş kararları ve `DemoOyun` ona bakıyor, yeniden adlandırma.
 - **Oyunlar** turunda eski "Süre ve skor" adımı kalktı (beş adıma sığmak için): rehber geri sayımdan sonra doğrudan soruyla geri geliyor ve demo sayacı o sırada işliyor. Ana sayfadaki ders kutucuğundan gelindiyse de ızgara ilk adımda görünüyor.
