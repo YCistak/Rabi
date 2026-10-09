@@ -75,12 +75,20 @@ export function YapilacaklarEkrani({
    */
   gorevIzniIste?: () => Promise<boolean | null>
   /**
-   * Yapılacaklar turu: ekleme sayfası kullanıcının dokunuşuna değil turun
-   * adımına bağlı (`gorevFormuTurdaAcik`). "+" yalnızca tura bildiriyor,
-   * kapatma "+" adımına döndürüyor ve Kaydet hiçbir şey yazmıyor — tur görev
-   * eklemeyi gösteriyor, eklettirmiyor.
+   * Yapılacaklar turu: ekleme sayfası ve ⋯ menüsü kullanıcının dokunuşuna
+   * değil turun adımına bağlı (`gorevFormuTurdaAcik`, `gorevMenusuTurdaAcik`).
+   * "+" ve ⋯ yalnızca tura bildiriyor, kapatma bir önceki adıma döndürüyor.
+   * Kaydet görevi **gerçekten** ekliyor ve tura bildiriyor (`gorevKaydedildi`).
    */
-  tanitim?: { formAcik: boolean; formuAc: () => void; formuKapat: () => void }
+  tanitim?: {
+    formAcik: boolean
+    formuAc: () => void
+    formuKapat: () => void
+    gorevKaydedildi: () => void
+    menuAcik: boolean
+    menuyuAc: () => void
+    menuyuKapat: () => void
+  }
 }) {
   const bugunIso = bugun()
   const [secili, setSecili] = useState(bugunIso)
@@ -92,6 +100,12 @@ export function YapilacaklarEkrani({
   /** "⋯" ile açılan işlem sayfasının görevi. */
   const [eylemli, setEylemli] = useState<Gorev | null>(null)
   const [mesaj, setMesaj] = useState<string | null>(null)
+  /**
+   * Turda eklenen görevin kimliği: turun sonraki adımları (Pomodoro düğmesi,
+   * ⋯ menüsü) bu görevin satırını aydınlatıyor. Gün doluysa ekleme olmuyor;
+   * o zaman listenin ilk görevi kullanılıyor (`turSatiri`).
+   */
+  const [turGorevId, setTurGorevId] = useState<string | null>(null)
 
   /*
     Geçmiş gün salt okunur: dün yapılmamış işi bugün işaretlemek geçmişi
@@ -126,8 +140,6 @@ export function YapilacaklarEkrani({
   }
 
   const kaydet = (duzen: GorevDuzeni, duzenlenen?: Gorev) => {
-    // Turda kayıt yok (Kaydet zaten rehberin kilidinde; bu ikinci emniyet).
-    if (tanitim) return
     if (duzenlenen) {
       const sonuc = gorevDuzenle(gorevler, duzenlenen.id, duzen)
       if (sonuc) setGorevler(sonuc)
@@ -135,14 +147,21 @@ export function YapilacaklarEkrani({
       soyle('Görev güncellendi.')
       return
     }
-    const sonuc = gorevEkle(gorevler, { id: yeniId(), gun: secili, ...duzen })
+    const id = yeniId()
+    const sonuc = gorevEkle(gorevler, { id, gun: secili, ...duzen })
     if (!sonuc) {
       soyle(`Bu günün listesi dolu (${EN_COK_GOREV} görev).`)
+      // Turda dolu gün kilitlemesin: tur listedeki ilk görevle sürüyor.
+      if (tanitim) tanitim.gorevKaydedildi()
       return
     }
     setGorevler(sonuc)
     setSayfa(null)
     soyle('Listeye eklendi.')
+    if (tanitim) {
+      setTurGorevId(id)
+      tanitim.gorevKaydedildi()
+    }
   }
 
   /** Ekleme sayfası; turda yalnızca tura bildiriliyor, sayfayı adım açıyor. */
@@ -155,6 +174,10 @@ export function YapilacaklarEkrani({
     tur bitince (prop kalkınca) adımın kapattığı sayfa yeniden belirirdi.
   */
   const formGorunur = tanitim ? tanitim.formAcik : sayfa !== null
+  /** Turun Pomodoro ve ⋯ adımlarında aydınlanan satır. */
+  const turSatiri = tanitim ? (isler.find((g) => g.id === turGorevId) ?? isler[0] ?? null) : null
+  /** Turda ⋯ menüsü adıma bağlı; tur bitince (prop kalkınca) kendiliğinden kapanıyor. */
+  const menuGorevi = tanitim ? (tanitim.menuAcik ? turSatiri : null) : eylemli
 
   const ertele = (gorev: Gorev) => {
     const sonuc = gorevErtele(gorevler, gorev.id)
@@ -209,8 +232,8 @@ export function YapilacaklarEkrani({
                 type="button"
                 data-tanitim="gorev-ekle"
                 onClick={sayfaAc}
-                // Turda dolu günde de basılabilir: sayfa yalnızca gösteriliyor,
-                // kayıt olmuyor; pasif düğme turu "+" adımında kilitlerdi.
+                // Turda dolu günde de basılabilir: pasif düğme turu "+" adımında
+                // kilitlerdi; kayıt dolu olunca tur listedeki ilk görevle sürüyor.
                 disabled={!yerVar && !tanitim}
                 aria-label="Görev ekle"
                 // Görsel 36 piksel; `::after` dokunma alanını 44'e çıkarıyor.
@@ -229,8 +252,9 @@ export function YapilacaklarEkrani({
                 gecmis={gecmis}
                 onIsaretle={() => setGorevler((o) => gorevIsaretle(o, gorev.id))}
                 onYildiz={() => setGorevler((o) => gorevYildizla(o, gorev.id))}
-                onEylemler={() => setEylemli(gorev)}
+                onEylemler={() => (tanitim ? gorev === turSatiri && tanitim.menuyuAc() : setEylemli(gorev))}
                 onPomodoro={onPomodoroBaslat && (() => onPomodoroBaslat(gorev))}
+                turSatiri={gorev === turSatiri}
               />
             ))}
 
@@ -273,13 +297,13 @@ export function YapilacaklarEkrani({
         />
       )}
 
-      {eylemli !== null && (
+      {menuGorevi !== null && (
         <GorevEylemleri
-          gorev={eylemli}
-          onKapat={() => setEylemli(null)}
-          onDuzenle={() => setSayfa({ gorev: eylemli })}
-          onErtele={() => setErtelenecek(eylemli)}
-          onSil={() => setSilinecek(eylemli)}
+          gorev={menuGorevi}
+          onKapat={() => (tanitim ? tanitim.menuyuKapat() : setEylemli(null))}
+          onDuzenle={() => setSayfa({ gorev: menuGorevi })}
+          onErtele={() => setErtelenecek(menuGorevi)}
+          onSil={() => setSilinecek(menuGorevi)}
         />
       )}
 
@@ -330,6 +354,7 @@ function GorevSatiri({
   onYildiz,
   onEylemler,
   onPomodoro,
+  turSatiri = false,
 }: {
   gorev: Gorev
   gecmis: boolean
@@ -338,11 +363,16 @@ function GorevSatiri({
   onEylemler: () => void
   /** Yalnızca "Pomodoro ile çalış" işaretli, bitmemiş görevde çiziliyor. */
   onPomodoro?: () => void
+  /** Yapılacaklar turunun aydınlattığı satır (`data-tanitim` hedefleri). */
+  turSatiri?: boolean
 }) {
   const renk = gorevRengi(gorev.renk)
+  const pomodoroVar = !gecmis && !gorev.bitti && gorev.pomodoro === true && !!onPomodoro
 
   return (
     <div
+      // Pomodoro düğmesi yoksa (kullanıcı formda kapattı) tur satırın kendisini gösteriyor.
+      data-tanitim={turSatiri && !pomodoroVar ? 'gorev-satir-pomodoro' : undefined}
       className={cn(
         'flex items-center gap-2.5 rounded-[16px] border border-border bg-card py-2.5 pl-3 pr-1 transition-opacity',
         gorev.bitti ? 'opacity-55' : 'shadow-kart',
@@ -398,8 +428,8 @@ function GorevSatiri({
         `EN_UZUN_GOREV`). İşaretli görevde ad biraz erken kırpılabiliyor —
         `truncate` orada son emniyet.
       */}
-      {!gecmis && !gorev.bitti && gorev.pomodoro === true && onPomodoro && (
-        <SatirDugmesi etiket="Pomodoro ile başlat" onClick={onPomodoro} className="text-primary">
+      {pomodoroVar && onPomodoro && (
+        <SatirDugmesi etiket="Pomodoro ile başlat" onClick={onPomodoro} className="text-primary" tanitim={turSatiri ? 'gorev-satir-pomodoro' : undefined}>
           <Timer size={19} strokeWidth={2.4} aria-hidden />
         </SatirDugmesi>
       )}
@@ -415,7 +445,7 @@ function GorevSatiri({
         </SatirDugmesi>
       )}
       {!gecmis && (
-        <SatirDugmesi etiket="Diğer işlemler" onClick={onEylemler}>
+        <SatirDugmesi etiket="Diğer işlemler" onClick={onEylemler} tanitim={turSatiri ? 'gorev-eylem-ac' : undefined}>
           <MoreHorizontal size={19} strokeWidth={2.4} aria-hidden />
         </SatirDugmesi>
       )}
@@ -429,17 +459,21 @@ function SatirDugmesi({
   basili,
   onClick,
   className,
+  tanitim,
   children,
 }: {
   etiket: string
   basili?: boolean
   onClick: () => void
   className?: string
+  /** Tur hedefi (`data-tanitim`). */
+  tanitim?: string
   children: React.ReactNode
 }) {
   return (
     <button
       type="button"
+      data-tanitim={tanitim}
       onClick={onClick}
       aria-label={etiket}
       aria-pressed={basili}
@@ -487,6 +521,7 @@ function GorevEylemleri({
     >
       <div
         ref={kaydir}
+        data-tanitim="gorev-eylemleri"
         className="alt-pencere-girisi w-full max-w-md rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.25rem+var(--guvenli-alt))]"
         onClick={(olay) => olay.stopPropagation()}
       >
@@ -583,7 +618,7 @@ function EklemeSayfasi({
   onKapat: () => void
   onKaydet: (duzen: GorevDuzeni) => void
   gorevIzniIste?: () => Promise<boolean | null>
-  /** Turda gösteriliyor: boş formda Kaydet soluk çizilmesin (rehber "dokununca eklenir" diyor). */
+  /** Yapılacaklar turunda açıldı: Pomodoro anahtarı açık başlıyor. */
   turda?: boolean
 }) {
   const [metin, setMetin] = useState(duzenlenen?.metin ?? '')
@@ -641,8 +676,12 @@ function EklemeSayfasi({
   // "DİĞER" yazan bir görev ne olduğunu söylemiyordu.
   const [ozelKategori, setOzelKategori] = useState(duzenlenen?.ozelKategori ?? '')
   const [renk, setRenk] = useState<GorevRengi | null>(duzenlenen?.renk ?? null)
-  /** "Pomodoro ile çalış" — kapalı başlıyor; düzenlemede görevin kendi değeri. */
-  const [pomodoro, setPomodoro] = useState(duzenlenen?.pomodoro === true)
+  /**
+   * "Pomodoro ile çalış" — kapalı başlıyor; düzenlemede görevin kendi değeri.
+   * Turda açık başlıyor: turun sonraki adımı satırdaki Pomodoro düğmesini
+   * gösteriyor (kullanıcı kapatabilir; o zaman tur satırı gösteriyor).
+   */
+  const [pomodoro, setPomodoro] = useState(duzenlenen?.pomodoro === true || (turda && !duzenlenen))
   const [hata, setHata] = useState(false)
 
   useGeriKatmani(true, onKapat)
@@ -710,8 +749,7 @@ function EklemeSayfasi({
           </button>
         </div>
 
-        {/* Tur hedefleri (`data-tanitim`) başlığı ve alanı birlikte sarıyor. */}
-        <div data-tanitim="gorev-ad">
+        <div>
           <AlanBasligi
             baslik="Ne yapacaksın?"
             // Sayaç sınırı görünür kılıyor: yazarken kesilen bir kutu, bozuk
@@ -733,7 +771,7 @@ function EklemeSayfasi({
 
         {/* Saat isteğe bağlı ve kapalı başlıyor: tek dokunuşla telefonun saat
             seçicisi açılıyor. Çarpı saati siler, görev saatsiz kalır. */}
-        <div data-tanitim="gorev-saat">
+        <div>
           <AlanBasligi baslik="Saat" sayac="isteğe bağlı" />
           {saatAcik ? (
             <div className="flex items-center gap-2">
@@ -827,7 +865,6 @@ function EklemeSayfasi({
         <button
           type="button"
           role="switch"
-          data-tanitim="gorev-pomodoro"
           aria-checked={pomodoro}
           onClick={() => setPomodoro((o) => !o)}
           className="mt-4 flex min-h-[52px] w-full items-center gap-3 rounded-[16px] border-[1.5px] border-border bg-card px-3.5 py-2 text-left transition active:bg-muted"
@@ -923,10 +960,9 @@ function EklemeSayfasi({
           ilerlenmiyor": pasif düğmenin yanında sebep yazmalı).
         */}
         <Buton
-          data-tanitim="gorev-kaydet"
           onClick={gonder}
           aria-disabled={!gecerli}
-          className={cn('mt-[18px] h-[54px] w-full rounded-[17px] text-base', !gecerli && !turda && 'opacity-45')}
+          className={cn('mt-[18px] h-[54px] w-full rounded-[17px] text-base', !gecerli && 'opacity-45')}
         >
           Kaydet
         </Buton>

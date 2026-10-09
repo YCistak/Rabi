@@ -109,12 +109,13 @@ import {
 } from '@/lib/ozet'
 import { bugunKonuBittiMi, gorevlerBittiMi } from '@/lib/ana-maskot'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { DENEME_FORMU_ADIMLARI, DENEME_VAZGEC, GOREV_VAZGEC, HARITA_TUR_ADIMLARI, gorevFormuTurdaAcik, gorevYazilabilir, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
+import { DENEME_FORMU_ADIMLARI, DENEME_VAZGEC, GOREV_VAZGEC, HARITA_TUR_ADIMLARI, gorevFormuTurdaAcik, gorevMenusuTurdaAcik, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
 import { demoDenemeleri, istatistikTuruDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
 import { tanitimGeriKarari } from '@/lib/tanitim-rehber'
 import { taniKaydet } from '@/lib/tanitim-tani'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
 import { SpotIsigi } from '@/components/tanitim/spot-isigi'
+import { TanitimSorusu } from '@/components/tanitim/tanitim-sorusu'
 import { DemoOyun, DemoOyunKarti } from '@/components/tanitim/demo-oyun'
 
 /** Rozet kontrolünün, veri durulana kadar beklediği süre (ms). */
@@ -135,8 +136,6 @@ export function AppShell() {
   return <TanitimSaglayici><RabiUygulamasi /></TanitimSaglayici>
 }
 
-/** Yapılacaklar turunda görev listesine yazım: turda görev oluşmuyor (`gorevYazilabilir`). */
-const turdaGorevYazma = () => {}
 
 function RabiUygulamasi() {
   const tanitim = useTanitim()
@@ -657,10 +656,13 @@ function RabiUygulamasi() {
   // (`turBaslayabilir` döner) etki yeniden çalışıp turu başlatıyor.
   const turBaslayabilir = cokmeKarari.turBaslayabilir
   useEffect(() => {
-    if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && turBaslayabilir && tanitim.tamamlandi === false && !tanitim.tanitimdaMi) {
+    if (ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && turBaslayabilir && tanitim.baslangic === 'ana-tur' && !tanitim.tanitimdaMi) {
       tanitim.turuBaslat('ana_tur')
     }
-  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, tanitim.tamamlandi, tanitim.tanitimdaMi, tanitim.turuBaslat])
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, tanitim.baslangic, tanitim.tanitimdaMi, tanitim.turuBaslat])
+  // Yeni kullanıcıya ana turdan önce "Tanıtım ister misin?" (`lib/tanitim-tercih.ts`).
+  // Tur ile aynı anda çıkabileceği koşullarda: kurulum ve açılış bitti, çökme sorusu yok.
+  const tanitimSorusuAcik = ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && turBaslayabilir && tanitim.baslangic === 'sor' && !tanitim.tanitimdaMi
 
   /*
     Mini turlar: ekran ilk kez açıldığında bir kez (`miniTurSec`). Ana tur
@@ -1281,12 +1283,16 @@ function RabiUygulamasi() {
             {ekran === 'notlar' && (
               <YapilacaklarEkrani
                 gorevler={anaTurda ? tanitim.demo.gorevler : gorevler}
-                // Yapılacaklar turu görev eklemeyi yalnızca gösteriyor: listeye yazılmıyor.
-                setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : gorevYazilabilir(tanitim.aktifTur) ? setGorevler : turdaGorevYazma}
+                // Yapılacaklar turunda görev gerçek listeye yazılıyor (kullanıcının kendi eylemi).
+                setGorevler={anaTurda ? (g) => tanitim.demoGuncelle('gorevler', g, 'gorev') : setGorevler}
                 tanitim={tanitim.aktifTur === 'yapilacaklar' ? {
                   formAcik: gorevFormuTurdaAcik(tanitim.aktifTur, tanitim.adim?.kimlik ?? null),
                   formuAc: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'gorev-ekle' }),
                   formuKapat: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: GOREV_VAZGEC }),
+                  gorevKaydedildi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'gorev' }),
+                  menuAcik: gorevMenusuTurdaAcik(tanitim.aktifTur, tanitim.adim?.kimlik ?? null),
+                  menuyuAc: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'gorev-eylem-ac' }),
+                  menuyuKapat: () => { if (tanitim.adim?.kimlik === 'gorev-menu') tanitim.oncekiAdimaDon() },
                 } : undefined}
                 // Turda ve ayar kapalıyken izin sorulmuyor.
                 gorevIzniIste={!anaTurda && ayarlar.gorevHatirlatma ? gorevIzniIste : undefined}
@@ -1314,6 +1320,11 @@ function RabiUygulamasi() {
                 onSil={(id) => (anaTurda ? tanitim.demoGuncelle('denemeler', (o) => o.filter((d) => d.id !== id)) : setDenemeler((onceki) => onceki.filter((d) => d.id !== id)))}
                 onDuzenle={(deneme) => { if (!anaTurda) setDenemeFormu({ duzenlenen: deneme }) }}
                 onYeniyeGit={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'deneme-ekle' }) : setDenemeFormu({ duzenlenen: null }))}
+                // Turda örnek denemenin kartı adıma bağlı açılıyor (`deneme-detay`).
+                tanitim={anaTurda ? {
+                  ornekAcik: tanitim.adim?.kimlik === 'deneme-detay',
+                  ornegeDokun: () => tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'deneme-ornek' }),
+                } : undefined}
               />
             )}
             {ekran === 'rozetler' && (
@@ -1548,6 +1559,7 @@ function RabiUygulamasi() {
       )}
       {tanitim.kayitUyarisi && <p role="status" className="mx-auto max-w-md px-4 pb-24 text-sm text-muted-foreground">{tanitim.kayitUyarisi}</p>}
       <SpotIsigi />
+      {tanitimSorusuAcik && <TanitimSorusu onCevap={(evet) => tanitim.tercihKaydet(evet ? 'evet' : 'hayir')} />}
       {/* Özet katmanı açılış ekranının **altında**: uygulama açılırken tavşan
           yuvasına inmeli, üstüne kocaman bir hikâye katmanı düşmemeli. */}
       {ozetAcik && ozet && (
