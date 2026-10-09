@@ -101,7 +101,7 @@ export const ANAHTARLAR = {
   /**
    * Kapanmış ayların hesaplanmış özetleri, ay anahtarına göre.
    *
-   * Özet ekranda **yalnızca ayın 1'inde** görülüyor ama hesabı silinmiyor:
+   * Özet ekranda **yalnızca açılış gününde** görülüyor ama hesabı silinmiyor:
    * ham kayıtlar zamanla budanıyor (yanlış sorular çözülünce düşüyor, oyun
    * geçmişi kısalıyor) ve ileride yıllık özetin dayanacağı tek yer burası.
    * Görülmeyen ay da yazılıyor. Yedeğe giriyor.
