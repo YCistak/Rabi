@@ -35,7 +35,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
     secimler: [
       ['Okul yönetimine başvuruda önce ne açık olmalı?', 'Olay ve talep', 'Yazanın duyguları', 'Kurum hangi işlem istendiğini anlamalı.'],
       ['Arkadaşa yazıyla kuruma yazı arasındaki temel değişken?', 'Alıcı ve amaç', 'Yazım ve noktalama', 'İlişki dili etkiler.'],
-      ['“Resmî üslup” yorumunu ne destekler?', 'Hitap ve ölçülü sözler', 'Yer ve tarih bulunması', 'Dil ve yapı birlikte incelenir.'],
+      ['“Resmî üslup” yorumunu ne destekler?', 'Hitap ve ölçülü sözler', 'Mektubun uzunluğu', 'Dil ve yapı birlikte incelenir.'],
       ['Dilekçede ek belge varsa nasıl gösterilir?', 'İstekle ilişkisi belirtilir', 'Hitaptan önce sıralanır', 'Kurum dayanağı görebilmelidir.'],
       ['Özel mektuptaki duygu yoğunluğu kuruma yazıda nasıl değişir?', 'Açık talep ve gerekçeye yer açar', 'Daha süslü anlatıma dönüşür', 'Yazma amacı değişir.'],
     ],
@@ -116,7 +116,7 @@ export const turkceDerinligi: Record<string, KonuDerinligi> = {
       ['Bir anıda olay atlanmışsa hangi yorum temkinli?', 'Yazar seçmiş olabilir', 'Olay kesin yaşanmadı', 'Bellek ve amaç seçimi etkiler.'],
       ['Sözlükte atasözü bulunması neyi gösterir?', 'Dil ve kültür bağını', 'Eserin bir anı olduğunu', 'Kullanım örneği kültür taşır.'],
       ['Bir tarihçi anıyı nasıl kullanmalı?', 'Başka belgeyle karşılaştırarak', 'Tek başına kesin kayıt sayarak', 'Tanıklık bakış açısı içerir.'],
-      ['Dîvânu Lugâti’t-Türk ile anının amaç farkı?', 'Dil tanıtımı ve yaşantı aktarımı', 'Şiir derleme ve olay kaydı', 'Metin türleri farklı hedefler taşır.'],
+      ['Dîvânu Lugâti’t-Türk ile anının amaç farkı?', 'Dil tanıtımı ve yaşantı aktarımı', 'Yasa derleme ve resmî kayıt', 'Metin türleri farklı hedefler taşır.'],
       ['Anlatıcının tarihî olay hakkındaki duygusu ne olarak okunur?', 'Kişisel yorum', 'Nesnel tarih bilgisi', 'Duygu tanıklığa eşlik eder.'],
     ],
     kontrol: ['Anıda eksik olay neyi kanıtlamaz?', 'Olayın hiç yaşanmadığını', 'Yazarın seçici olduğunu', 'Anı seçilmiş yaşantıları aktarır.'], kontrolKarti: 8,

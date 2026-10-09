@@ -430,7 +430,7 @@ export const turkce9 = program('turkce', 9, 'Sözün inceliğinden dilin zenginl
       soru('Deneme ile makale arasında bir fark yoktur.', false, 'Makale kanıtlar, deneme düşündürür; üslupları da ayrı.'),
       sikli('Denemenin kurucusu kimdir?', ['Ataç', 'Montaigne'], 1, 'Nurullah Ataç Türk edebiyatında.'),
       sikli('Karşısında biri varmış gibi yazılan düşünce yazısı?', ['Makale', 'Söyleşi'], 1, 'Söyleşide yazar okurla sohbet eder gibi yazar.'),
-      soru('Eleştiri bir eseri ölçütlerle değerlendirir.', true, 'Eserin değerini ölçüt ve kanıtla tartar; yalnız izlenim anlatan öznel eleştiridir.'),
+      soru('Eleştiri bir eseri ölçütlerle değerlendirir.', true, 'Eserin değerini ölçüt ve kanıtla tartar.'),
       soru('Denemede her konu işlenebilir.', true, 'Denemenin konu sınırı yok; sınırlayan yazarın bakışı.'),
       soru('Denemede yazar kesin bir yargıya varmak zorundadır.', false, 'Deneme sonuç bağlamak zorunda değil; okuru düşünmeye çağırır.'),
       soru('Makalenin giriş bölümünde savunulacak düşünce ortaya konur.', true, 'Gelişmede kanıtlanır, sonuçta toparlanır.'),
