@@ -260,8 +260,11 @@ export const ISTATISTIK_ADIMLARI: readonly TanitimAdimi[] = [
 */
 export const OYUN_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'demo-ac', hedef: 'demo-oyun', baslik: 'Kısa deneme', aciklama: 'Tanıtım oyunu kartına dokun; skor tanıtımda kalır.', tiklamali: true },
-  { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Hazırlık ekranı', aciklama: 'Tur modunu seç; demo 10 dakika.', tiklamali: false },
-  { kimlik: 'oyun-baslat', hedef: 'demo-baslat', baslik: 'Turu başlat', aciklama: 'Başlat’a dokun.', tiklamali: true },
+  // Hazırlık ekranı yerini oyun modu penceresine bıraktı (`ModPenceresi`,
+  // `oyun-tanitim.tsx`): zorluk seçimi yok, düğmenin adı "Başla". Kimlik
+  // (`zorluk`) geri dönüş kararlarında ve `DemoOyun`da geçtiği için kaldı.
+  { kimlik: 'zorluk', hedef: 'demo-zorluk', etkilesimli: true, baslik: 'Oyun modu', aciklama: 'Her oyun bu pencereyle açılır. İstersen başka bir mod seç.', tiklamali: false },
+  { kimlik: 'oyun-baslat', hedef: 'demo-baslat', baslik: 'Turu başlat', aciklama: 'Başla’ya dokun; 3, 2, 1 sayımından sonra soru gelir.', tiklamali: true },
   // Tanıtım oyununda pas yok (`oyun-islem.tsx`, `pas` demoda tanımsız): 0.9.14'te
   // tuş takımındaki "Pas geç" kalktı, ortak pas demoya verilmedi. Rehber pas önermesin.
   { kimlik: 'soru-bir', hedef: 'demo-soru', ekHedefler: ['demo-islem'], baslik: 'Bir işlemi çöz', aciklama: 'Sonucu yaz ve Onayla’ya dokun.', tiklamali: true },

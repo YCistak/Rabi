@@ -255,6 +255,20 @@ describe('Mini turlar', () => {
     expect(soru.aciklama).toContain('Onayla')
   })
 
+  it('oyun turu yeni giriş penceresini anlatıyor: hazırlık ekranı ve zorluk yok, düğme "Başla"', () => {
+    // Hazırlık ekranı oyun modu penceresine döndü (`ModPenceresi`); balon hâlâ
+    // "Hazırlık ekranı" ve "Başlat’a dokun" diyordu.
+    const metinler = TUR_ADIMLARI.oyunlar.map((adim) => `${adim.baslik} ${adim.aciklama}`.toLocaleLowerCase('tr'))
+    for (const metin of metinler) {
+      expect(metin).not.toContain('hazırlık')
+      expect(metin).not.toContain('zorluk')
+      expect(metin).not.toMatch(/\bpas\b/)
+    }
+    const baslat = TUR_ADIMLARI.oyunlar.find((adim) => adim.kimlik === 'oyun-baslat')!
+    expect(baslat.aciklama).toContain('Başla’ya dokun')
+    expect(TUR_ADIMLARI.oyunlar.find((adim) => adim.kimlik === 'zorluk')!.baslik).toBe('Oyun modu')
+  })
+
   it.each([[1, 0], [0, 1]])('oyun %i doğru %i yanlışla bitince sonuç adımı, geri hazırlığa ve temiz sonuca', (dogru, yanlis) => {
     const sonuc = tanitimGecisi(adimaKadar('soru-bir', 'oyunlar'), { tur: 'oyun-bitti', dogru, yanlis })
     expect(kimlik(sonuc)).toBe('sonuc')
