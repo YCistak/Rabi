@@ -22,7 +22,7 @@ Ana tur **25 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 6. Form: ders ve sayılar; Kaydet'le (kayıt turun belleğinde, tur bitince siliniyor).
 7. "Kaydın günlük hedefine eklendi" → "Araçlara dön".
 8. Konu Takibi satırına dokunuş.
-9. Girişin üstü (sınıf sekmesi ve aşama lejantı; konu satırları bu adımda görünmez) → "İleri" (özel düğme yazısı yok). Balon daireye "dokun" demez: "Dersi açınca konunun solundaki daireyle Bitirdim’i işaretlersin."
+9. Girişin üstü (sınıf sekmesi ve giriş açıklaması; konu satırları bu adımda görünmez) → "İleri" (özel düğme yazısı yok). Balon bu adımda dokunulacak bir şey göstermez: "Dersi açınca konuya dokunup kartta Okul, Soru ve Bitti’yi işaretlersin."
 10. Aynı ekranda alt menüden Harita'ya dokunuş.
 11. İlk bölümün ilk yeşil kitabı (konu anlatımı) — bilgi adımı, İleri ile geçilir; balon "dokun" demez ("Konuyu kısa kartlarla buradan çalışırsın.").
 12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön". Bilgi adımı. Kitap kilitli/yazılmamış olsa da bu adımda gerçek turuncu rengiyle çizilir (gri ve soluklaştırma yok, kilit rozeti kalır); yalnızca tur sırasında ve yalnızca bu kitap için (`Dugum`, `konu-haritasi.tsx`).

@@ -106,12 +106,17 @@ Okulda öğrendim, Soru çözdüm ve ayrı bir Bitirdim.
   sınıfta neredeyim?"; seçenek o sınıfın her dersinde ilk ⌊n × oran⌋ satırı okulda
   işlendi yazar. Bayrak `rabi-konu-takibi-hizli-baslangic` sürüm 2, sınıf tutar;
   sürüm 1'de (TYT/AYT) kartı görmüş öğrenciye yeniden sorulmaz.
+- **Giriş açıklaması** (`GirisAciklamasi`): sınıf sekmesinin altında tek kart — simge,
+  kısa başlık, tek cümle (sınıf temelli olduğu + işaretlemenin ne işe yaradığı). Uzun
+  aşama lejantı yok (halka açıklaması ders ekranında). ✕ ile kapanır, bir daha çıkmaz
+  (`rabi-konu-takibi-aciklama-kapali`, yedeğe girmez); turda her zaman görünür, ✕'siz.
+  Hızlı başlangıç kartı görünürken onun yerine o çıkar.
 - **Tek geri:** ders ekranının kendi geri düğmesi yok; kabuğun "Geri"si önce dersi
   kapatır (Android geri tuşu, iOS kenar kaydırmasıyla aynı sıra). Seçili sınıf
   (`rabi-konu-takibi-sekme`), açık ders ve liste kaydırması `sessionStorage`'da
   (oturumluk).
 - **Tanıtım turu** "Konu konu işaretle" adımı `data-tanitim="konu-takibi"` bloğunu
-  aydınlatır: sınıf sekmesi + ilk kullanım ipucu. Turda ekran öğrencinin
+  aydınlatır: sınıf sekmesi + giriş açıklaması. Turda ekran öğrencinin
   sınıfında, ders kapalı açılır.
 - **Binom AYT'de**, kimliği `tyt-mat-binom` kalır; taşınan konu kimliğini korur
   (`TASINAN_KONULAR`, `takip.test.ts`).
