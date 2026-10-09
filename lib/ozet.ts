@@ -12,7 +12,8 @@
  * kuruluma yaslanmıyor, çünkü "Eylül özeti" dediğinde herkes aynı şeyi
  * anlamalı ve ileride yıllık özet bu kayıtları ay ay toplayacak.
  *
- * Özet ayın kapanışından sonraki **ilk gün** ve yalnızca o gün görülüyor
+ * Özet ayın kapanışından sonraki ayın açılış gününde (Kasım 2026'dan beri
+ * 10'unda) ve yalnızca o gün görülüyor
  * (`bekleyenOzetAyi`); kaçırılan ay bir daha çıkmıyor ama hesabı arşive
  * yazılıyor (`AylikOzetArsivi`) — silinseydi yıllık özetin dayanacağı bir
  * şey kalmazdı.
@@ -80,27 +81,47 @@ export function ayKaydir(anahtar: AyAnahtari, adim: number): AyAnahtari {
 }
 
 /**
- * Bugün gösterilmeyi bekleyen özetin ayı; bugün ayın 1'i değilse `null`.
+ * Özetin açıldığı gün (ayın kaçı).
  *
- * Özet **yalnızca** ayın ilk günü görülüyor: Ağustos'un özeti 1 Eylül'de
- * çıkıyor, 2 Eylül'de kapanıyor. Kullanıcının kararı — hikâye bir kapanış
+ * Kasım 2026'dan itibaren ayın **10'u** (kullanıcı kararı, 2026-10: "10
+ * Kasım'da açılır"). Önceki aylarda özet ayın 1'inde açılmıştı; geçiş ayı
+ * sabit tutuluyor ki Eylül özeti 1 Ekim'de görülmüşken 10 Ekim'de ikinci kez
+ * çıkmasın ve pasif kart bugün "10 Ekim" değil "10 Kasım" desin.
+ */
+export const OZET_ACILIS_GUNU = 10
+const OZET_ACILIS_GECIS_AYI: AyAnahtari = '2026-11'
+
+/** Verilen ayda özetin açıldığı günün tarihi. */
+function acilisTarihi(ay: AyAnahtari): string {
+  const gun = ay >= OZET_ACILIS_GECIS_AYI ? OZET_ACILIS_GUNU : 1
+  return `${ay}-${String(gun).padStart(2, '0')}`
+}
+
+/**
+ * Bugün gösterilmeyi bekleyen özetin ayı; bugün açılış günü değilse `null`.
+ *
+ * Özet **yalnızca** açılış günü görülüyor: Ekim'in özeti 10 Kasım'da
+ * çıkıyor, 11 Kasım'da kapanıyor. Kullanıcının kararı — hikâye bir kapanış
  * ânı, haftalarca duran bir kart değil. O gün açmayan kullanıcı o ayın
  * hikâyesini kaçırıyor; sayıları arşivde duruyor.
  */
 export function bekleyenOzetAyi(bugunIso: string): AyAnahtari | null {
-  if (tariheCevir(bugunIso).getDate() !== 1) return null
-  return ayKaydir(ayAnahtari(bugunIso), -1)
+  const buAy = ayAnahtari(bugunIso)
+  if (bugunIso !== acilisTarihi(buAy)) return null
+  return ayKaydir(buAy, -1)
 }
 
 /**
  * Bir sonraki özetin açılacağı gün — pasif kartın üstündeki tarih.
  *
- * Bugün ayın 1'iyse bugünü **değil** bir sonraki ayı veriyor: kart o gün ya
+ * Bugün açılış günüyse bugünü **değil** bir sonrakini veriyor: kart o gün ya
  * aktif (özet bekliyor) ya da izlenmiş/boş, iki hâlde de "bugün açılır"
  * yazmak anlamsız.
  */
 export function sonrakiOzetGunu(bugunIso: string): string {
-  return ayAraligi(ayKaydir(ayAnahtari(bugunIso), 1)).baslangic
+  const buAy = ayAnahtari(bugunIso)
+  const buAyinki = acilisTarihi(buAy)
+  return buAyinki > bugunIso ? buAyinki : acilisTarihi(ayKaydir(buAy, 1))
 }
 
 /**
@@ -216,7 +237,7 @@ export type AylikOzet = {
 /**
  * Bir aylık hikâyeyi anlamlı kılan en az etkin gün sayısı.
  *
- * Yayın günü kişiye göre kaymıyor: uygun özetler yine ayın 1'inde açılıyor.
+ * Yayın günü kişiye göre kaymıyor: uygun özetler yine açılış gününde açılıyor.
  * Bu eşik yalnızca bir-iki günlük veriyi "aylık özet" diye sunmayı engelliyor.
  */
 export const AYLIK_OZET_EN_AZ_ETKIN_GUN = 7

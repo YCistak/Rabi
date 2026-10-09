@@ -4,8 +4,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 `components/ekranlar/aylik-ozet.tsx`, `lib/ozet.ts`, afiş `lib/ozet-gorsel.ts`, tasarım
 `tasarim/aylik-ozet.dc.html`. Araçlar listesinde **yok**. Ay takvim ayı.
-- Bir ayın özeti **yalnız sonraki ayın 1'inde** açılır (`bekleyenOzetAyi`; kullanıcı
-  kararı). Ana sayfa kartı hep var: aktifken en üstte renkli (`OzetDaveti`),
+- Bir ayın özeti **yalnız sonraki ayın açılış gününde** açılır (`bekleyenOzetAyi`;
+  kullanıcı kararı). Açılış günü Kasım 2026'dan beri ayın **10'u** (`OZET_ACILIS_GUNU`,
+  geçiş ayı `OZET_ACILIS_GECIS_AYI`; öncesi 1'i — Eylül özeti 1 Ekim'de açılmıştı). Ana sayfa kartı hep var: aktifken en üstte renkli (`OzetDaveti`),
   değilken en altta gri ve sonraki açılış tarihiyle (`OzetBekliyor`). Kapatma düğmesi
   yok.
 - Kapanan ayda en az **7 farklı etkin gün** yoksa hikâye açılmaz

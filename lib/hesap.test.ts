@@ -174,52 +174,84 @@ describe('devamsizlikOzeti', () => {
   })
 
   it('yarım günü 0,5 sayar', () => {
-    const ozet = devamsizlikOzeti([kayit('ozursuz'), kayit('ozursuz', true)])
+    const ozet = devamsizlikOzeti([kayit('ozursuz'), kayit('ozursuz', true), kayit('ozurlu', true)])
     expect(ozet.ozursuz).toBe(1.5)
     expect(ozet.ozursuzKalan).toBe(8.5)
+    expect(ozet.ozurlu).toBe(0.5)
+    // Özürlü sınırı = 30 - 1,5 özürsüz = 28,5; kalan 28.
+    expect(ozet.ozurluSinir).toBe(28.5)
+    expect(ozet.ozurluKalan).toBe(28)
+    expect(ozet.toplamKalan).toBe(28)
   })
 
-  it('sınır aşılınca asildi true olur', () => {
-    const ozet = devamsizlikOzeti(Array.from({ length: 11 }, () => kayit('ozursuz')))
+  it('özürsüz 10 günü geçince asildi true olur', () => {
+    const sinirda = devamsizlikOzeti(Array.from({ length: 10 }, () => kayit('ozursuz')))
+    expect(sinirda.asildi).toBe(false)
+    expect(sinirda.ozursuzKalan).toBe(0)
+    const ozet = devamsizlikOzeti(
+      Array.from({ length: 10 }, () => kayit('ozursuz')).concat(kayit('ozursuz', true)),
+    )
     expect(ozet.asildi).toBe(true)
+    expect(ozet.ozursuzKalan).toBe(-0.5)
     expect(ozet.uyari).toBe(false)
   })
 
-  it('sınırın %70inde uyarı verir', () => {
-    const ozet = devamsizlikOzeti(Array.from({ length: 7 }, () => kayit('ozursuz')))
-    expect(ozet.uyari).toBe(true)
+  it('toplam 30 günü geçince asildi true olur', () => {
+    const sinirda = devamsizlikOzeti(Array.from({ length: 30 }, () => kayit('ozurlu')))
+    expect(sinirda.asildi).toBe(false)
+    expect(sinirda.toplamKalan).toBe(0)
+    expect(sinirda.ozurluKalan).toBe(0)
+    const ozet = devamsizlikOzeti([
+      ...Array.from({ length: 25 }, () => kayit('ozurlu')),
+      ...Array.from({ length: 5 }, () => kayit('ozursuz')),
+      kayit('ozurlu', true),
+    ])
+    expect(ozet.asildi).toBe(true)
+    expect(ozet.toplamKalan).toBe(-0.5)
+    expect(ozet.ozurluKalan).toBe(-0.5)
+  })
+
+  it('özürsüz kullanıldıkça özürlü sınırı düşer', () => {
+    expect(devamsizlikOzeti([]).ozurluSinir).toBe(30)
+    const ozet = devamsizlikOzeti([
+      ...Array.from({ length: 4 }, () => kayit('ozursuz')),
+      kayit('ozursuz', true),
+      ...Array.from({ length: 6 }, () => kayit('ozurlu')),
+    ])
+    expect(ozet.ozurluSinir).toBe(25.5)
+    expect(ozet.ozurluKalan).toBe(19.5)
     expect(ozet.asildi).toBe(false)
+  })
+
+  it('sınıra yaklaşınca uyarı verir', () => {
+    // Özürsüz: 10 günün %70i = 7.
+    const ozursuz = devamsizlikOzeti(Array.from({ length: 7 }, () => kayit('ozursuz')))
+    expect(ozursuz.uyari).toBe(true)
+    expect(ozursuz.asildi).toBe(false)
+    expect(devamsizlikOzeti(Array.from({ length: 6 }, () => kayit('ozursuz'))).uyari).toBe(false)
+    // Toplam: 30 günün %70i = 21.
+    const ozurlu = devamsizlikOzeti(Array.from({ length: 21 }, () => kayit('ozurlu')))
+    expect(ozurlu.uyari).toBe(true)
+    expect(devamsizlikOzeti(Array.from({ length: 20 }, () => kayit('ozurlu'))).uyari).toBe(false)
   })
 
   it('kayıt yoksa uyarı vermez', () => {
     const ozet = devamsizlikOzeti([])
     expect(ozet.uyari).toBe(false)
+    expect(ozet.ozursuzKalan).toBe(10)
+    expect(ozet.ozurluKalan).toBe(30)
     expect(ozet.toplamKalan).toBe(30)
-  })
-
-  /**
-   * Gerileme testi: özürlü devamsızlık ayrı bir 20 günlük sınırla ölçülüyordu.
-   * Yönetmelik (MADDE 36) yalnızca özürsüzü (10) ve toplamı (30) sınırlıyor.
-   */
-  it('özürlü devamsızlık toplam sınırla ölçülür', () => {
-    const icinde = devamsizlikOzeti([
-      ...Array.from({ length: 3 }, () => kayit('ozursuz')),
-      ...Array.from({ length: 25 }, () => kayit('ozurlu')),
-    ])
-    expect(icinde.asildi).toBe(false)
-    expect(icinde.toplamKalan).toBe(2)
-
-    const disinda = devamsizlikOzeti([
-      ...Array.from({ length: 5 }, () => kayit('ozursuz')),
-      ...Array.from({ length: 26 }, () => kayit('ozurlu')),
-    ])
-    expect(disinda.asildi).toBe(true)
   })
 })
 
 describe('dersYilininKayitlari', () => {
   it('yalnızca verilen ders yılının kayıtlarını bırakır', () => {
-    const k = (tarih: string): Devamsizlik => ({ id: tarih, tarih, tur: 'ozursuz', yarimGun: false })
+    const k = (tarih: string): Devamsizlik => ({
+      id: tarih,
+      tarih,
+      tur: 'ozursuz',
+      yarimGun: false,
+    })
     // 2025-2026 ders yılı eylülde başlıyor, ağustosta bitiyor.
     const kayitlar = [k('2025-05-10'), k('2025-09-15'), k('2026-03-01'), k('2026-09-02')]
     expect(dersYilininKayitlari(kayitlar, 2025).map((x) => x.tarih)).toEqual([
@@ -252,7 +284,11 @@ describe('mezun', () => {
 })
 
 describe('elle girilen OBP', () => {
-  const yil = (sinif: number, ortalama: number) => ({ id: String(sinif), sinif, ortalama })
+  const yil = (sinif: number, ortalama: number) => ({
+    id: String(sinif),
+    sinif,
+    ortalama,
+  })
 
   it('girilen puan olduğu gibi geçerli, diploma notu geri türetiliyor', () => {
     const sonuc = obpBildirilen(412.5)
@@ -279,7 +315,11 @@ describe('elle girilen OBP', () => {
 })
 
 describe('doğrudan OBP kilidi (mezun)', () => {
-  const yil = (sinif: number, ortalama: number) => ({ id: String(sinif), sinif, ortalama })
+  const yil = (sinif: number, ortalama: number) => ({
+    id: String(sinif),
+    sinif,
+    ortalama,
+  })
 
   it('hiç yıl sonu notu yokken açık', () => {
     expect(elleObpKilitliMi([], null)).toBe(false)

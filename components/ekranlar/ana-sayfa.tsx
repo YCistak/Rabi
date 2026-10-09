@@ -351,7 +351,7 @@ export function AnaSayfa({
             <span>
               {devamsizlikDurumu.asildi
                 ? 'Devamsızlık hakkını aştın. Okul rehberliğiyle görüşmen gerekebilir.'
-                : `Devamsızlık sınırına yaklaştın: özürsüz ${devamsizlikDurumu.ozursuzKalan}, toplam ${devamsizlikDurumu.toplamKalan} gün hakkın kaldı.`}
+                : `Devamsızlık sınırına yaklaştın: özürlü ${devamsizlikDurumu.ozurluKalan}, özürsüz ${devamsizlikDurumu.ozursuzKalan} gün hakkın kaldı.`}
             </span>
           </span>
         </Not>

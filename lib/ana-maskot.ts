@@ -16,7 +16,7 @@
  * 3. Devamsızlık hakkı aşıldı → üzgün.
  * 4. Sınav günü → bağdaş kurmuş, sakin. `gunun-hali.ts` o gün soru sayısından
  *    bağımsız olarak "dinlen" diyor; tavşan da çalışmıyor.
- * 5. Aylık özet açılmayı bekliyor → megafonla konuşan. Ayın 1'inde, özet
+ * 5. Aylık özet açılmayı bekliyor → megafonla konuşan. Açılış gününde, özet
  *    açılana kadar; açılınca `ozetHazir` düşüyor.
  * 6. Bugünün tarihli bir deneme girildi → onay damgası basan.
  * 7. Bugün bir konu anlatımı bitirildi → tahtaya yazan.
@@ -74,7 +74,7 @@ export type AnaMaskotGirdisi = {
   /** İşleyen bir Pomodoro aşaması; duraklatılmışsa ya da yoksa null. */
   pomodoro: PomodoroHali
   devamsizlikAsildi: boolean
-  /** Aylık özet açılmayı bekliyor (ayın 1'i, henüz açılmadı). */
+  /** Aylık özet açılmayı bekliyor (açılış günü, henüz açılmadı). */
   ozetHazir: boolean
   /** En yeni denemenin tarihi; hiç deneme yoksa null. */
   sonDenemeTarihi: string | null

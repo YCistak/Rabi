@@ -106,18 +106,29 @@ describe('ay aralığı', () => {
 })
 
 describe('bekleyen özet ayı', () => {
-  it('yalnızca ayın 1inde bir önceki ayı verir', () => {
+  it('yalnızca açılış gününde bir önceki ayı verir', () => {
+    // Kasım 2026'ya kadar açılış ayın 1'i.
     expect(bekleyenOzetAyi('2026-10-01')).toBe(EYLUL)
     expect(bekleyenOzetAyi('2026-10-02')).toBeNull()
+    expect(bekleyenOzetAyi('2026-10-10')).toBeNull()
     expect(bekleyenOzetAyi('2026-09-30')).toBeNull()
-    expect(bekleyenOzetAyi('2027-01-01')).toBe('2026-12')
+    // Kasım 2026'dan itibaren ayın 10'u.
+    expect(bekleyenOzetAyi('2026-11-01')).toBeNull()
+    expect(bekleyenOzetAyi('2026-11-10')).toBe('2026-10')
+    expect(bekleyenOzetAyi('2026-11-11')).toBeNull()
+    expect(bekleyenOzetAyi('2027-01-10')).toBe('2026-12')
+    expect(bekleyenOzetAyi('2027-01-01')).toBeNull()
   })
 
-  it('sonraki özet günü bir sonraki ayın 1i', () => {
+  it('sonraki özet günü bir sonraki açılış günü', () => {
     expect(sonrakiOzetGunu('2026-09-17')).toBe('2026-10-01')
-    // Ayın 1'inde bile bir sonraki ayı gösteriyor: o günkü özet ya aktif ya izlenmiş.
-    expect(sonrakiOzetGunu('2026-10-01')).toBe('2026-11-01')
-    expect(sonrakiOzetGunu('2026-12-05')).toBe('2027-01-01')
+    // Ayın 1'inde bile bir sonrakini gösteriyor: o günkü özet ya aktif ya izlenmiş.
+    expect(sonrakiOzetGunu('2026-10-01')).toBe('2026-11-10')
+    expect(sonrakiOzetGunu('2026-10-09')).toBe('2026-11-10')
+    expect(sonrakiOzetGunu('2026-11-09')).toBe('2026-11-10')
+    expect(sonrakiOzetGunu('2026-11-10')).toBe('2026-12-10')
+    expect(sonrakiOzetGunu('2026-12-05')).toBe('2026-12-10')
+    expect(sonrakiOzetGunu('2026-12-20')).toBe('2027-01-10')
   })
 
   it('arşivde eksik ayları ilk veriden bugüne kadar sayar, bu ayı saymaz', () => {

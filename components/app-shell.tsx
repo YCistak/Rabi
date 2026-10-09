@@ -583,7 +583,7 @@ function RabiUygulamasi() {
     bugunIso,
   ])
 
-  /** Bugün izlenmeyi bekleyen ay; bugün ayın 1'i değilse ya da izlendiyse null. */
+  /** Bugün izlenmeyi bekleyen ay; bugün açılış günü değilse ya da izlendiyse null. */
   const bekleyenAy = useMemo(() => {
     const ay = bekleyenOzetAyi(bugunIso)
     if (!ay || ozetGorulen.includes(ay)) return null
