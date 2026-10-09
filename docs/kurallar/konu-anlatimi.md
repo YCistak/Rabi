@@ -117,7 +117,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   üstünde yalnız "10. sınıf · Kimya" kartı (ders emojisi, ilerleme, turuncu ok);
   basınca alttan pencere. Pencerede önce `SINIF` (seçili turuncu dolgu, yüzde =
   sınıfın ders ortalaması `sinifOrtalamasi`), sonra o sınıfın dersleri gri grupta
-  beyaz satırlar; seçili ders turuncu kenar + `--primary-soft`. Sınıfa basmak yalnız
+  beyaz satırlar; seçili ders turuncu kenar + `--primary-soft`. Derse basınca seçim ~300 ms vurgulu kalır, sonra pencere 200 ms animasyonla kapanır; bu sürede dokunuşlar yutulur (ghost click). Sınıfa basmak yalnız
   listeyi değiştirir, seçim derse basınca biter; bakılan sınıfta seçili ders yoksa
   `pencereBilgisi` satırı. **"sen" işareti yok** (kullanıcı kaldırttı). Emojiler
   `OlcekliEmoji` ile (kullanıcı istedi; hizalı satırda ham emoji telefona göre kayar).
@@ -137,3 +137,4 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   Bezier, SVG 400 px); bölüm kutusu `overflow: clip` (`hidden` değil), `BANT_PAYI`,
   `BOLUM_ARASI`. Numara yalnız yeşil kitapta, konuyu sayar. Kitaba basınca ortada
   `KonuKarti`.
+- **Soru sahnesindeki tavşan** konu kartlarıyla aynı torbadan (`kartPozlari`, `lib/konu/kart-maskotu.ts`) soru başına bir poz alır; sabit `kahveli` değil.

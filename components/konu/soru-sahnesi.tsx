@@ -6,6 +6,7 @@ import type { Konu } from '@/lib/konu'
 import { isabetOrani, kapanisKademesi, sureYaz } from '@/lib/konu/kapanis'
 import { useGeriKatmani } from '@/lib/geri'
 import { bugun, cn } from '@/lib/utils'
+import { kartPozlari } from '@/lib/konu/kart-maskotu'
 import { gununPozu, type MaskotPozu } from '@/lib/maskot'
 import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
@@ -109,6 +110,8 @@ export function SoruSahnesi({
   onCikisBitti?: () => void
 }) {
   const [sira, setSira] = useState(0)
+  /** Her soruya bir poz; konu kartlarıyla aynı torba mantığı (`kart-maskotu.ts`), art arda aynısı gelmez. */
+  const [pozlar] = useState(() => kartPozlari(konu.sorular.length))
   /**
    * Verilen cevap; `null` ise henüz karar verilmedi.
    *
@@ -354,7 +357,7 @@ export function SoruSahnesi({
               izliyor. Kart kaydırmadan sığmıyorsa (`Sigdir`) önce o kalkıyor. */}
           {!sikisik && (
             <div className="flex justify-center">
-              <Rabi poz="kahveli" boyut={134} durum="normal" className="sahne-maskot" />
+              <Rabi poz={pozlar[sira] ?? 'kahveli'} boyut={134} durum="normal" className="sahne-maskot" />
             </div>
           )}
 

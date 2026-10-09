@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 import { dersBul, sinifDersleri, HARITA_SINIFLARI, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
 import type { KonuIlerlemeleri } from '@/lib/konu/ilerleme'
@@ -30,6 +30,11 @@ import { cn } from '@/lib/utils'
 */
 
 type Secim = { ders: KonuDersId; sinif: HaritaSinifi }
+
+/** Seçilen ders kapanmadan önce vurgulu görünür (ms); kullanıcı neyi seçtiğini görsün. */
+const VURGU_SURESI = 300
+/** Kapanış animasyonunun süresi (ms); `.alt-pencere-cikisi` ile aynı olmalı. */
+const KAPANIS_SURESI = 200
 
 /** Patikanın üstündeki seçim kartı; basınca pencere açılır. */
 export function SecimKarti({
@@ -109,20 +114,54 @@ export function SecimPenceresi({
   useGeriKatmani(true, onKapat)
   const kaydir = useAsagiKaydirKapat(onKapat)
   const [bakilan, setBakilan] = useState<HaritaSinifi>(secim.sinif)
+  /** Basılan ders; doluyken pencere vurguyu gösterip kapanmayı bekliyor. */
+  const [secilen, setSecilen] = useState<Secim | null>(null)
+  const [kapaniyor, setKapaniyor] = useState(false)
+  const onSecRef = useRef(onSec)
+  onSecRef.current = onSec
+  const zamanlayicilar = useRef<number[]>([])
+  useEffect(() => {
+    const liste = zamanlayicilar.current
+    return () => liste.forEach((z) => window.clearTimeout(z))
+  }, [])
+
+  /*
+    Ders seçilince pencere anında sökülüyordu: kullanıcı neyi seçtiğini
+    göremiyordu. Şimdi seçim önce vurgulanıyor, sonra pencere animasyonla
+    kapanıyor. Bu sürede pencere dokunuşları yutuyor — ikinci basış ya da
+    pencere kalkarken alttaki karta (ghost click) geçen dokunuş seçimi bozmasın.
+  */
+  const dersSec = (yeni: Secim) => {
+    if (secilen) return
+    setSecilen(yeni)
+    zamanlayicilar.current.push(
+      window.setTimeout(() => {
+        setKapaniyor(true)
+        zamanlayicilar.current.push(window.setTimeout(() => onSecRef.current(yeni), KAPANIS_SURESI))
+      }, VURGU_SURESI),
+    )
+  }
   const dersler = sinifDersleri(bakilan)
   const bilgi = pencereBilgisi(secim, bakilan)
 
   return (
     <div
-      className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-foreground/35"
-      onClick={onKapat}
+      className={cn(
+        'fixed inset-0 z-50 flex items-end justify-center bg-foreground/35',
+        kapaniyor ? 'katman-zemin-cikisi' : 'katman-zemin',
+      )}
+      onClick={secilen ? undefined : onKapat}
     >
       <div
         ref={kaydir}
         role="dialog"
         aria-modal="true"
         aria-label="Sınıf ve ders seç"
-        className="alt-pencere-girisi flex max-h-[88dvh] w-full max-w-md flex-col overflow-y-auto rounded-t-[26px] bg-card px-4 pt-2.5 pb-[calc(var(--guvenli-alt)+20px)] shadow-[0_-12px_34px_rgba(90,60,35,0.18)]"
+        className={cn(
+          'flex max-h-[88dvh] w-full max-w-md flex-col overflow-y-auto rounded-t-[26px] bg-card px-4 pt-2.5 pb-[calc(var(--guvenli-alt)+20px)] shadow-[0_-12px_34px_rgba(90,60,35,0.18)]',
+          kapaniyor ? 'alt-pencere-cikisi' : 'alt-pencere-girisi',
+          secilen && '[&_button]:pointer-events-none',
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -189,7 +228,8 @@ export function SecimPenceresi({
         {/* Dersler havada durmasın: gri bir grup, her ders kendi beyaz satırında. */}
         <ul className="grid gap-1.5 rounded-[18px] bg-muted p-1.5">
           {dersler.map((d) => {
-            const secili = bakilan === secim.sinif && d.id === secim.ders
+            const gecerli = secilen ?? secim
+            const secili = bakilan === gecerli.sinif && d.id === gecerli.ders
             const yuzde = sinifYuzdesi(d.id, bakilan, ilerlemeler) ?? 0
             const db = haritaTemasi(d.id)
             const ad = haritaDersAdi(d.id, bakilan)
@@ -197,7 +237,7 @@ export function SecimPenceresi({
               <li key={d.id}>
                 <button
                   type="button"
-                  onClick={() => onSec({ ders: d.id, sinif: bakilan })}
+                  onClick={() => dersSec({ ders: d.id, sinif: bakilan })}
                   aria-pressed={secili}
                   aria-label={`${ad}, yüzde ${yuzde}`}
                   className={cn(
