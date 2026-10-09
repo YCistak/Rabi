@@ -3,6 +3,7 @@ import {
   KADEME_SIRASI,
   ROZETLER,
   bildirilecekler,
+  bitenKonuSayisi,
   hakEdilenler,
   kademeSayimi,
   rozetDurumu,
@@ -10,6 +11,8 @@ import {
   yeniRozetler,
 } from './rozetler'
 import type { Deneme, GunlukKayit, PomodoroSeans, Sablon, YanlisSoru } from './types'
+import type { KonuIlerlemeleri } from './konu/ilerleme'
+import type { YksTakip } from './konu-takibi/kayit'
 
 function denemeler(sayi: number): Deneme[] {
   return Array.from({ length: sayi }, (_, i) => ({
@@ -72,6 +75,9 @@ describe('rozetDurumu', () => {
       yanlisCozulen: 0,
       bankaDusen: 0,
       bankaTemiz: false,
+      konuBitti: 0,
+      haritaKonu: 0,
+      konuOkumaDakikasi: 0,
       oyunTuru: 0,
       oyunRekoru: 0,
       oyunHatasiz: 0,
@@ -417,5 +423,65 @@ describe('bildirilecekler', () => {
 
   it('yeni rozet yoksa kuyruk boş', () => {
     expect(bildirilecekler([])).toEqual([])
+  })
+})
+
+describe('konu rozetleri', () => {
+  function takip(konular: YksTakip['konular']): YksTakip {
+    return { surum: 2, konular }
+  }
+
+  it('Konu Takibi yalnız "Bitti" işaretli konuları sayar', () => {
+    const t = takip({
+      'tyt-trk-sozcuk': { bitti: '2026-10-01' },
+      'tyt-trk-cumle': { okul: '2026-10-01', soru: '2026-10-02' },
+      'tyt-fiz-kuvvet': { okul: '2026-10-01', bitti: '2026-10-03' },
+    })
+    expect(bitenKonuSayisi(t)).toBe(2)
+  })
+
+  it('birleşen satırın iki kimliği tek konu sayılır', () => {
+    const t = takip({
+      'tyt-mat-fonksiyon': { bitti: '2026-10-01' },
+      'ayt-mat-fonksiyon': { bitti: '2026-10-01' },
+      'tyt-mat-polinom': { bitti: '2026-10-02' },
+    })
+    expect(bitenKonuSayisi(t)).toBe(2)
+  })
+
+  it('on biten konu bronz rozeti verir, elli gümüşü', () => {
+    const konular: YksTakip['konular'] = {}
+    for (let i = 0; i < 10; i++) konular[`k${i}`] = { bitti: '2026-10-01' }
+    const ids = hakEdilenler(rozetDurumu({ ...BOS, yksTakip: takip(konular) })).map((r) => r.id)
+    expect(ids).toContain('konu-bitti-10')
+    expect(ids).not.toContain('konu-bitti-50')
+  })
+
+  it('harita yalnız sonuna kadar okunan desteleri sayar', () => {
+    const ilerleme: KonuIlerlemeleri = {}
+    for (let i = 0; i < 10; i++) ilerleme[`h${i}`] = { bitti: true, tarih: '2026-10-01' }
+    ilerleme.yarim = { bitti: false, okunan: 3, tarih: '2026-10-01' }
+    const durum = rozetDurumu({ ...BOS, haritaIlerleme: ilerleme })
+    expect(durum.haritaKonu).toBe(10)
+    const ids = hakEdilenler(durum).map((r) => r.id)
+    expect(ids).toContain('harita-10')
+    expect(ids).not.toContain('harita-50')
+  })
+
+  it('okuma süresi saniyeden dakikaya aşağı yuvarlanır', () => {
+    const okumaGecmisi = [
+      { konuId: 'a', tarih: '2026-10-01', saniye: 90 },
+      { konuId: 'b', tarih: '2026-10-02', saniye: 59 },
+    ]
+    expect(rozetDurumu({ ...BOS, okumaGecmisi }).konuOkumaDakikasi).toBe(2)
+  })
+
+  it('10 saatlik okuma rozeti 600. dakikada gelir', () => {
+    const seanslar = (saniye: number) =>
+      Array.from({ length: 10 }, (_, i) => ({ konuId: `k${i}`, tarih: '2026-10-01', saniye }))
+    const eksik = hakEdilenler(rozetDurumu({ ...BOS, okumaGecmisi: seanslar(3599) }))
+    const tam = hakEdilenler(rozetDurumu({ ...BOS, okumaGecmisi: seanslar(3600) }))
+    expect(eksik.map((r) => r.id)).not.toContain('okuma-10s')
+    expect(tam.map((r) => r.id)).toContain('okuma-10s')
   })
 })

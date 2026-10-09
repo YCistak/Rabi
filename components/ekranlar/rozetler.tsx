@@ -10,6 +10,9 @@ import type {
   Sablon,
   YanlisSoru,
 } from '@/lib/types'
+import type { KonuIlerlemeleri } from '@/lib/konu/ilerleme'
+import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
+import type { YksTakip } from '@/lib/konu-takibi/kayit'
 import {
   KADEME_ADI,
   ROZETLER,
@@ -46,6 +49,9 @@ const BIRIM: Partial<Record<RozetTuru, string>> = {
   'oyun-hatasiz': 'tur',
   'oyun-dogru': 'doğru',
   'oyun-seri': 'doğru',
+  'konu-bitti': 'konu',
+  'harita-konu': 'konu',
+  'konu-okuma': 'dk',
 }
 
 /**
@@ -124,6 +130,9 @@ export function RozetlerEkrani({
   oyunlar,
   bankaDusen,
   bankaBoyutu,
+  yksTakip,
+  haritaIlerleme,
+  okumaGecmisi,
   kazanilmis,
 }: {
   denemeler: Deneme[]
@@ -136,6 +145,9 @@ export function RozetlerEkrani({
   oyunlar: OyunKayitlari
   bankaDusen: number
   bankaBoyutu: number
+  yksTakip: YksTakip
+  haritaIlerleme: KonuIlerlemeleri
+  okumaGecmisi: OkumaSeansi[]
   kazanilmis: KazanilanRozet[]
 }) {
   const [suzgec, setSuzgec] = useState<Suzgec>('tumu')
@@ -153,6 +165,9 @@ export function RozetlerEkrani({
         oyunlar,
         bankaDusen,
         bankaBoyutu,
+        yksTakip,
+        haritaIlerleme,
+        okumaGecmisi,
       }),
     [
       denemeler,
@@ -165,6 +180,9 @@ export function RozetlerEkrani({
       oyunlar,
       bankaDusen,
       bankaBoyutu,
+      yksTakip,
+      haritaIlerleme,
+      okumaGecmisi,
     ],
   )
 
@@ -232,13 +250,6 @@ export function RozetlerEkrani({
         <Not className="mt-4">
           Seri rozetleri günlük soru hedefine göre sayılıyor. Ayarlar’dan bir hedef belirlemeden
           bu grup ilerlemiyor.
-        </Not>
-      )}
-
-      {durum.diplomaNotu === null && (
-        <Not className="mt-4">
-          Okul notu rozetleri için Okul Notları ekranından derslerini gir — diploma notun
-          hesaplanınca burada da görünür.
         </Not>
       )}
 
