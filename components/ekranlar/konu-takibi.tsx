@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Check, ChevronLeft, ChevronRight, Flag, GraduationCap, Map as HaritaSimgesi, PencilLine, X } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Flag, GraduationCap, ListChecks, Map as HaritaSimgesi, PencilLine, X } from 'lucide-react'
 import { Haptics, NotificationType } from '@capacitor/haptics'
 import type { PuanTuru } from '@/lib/types'
 import type { KonuDersId } from '@/lib/konu/tip'
@@ -195,8 +195,16 @@ export function KonuTakibiEkrani({
     return tablo
   }, [dersler, takip, ilerlemeler])
 
-  /** Hiç işaret yok — ilk kullanım ipucu bundan türüyor, ayrı bir ayar tutulmuyor. */
-  const bos = Object.keys(takip.konular).length === 0
+  /*
+    Giriş açıklaması kapatılana kadar duruyor; turda her zaman görünür (tur
+    bu bloğu aydınlatıyor). Depo okunmadan çizilmiyor: kapatmış kullanıcıda
+    kart bir kare görünüp kaybolmasın.
+  */
+  const [aciklamaKapali, setAciklamaKapali, aciklamaHazir] = useYerelDepo<boolean>(
+    ANAHTARLAR.konuTakibiAciklamaKapali,
+    false,
+  )
+  const aciklamaGoster = tanitimda || (aciklamaHazir && aciklamaKapali !== true)
 
   /*
     Hızlı başlangıç: 12. sınıf ve mezunda, seçili sınıfta hiç işaret yokken
@@ -316,7 +324,7 @@ export function KonuTakibiEkrani({
             onAtla={() => bayrakYaz(gorunenSinif, true)}
           />
         ) : (
-          (bos || tanitimda) && <IlkKullanim />
+          aciklamaGoster && <GirisAciklamasi onKapat={tanitimda ? undefined : () => setAciklamaKapali(true)} />
         )}
       </div>
 
@@ -377,39 +385,34 @@ function HizliBaslangic({
   )
 }
 
-/** Hiç işaret yokken tek cümlelik yön ve aşama simgelerinin lejantı. İlk işaretle kalkıyor. */
-function IlkKullanim({ haritali = true }: { haritali?: boolean }) {
+/**
+ * Girişin açıklaması: simge, kısa başlık ve tek cümle. Uzun lejant buradan
+ * kalktı; halkanın dilimleri ders ekranının altında zaten anlatılıyor.
+ * Kapatılınca bir daha çıkmıyor (`konuTakibiAciklamaKapali`).
+ */
+function GirisAciklamasi({ onKapat }: { onKapat?: () => void }) {
   return (
-    <div className="mb-3 rounded-2xl bg-muted/70 px-3.5 py-3">
-      <p className="text-[13.5px] leading-snug font-bold text-pretty">
-        Okulda işlediğin konuları işaretleyerek başla.
-      </p>
-      <Lejant haritali={haritali} className="mt-2" />
-    </div>
-  )
-}
-
-function Lejant({ haritali, className }: { haritali: boolean; className?: string }) {
-  const asamalar: AsamaId[] = haritali ? ['harita', 'okul', 'soru'] : ['okul', 'soru']
-  return (
-    <ul className={cn('flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-bold text-muted-foreground', className)}>
-      <li className="flex items-center gap-1.5">
-        <span className="grid size-[18px] place-items-center rounded-full bg-success text-white" aria-hidden>
-          <Check size={11} strokeWidth={3.4} />
-        </span>
-        Bitirdim
-      </li>
-      {asamalar.map((a) => {
-        const { Simge } = ASAMA[a]
-        return (
-          <li key={a} className="flex items-center gap-1.5">
-            <Simge size={14} strokeWidth={2.3} aria-hidden />
-            {ASAMA[a].ad}
-            {a === 'harita' && <span className="font-semibold">(kendiliğinden)</span>}
-          </li>
-        )
-      })}
-    </ul>
+    <Kart className="mb-3 flex items-start gap-3 py-3 pr-1.5 pl-3.5">
+      <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary" aria-hidden>
+        <ListChecks size={18} strokeWidth={2.4} />
+      </span>
+      <div className="min-w-0 flex-1 pt-0.5">
+        <p className="text-[14px] leading-snug font-extrabold">9–12: her sınıfın okul konuları</p>
+        <p className="mt-0.5 text-[12.5px] leading-snug font-semibold text-pretty text-muted-foreground">
+          Konuyu okulda gördükçe, soru çözdükçe ve bitirdikçe işaretle; her derste ne kadar ilerlediğini gör.
+        </p>
+      </div>
+      {onKapat && (
+        <button
+          type="button"
+          onClick={onKapat}
+          aria-label="Açıklamayı kapat"
+          className="-my-1 grid size-11 shrink-0 place-items-center rounded-xl text-muted-foreground transition active:bg-muted"
+        >
+          <X size={16} strokeWidth={2.6} aria-hidden />
+        </button>
+      )}
+    </Kart>
   )
 }
 

@@ -84,6 +84,11 @@ export const ANAHTARLAR = {
    */
   konuTakibiHizliBaslangic: 'rabi-konu-takibi-hizli-baslangic',
   /**
+   * Konu Takibi girişindeki açıklama kartı kapatıldı mı (`true` kapalı).
+   * Yedeğe **girmiyor**: veri değil, bu cihazdaki görünüm tercihi.
+   */
+  konuTakibiAciklamaKapali: 'rabi-konu-takibi-aciklama-kapali',
+  /**
    * Konu haritasında en son seçili ders ve sınıf.
    *
    * Yedeğe girmiyor: kısayollarla aynı sebep — bu veri değil, bu cihazda

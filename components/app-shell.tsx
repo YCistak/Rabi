@@ -766,6 +766,9 @@ function RabiUygulamasi() {
         oyunlar,
         bankaDusen,
         bankaBoyutu: oyunBankasi.length,
+        yksTakip,
+        haritaIlerleme: konuIlerleme,
+        okumaGecmisi,
       }),
     [
       denemeler,
@@ -778,6 +781,9 @@ function RabiUygulamasi() {
       oyunlar,
       bankaDusen,
       oyunBankasi.length,
+      yksTakip,
+      konuIlerleme,
+      okumaGecmisi,
     ],
   )
 
@@ -1328,6 +1334,9 @@ function RabiUygulamasi() {
                 oyunlar={oyunlar}
                 bankaDusen={bankaDusen}
                 bankaBoyutu={oyunBankasi.length}
+                yksTakip={yksTakip}
+                haritaIlerleme={konuIlerleme}
+                okumaGecmisi={okumaGecmisi}
                 kazanilmis={rozetler}
               />
             )}

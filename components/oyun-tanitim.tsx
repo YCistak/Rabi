@@ -264,16 +264,20 @@ function ModPenceresi({
         </div>
 
         {/* Konu sahnesindeki karar düğmelerinin dili (`sahne-dugme`): altta
-            kalın kenar, basınca gömülüyor. Kenar `--primary`, dolgunun koyusu. */}
-        <button
-          type="button"
-          data-tanitim={demoVeri ? 'demo-baslat' : undefined}
-          onClick={onDevam}
-          className="mt-5 mb-[5px] flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-primary-parlak font-display text-[18px] font-black text-white shadow-[0_5px_0_var(--primary)] transition-[transform,box-shadow] duration-75 active:translate-y-[3px] active:shadow-[0_2px_0_var(--primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          Başla
-          <ArrowRight size={20} strokeWidth={2.6} aria-hidden />
-        </button>
+            kalın kenar, basınca gömülüyor. Kenar `--primary`, dolgunun koyusu.
+            Tanıtım hedefi düğme değil sarmalayıcı: 5 px'lik gölge düğmenin
+            kutusunun dışında, spot yalnız düğmeyi ölçünce çerçevenin altı
+            gölgenin dibine yapışıyor, üç kenardaki pay altta kalmıyordu. */}
+        <div data-tanitim={demoVeri ? 'demo-baslat' : undefined} className="mt-5 pb-[5px]">
+          <button
+            type="button"
+            onClick={onDevam}
+            className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-primary-parlak font-display text-[18px] font-black text-white shadow-[0_5px_0_var(--primary)] transition-[transform,box-shadow] duration-75 active:translate-y-[3px] active:shadow-[0_2px_0_var(--primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Başla
+            <ArrowRight size={20} strokeWidth={2.6} aria-hidden />
+          </button>
+        </div>
       </div>
     </div>
   )

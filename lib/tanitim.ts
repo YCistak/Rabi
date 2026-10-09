@@ -172,7 +172,7 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'soru-form', hedef: 'soru-formu', kayit: 'soru', kisa: true, baslik: 'Ders ve sayılar', aciklama: 'Dersi seç, toplam, doğru ve yanlış sayını yaz.', ipucu: 'Kaydet’e dokun', tiklamali: true },
   { kimlik: 'soru-kaydedildi', hedef: 'soru-listesi', baslik: 'Hedefe işlendi', aciklama: 'Kaydın günlük hedefine eklendi.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
   { kimlik: 'konu-takibi-ac', hedef: 'arac-konu-takibi', baslik: 'Konu Takibi', aciklama: 'Konu Takibi’ne dokun.', tiklamali: true },
-  { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'Dersi açınca konunun solundaki daireyle Bitirdim’i işaretlersin.', tiklamali: false },
+  { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'Dersi açınca konuya dokunup kartta Okul, Soru ve Bitti’yi işaretlersin.', tiklamali: false },
   { kimlik: 'harita-ac', hedef: 'harita-ac', baslik: 'Konu haritası', aciklama: 'Alt menüde Harita’ya dokun.', tabletAciklama: 'Sağdaki menüde Harita’ya dokun.', tiklamali: true },
   { kimlik: 'harita-ders', hedef: 'harita-kart', dolgu: 14, baslik: 'Yeşil kitap', aciklama: 'Konuyu kısa kartlarla buradan çalışırsın.', tiklamali: false },
   { kimlik: 'harita-soru', hedef: 'harita-soru', dolgu: 14, baslik: 'Turuncu kitap', aciklama: 'Konunun sorularını çöz; biten konu takipte işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },

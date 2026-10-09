@@ -15,6 +15,12 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - `bildirilecekler` her türden yalnız en değerlisini bildirir; kayda hepsi girer
   (`yeniRozetler`). Kuyruk `AppShell`de, ekranda tek bildirim, `key` = rozet kimliği.
 
+- Konu rozetleri: Konu Takibi'nde "Bitti" sayısı (`bitenKonuSayisi`, birleşen satır tek
+  konu; tek dokunuşla uydurulabildiği için en çok gümüş), haritada sonuna kadar okunan
+  deste (`KonuIlerlemesi.bitti`; yoklama oranı içerik ister, rozet bakmaz) ve haritadaki
+  okuma süresi (`okumaGecmisi`, dakika). Okul notu rozetinde "Okul Notları ekranından…"
+  yönlendirme notu kaldırıldı (kullanıcı istedi, 2026-10), geri getirme.
+
 ## Seviye, havuç, mağaza yok
 
 Üçü silindi; eski anahtarlar `ESKI_ANAHTARLAR`ta. Geri getirme: veriler elle
