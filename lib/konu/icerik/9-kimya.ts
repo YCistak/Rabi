@@ -82,7 +82,7 @@ export const kimya9 = program('kimya', 9, 'Atomdan maddenin hâllerine', [
       sikli('Sabunun yağı çözmesinin sebebi?', ['Yağı buharlaştırır', 'Bir ucu suyu, bir ucu yağı sever'], 1, 'Yağı kavrayıp suya taşır.'),
       soru('Ekmeğin kızarması kimyasal bir değişimdir.', true, 'Şeker ile protein tepkimeye girip yeni maddeler oluşturuyor.'),
       soru('Sütün ekşimesi kimyasal bir değişimdir.', true, 'Laktoz laktik aside dönüşür; yeni madde oluşur.'),
-      soru('Suyun kaynaması kimyasal bir değişimdir.', false, 'Buhar da H₂O; hâl değişimi fizikseldir.'),
+      soru('Demirin paslanması fiziksel bir değişimdir.', false, 'Demir oksijenle birleşip pası oluşturur; yeni madde oluştuğu için kimyasaldır.'),
       soru('Şekerin suda çözünmesi fiziksel bir değişimdir.', true, 'Su buharlaşınca şeker geri kalır.'),
       sikli('Hangisi kimyasal değişimdir?', ['Camın kırılması', 'Odunun yanması'], 1, 'Yanmada yeni maddeler oluşur.'),
     ], [

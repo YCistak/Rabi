@@ -280,7 +280,7 @@ export const turkce10 = program('turkce', 10, 'Sözün ezgisinden nesillerin mir
       soru('Ahengi sağlayan tek araç ölçüdür.', false, 'Uyak, redif, ses tekrarları ve vurgu da ahenge katkı sağlıyor.'),
       soru('Ses tekrarlarının şiirin anlamıyla bir ilgisi yoktur.', false, 'Tekrarlanan ses çoğu zaman anlatılan duyguyu destekliyor.'),
       sikli('Dize sonunda tekrar eden aynı ek ya da sözcüğe ne denir?', ['Uyak', 'Redif'], 1, 'Redif aynı görevdeki ek ya da sözcük; uyak redifin önündeki ses benzerliği.'),
-      sikli('Kalın ve ağır seslerin yoğunlaştığı dize hangi duyguyu destekler?', ['Kıvraklık', 'Ağırlık'], 1, 'İnce, hızlı sesler kıvraklık; ağır sesler ağırlık duygusu verir.'),
+      sikli('"Karşı yaka" söyleyişindeki k ve a tekrarı dizeye hangi etkiyi katar?', ['Yumuşaklık', 'Sertlik'], 1, 'k gibi patlamalı ünsüzler sertlik verir; "yeşil yeşil" gibi akıcı sesler yumuşaklık.'),
       soru('Ölçülü şiirde ritmi ölçü kurar.', true, 'Serbest şiirde ise ritmi söyleyiş, tekrar ve dize uzunluğu sağlar.'),
       soru('Seci, düzyazıda cümle sonlarının uyaklı olmasıdır.', true, 'Düzyazıya şiirin sesini katar.'),
       soru('Nakarat, şiirde yalnızca bir kez geçen dizedir.', false, 'Nakarat her bölümün sonunda aynen döner.'),

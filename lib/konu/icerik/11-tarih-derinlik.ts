@@ -4,7 +4,7 @@ import type { KonuDerinligi } from './11-yardimci'
 export const tarihDerinligi: Record<string, KonuDerinligi> = {
   'trh11-mucadele': {
     kartlar: [
-      ['Kırım’ın üç aşaması', '1774: bağımsızlık kabul edildi.\n1783: Rusya ilhak etti.\n1784: Osmanlı Aynalıkavak Tenkihnamesi’yle ilhakı tanıdı; 1792 Yaş bunu pekiştirdi.'],
+      ['Kırım’ın üç aşaması', '1774: bağımsızlık kabul edildi.\n1783: Rusya ilhak etti.\n1784: Osmanlı bir senetle ilhakı tanıdı; 1792 Yaş kesinleştirdi.'],
       ['Karlofça’nın anlamı', 'Karlofça yalnız toprak kaybı değildi.\nOsmanlı diplomaside geniş bir koalisyonla aynı masaya oturdu.'],
       ['Rusya’nın hedefi', 'Rusya sıcak denizlere inmek için Karadeniz çevresinde güç aradı.\nAzak ve Kırım bu yüzden önemliydi.'],
       ['Belgrad neden iki kez?', 'Belgrad 1718’de kaybedildi, 1739’da geri alındı.\nAynı kentin iki antlaşmada farklı tarafta olması dönemin dengesini gösterir.'],
@@ -17,7 +17,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
       ['Belgrad’ın 1718 ve 1739’daki durumu neyi gösterir?', 'Askerî dengenin değiştiğini', 'Avusturya’nın kalıcı üstünlüğünü', 'Kent kaybedildi, sonra geri alındı.'],
       ['Rusya açısından Azak ve Kırım’ın ortak önemi?', 'Karadeniz’e erişim', 'Akdeniz adalarına doğrudan hâkimiyet', 'İki bölge Karadeniz çevresindedir.'],
       ['1774 için hangi ifade daha doğru?', 'Kırım bağımsız sayıldı', 'Kırım Rusya’ya ilhak edildi', 'İlhak dokuz yıl sonra oldu.'],
-      ['Osmanlı, Kırım’ın ilhakını hangi aşamada tanıdı?', 'Aynalıkavak Tenkihnamesi’nde', 'Küçük Kaynarca’da', '1784 Aynalıkavak ilhakı tanıdı; 1792 Yaş bunu pekiştirdi.'],
+      ['Kırım’ın ilhakını kesinleştiren antlaşma?', 'Yaş Antlaşması', 'Küçük Kaynarca Antlaşması', 'Küçük Kaynarca Kırım’ı bağımsız saydı; 1784 senedinden sonra ilhakı 1792 Yaş kesinleştirdi.'],
       ['Karlofça’yı dönüm noktası yapan ne?', 'Koalisyona karşı büyük kayıp', 'Kırım’ın bağımsız sayılması', 'Avrupa’da geniş toprak kaybı kabul edildi.'],
     ],
     kontrol: ['Kırım’ın bağımsız sayılması ile ilhakı arasındaki ilişki?', 'Ayrı tarihlerde yaşandı', 'Aynı antlaşmada tamamlandı', '1774 kararını 1783 ilhakı izledi.'], kontrolKarti: 7,
@@ -91,7 +91,7 @@ export const tarihDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Eşit yurttaşlık fikri ile milliyetçilik Osmanlı’da aynı sonucu doğurmadı.', true, 'Biri birleştirme, diğeri ayrılık talebine yol açabildi.'],
-      ['Osmanlıcılık, Balkan milletlerinin bağımsızlık taleplerini destekleyen bir akımdı.', false, 'Osmanlıcılık ortak yurttaşlıkla dağılmayı önlemeyi amaçladı.'],
+      ['Aydınlanma düşüncesinin 1789’daki değişim taleplerinde bir etkisi olmadı.', false, 'Aydınlanma düşüncesi değişim taleplerini besledi.'],
     ],
     secimler: [
       ['Vergi yüküne itiraz hangi daha geniş soruya bağlandı?', 'Siyasal temsile', 'Ticaretin serbestleşmesine', 'Vergi verenlerin söz hakkı tartışıldı.'],

@@ -57,9 +57,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'E-postanın hızı açık anlatımın yerini tutmaz; eksik bağlam hızlı yanlış anlaşılır.',
       iddialar: [
         ['Konu satırı iletinin amacını gösterebilir.', true, 'Alıcı ne bekleyeceğini anlar.'],
-        ['İletinin tonu alıcıdan bağımsız seçilir.', false, 'Alıcı ve amaç üslubu etkiler.'],
+        ['E-postaya eklenen ilgisiz ayrıntılar ana mesajı daha görünür kılar.', false, 'İlgisiz ayrıntı ana mesajı gizler.'],
         ['Göndermeden önce ekleri kontrol etmek yararlıdır.', true, 'Unutulan ek iletiyi eksik bırakır.'],
-        ['Konu satırına yalnız “Merhaba” yazmak, iş iletisinin amacını alıcıya yeterince gösterir.', false, 'Konu satırı amacı göstermeli; “Merhaba” tek başına belirsizdir.'],
+        ['Yanlış adrese gönderilen bir e-posta her zaman geri alınabilir.', false, 'Yanlış adrese giden ileti geri alınamayabilir; alıcı gönderimden önce denetlenir.'],
       ],
     },
   ],
@@ -77,7 +77,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Ortak kültür izi ararken bütün Türk topluluklarını tek ve aynı yaşam biçimi sayma.',
       iddialar: [
         ['Yerel sözcükler hikâyenin kültürel çevresini gösterebilir.', true, 'Söz varlığı metnin geçtiği çevreyle ilişkilidir.'],
-        ['Türk dünyası hikâyelerinde ortak kültür izi bulunması, yörelerin söz varlığının da aynı olduğunu gösterir.', false, 'Ortak iz olsa da her yörenin dili ve yaşamı kendine özgüdür.'],
+        ['Hikâyede olayın merkezini kahramanın amacı ile önündeki engel oluşturmaz.', false, 'Kahramanın amacı ile engeli olayın merkezidir.'],
         ['Anlatıcı ile kahraman aynı kavram değildir.', true, 'Anlatıcı olayı aktaran sestir.'],
         ['Aynı temayı işleyen iki hikâye, çatışmayı aynı biçimde kurmak zorundadır.', false, 'Tema ortak olsa da kahramanın amacı ve engeli farklı işlenebilir.'],
       ],
@@ -95,15 +95,15 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Orhun metnini yalnız ezber tarih gibi okuma; halka nasıl ve neden seslendiğini incele.',
       iddialar: [
         ['Orhun Yazıtları taşa yazılmış metinlerdir.', true, 'Yazıtlar tarihî ve edebî değer taşır.'],
-        ['Kül Tigin Yazıtı, Dîvânu Lugâti’t-Türk’ün bir bölümü olarak kâğıda yazılmıştır.', false, 'Kül Tigin, Orhun Yazıtları’ndandır ve taşa yazılmıştır.'],
+        ['Kül Tigin ve Bilge Kağan yazıtları eski Türkçenin değil, Osmanlı Türkçesinin örnekleridir.', false, 'Orhun Yazıtları eski Türkçenin önemli örnekleridir.'],
         ['Metni tarihî bağlamında okumak anlamayı kolaylaştırır.', true, 'Dönemin koşulları sözün anlamını etkiler.'],
-        ['Yazıtlarda halka seslenme bulunmaz.', false, 'Doğrudan hitap belirgin anlatım özelliğidir.'],
+        ['Orhun Yazıtlarında bağımsızlık düşüncesi üzerinde durulmaz.', false, 'Yazıtlar yönetim, birlik ve bağımsızlık üzerinde durur.'],
       ],
     },
     {
       id: 'trk11-divan-ani', ad: 'Dîvânu Lugâti’t-Türk ve Anı',
       kartlar: [
-        ['Sözlükten fazlası', 'Kâşgarlı Mahmud’un eseri Türkçenin söz varlığını tanıtır.\nŞiir ve atasözü örnekleri kültürel bilgi de taşır.'],
+        ['Sözlükten fazlası', 'Kâşgarlı Mahmud’un eseri Türkçenin söz varlığını tanıtır.\nŞiir ve atasözü örnekleri kültürel bilgi de taşır.\nKutadgu Bilig ise Yusuf Has Hacib’indir; ikisini karıştırma.'],
         ['Yazılış amacı', 'Eser Türkçeyi öğretme ve tanıtma amacıyla hazırlandı.\nKelimeyi bağlamı içinde okumak gerekir.'],
         ['Anı', 'Yazar yaşadığı ya da tanık olduğu olayları sonradan anlatır.\nBellek ve bakış açısı anlatıyı etkiler.'],
         ['Tanıklık ve sınır', 'Anı tarih için kaynak olabilir.\nTek bir kişinin bakışı bütün olayı temsil etmez.'],
@@ -149,7 +149,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: '“Güzeldi” tek başına izlenim değil; hangi ayrıntının sende o etkiyi bıraktığını yaz.',
       iddialar: [
         ['İzlenim yazısında gözlem ve kişisel değerlendirme bulunabilir.', true, 'Görülen şeyin kişideki etkisi anlatılır.'],
-        ['İzlenim yazısında eserin adı ve dönemi, yazarın o eserle ilgili duygusuyla aynı türden ifadedir.', false, 'Doğrulanmış bilgi ile kişisel duygu ayrılmalıdır.'],
+        ['İzlenim yazısında ne öğrenildiğinin değerlendirmesi girişte yapılır; sonuç bölümü gerekmez.', false, 'Girişte müze tanıtılır; ne öğrenildiği sonuçta değerlendirilir.'],
         ['Eserin kaynak bilgisini belirtmek gerekir.', true, 'Bilgi ve görselin kaynağı görünür olmalıdır.'],
         ['Eser adlarını sıralamak tek başına izlenim yazısıdır.', false, 'Seçim ve değerlendirme gerekir.'],
       ],
@@ -205,9 +205,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Radyo tiyatrosunda görünmeyen sahneyi ses kurar; ses efekti süs değil anlatım aracıdır.',
       iddialar: [
         ['Radyo tiyatrosunda mekân seslerle kurulabilir.', true, 'Efekt ve konuşma dinleyene yer düşündürür.'],
-        ['Radyo tiyatrosunda ses efekti, yalnızca konuşmada söylenmiş bilgiyi tekrar eder.', false, 'Efekt sözü tekrarlamak yerine yeni bilgi taşır.'],
+        ['Radyo tiyatrosunda her sessizlik ya da duraksama teknik hata sayılır.', false, 'Duraksama gerilim veya düşünme gösterebilir.'],
         ['Tonlama aynı cümlenin anlamını etkileyebilir.', true, 'Vurgu ve ses rengi yorum değiştirir.'],
-        ['Radyo tiyatrosu öyküye çevrilirken ses efektlerinin verdiği bilgi metinden çıkarılır.', false, 'Sesin verdiği bilgi betimlemeye taşınır.'],
+        ['Radyo tiyatrosunda kişiler arasındaki çatışma konuşmalarla tanıtılamaz.', false, 'Konuşmalar çatışmayı ve kişiyi tanıtır.'],
       ],
     },
     {
@@ -223,9 +223,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Hayalî mülakat kurmaca olabilir ama roman kişisinin bilmediği bir olayı ona bildirme.',
       iddialar: [
         ['Mülakat soruları romanın bağlamına dayanmalıdır.', true, 'Kişinin deneyimleri metinden çıkarılır.'],
-        ['Hayalî mülakatta yazar, kendi görüşünü roman kişisinin ağzından söyletebilir.', false, 'Yanıt kişinin sesine uymalı; yazarın görüşü kişiye zorla söyletilmez.'],
+        ['Mülakatı hazırlayan, romanda dayanağı olmayan kendi görüşünü kişiye söyletebilir.', false, 'Yanıt kişinin diline, dönemine ve metindeki eylemlerine dayanmalı.'],
         ['Açık uçlu soru kişinin gerekçesini anlatmasını sağlayabilir.', true, 'Neden ve nasıl soruları yanıtı açar.'],
-        ['Bir köy romanının kişisinin yanıtlarında bugünün sosyal medya deyimlerini kullanmak inandırıcılığı artırır.', false, 'Yanıtlar kişinin diline ve dönemine uymalıdır.'],
+        ['Hayalî mülakat giriş ve kapanış olmadan, soruların art arda sıralanmasıyla kurulur.', false, 'Kısa giriş, sorular, yanıtlar ve kapanış düzeni kurulur.'],
       ],
     },
   ],
@@ -243,7 +243,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Sahne yönergesini replik diye okuma; oyuncuya nasıl davranacağını söyler.',
       iddialar: [
         ['Sahne yönergesi oyuncunun hareketini gösterebilir.', true, 'Yer ve ton bilgisi verebilir.'],
-        ['Tiyatro metninde parantez içindeki sahne yönergeleri oyuncu tarafından seyirciye okunur.', false, 'Yönerge oyuncunun söylediği replik değildir.'],
+        ['Metindeki çatışmaya benzeyen bir yaşam durumu da mutlaka aynı sonuçla biter.', false, 'Benzer durum aynı sonuç demek değildir.'],
         ['Canlandırmada beden dili anlamı etkileyebilir.', true, 'Söz dışı ifade önemlidir.'],
         ['Tiyatro metninde perde, sahneden daha küçük bir bölümdür.', false, 'Perde büyük bölümdür; sahne, perde içindeki yer ya da kişi değişimini gösterir.'],
       ],
@@ -281,7 +281,7 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Belgeselin yayım tarihi güvenilirlik değerlendirmesinde önemlidir.', true, 'Bilginin güncelliği görülebilir.'],
         ['Belgeseldeki destekleyici bir örnek, belgeselin ana mesajıyla aynı şeydir.', false, 'Ana düşünce tek cümlede kurulur; örnekler onu destekler.'],
         ['Afişte kısa ve açık mesaj okunmayı kolaylaştırır.', true, 'Görsel hiyerarşi anlaşılmayı sağlar.'],
-        ['Afişte yazı ne kadar çok olursa mesaj o kadar açık iletilir.', false, 'Kalabalık yazı mesajı gizler; kısa çağrı ve denge gerekir.'],
+        ['Belgeselde müzik ve anlatıcının yarattığı duygu, verinin yerine kanıt olarak geçer.', false, 'Duygu verinin yerine geçmez.'],
       ],
     },
   ],

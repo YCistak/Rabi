@@ -13,13 +13,13 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
       ['Mahalle ölçeğinde çözüm için ülke ortalaması tek başına yeterli ayrıntıyı verir.', false, 'Yerel eğim ve yapılaşma verisi gerekir.'],
     ],
     secimler: [
-      ['Aynı yağışa rağmen farklı sel hasarı varsa önce ne karşılaştırılır?', 'Zemin ve yapılaşma', 'Yağış miktarı', 'Yerel kırılganlık değişmiş olabilir.'],
+      ['Aynı yağışa rağmen farklı sel hasarı varsa önce ne karşılaştırılır?', 'Zemin ve yapılaşma', 'Rüzgâr yönü', 'Yerel kırılganlık değişmiş olabilir.'],
       ['Yeni yol açıldıktan sonra taşkın artmışsa hangi veri gerekir?', 'Önce-sonra arazi kullanımı', 'Yolun trafik yoğunluğu', 'Geçirimsiz yüzey değişimi incelenir.'],
       ['Yerel taşkın için hangi ölçek daha yararlı?', 'Mahalle haritası', 'Ülke haritası', 'Risk noktaları yerel ayrıntı ister.'],
       ['Bir çözümü coğrafi yapan nedir?', 'Nedenin konumuyla eşleşmesi', 'Haritada gösterilebilmesi', 'Mekânsal farklılık hesaba katılmalı.'],
       ['Haritadaki riskli alanı açıklamak için ne yeterli değildir?', 'Yalnız fotoğraf', 'Eğim ve zemin verisi', 'Fotoğraf dağılışı ve nedeni açıklamaz.'],
     ],
-    kontrol: ['İki mahallede yağış aynıysa sel farkı neyle açıklanabilir?', 'Zemin ve yapılaşmayla', 'Yağış şiddetiyle', 'Yağış dışındaki mekânsal etkenlere bakılır.'], kontrolKarti: 7,
+    kontrol: ['İki mahallede yağış aynıysa sel farkı neyle açıklanabilir?', 'Zemin ve yapılaşmayla', 'Hava sıcaklığıyla', 'Yağış dışındaki mekânsal etkenlere bakılır.'], kontrolKarti: 7,
   },
   'cog11-cbs': {
     kartlar: [
@@ -174,7 +174,7 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
     ],
     secimler: [
       ['Rezerv yaygın ama rafine üretim tek yerdeyse risk nerede?', 'İşleme aşamasında', 'Rezerv miktarında', 'Tedarik zincirinin dar halkası işleme olur.'],
-      ['Yeni batarya teknolojisi bir madeni nasıl etkiler?', 'Talebini değiştirebilir', 'Rezervini artırır', 'Teknoloji kullanım talebini etkiler.'],
+      ['Yeni batarya teknolojisi bir madeni nasıl etkiler?', 'Talebini değiştirebilir', 'Jeolojik oluşumunu değiştirir', 'Teknoloji kullanım talebini etkiler.'],
       ['Ham cevher ihracı ile işlenmiş ürün arasındaki fark?', 'Katma değer', 'Rezerv büyüklüğü', 'İşleme bilgi ve emek ekler.'],
       ['Maden sahası kapanırken maliyete ne katılır?', 'Arazi iyileştirmesi', 'Yeni rezerv arama gideri', 'Atık ve habitat etkisi sürer.'],
       ['Bir madenin kritikliği hangi değişkenle artabilir?', 'Arz kesintisi riskiyle', 'Rezervin artmasıyla', 'Tedarik güvenliği belirleyicidir.'],
@@ -193,7 +193,7 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
       ['Güneş ve rüzgârın değişkenliği şebeke planlamasını önemli kılar.', true, 'Arz-talep her an dengelenmelidir.'],
     ],
     secimler: [
-      ['İki eş güçlü santral farklı enerji üretiyor: olası neden?', 'Çalışma süresi farklı', 'Kurulu güçleri farklı', 'Kurulu güç gerçek üretim değildir.'],
+      ['İki eş güçlü santral farklı enerji üretiyor: olası neden?', 'Çalışma süresi farklı', 'Santral binalarının büyüklüğü farklı', 'Kurulu güç gerçek üretim değildir.'],
       ['Güneşin geceki eksikliğini ne karşılayabilir?', 'Depolama veya esnek kaynak', 'Daha çok güneş paneli', 'Arz sürekliliği planlanır.'],
       ['Enerji güvenliğinde önce hangi ikili tartılır?', 'Çeşitlilik ve verimlilik', 'Tek kaynak ve ucuzluk', 'Kaynak riski ve talep birlikte yönetilir.'],
       ['Kömür ile rüzgârı yalnız kurulu güçle kıyaslamak neyi gizler?', 'Emisyon ve üretim farkını', 'Kurulu güç toplamını', 'Çevre etkisi ve çalışma süresi farklıdır.'],
@@ -219,7 +219,7 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
       ['Konut-sanayi yakınlığı neden her zaman iyi değildir?', 'Emisyon ve gürültü', 'İşçinin eve yakınlığı', 'Sağlık etkisi erişim yararını sınırlayabilir.'],
       ['Sanayinin bölgesel etkisi hangi veride görünür?', 'Göç ve istihdamda', 'Tesisin arsa büyüklüğünde', 'İş olanakları nüfusu ve kenti değiştirir.'],
     ],
-    kontrol: ['Sanayi kümelenmesinin iki yönü?', 'Paylaşılan girdi ve artan baskı', 'Düşen kira ve trafik', 'Yakınlık hem kolaylık hem yoğunluk getirir.'], kontrolKarti: 8,
+    kontrol: ['Sanayi kümelenmesinin iki yönü?', 'Paylaşılan girdi ve artan baskı', 'Düşen kira ve azalan yoğunluk', 'Yakınlık hem kolaylık hem yoğunluk getirir.'], kontrolKarti: 8,
   },
   'cog11-gezegen-siniri': {
     kartlar: [
@@ -290,12 +290,12 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Kültürel etkileşimin siyasi sınıra sığmaması egemenlik sınırının değiştiğini göstermez.', true, 'Kültür ağı ve devlet yetkisi ayrıdır.'],
-      ['Türkiye ile Balkanlar arasındaki kültürel bağlar Osmanlı döneminde kalmış, bugün değişmeyen bir olgudur.', false, 'Göç, aile bağları ve güncel ilişkilerle etkileşim sürer ve değişir.'],
+      ['Türkiye ile Balkanlar arasındaki kültürel bağlar Osmanlı döneminde oluşmuş, o günden beri hiç değişmemiş sabit bir olgudur.', false, 'Göç, aile bağları ve güncel ilişkilerle etkileşim sürer ve değişir.'],
     ],
     secimler: [
       ['Sınır ötesi aile bağı neyi gösterir?', 'Kültürel ilişkiyi', 'Siyasi yönetim yetkisini', 'Aile ve göç ağı egemenlik değildir.'],
       ['İki ülkede öğrenci değişimi artıyorsa hangi bağ güçlenir?', 'Eğitimsel etkileşim', 'Siyasi egemenlik', 'İnsan hareketi kültürel teması artırır.'],
-      ['Türk dünyasını incelerken hangi yaklaşım doğru?', 'Ortaklık ve farklılık birlikte', 'Ortak yönleri esas almak', 'Akrabalık çeşitliliği kaldırmaz.'],
+      ['Türk dünyasını incelerken hangi yaklaşım doğru?', 'Ortaklık ve farklılık birlikte', 'Bütün toplumları aynı saymak', 'Akrabalık çeşitliliği kaldırmaz.'],
       ['Kültürel etkiyi yalnız haritadaki yakınlıkla niçin ölçemeyiz?', 'Gerçek akış verisi gerekir', 'Harita ölçeği küçüktür', 'Eğitim ve göç akışına bakılır.'],
       ['Hinterlandın zamanla değişmesine hangi olay yol açabilir?', 'Yeni göç ve iletişim ağı', 'Sabit coğrafi konum', 'İlişki ağı dinamik yapıdır.'],
     ],
