@@ -892,29 +892,41 @@ function BankaSatiri({
  * Rekor hapı yalnızca oynanmış oyunlarda çıkıyor: "Rekor 0" yazan bir hap, hiç
  * denememiş oyuncuya geride kaldığını söylerdi.
  */
-function OyunKarti({
+/**
+ * Oyunu açan kart. Tanıtım turundaki "Tanıtım oyunu" kartı da bu
+ * (`DemoOyunKarti`): turda gösterilen kart gerçek oyun kartından ayrı
+ * yazılınca kart yeniden tasarlandığında turda eski görünüm kalıyordu.
+ */
+export function OyunKarti({
   oyun,
-  aile,
+  aile = AILE[oyun.ders],
   rekor,
   genis,
   sira,
   onAc,
+  baslik = BASLIK_SATIRLARI[oyun.id],
+  tanitimHedefi,
 }: {
   oyun: OyunTanimi
-  aile: Aile
+  aile?: Aile
   rekor: number
   /** İki sütunu birden kaplayan yatay hâl. */
   genis: boolean
   /** Izgaradaki sırası — kartlar bu sırayla beliriyor. */
   sira: number
   onAc: () => void
+  /** Kartın iki satırlık başlığı; tanıtım kartı oyunun adını değil kendi adını yazıyor. */
+  baslik?: readonly [string, string]
+  /** Tanıtım rehberinin aydınlattığı hedef (`data-tanitim`). */
+  tanitimHedefi?: string
 }) {
-  const [ustSatir, altSatir] = BASLIK_SATIRLARI[oyun.id]
+  const [ustSatir, altSatir] = baslik
   const giris = kartGirisi(sira)
 
   return (
     <button
       type="button"
+      data-tanitim={tanitimHedefi}
       onClick={onAc}
       style={giris.style}
       className={cn(

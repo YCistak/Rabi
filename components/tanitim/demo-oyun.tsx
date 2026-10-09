@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { IslemOyunuEkrani } from '@/components/ekranlar/oyun-islem'
+import { OyunKarti } from '@/components/ekranlar/oyunlar'
+import { oyunBul } from '@/lib/oyunlar/tanim'
 import { TurAyariSaglayici } from '@/components/tur-ayari-baglami'
 import { DEMO_SORULAR } from '@/lib/tanitim'
 import type { OyunModu } from '@/lib/oyunlar/mod'
@@ -17,14 +19,18 @@ import type { BankaKaydi } from '@/lib/oyunlar/banka'
 */
 const BOS_BANKA: BankaKaydi[] = []
 
+/*
+  Ders ızgarasındaki tanıtım kartı gerçek oyun kartı (`OyunKarti`): öğrenci
+  turda hangi kartı görürse oyunlarda da onu görsün. Hızlı Hesap'ın kartı,
+  yalnız başlığı ve simgesi tanıtıma ait.
+*/
+const TANITIM_OYUNU = { ...oyunBul('islem'), ikon: '🎮' }
+const TANITIM_BASLIGI = ['Tanıtım', 'oyunu'] as const
+
 export function DemoOyunKarti() {
   const { gonder } = useTanitim()
-  return <button type="button" data-tanitim="demo-oyun" onClick={() => gonder({ tur: 'hedefe-dokun', hedef: 'demo-oyun' })}
-    className="flex flex-col rounded-2xl bg-konu-matematik p-3.5 text-left transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-ring">
-    <span className="mb-3 grid size-11 place-items-center rounded-[14px] bg-konu-matematik-ok text-[25px]" aria-hidden>🎮</span>
-    <span className="font-display text-[16px] font-extrabold leading-tight">Tanıtım oyunu</span>
-    <span className="mt-1.5 text-[11.5px] font-bold text-konu-matematik-koyu">Geçici deneme · 1 soru</span>
-  </button>
+  return <OyunKarti oyun={TANITIM_OYUNU} baslik={TANITIM_BASLIGI} rekor={0} genis={false} sira={0}
+    tanitimHedefi="demo-oyun" onAc={() => gonder({ tur: 'hedefe-dokun', hedef: 'demo-oyun' })} />
 }
 
 /** Gerçek oyunun ekranlarını kullanır; seçimler ve sonuç sadece bellekte kalır. */
