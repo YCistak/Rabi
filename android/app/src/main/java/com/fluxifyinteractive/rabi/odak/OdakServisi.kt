@@ -70,6 +70,24 @@ class OdakServisi : Service() {
     private var sonSorgu = 0L
 
     /**
+     * Tur kuruldu mu (`baslat` niyeti işlendi, `startForeground` çağrıldı).
+     *
+     * Bildirim düğmesinin `PendingIntent`i servis ölmüşken de çalışabiliyor ve
+     * o zaman sistem **boş** bir örnek kuruyor. O örnek duraklat/devam komutunu
+     * işleyip bildirimi `notify` ile yeniden asarsa ortaya hiçbir servise bağlı
+     * olmayan, kaydırılamayan bir bildirim çıkıyordu.
+     */
+    private var turKurulu = false
+
+    /**
+     * Servis kapanıyor: `stopSelf`/`stopService` ile `onDestroy` arasındaki
+     * aralık. Bu sırada bildirime dokunulmaz — sistem ön plan bildirimini
+     * kaldırdıktan sonra gelen bir `notify`, bildirimi ön plan bayrağı
+     * olmadan, sahipsiz ve `ongoing` olarak geri getiriyordu.
+     */
+    private var kapaniyor = false
+
+    /**
      * Sayaç duraklatıldı mı — bildirimdeki düğmeden.
      *
      * Duraklamış turda ne kalan süre işliyor ne de öne gelen uygulama
@@ -118,7 +136,9 @@ class OdakServisi : Service() {
 
     private val dongu = object : Runnable {
         override fun run() {
+            if (kapaniyor) return
             adim()
+            if (kapaniyor) return
             elciler.postDelayed(this, if (yasakli.isEmpty()) BILDIRIM_ARALIGI_MS else ARALIK_MS)
         }
     }
@@ -153,7 +173,20 @@ class OdakServisi : Service() {
           sayacı ikinci kez kurardı.
         */
         val bildir = niyet?.getBooleanExtra(EK_BILDIR, false) == true
-        when (niyet?.action) {
+        val eylem = niyet?.action
+        /*
+          Tur kurulmamış bir örneğe düğme komutu geldi: servis ölmüş, eski bir
+          bildirim (ya da onun düğmesi) ortada kalmış. Duraklatılacak ya da
+          sürdürülecek bir tur yok; kalıntı temizlenip örnek kapanıyor. Web'e
+          "bitir" gidiyor ki açık bir sayaç varsa o da kapansın.
+        */
+        if (!turKurulu && eylem in DUGME_EYLEMLERI) {
+            if (bildir) OdakKilidiEklentisi.pomodoroKomutuBildir(KOMUT_BITIR, 0L)
+            durdurKendini()
+            return START_NOT_STICKY
+        }
+        if (kapaniyor && eylem in DUGME_EYLEMLERI) return START_NOT_STICKY
+        when (eylem) {
             EYLEM_DURAKLAT -> {
                 duraklat(bildir)
                 return START_NOT_STICKY
@@ -180,7 +213,9 @@ class OdakServisi : Service() {
         sonYazilanSaniye = -1L
         sonSorgu = System.currentTimeMillis()
 
+        kapaniyor = false
         onPlanaGec()
+        turKurulu = true
         calisiyor = true
         if (niyet?.getBooleanExtra(EK_RAHATSIZ_ETME, false) == true) sustur()
         // Tur başlamadan önce açılmış bir video hâlâ çalıyor olabilir; kilidin
@@ -214,6 +249,8 @@ class OdakServisi : Service() {
 
     override fun onDestroy() {
         calisiyor = false
+        kapaniyor = true
+        turKurulu = false
         // Tur bitti: telefon eski hâline dönsün. Molada susmaya devam eden bir
         // telefon, molayı mola olmaktan çıkarırdı.
         sesiGeriVer()
@@ -226,6 +263,15 @@ class OdakServisi : Service() {
         } catch (hata: IllegalArgumentException) {
             // kaydı yoksa yoksay
         }
+        /*
+          Bildirim burada ayrıca siliniyor. `stopService` ile kapanışta sistem ön
+          plan bildirimini kendisi kaldırıyor ama ana iş parçacığının kuyruğunda
+          bekleyen bir komut (uygulamanın "Sıfırla"sı aynı anda `duraklat` ve
+          `bitir` gönderiyor) o arada `notify` çağırıp bildirimi sahipsiz olarak
+          geri asabiliyordu. `onDestroy` o komuttan sonra geliyor; son söz bunun.
+        */
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        bildirimiSil(this)
         super.onDestroy()
     }
 
@@ -495,6 +541,9 @@ class OdakServisi : Service() {
     }
 
     private fun bildirimiGuncelle() {
+        // Ön planda olmayan bir örnek bildirim asamaz: asarsa bildirim hiçbir
+        // servise bağlı olmadan, kaydırılamaz biçimde kalır.
+        if (kapaniyor || !turKurulu) return
         val yonetici = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         yonetici.notify(BILDIRIM_ID, bildirimYap())
     }
@@ -621,7 +670,11 @@ class OdakServisi : Service() {
     }
 
     private fun durdurKendini() {
+        kapaniyor = true
+        elciler.removeCallbacks(dongu)
+        katman?.gizle()
         stopForeground(STOP_FOREGROUND_REMOVE)
+        bildirimiSil(this)
         stopSelf()
     }
 
@@ -645,6 +698,7 @@ class OdakServisi : Service() {
         private const val EYLEM_DURAKLAT = "com.fluxifyinteractive.rabi.ODAK_DURAKLAT"
         private const val EYLEM_DEVAM = "com.fluxifyinteractive.rabi.ODAK_DEVAM"
         private const val EYLEM_BITIR = "com.fluxifyinteractive.rabi.ODAK_BITIR"
+        private val DUGME_EYLEMLERI = setOf(EYLEM_DURAKLAT, EYLEM_DEVAM, EYLEM_BITIR)
 
         /** Web tarafının dinlediği komut adları (`lib/odak-kilidi.ts`). */
         const val KOMUT_DURAKLAT = "duraklat"
@@ -708,8 +762,23 @@ class OdakServisi : Service() {
             )
         }
 
+        /**
+         * Turdan çıkış: servis durur, bildirim kalkar.
+         *
+         * `stopService` tek başına yetmiyordu: servis ölmüş ama bildirimi sahipsiz
+         * kalmışsa (bkz. `onDestroy`) durdurulacak bir şey yok ve bildirim
+         * yerinde duruyordu. Açılıştaki uzlaştırma (`app-shell.tsx`) ve kapanış
+         * (`PomodoroKapanis`) da bu yoldan geçiyor. Ayakta bir ön plan servisinin
+         * bildirimine `cancel` dokunamıyor, yani bu silme yalnızca kalıntıyı alır.
+         */
         fun durdur(baglam: Context) {
             baglam.stopService(Intent(baglam, OdakServisi::class.java))
+            bildirimiSil(baglam)
+        }
+
+        private fun bildirimiSil(baglam: Context) {
+            val yonetici = baglam.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+            yonetici?.cancel(BILDIRIM_ID)
         }
     }
 }
