@@ -618,7 +618,7 @@ function EklemeSayfasi({
   onKapat: () => void
   onKaydet: (duzen: GorevDuzeni) => void
   gorevIzniIste?: () => Promise<boolean | null>
-  /** Yapılacaklar turunda açıldı: Pomodoro anahtarı açık başlıyor. */
+  /** Yapılacaklar turunda açıldı: Pomodoro anahtarı açık başlıyor, sayfa balona yer bırakıyor. */
   turda?: boolean
 }) {
   const [metin, setMetin] = useState(duzenlenen?.metin ?? '')
@@ -722,7 +722,8 @@ function EklemeSayfasi({
       <div
         ref={kaydir}
         data-tanitim="gorev-formu"
-        className="alt-pencere-girisi max-h-[88%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))]"
+        // Turda sayfa biraz kısa: rehberin balonu üstte, başlığı ve ✕'i örtmeden dursun.
+        className={cn('alt-pencere-girisi w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))]', turda ? 'max-h-[calc(100%-11rem)]' : 'max-h-[88%]')}
         onClick={(olay) => olay.stopPropagation()}
       >
         <div className="flex justify-center pt-1.5 pb-3">

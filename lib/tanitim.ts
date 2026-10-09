@@ -14,7 +14,7 @@ import type { Gorev } from './yapilacaklar'
   Şimdi 28 adım: soru eklemeden sonra Pomodoro'ya kısa bir değinme, Harita'dan
   sonra deneme ekleme ve İstatistik. Gerisi (Pomodoro'nun ayrıntısı,
   Yapılacaklar, Oyunlar, Oyun Bankası) ekran bazlı mini turlarda —
-  ilgili ekran **ilk kez** açıldığında 1–6 adımlık kısa bir tur (`miniTurSec`).
+  ilgili ekran **ilk kez** açıldığında 1–5 adımlık kısa bir tur (`miniTurSec`).
   Mini turlar da ana tur gibi atlanamıyor ve her biri bir kez görülüyor.
 */
 export type TanitimTuru =
