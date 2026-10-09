@@ -22,12 +22,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Küçük Kaynarca’da Kırım doğrudan Rus toprağı olmuştur.', false, 'Antlaşmada bağımsız sayıldı; Rusya 1783’te ilhak etti.'],
         ['Prut Antlaşması ile Azak Kalesi geri alınmıştır.', true, '1711’de Rusya Azak’ı geri verdi.'],
       ],
-      secimler: [
-        ['Lale Devri hangi antlaşmadan sonra başladı?', 'Pasarofça', 'Karlofça', '1718 Pasarofça’nın ardından başladı.'],
-        ['Belgrad hangi antlaşmayla geri alındı?', 'Belgrad', 'Küçük Kaynarca', '1739 Belgrad Antlaşması’yla.'],
-        ['Kutsal İttifak hangi olaydan sonra oluştu?', 'II. Viyana bozgunu', 'Prut zaferi', '1683’teki başarısız kuşatma ittifakı tetikledi.'],
-      ],
-      kontrol: ['Kırım 1774’te hangi statüye geçti?', 'Bağımsız sayıldı', 'Rusya’ya katıldı', 'Rusya’ya katılması 1783’tedir.'], kontrolKarti: 6,
     },
     {
       id: 'trh11-lale', ad: 'Lale Devri ve Toplum Hayatı',
@@ -46,12 +40,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Tulumbacı Ocağı yangınlarla mücadele için kuruldu.', true, 'Kent hizmetlerindeki yeniliklerden biridir.'],
         ['Patrona Halil İsyanı Lale Devri’ni başlatmıştır.', false, '1730’daki isyan dönemi sona erdirdi.'],
       ],
-      secimler: [
-        ['Paris gözlemleriyle öne çıkan elçi kimdir?', 'Yirmisekiz Çelebi Mehmed Efendi', 'İbrahim Müteferrika', 'Elçi Paris’e gitti; Müteferrika matbaayla tanınır.'],
-        ['Lale Devri’nin bitiş olayı hangisidir?', 'Patrona Halil İsyanı', 'II. Viyana Kuşatması', 'İsyan 1730’da dönemi bitirdi.'],
-        ['Yangınlara müdahale için kurulan kurum?', 'Tulumbacı Ocağı', 'Nizam-ı Cedid', 'Tulumbacılar yangın söndürmeyle ilgilendi.'],
-      ],
-      kontrol: ['Lale Devri hangi yıllar arasındadır?', '1718–1730', '1789–1807', 'Pasarofça’dan Patrona Halil İsyanı’na kadardır.'], kontrolKarti: 1,
     },
     {
       id: 'trh11-depremler', ad: '1755 Lizbon ve 1766 İstanbul Depremleri',
@@ -66,16 +54,10 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Depremden sonra yangın veya tsunami varsa etkiler depremin şiddetiyle tek başına açıklanamaz.',
       iddialar: [
         ['Lizbon’da depremden sonra tsunami ve yangınlar da yıkımı artırdı.', true, 'İkincil tehlikeler can ve mal kaybını büyüttü.'],
-        ['1766 depremi İstanbul’daki yapıları etkilememiştir.', false, 'Konutlar ve anıtsal yapılar zarar gördü.'],
-        ['Afetlerin etkisi yalnızca sarsıntının büyüklüğüne bağlıdır.', false, 'Yapı, yerleşim ve ikincil tehlikeler de belirleyicidir.'],
+        ['1766 İstanbul depreminden sonra artçı sarsıntı yaşanmadığı için onarımlar kolayca tamamlandı.', false, 'Artçı sarsıntılar onarımı güçleştirdi.'],
+        ['Lizbon’un liman kenti olması, 1755 depreminde kıyıdaki hasarı azaltan bir etkendi.', false, 'Tsunami yüzünden liman konumu kıyıdaki hasarı ağırlaştırdı.'],
         ['İki kentte de yeniden inşa ve barınma sorunu ortaya çıktı.', true, 'Yıkımın ardından onarım ve barınma gerekti.'],
       ],
-      secimler: [
-        ['Lizbon’da depremi izleyen kıyı tehlikesi neydi?', 'Tsunami', 'Kuraklık', 'Kıyıdaki dalgalar hasarı artırdı.'],
-        ['1766 depremi hangi kenti etkiledi?', 'İstanbul', 'Lizbon', 'Lizbon depremi 1755’tedir.'],
-        ['İki afeti karşılaştırırken hangisi incelenir?', 'Yeniden inşa', 'Yalnız tarihleri', 'Toplumsal ve mekânsal sonuçlara bakılır.'],
-      ],
-      kontrol: ['Depremin etkisini artırabilen etken?', 'İkincil tehlikeler', 'Yalnız takvim günü', 'Yangın ve tsunami toplam zararı artırabilir.'], kontrolKarti: 2,
     },
     {
       id: 'trh11-sanayi', ad: 'Sanayi Devrimi’nin Etkileri',
@@ -92,14 +74,8 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Makineleşme üretim miktarını artırdı.', true, 'Fabrika üretimi büyük ölçeğe ulaştı.'],
         ['Sanayi Devrimi kırdan kente göçü azaltmıştır.', false, 'Fabrika işleri göçü artırdı.'],
         ['Sanayi devletlerinin ham madde arayışı sömürgecilikle ilişkilidir.', true, 'Üretimin girdileri ve pazar ihtiyacı rekabeti büyüttü.'],
-        ['Osmanlı atölyeleri fabrika mallarından hiç etkilenmemiştir.', false, 'Ucuz ithal mallar yerel üretimi zorladı.'],
+        ['Avrupa’dan gelen ucuz fabrika malları, Osmanlı’daki yerel el tezgâhlarının satışlarını artırdı.', false, 'Ucuz ithal mallar yerel atölyelerle rekabet ederek üretimi zorladı.'],
       ],
-      secimler: [
-        ['Fabrika üretiminde hangi güç öne çıktı?', 'Makine ve buhar', 'Yalnız el emeği', 'Makineleşme üretimi dönüştürdü.'],
-        ['Kent nüfusunu artıran neden?', 'İş için göç', 'Tarımda işlerin artması', 'Fabrikalar kentte iş olanağı sağladı.'],
-        ['Sanayi devletleri neden ham madde aradı?', 'Üretimi beslemek için', 'Fabrikaları kapatmak için', 'Fabrikaların sürekli girdiye ihtiyacı vardı.'],
-      ],
-      kontrol: ['Sanayi Devrimi kentlerde neyi artırdı?', 'Ücretli işçiliği', 'Lonca sayısını', 'Fabrika işleri ücretli emeği yaygınlaştırdı.'], kontrolKarti: 4,
     },
   ],
   [
@@ -116,16 +92,10 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Milliyetçilik ile eşit yurttaşlık aynı şey değil; Osmanlı’da etkileri farklı siyasal arayışlar doğurdu.',
       iddialar: [
         ['İhtilal, egemenliğin kaynağını tartışmaya açtı.', true, 'Millet egemenliği düşüncesi güçlendi.'],
-        ['Milliyetçilik çok uluslu devletleri hiç etkilemedi.', false, 'Ayrılıkçı talepleri güçlendirdi.'],
+        ['Milliyetçiliğin Osmanlı’daki ilk ayrılıkçı etkisi Anadolu’da görüldü.', false, 'İlk ayrılıkçı hareketler Balkanlarda (Sırp, Yunan isyanları) görüldü.'],
         ['Osmanlıcılık farklı toplulukları ortak yurttaşlıkta birleştirmeyi amaçladı.', true, 'Dağılmayı önlemeye dönük bir düşünceydi.'],
-        ['İhtilalin bütün hakları tüm topluma hemen eşit uygulandı.', false, 'Hakların kapsamı ve uygulanması zamanla değişti.'],
+        ['İhtilal fikirlerinin Avrupa’ya yayılmasında Napolyon savaşlarının etkisi olmadı.', false, 'Napolyon savaşları fikirlerin yayılmasını hızlandırdı.'],
       ],
-      secimler: [
-        ['1789’da hangi egemenlik fikri güçlendi?', 'Millet egemenliği', 'Hanedan ayrıcalığı', 'Siyasi meşruiyet halka dayandırıldı.'],
-        ['Çok uluslu devletleri zorlayan akım?', 'Milliyetçilik', 'Merkantilizm', 'Bağımsızlık taleplerini artırdı.'],
-        ['İhtilalin ekonomik nedenlerinden biri?', 'Mali kriz', 'Üretim fazlası', 'Fransa’nın borç ve vergi sorunları vardı.'],
-      ],
-      kontrol: ['Osmanlıcılık neyi hedefledi?', 'Ortak yurttaşlık', 'Ayrı hanedanlar', 'Farklı toplulukları ortak kimlikte tutmayı amaçladı.'], kontrolKarti: 6,
     },
     {
       id: 'trh11-donusum', ad: '1789-1908 Siyasi ve İdari Dönüşüm',
@@ -144,12 +114,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Tanzimat Fermanı can ve mal güvenliğini vurguladı.', true, 'Gülhane Hattı’nın temel ilkelerindendir.'],
         ['1908’de meclis kalıcı olarak kapatıldı.', false, 'II. Meşrutiyet ile yeniden açıldı.'],
       ],
-      secimler: [
-        ['İlk Osmanlı anayasası hangisidir?', 'Kanun-ı Esasi', 'Tanzimat Fermanı', '1876’da Kanun-ı Esasi ilan edildi.'],
-        ['Yeniçeri Ocağı hangi yılda kaldırıldı?', '1826', '1876', 'II. Mahmud dönemindeki 1826 düzenlemesidir.'],
-        ['Nizam-ı Cedid hangi padişahla ilişkilidir?', 'III. Selim', 'II. Abdülhamid', 'Yeni ordu ve hazine düzeni III. Selim’e aittir.'],
-      ],
-      kontrol: ['Can ve mal güvenliğini vurgulayan belge?', 'Tanzimat Fermanı', 'Kanun-ı Esasi', '1839 Gülhane Hattı bu güvenliği öne çıkardı.'], kontrolKarti: 3,
     },
     {
       id: 'trh11-bilim', ad: '1789-1908 Bilim, Sanat ve Teknoloji',
@@ -164,16 +128,10 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Teknoloji yalnızca araç eklemedi; haberleşme hızı yönetim ilişkilerini de değiştirdi.',
       iddialar: [
         ['Telgraf haberleşme süresini kısalttı.', true, 'Merkez ile taşra arasındaki iletişim hızlandı.'],
-        ['Demiryolu taşımacılığı etkilemedi.', false, 'Mal ve yolcu taşınmasını değiştirdi.'],
+        ['Telgraf Osmanlı’da yalnız ticari haberleşmede kullanıldı; yönetim ve ordu için önem taşımadı.', false, 'Telgraf merkez-taşra yönetimi ve ordu için önemliydi.'],
         ['Gazeteler fikirlerin yayılmasına katkı sağladı.', true, 'Basın kamuoyu oluşumunda rol oynadı.'],
-        ['Tanzimat döneminde roman ve tiyatro tümüyle yasaklandı.', false, 'Bu türlerde eserler verildi.'],
+        ['Tanzimat’la gelişen roman ve tiyatro, Batı’dan yapılan çevirilerden bağımsız olarak doğdu.', false, 'Çeviri eserler yeni türleri ve anlatım biçimlerini besledi.'],
       ],
-      secimler: [
-        ['Merkez-taşra haberleşmesini hızlandıran araç?', 'Telgraf', 'Kervansaray', 'Telgraf uzak mesafeye hızlı haber iletti.'],
-        ['Tanzimat edebiyatında gelişen tür?', 'Roman', 'Destan', 'Roman yeni anlatım türlerinden biridir.'],
-        ['Teknik uzman yetiştiren kurum?', 'Mühendislik okulu', 'Lonca çarşısı', 'Yeni okullar teknik eğitim verdi.'],
-      ],
-      kontrol: ['Gazete hangi toplumsal alanı etkiledi?', 'Kamuoyunu', 'Yalnız tarımı', 'Fikirlerin dolaşımı kamuoyunu güçlendirdi.'], kontrolKarti: 4,
     },
     {
       id: 'trh11-sanayilesme', ad: 'Osmanlı’da Sanayileşme Çabaları',
@@ -188,16 +146,10 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Sanayileşme için bina değil, makine, sermaye, uzman ve pazarın birlikte işlemesi gerekir.',
       iddialar: [
         ['Ucuz ithal fabrika malları yerel atölyeleri zorladı.', true, 'Rekabet koşulları üreticilerin aleyhine değişti.'],
-        ['Osmanlı Devleti hiç fabrika kurmadı.', false, 'Devlet çeşitli alanlarda fabrikalar kurdu.'],
+        ['Osmanlı Devleti’nin kurduğu fabrikalar yalnız lüks tüketim malı üretti; dokuma ve silah üretilmedi.', false, 'Devlet dokuma ve silah gibi alanlarda fabrika kurdu.'],
         ['Düyun-ı Umumiye mali bağımsızlığı güçlendirdi.', false, 'Bazı gelirler dış alacaklıların denetimine geçti.'],
         ['Islah-ı Sanayi girişimleri yerli üretimi geliştirmeyi amaçladı.', true, 'Esnaf ve üretim düzeni uyarlanmaya çalışıldı.'],
       ],
-      secimler: [
-        ['1838 ticaret düzenlemesinin adı?', 'Balta Limanı', 'Karlofça', 'Balta Limanı ticaret ilişkilerini etkiledi.'],
-        ['1881’de gelirleri denetleyen kurum?', 'Düyun-ı Umumiye', 'Tulumbacı Ocağı', 'Dış borçların ödenmesi için kuruldu.'],
-        ['Sanayi için hangi ikili gerekir?', 'Sermaye ve uzmanlık', 'Yalnız bina ve tabela', 'Üretim sürdürülebilir bir sistem ister.'],
-      ],
-      kontrol: ['Ucuz ithal mal kime baskı yaptı?', 'Yerli üreticiye', 'Yalnız elçilere', 'Yerel atölyeler fabrika malıyla yarıştı.'], kontrolKarti: 1,
     },
   ],
   [
@@ -218,12 +170,6 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
         ['Edirne İkinci Balkan Savaşı’nda geri alındı.', true, 'Balkan devletlerinin anlaşmazlığı fırsat yarattı.'],
         ['Mondros Ateşkesi 1914’te imzalandı.', false, 'Savaşın sonunda, 1918’de imzalandı.'],
       ],
-      secimler: [
-        ['31 Mart Olayı’nı bastıran güç?', 'Hareket Ordusu', 'Tulumbacı Ocağı', 'Ayaklanma Hareket Ordusu tarafından bastırıldı.'],
-        ['Trablusgarp’ı bırakan antlaşma?', 'Uşi', 'Belgrad', '1912 Uşi Antlaşması’yla bırakıldı.'],
-        ['1913’te iktidar dengesini değiştiren olay?', 'Bâbıâli Baskını', 'Patrona Halil İsyanı', 'Bâbıâli Baskını İttihat ve Terakki’nin etkisini artırdı.'],
-      ],
-      kontrol: ['Osmanlı savaşta hangi cephede direniş başarısı gösterdi?', 'Çanakkale', 'Trablusgarp', 'Çanakkale I. Dünya Savaşı cephesidir.'], kontrolKarti: 6,
     },
     {
       id: 'trh11-goc', ad: '1908-1918 Göçler ve Salgınlar',
@@ -238,16 +184,10 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       not: 'Göç yalnızca nüfus sayısı değildir; barınma, sağlık ve geçim sorunlarını birlikte getirir.',
       iddialar: [
         ['Balkan Savaşları Anadolu’ya göçü artırdı.', true, 'Rumeli’den büyük nüfus hareketi yaşandı.'],
-        ['Kalabalık barınma koşulları salgın riskini azaltır.', false, 'Bulaşma ve temiz su sorunu riski artırır.'],
+        ['Göç yollarındaki hareketlilik, bulaşıcı hastalıkların yayılmasını sınırladı.', false, 'Göç yolları hastalığın taşınmasını kolaylaştırdı, sağlık hizmetini zorladı.'],
         ['Göç, yerleşmelerin nüfus yapısını değiştirebilir.', true, 'Gelen ve giden nüfus mekânı etkiler.'],
-        ['Göçmenler için barınma ve geçim sorunu oluşmadı.', false, 'Konut, iş ve gıda temel ihtiyaçtı.'],
+        ['Rumeli’den gelen göçmenler yalnız kentlere yerleşti; kırsal yerleşmelerin nüfusu değişmedi.', false, 'Kent ve kırsal yerleşmelerin nüfusu birlikte değişti.'],
       ],
-      secimler: [
-        ['Rumeli’den göçün yönü neresiydi?', 'Anadolu', 'Lizbon', 'Savaşlar Anadolu’ya göçü artırdı.'],
-        ['Salgın riskini artıran durum?', 'Kalabalık ve kirli barınma', 'Temiz suya erişim', 'Kalabalık ve temizlik yetersizliği bulaşmayı kolaylaştırır.'],
-        ['Göçü anlamak için hangisi karşılaştırılır?', 'Kayıtlar ve anılar', 'Yalnız bir söylenti', 'Farklı kaynaklar birbirini tamamlar.'],
-      ],
-      kontrol: ['Göçten sonra ilk ihtiyaçlardan biri?', 'Barınma', 'Yeni sınır çizmek', 'Yerinden edilen insanların güvenli kalacak yere ihtiyacı vardır.'], kontrolKarti: 3,
     },
     {
       id: 'trh11-katki', ad: 'Osmanlı’nın İnsanlık Tarihine Katkıları',
@@ -263,15 +203,9 @@ const taslaklar: OnBirinciSinifKonusu[][] = [
       iddialar: [
         ['Vakıflar sağlık ve eğitim hizmetlerini destekledi.', true, 'Gelirleri toplumsal hizmetlere ayrılabildi.'],
         ['Pîrî Reis denizcilik haritalarıyla tanınır.', true, 'Haritaları dönemin denizcilik bilgisini taşır.'],
-        ['Darüşşifalar yalnızca askerî kışlaydı.', false, 'Tedavi ve bakım sunan sağlık kurumlarıydı.'],
-        ['Osmanlı mirası yalnızca saray yapılarından oluşur.', false, 'Köprü, külliye, vakıf ve sanat eserleri de vardır.'],
+        ['Darüşşifa, Osmanlı’da gök cisimlerinin gözlendiği bilim kurumunun adıdır.', false, 'Darüşşifa tedavi ve bakım sunan sağlık kurumudur; gözlem rasathanede yapılır.'],
+        ['Pîrî Reis’in haritasının önemi, eski haritalardan hiç yararlanmamasından gelir.', false, 'Haritası farklı kaynaklardaki denizcilik bilgisini bir araya getirdi.'],
       ],
-      secimler: [
-        ['Denizcilik haritalarıyla tanınan kişi?', 'Pîrî Reis', 'Nevşehirli Damat İbrahim Paşa', 'Pîrî Reis denizcilik bilgisiyle öne çıkar.'],
-        ['Gelirini kamu hizmetine ayıran kurum?', 'Vakıf', 'Kapitülasyon', 'Vakıflar hizmetleri finanse edebildi.'],
-        ['Tarihî katkı nasıl incelenir?', 'Bağlam ve kaynaklarla', 'Yalnız övgüyle', 'İşlev ve kanıt birlikte değerlendirilir.'],
-      ],
-      kontrol: ['Darüşşifa ne sunardı?', 'Tedavi ve bakım', 'Deniz ticareti', 'Darüşşifa sağlık kurumudur.'], kontrolKarti: 3,
     },
   ],
 ]

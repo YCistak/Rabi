@@ -290,7 +290,7 @@ export const cografyaDerinligi: Record<string, KonuDerinligi> = {
     ],
     iddialar: [
       ['Kültürel etkileşimin siyasi sınıra sığmaması egemenlik sınırının değiştiğini göstermez.', true, 'Kültür ağı ve devlet yetkisi ayrıdır.'],
-      ['Dil yakınlığı iki toplumun tüm geleneklerini bire bir aynı kılar.', false, 'Tarih ve çevre farklılaşma yaratır.'],
+      ['Türkiye ile Balkanlar arasındaki kültürel bağlar Osmanlı döneminde kalmış, bugün değişmeyen bir olgudur.', false, 'Göç, aile bağları ve güncel ilişkilerle etkileşim sürer ve değişir.'],
     ],
     secimler: [
       ['Sınır ötesi aile bağı neyi gösterir?', 'Kültürel ilişkiyi', 'Siyasi yönetim yetkisini', 'Aile ve göç ağı egemenlik değildir.'],
