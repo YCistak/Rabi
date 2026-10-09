@@ -154,8 +154,8 @@ export function OdakAyarlari({
       {ayar.rahatsizEtme && !izinler.rahatsizEtme && (
         <div className="border-t border-border px-4 py-3">
           <Not tur="uyari">
-            İzin verilmeden telefon susmaz. Açılan listede{' '}
-            <b className="font-extrabold">Rabi</b>'yi bul ve aç.
+            İzin verilmeden telefon susmaz. Açılan ekranda{' '}
+            <b className="font-extrabold">Rabi</b>'nin iznini aç.
             <span className="mt-2 block">
               <Buton
                 bicim="ikincil"

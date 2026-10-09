@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Process
 import android.provider.Settings
 
@@ -108,10 +109,7 @@ object Izinler {
         if (ekraniAc(baglam, duzenleyici)) return true
         return ekraniAc(
             baglam,
-            Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:${baglam.packageName}"),
-            ),
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, paketAdresi(baglam)),
         )
     }
 
@@ -126,27 +124,82 @@ object Izinler {
     /** MIUI'nin `OP_BACKGROUND_START_ACTIVITY` işlemi — arka planda pencere açma. */
     private const val MIUI_ARKA_PLAN_PENCERE = 10021
 
+    /**
+     * Kullanım erişimi ekranı.
+     *
+     * Android 10+ birçok cihazda `package:` adresli niyet doğrudan Rabi'nin
+     * anahtar sayfasını açıyor; kullanıcı uzun listede uygulamayı aramıyor.
+     * Desteklemeyen cihaz ya hata veriyor ya da adresi yok sayıp listeyi
+     * açıyor — ikisi de eskisinden kötü değil. Hata verirse adressiz listeye
+     * düşülüyor.
+     */
     fun kullanimVerisiEkraniniAc(baglam: Context): Boolean =
-        ekraniAc(baglam, Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+        ilkAcilan(
+            baglam,
+            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS, paketAdresi(baglam)),
+            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS),
+        )
 
     /**
      * Rahatsız Etme erişimi ekranı.
      *
-     * Doğrudan Rabi'nin satırına götüren bir niyet yok; liste ekranı açılıyor
-     * ve kullanıcı uygulamayı kendisi buluyor. Arayüz bu yüzden ne arayacağını
-     * yazıyor.
+     * Sırayla:
+     * 1. Android 11+ ayar uygulamasının uygulamaya özel detay sayfası
+     *    (`NOTIFICATION_POLICY_ACCESS_DETAIL_SETTINGS` + `package:`). Sabit
+     *    SDK'da gizli (`@hide`), bu yüzden adı elle yazılı; üretici kaldırmışsa
+     *    hata verir ve bir sonrakine geçilir.
+     * 2. Liste ekranı, Rabi'nin satırını vurgulayan argümanla: AOSP listesinde
+     *    her satırın anahtarı paket adı, Android 10+ ayarlar bu anahtara
+     *    kaydırıp satırı yanıp söndürüyor. Tanımayan cihaz argümanı yok sayıyor.
      */
     fun rahatsizEtmeEkraniniAc(baglam: Context): Boolean =
-        ekraniAc(baglam, Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS))
-
-    fun katmanEkraniniAc(baglam: Context): Boolean =
-        ekraniAc(
+        ilkAcilan(
             baglam,
-            Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:${baglam.packageName}"),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                Intent(RAHATSIZ_ETME_DETAY, paketAdresi(baglam))
+            } else {
+                null
+            },
+            satiriVurgula(
+                Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS),
+                baglam.packageName,
             ),
         )
+
+    /**
+     * Üste çizme izni. `package:` adresiyle Android 11+'da doğrudan Rabi'nin
+     * anahtarı, daha eskisinde liste açılıyor. Adresli niyet açılamazsa adressiz
+     * listeye, o da yoksa uygulama bilgi sayfasına düşülüyor.
+     */
+    fun katmanEkraniniAc(baglam: Context): Boolean =
+        ilkAcilan(
+            baglam,
+            Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, paketAdresi(baglam)),
+            Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION),
+            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, paketAdresi(baglam)),
+        )
+
+    private fun paketAdresi(baglam: Context): Uri = Uri.parse("package:${baglam.packageName}")
+
+    /**
+     * Ayarlar listesinde bir satırı vurgulatan argümanlar. AOSP'de
+     * `SettingsActivity` bunları liste parçasına geçiriyor; anahtar eşleşirse
+     * satıra kaydırıp vurguluyor. Belgelenmemiş ama Android 10'dan beri
+     * kararlı; tanınmazsa niyet olduğu gibi çalışıyor.
+     */
+    private fun satiriVurgula(niyet: Intent, anahtar: String): Intent = niyet.apply {
+        putExtra(PARCA_ANAHTARI, anahtar)
+        putExtra(PARCA_ARGUMANLARI, Bundle().apply { putString(PARCA_ANAHTARI, anahtar) })
+    }
+
+    /** Niyetleri sırayla dener, ilk açılanda durur; `null`lar atlanır. */
+    private fun ilkAcilan(baglam: Context, vararg niyetler: Intent?): Boolean =
+        niyetler.any { it != null && ekraniAc(baglam, it) }
+
+    private const val RAHATSIZ_ETME_DETAY =
+        "android.settings.NOTIFICATION_POLICY_ACCESS_DETAIL_SETTINGS"
+    private const val PARCA_ANAHTARI = ":settings:fragment_args_key"
+    private const val PARCA_ARGUMANLARI = ":settings:show_fragment_args"
 
     /**
      * Bazı üreticiler (özellikle Xiaomi/Huawei) bu ayar ekranlarını hiç

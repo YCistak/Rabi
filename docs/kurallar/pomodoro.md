@@ -75,6 +75,11 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   Süreler'in hemen altında, hazırlık ekranında.
 - Anahtar kilidi doğrudan açmaz: önce `odak-daveti.tsx`, "İstiyorum" denince kilit;
   izin ekranı yalnız adı yazılı düğmeyle.
+- İzin ekranları Rabi'ye en yakın sayfayı açar, olmazsa genele düşer
+  (`Izinler.ilkAcilan`): kullanım verisi ve üste çizme `package:` adresiyle,
+  Rahatsız Etme önce gizli `NOTIFICATION_POLICY_ACCESS_DETAIL_SETTINGS` (11+), sonra
+  listede `:settings:fragment_args_key` ile satır vurgusu. Arayüz metni "listede bul"
+  demez. Erişilebilirlik hizmeti yok (Play politikası).
 - **Engel katmanı** (`EngelKatmani.kt`, `res/layout/engel_katmani.xml`) yerli düzen.
   Maskot `drawable-nodpi/tavsan_yuz.png` (üç kopya, bkz. Maskot). Renkler
   `values/colors.xml`, `values-night/` birebir aynı. Kalan süre en büyük öge; çubuğun
