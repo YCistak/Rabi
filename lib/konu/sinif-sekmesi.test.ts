@@ -3,6 +3,7 @@ import { programBul, sinifDersleri, tumKonular } from './index'
 import { ilerlemeyiYaz, type KonuIlerlemeleri } from './ilerleme'
 import {
   haritaAcilisSinifi,
+  haritaDersAdi,
   pencereBilgisi,
   sinifDegisimi,
   sinifOrtalamasi,
@@ -75,8 +76,12 @@ describe('haritanın sınıf sekmesi', () => {
     const degisim = sinifDegisimi({ ders: 'ingilizce', sinif: 11 }, 9)
     expect(degisim?.secim).toEqual({ ders: 'matematik', sinif: 9 })
     expect(degisim?.bilgi).toBe('İngilizce 9. sınıfta yok; Matematik açıldı.')
-    // 11. sınıfın Türkçesi Edebiyat adıyla anılıyor.
     expect(sinifDegisimi({ ders: 'turkce', sinif: 11 }, 10)?.bilgi).toBeNull()
+  })
+
+  it('Türkçe her sınıfta Türk Dili ve Edebiyatı adıyla anılıyor', () => {
+    expect(haritaDersAdi('turkce')).toBe('Türk Dili ve Edebiyatı')
+    expect(haritaDersAdi('tarih')).toBe('Tarih')
   })
 
   it('12\'ye geçişte ders kalıyor; 12\'den İngilizcenin olmadığı 10\'a inince Matematik açılıyor', () => {

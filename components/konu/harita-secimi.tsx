@@ -50,7 +50,7 @@ export function SecimKarti({
 }) {
   const ders = dersBul(secim.ders)
   const bicim = haritaTemasi(secim.ders)
-  const dersAdi = haritaDersAdi(secim.ders, secim.sinif)
+  const dersAdi = haritaDersAdi(secim.ders)
   const yuzde = sinifYuzdesi(secim.ders, secim.sinif, ilerlemeler)
   return (
     <button
@@ -232,7 +232,7 @@ export function SecimPenceresi({
             const secili = bakilan === gecerli.sinif && d.id === gecerli.ders
             const yuzde = sinifYuzdesi(d.id, bakilan, ilerlemeler) ?? 0
             const db = haritaTemasi(d.id)
-            const ad = haritaDersAdi(d.id, bakilan)
+            const ad = haritaDersAdi(d.id)
             return (
               <li key={d.id}>
                 <button
