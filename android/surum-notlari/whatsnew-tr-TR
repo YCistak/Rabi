@@ -1,8 +1,3 @@
-Rabi 1.0.1
-• Haritada ders seçim penceresi sadeleşti.
-• Ayarlar'dan tanıtımı yeniden başlatabilirsin.
-• Pomodoro bildirimi iptalden sonra takılı kalmıyor.
-• Başta tanıtım isteyip istemediğin soruluyor; Yapılacaklar turunda görevi kendin ekliyorsun.
-• Odak kilidi izinleri doğrudan Rabi'nin ayarını açıyor.
-• Devamsızlıkta MEB sınırları ve özürlü çubuğu.
-• 5 yeni başarım, gizlilik metinleri güncellendi.
+Rabi 1.0.2
+• Denemede Okut artık sade bir pencere açıyor; okunan doğru/yanlış sayıları doğrudan forma yazılıyor.
+• Okunan sayıları kontrol etmeyi unutma.
