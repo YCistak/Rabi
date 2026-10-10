@@ -2606,6 +2606,42 @@ body {
 }
 
 /*
+  Ana sayfanın tablet kahramanı (`ana-sayfa.tsx` → `ana-kahraman`): geri
+  sayım ve günlük hedef tek kartın içinde, kendi gölgeleri kalkıyor (iç içe
+  gölge kart üstünde kart gibi duruyordu). `golge-kart` katmanlı bir sınıf;
+  `tablet:shadow-none` onu her derlemede ezmeyebilir, kural burada katmansız.
+*/
+:root[data-yerlesim='tablet'] .ana-kahraman .golge-kart {
+  box-shadow: none;
+}
+
+/*
+  Tablette alt pencere ekranın ortasında (`tablet-orta-zemin` zeminde,
+  `tablet-orta-pencere` pencerede). Telefondaki tam genişlik çekmece 1000
+  pikselden geniş ekranda alttan yayılan bir şerit oluyordu; ortada,
+  makul genişlikte bir pencere formun tamamını gözün önünde tutuyor. Zemin
+  sağdan ray kadar içeri çekiliyor: pencere içerik alanının ortasında.
+  Tutamaç (`tablet-orta-tutamac`) tablette gizli: ortadaki pencere aşağı
+  çekilerek kapanmayı çağrıştırmasın (çekmek yine çalışıyor). Giriş
+  hareketi aynı (`alt-pencere-girisi`, aşağıdan hafif yükselme).
+*/
+:root[data-yerlesim='tablet'] .tablet-orta-zemin {
+  align-items: center;
+  padding: calc(1.5rem + var(--guvenli-ust)) calc(var(--ray) + var(--guvenli-sag) + 1.5rem)
+    calc(1.5rem + var(--guvenli-alt)) calc(1.5rem + var(--guvenli-sol));
+}
+:root[data-yerlesim='tablet'] .tablet-orta-pencere {
+  max-width: 34rem;
+  max-height: 100%;
+  border-radius: 26px;
+  padding-bottom: 1.5rem;
+  box-shadow: 0 24px 60px rgba(54, 33, 40, 0.22);
+}
+:root[data-yerlesim='tablet'] .tablet-orta-tutamac {
+  display: none;
+}
+
+/*
   Tanıtım rehberi: başka ekrana geçilince spot ve balon eski yerden uçmuyor,
   yeni hedefin yerinde hafifçe büyüyüp beliriyor (`spot-isigi.tsx`, `belir`).
   İki eş anahtar kare dönüşümlü kullanılıyor: ad değişince animasyon baştan
