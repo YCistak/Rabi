@@ -1,11 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Camera, ImagePlus, LoaderCircle, ScanLine, X } from 'lucide-react'
+import { Camera, ImagePlus, LoaderCircle, ScanLine } from 'lucide-react'
 import { Camera as CihazKamerasi, CameraResultType, CameraSource } from '@capacitor/camera'
-import { Buton, Kart, Not, useKapatmaOnayi } from '@/components/ui'
+import { Buton, Not } from '@/components/ui'
 import { cihazdaMi } from '@/lib/kamera'
-import { denemeyiCoz, type OkunanDers, type OkumaSonucu } from '@/lib/deneme-okuma'
+import { denemeyiCoz, type OkunanDers } from '@/lib/deneme-okuma'
 import { useGeriKatmani } from '@/lib/geri'
 import type { Sablon } from '@/lib/types'
 
@@ -19,8 +19,6 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
   const [okunuyor, setOkunuyor] = useState(false)
   const [ilerleme, setIlerleme] = useState('')
   const [hata, setHata] = useState('')
-  const [hamMetin, setHamMetin] = useState('')
-  const [sonuc, setSonuc] = useState<OkumaSonucu | null>(null)
   const girdi = useRef<HTMLInputElement>(null)
   const islem = useRef<AbortController | null>(null)
   const etkin = useRef(true)
@@ -40,20 +38,13 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
     return () => { if (acik) acikBildir.current?.(false) }
   }, [acik])
 
-  // Yalnız okunmuş sonuç varken sorar: o fotoğrafı yeniden çekmek gerekir.
-  const kapatmaOnayi = useKapatmaOnayi({
-    aciklama: 'Okunan sonuçlar aktarılmadıysa kaybolur.',
-  })
-
   const kapat = () => {
     secimSurumu.current++
     islem.current?.abort()
     islem.current = null
     setAcik(false)
     setOkunuyor(false)
-    setSonuc(null)
     setHata('')
-    setHamMetin('')
   }
   useGeriKatmani(acik, kapat)
 
@@ -64,23 +55,20 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
     islem.current = denetim
     setOkunuyor(true)
     setHata('')
-    setHamMetin('')
-    setSonuc(null)
     setIlerleme('Okuma hazırlanıyor…')
     try {
       const { kagidiOku } = await import('@/lib/deneme-ocr')
       if (denetim.signal.aborted) return
       const metin = await kagidiOku(fotograf, setIlerleme, denetim.signal)
       if (denetim.signal.aborted || !etkin.current) return
-      setHamMetin(metin)
       const okuma = denemeyiCoz(metin, sablon)
       if (okuma.okunanlar.length === 0) {
         setHata(metin.trim()
-          ? 'Yazı bulundu; ancak doğru ve yanlış sayıları güvenle tamamlanamadı. Aşağıdaki ham okumayı kontrol et veya sonuçları elle gir.'
-          : 'Bu kâğıtta yazı bulamadım. İyi ışıkta yeniden fotoğraf çek veya sonuçları elle gir.')
-      } else setSonuc(okuma)
+          ? 'Sayılar güvenle okunamadı. Yeniden dene veya elle gir.'
+          : 'Kâğıtta yazı bulamadım. İyi ışıkta yeniden dene veya elle gir.')
+      } else { onAktar(okuma.okunanlar); kapat() }
     } catch {
-      if (!denetim.signal.aborted && etkin.current) setHata('Fotoğraf okunamadı. Başka bir fotoğrafla tekrar dene veya elle gir.')
+      if (!denetim.signal.aborted && etkin.current) setHata('Fotoğraf okunamadı. Tekrar dene veya elle gir.')
     } finally {
       if (etkin.current && islem.current === denetim) {
         setOkunuyor(false)
@@ -116,44 +104,26 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
       Okut
       <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-extrabold text-primary">Beta</span>
     </Buton>
-    {kapatmaOnayi.pencere}
-    {acik && <div role="dialog" aria-modal="true" aria-labelledby="deneme-okut-baslik" className="tam-katman-girisi fixed inset-0 z-50 overflow-y-auto bg-background">
-      <div className="mx-auto max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))]">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 id="deneme-okut-baslik" className="font-display flex items-center gap-2 text-xl font-semibold">Denemeyi okut <span className="rounded-full bg-primary-soft px-2 py-0.5 text-xs text-primary">Beta</span></h2>
-          <Buton bicim="hayalet" boy="simge" onClick={() => (sonuc ? kapatmaOnayi.sor(kapat) : kapat())} aria-label="Okumayı kapat"><X size={20} /></Buton>
-        </div>
-        <p className="mb-2 text-sm text-muted-foreground">{sablon.ad} için ders adını, doğru ve yanlış sayısını her satıra ayrı yaz.</p>
-        <Kart className="mb-4 space-y-1 font-semibold text-sm"><p>Matematik 38D 2Y</p><p>Türkçe 32D 6Y 2B</p></Kart>
+    {acik && <div role="dialog" aria-modal="true" aria-labelledby="deneme-okut-baslik" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-xl">
+        <h2 id="deneme-okut-baslik" className="font-display mb-2 text-lg font-semibold">Kâğıdı okut</h2>
         <input ref={girdi} type="file" accept="image/*" className="hidden" aria-label="Deneme fotoğrafı seç" onChange={(olay) => {
           const dosya = olay.target.files?.[0]
           olay.target.value = ''
           if (dosya) void oku(dosya)
         }} />
-        {!okunuyor && <div className="mb-4 flex gap-2">
-          {cihazdaMi() && <Buton bicim="ikincil" className="flex-1" onClick={() => void fotografSec('kamera')}><Camera size={18} />Çek</Buton>}
-          <Buton bicim="ikincil" className="flex-1" onClick={() => void fotografSec('galeri')}><ImagePlus size={18} />Fotoğraf seç</Buton>
-        </div>}
-        {/* Uyarı düğmelerin altında: ekranın tepesinde, yönergeden ve örnekten
-            önce okunuyordu ve okumanın kendisi daha başlamamışken "yanılabilir"
-            diyordu. Kullanıcı Çek'in altına istedi — fotoğrafı çekecek kişinin
-            gözü orada. */}
-        {!okunuyor && <Not className="mb-4">Okuma yanılabilir. Sayıları kontrol ettikten sonra forma aktar. Fotoğraf cihazında okunur ve saklanmaz.</Not>}
-        {okunuyor && <div role="status" className="my-8 flex flex-col items-center gap-3 text-sm text-muted-foreground"><LoaderCircle className="animate-spin text-primary" size={28} />{ilerleme}<Buton bicim="hayalet" onClick={kapat}>Vazgeç</Buton></div>}
-        {hata && <Not tur="tehlike" className="mb-4">{hata}</Not>}
-        {hamMetin && <details className="mb-4 rounded-xl border border-border bg-card px-3 py-2 text-sm">
-          <summary className="cursor-pointer font-semibold">Okunan yazıyı göster</summary>
-          <pre className="mt-2 whitespace-pre-wrap break-words font-sans text-muted-foreground">{hamMetin}</pre>
-        </details>}
-        {sonuc && <>
-          <h3 className="mb-2 font-display font-semibold">Okunan sonuçları kontrol et</h3>
-          <Kart className="mb-3 p-0">
-            <div className="grid grid-cols-[1fr_3.5rem_3.5rem] gap-2 border-b border-border px-3 py-2 text-xs text-muted-foreground"><span>Ders</span><span>Doğru</span><span>Yanlış</span></div>
-            {sonuc.okunanlar.map((ders) => <div key={ders.dersId} className="grid grid-cols-[1fr_3.5rem_3.5rem] gap-2 border-b border-border px-3 py-3 text-sm last:border-0"><span>{sablon.dersler.find((d) => d.id === ders.dersId)?.ad}</span><span className="rakam">{ders.dogru}</span><span className="rakam">{ders.yanlis}</span></div>)}
-          </Kart>
-          <p className="mb-4 text-xs text-muted-foreground">{sonuc.okunanlar.length}/{sablon.dersler.length} ders okundu. Eksik veya hatalı sayıları formda düzeltebilirsin. Okunan derslerin girişleri bu sayılarla değişir.</p>
-          {sonuc.atlananlar.length > 0 && <p className="mb-4 text-xs text-muted-foreground">Eksik veya belirsiz olduğu için aktarılmayanlar: {sonuc.atlananlar.join(', ')}.</p>}
-          <Buton className="w-full" onClick={() => { onAktar(sonuc.okunanlar); kapat() }}>Kontrol ettim, forma aktar</Buton>
+        {okunuyor ? <div role="status" className="my-4 flex flex-col items-center gap-3 text-sm text-muted-foreground">
+          <LoaderCircle className="animate-spin text-primary" size={28} />{ilerleme}
+          <Buton bicim="hayalet" onClick={kapat}>Vazgeç</Buton>
+        </div> : <>
+          <p className="mb-1 text-sm text-muted-foreground">Kâğıdı düz tut, iyi ışıkta çek; sonuç tablosunun tamamı kadrajda olsun.</p>
+          <p className="mb-4 text-sm font-semibold">Okunan sayıları kontrol et.</p>
+          {hata && <Not tur="tehlike" className="mb-3">{hata}</Not>}
+          <div className="flex flex-col gap-2">
+            {cihazdaMi() && <Buton onClick={() => void fotografSec('kamera')}><Camera size={18} />Fotoğraf çek</Buton>}
+            <Buton bicim={cihazdaMi() ? 'ikincil' : 'birincil'} onClick={() => void fotografSec('galeri')}><ImagePlus size={18} />Galeriden seç</Buton>
+            <Buton bicim="hayalet" onClick={kapat}>Vazgeç</Buton>
+          </div>
         </>}
       </div>
     </div>}
