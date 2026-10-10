@@ -112,6 +112,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   Her açılışta ayarlardaki sınıfla açılır (`haritaSinifiBul` → `haritaAcilisSinifi`);
   ekran içi sınıf değişimi o ziyaretlik; mezunda son seçim kalır; pasif sınıfın
   öğrencisi içeriği olan en büyük sınıfta açılır (12 artık açık, 12'de açılır). `sinifDersleri` boş programları haritada gizler.
+  Haritada `turkce` her sınıfta **Türk Dili ve Edebiyatı** adıyla anılır
+  (`haritaDersAdi`, kullanıcı istedi, 2026-10); kimlik `turkce` kalır.
 - **Sınıf ve ders tek kart + alt pencere** (kullanıcı seçti, 2026-10;
   `components/konu/harita-secimi.tsx`, tasarım "Tek başlık + alt sayfa"): patikanın
   üstünde yalnız "10. sınıf · Kimya" kartı (ders emojisi, ilerleme, turuncu ok);

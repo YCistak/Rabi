@@ -390,7 +390,7 @@ export function KonuHaritasiEkrani({
   // Hiçbir dersi yazılmamış sınıf. 12'de Matematik yazıldı; kart yalnız ileride
   // içeriği boşalan bir sınıf ya da eski kayıt için duruyor.
   const yapimda = sinifPasifMi(secim.sinif)
-  const dersAdi = haritaDersAdi(secim.ders, secim.sinif)
+  const dersAdi = haritaDersAdi(secim.ders)
   const bicim = haritaTemasi(secim.ders)
   const program = useMemo(() => programBul(secim.ders, secim.sinif), [secim])
   /** Program boyunca tek sıra: kilit tema sınırına değil, bir önceki konuya bakıyor. */

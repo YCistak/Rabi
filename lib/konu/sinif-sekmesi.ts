@@ -71,9 +71,13 @@ export function sinifSekmeleri(
   }))
 }
 
-/** Görünen ders adı: 11. sınıfta Türkçe'nin programı Edebiyat. */
-export function haritaDersAdi(ders: KonuDersId, sinif: HaritaSinifi): string {
-  return sinif === 11 && ders === 'turkce' ? 'Edebiyat' : dersBul(ders).ad
+/**
+ * Görünen ders adı. Haritada `turkce` her sınıfta okuldaki adıyla, Türk Dili ve
+ * Edebiyatı olarak anılıyor (kullanıcı istedi, 2026-10): lisede "Türkçe" diye
+ * bir ders yok. Kimlik `turkce` kalıyor — kayıtlar ona bağlı.
+ */
+export function haritaDersAdi(ders: KonuDersId): string {
+  return ders === 'turkce' ? 'Türk Dili ve Edebiyatı' : dersBul(ders).ad
 }
 
 /**
@@ -93,7 +97,7 @@ export function sinifDegisimi(
   const yeniDers = sinifDersleri(yeniSinif)[0].id
   return {
     secim: { ders: yeniDers, sinif: yeniSinif },
-    bilgi: `${haritaDersAdi(secim.ders, secim.sinif)} ${yeniSinif}. sınıfta yok; ${haritaDersAdi(yeniDers, yeniSinif)} açıldı.`,
+    bilgi: `${haritaDersAdi(secim.ders)} ${yeniSinif}. sınıfta yok; ${haritaDersAdi(yeniDers)} açıldı.`,
   }
 }
 
@@ -140,5 +144,5 @@ export function pencereBilgisi(
 ): string | null {
   if (bakilanSinif === secim.sinif || sinifPasifMi(bakilanSinif)) return null
   if (programBul(secim.ders, bakilanSinif)) return null
-  return `${haritaDersAdi(secim.ders, secim.sinif)} ${bakilanSinif}. sınıfta yok, başka bir ders seç.`
+  return `${haritaDersAdi(secim.ders)} ${bakilanSinif}. sınıfta yok, başka bir ders seç.`
 }
