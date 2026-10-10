@@ -75,6 +75,11 @@ listesi**.
   deneme formu ve tanıtım turu aynı kuralı kullanır. Hiçbir sayı girilmemiş form
   yine kaydedilmez.
 
+- **Tablet düzeni:** sayfa ≥ 42rem iken iki sütun — solda günün özeti, Soru ekle,
+  ders kutuları; sağda hafta şeridi + ay takvimi (tablette açık başlar, düğme yine
+  kapatır; `useYerlesim` etkide, statik derlemede ilk kare 'telefon'). Ekleme
+  penceresi tablette ortada (`tablet-orta-*`). Telefonda hiçbir sınıf eşleşmez.
+
 ## Takvim tek bileşen
 
 - Gün seçen her takvim `components/takvim.tsx`ten: yedi günlük `HaftaSeridi` (bugün

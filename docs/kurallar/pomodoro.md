@@ -43,6 +43,19 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   (kullanıcı kaldırttı). "Ekran açık kalsın" ayar kartında, iki kipte de. Başlat
   `sticky`, alt menünün üstünde.
 
+## Tablet düzeni
+
+- Kurulum ekranı sayfa ≥ 42rem iken (`tablet:@container` + `@min-[42rem]`) iki
+  sütun: solda büyük halka (`zoom`) ve Başlat, sağda kip, "Hangi derse?", ayar kartı.
+  Satırlar elle yerleşir, aralıklar öğelerin `mb-3`ünden (ızgarada satır aralığı yok;
+  boş satırlar sıfır boy). Halka esnek satırı da kaplar ki sağ sütun aralanmasın.
+  Yatayda ızgara ekran boyunda. Yuva tablette 60rem (`app-shell.tsx`). Dar dikey
+  Android tablette ve telefonda tek sütun.
+- Sahne yatay tablette odak düzeni: sayaç ortada, sağda `aside` bilgi şeridi (durum,
+  bu tur, sayaç satırı, turlar); telefonda/dikeyde `hidden`. Sahne tam ekran ve menü
+  rayının üstünde (z-50 > z-40), şerit yalnız sağ güvenli alanı hesaba katar.
+- Süreler çekmecesi tablette ortada pencere (`tablet-orta-*`, bkz. hareket-ve-gecisler).
+
 ## Müzik yok
 
 - Oyun müziği ve Pomodoro lo-fi'ı kaldırıldı (kullanıcı). `Ayarlar.oyunMuzigi`,
