@@ -12,6 +12,7 @@ import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yediGunlukSerit } from '@
 import { Alan, BaslikSatiri, Buton, Halka, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import { DersSeridi } from '@/components/ders-seridi'
 import { AY_ADLARI, HaftaSeridi, Takvim, type GunIsareti } from '@/components/takvim'
+import { useYerlesim } from '@/lib/yerlesim'
 
 /**
  * "12 Eylül" — `tarihYaziKisa` gün adını da ekliyor ve "12 Eylül Cumartesi"
@@ -58,6 +59,16 @@ export function SoruTakibiEkrani({
   const [secili, setSecili] = useState(bugunIso)
   const [ay, setAy] = useState(() => tariheCevir(bugunIso))
   const [takvimAcik, setTakvimAcik] = useState(false)
+  /*
+    Tablette ay takvimi açık başlıyor: sağ sütunun işi takvim ve geçmiş,
+    kapalı takvimle o sütunda yalnız yedi günlük şerit kalıyordu. Düğme yine
+    kapatıyor. Yerleşim ilk karede (statik derleme) 'telefon' geliyor, o
+    yüzden etkide.
+  */
+  const yerlesim = useYerlesim()
+  useEffect(() => {
+    if (yerlesim !== 'telefon') setTakvimAcik(true)
+  }, [yerlesim])
   const [sayfaAcik, setSayfaAcik] = useState(false)
 
   /**
@@ -176,10 +187,19 @@ export function SoruTakibiEkrani({
   return (
     <div>
       <BaslikSatiri arac="soru" baslik="Soru Takibi" />
-      {/* Yatay tablette kartlar iki sütuna akıyor (`tablet-sutunlar`). */}
-      <div className="tablet-sutunlar flex flex-col gap-3.5">
+      {/*
+        Tablette iki sütun (sayfa en az 42rem genişse; dar dikey Android
+        tablette tek sütun kalıyor): solda günün girişi — özet, Soru ekle,
+        ders kutuları; sağda takvim (hafta şeridi + ay). Kap sorgusu
+        (`@container`) yalnız tablette kuruluyor, telefonda eşleşen yok.
+      */}
+      <div className="tablet:@container">
+      <div className={cn(
+        'flex flex-col gap-3.5',
+        'tablet:@min-[42rem]:grid tablet:@min-[42rem]:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] tablet:@min-[42rem]:grid-rows-[auto_auto_auto_auto_1fr] tablet:@min-[42rem]:gap-x-6',
+      )}>
         {/* Günün hâli: halka, mesaj, çubuk ve dört sayı. */}
-        <Kart className="rounded-3xl">
+        <Kart className="rounded-3xl tablet:@min-[42rem]:col-start-1 tablet:@min-[42rem]:row-start-1">
           <div className="flex items-center gap-4">
             <Halka deger={ozet.toplam} hedef={hedef} boyut={112} kalinlik={10} renk={halkaRengi}>
               <span className="rakam text-[30px] font-black leading-none text-primary">
@@ -227,6 +247,7 @@ export function SoruTakibiEkrani({
         {/* Hafta şeridi (ortak takvim); ay takvimi altında katlanıyor. Dünden
             eskisi salt okunur olduğu için soluk, yarından sonrası kapalı. */}
         <HaftaSeridi
+          className="tablet:@min-[42rem]:col-start-2 tablet:@min-[42rem]:row-span-5 tablet:@min-[42rem]:row-start-1 tablet:@min-[42rem]:self-start tablet:@min-[42rem]:rounded-3xl tablet:@min-[42rem]:px-3 tablet:@min-[42rem]:pb-3"
           secili={secili}
           onSec={gunSec}
           bugunIso={bugunIso}
@@ -278,7 +299,7 @@ export function SoruTakibiEkrani({
           <Buton
             data-tanitim="soru-ekle"
             onClick={() => (tanitim ? tanitim.formuAc() : setSayfaAcik(true))}
-            className="h-[54px] w-full rounded-[18px] text-base shadow-[0_8px_18px_rgba(217,98,47,0.24)]"
+            className="h-[54px] w-full rounded-[18px] text-base shadow-[0_8px_18px_rgba(217,98,47,0.24)] tablet:@min-[42rem]:col-start-1"
           >
             <Plus size={19} strokeWidth={2.8} aria-hidden />
             Soru ekle
@@ -287,12 +308,12 @@ export function SoruTakibiEkrani({
           // Tek satırlık sarı şerit: eskiden gerekçeyi anlatan üç cümlelik bir
           // not ve "Bugüne dön" bağlantısı vardı; kullanıcı yalnızca kuralı
           // istedi. Bugüne dönmenin yolu takvimin kendisi.
-          <Not tur="uyari" className="rounded-2xl text-center text-[13px] font-extrabold">
+          <Not tur="uyari" className="rounded-2xl text-center text-[13px] font-extrabold tablet:@min-[42rem]:col-start-1">
             Sadece bugüne ve düne soru girebilirsin
           </Not>
         )}
 
-        <div className="flex items-center justify-between gap-2 px-1 pt-0.5">
+        <div className="flex items-center justify-between gap-2 px-1 pt-0.5 tablet:@min-[42rem]:col-start-1">
           <p className="text-[13px] font-extrabold uppercase tracking-wide text-muted-foreground">
             Dersler
           </p>
@@ -304,7 +325,7 @@ export function SoruTakibiEkrani({
         </div>
 
         {satirlar.length === 0 ? (
-          <div className="rounded-[20px] border border-dashed border-border px-4 py-6 text-center">
+          <div className="rounded-[20px] border border-dashed border-border px-4 py-6 text-center tablet:@min-[42rem]:col-start-1">
             <p className="text-sm font-bold">
               {bugunMu
                 ? 'Bugüne henüz ders eklemedin'
@@ -319,7 +340,7 @@ export function SoruTakibiEkrani({
             </p>
           </div>
         ) : (
-          <div data-tanitim="soru-listesi" className="flex flex-col gap-2.5">
+          <div data-tanitim="soru-listesi" className="flex flex-col gap-2.5 tablet:@min-[42rem]:col-start-1">
             {satirlar.map((satir, indeks) => (
               <DersSatiri
                 key={satir.ders}
@@ -331,6 +352,7 @@ export function SoruTakibiEkrani({
             ))}
           </div>
         )}
+      </div>
       </div>
 
       {(tanitim ? tanitim.formAcik : sayfaAcik) && (
@@ -592,17 +614,18 @@ function SoruEkleSayfasi({
 
   return (
     <div
-      className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
+      // Tablette ortada pencere (`tablet-orta-*`, globals.css); telefonda alttan çekmece.
+      className="katman-zemin tablet-orta-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
       onClick={onKapat}
     >
       {kapatmaOnayi.pencere}
       <div
         ref={kaydir}
         data-tanitim="soru-formu"
-        className="alt-pencere-girisi max-h-[76%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-4 pt-3 pb-[calc(1.5rem+var(--guvenli-alt))]"
+        className="alt-pencere-girisi tablet-orta-pencere max-h-[76%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-4 pt-3 pb-[calc(1.5rem+var(--guvenli-alt))] tablet:px-6 tablet:pt-5"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mx-auto mb-3 h-1 w-[42px] rounded-full bg-border" />
+        <div className="tablet-orta-tutamac mx-auto mb-3 h-1 w-[42px] rounded-full bg-border" />
         <div className="mb-3.5 flex items-center gap-2.5">
           <p className="font-display text-lg font-extrabold tracking-tight">Soru ekle</p>
           <p className="ml-auto text-[12.5px] font-bold text-muted-foreground/70">Bugün</p>
