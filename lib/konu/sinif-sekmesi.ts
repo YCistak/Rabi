@@ -20,7 +20,7 @@ export type SinifSekmesi = {
    * yoksa ya da sınıfın içeriği yazılmadıysa `null`.
    */
   yuzde: number | null
-  /** İçeriği olmayan sınıf (12): seçilemiyor, "Yakında" rozetli. */
+  /** İçeriği olmayan sınıf (12): seçimde listelenmiyor. */
   pasif: boolean
   /** Kullanıcının kendi sınıfı — küçük "sen" işareti. */
   sen: boolean
