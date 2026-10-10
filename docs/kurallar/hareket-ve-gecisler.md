@@ -47,3 +47,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   notu sil, Saati kaldır) kapsam dışı.
 - Tanıtım turu sürerken (`useTanitimSuruyor`) sorulmaz: spot ışığı hedef dışı
   dokunuşu yutar, açılan onay turu kilitlerdi.
+- **Tablette alt pencere ortada:** zemine `tablet-orta-zemin`, pencereye
+  `tablet-orta-pencere`, tutamağa `tablet-orta-tutamac` (`globals.css`, katmansız —
+  Tailwind'in `max-w-md`/`rounded-t` sınıflarını ezer). Pencere içerik alanının
+  ortasında (sağdan `--ray` kadar), en çok 34rem; giriş hareketi aynı. Şimdilik Soru
+  ekle ve Pomodoro Süreler; başka alt sayfaya da aynı üç sınıf eklenir.

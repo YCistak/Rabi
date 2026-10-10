@@ -72,3 +72,12 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   kutucukları **dersi** gösterir (ders rengi), dokunuş `onOyunlaraGit(ders)` →
   `acilacakDers`, `oyunlar.tsx`te bir kez tüketilir. Ders geçmişi oyunlardan türetilir
   (`oyunlarinDersleri`).
+- **Tablet düzeni** (yalnız `tablet:` / `yatay:`; telefonda DOM aynı, piksel farkı
+  yok — iki sarmalayıcı da `space-y-3.5` taşıyor): solda "Bugün" kahraman kartı
+  (`ana-kahraman`: selam, `GeriSayim kahraman`, günlük hedef halkası + hafta), sağda
+  Araçlar, Oyunlar, aylık özet. Yatayda iki sütun ekran boyu kadar (`min-h` →
+  `--olcek`e bölünmüş `100dvh`), dikeyde kahraman üstte, altında Araçlar | Oyunlar.
+  Kahramanın içindeki kartların gölgesi `globals.css`te katmansız kuralla kalkar.
+  Halka `zoom` ile büyür (piksel boyut telefonda 78 kalsın). Kutucuklar tablette 2×2,
+  yatayda simge + ad yan yana. Bugünkü görev listesi ana sayfada yok, tablette de
+  eklenmedi (yeni özellik sayılır, sorulmadan eklenmez).
