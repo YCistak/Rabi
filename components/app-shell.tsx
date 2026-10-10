@@ -1204,7 +1204,8 @@ function RabiUygulamasi() {
           araçlardaki gibi `SayfaGecisi`nin içinde dursaydı yuvanın, yani
           bütün Pomodoro'nun altında kalırdı. */}
       {ekran === 'pomodoro' && (
-        <div data-geri-sayfa className="sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[40rem]">
+        // Tablette Pomodoro kurulumu iki sütun (`pomodoro.tsx`): geniş sayfa.
+        <div data-geri-sayfa className="sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[60rem]">
           {geriDugmesi}
           <div ref={setPomodoroYuvasi} />
         </div>

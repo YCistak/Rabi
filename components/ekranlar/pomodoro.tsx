@@ -614,18 +614,31 @@ export function PomodoroEkrani({
   }
 
   return (
-    <div>
-      <BaslikSatiri arac="pomodoro" baslik="Pomodoro" />
+    /*
+      Tablette (sayfa en az 42rem genişse) kurulum iki sütun: solda büyük
+      sayaç halkası ve altında Başlat; sağda kip, "Hangi derse?" ve ayarlar
+      kartı (Süreler, Odak koruması, ekran anahtarı). Satırlar elle
+      yerleştiriliyor; boş kalan satırlar (bildirimler yokken) sıfır boyda,
+      aralıklar öğelerin kendi alt boşluklarından (`mb-3`), ızgaranın satır
+      aralığı yok. Halka dört satırı ve bir esnek satırı kaplıyor: sağ sütun
+      halkadan kısaysa fazlalık esnek satıra gidiyor, sağdaki kartlar
+      birbirinden ayrılmıyor. Dar dikey tablette ve telefonda tek sütun.
+    */
+    <div className="tablet:@container">
+    <div className="tablet:@min-[42rem]:grid yatay:min-h-[calc(100dvh/var(--olcek)-7.5rem-var(--guvenli-ust)-var(--guvenli-alt))] tablet:@min-[42rem]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] tablet:@min-[42rem]:grid-rows-[auto_auto_auto_auto_auto_auto_1fr_auto] tablet:@min-[42rem]:gap-x-8">
+      <div className="tablet:@min-[42rem]:col-span-2 tablet:@min-[42rem]:row-start-1">
+        <BaslikSatiri arac="pomodoro" baslik="Pomodoro" />
+      </div>
 
       {bitenProva && (
-        <Not className="mb-4">
+        <Not className="mb-4 tablet:@min-[42rem]:col-span-2 tablet:@min-[42rem]:row-start-2">
           {bitenProva.ad} provası bitti — süre {bitenProva.dakika} dakikaydı, çalışma
           geçmişine yazıldı.
         </Not>
       )}
 
       {kirilanKilit && (
-        <Not tur="uyari" className="mb-4">
+        <Not tur="uyari" className="mb-4 tablet:@min-[42rem]:col-span-2 tablet:@min-[42rem]:row-start-3">
           Odak kilidini kırdın, tur baştan başlıyor.
         </Not>
       )}
@@ -639,7 +652,7 @@ export function PomodoroEkrani({
       */}
       <div data-tanitim="pomodoro-prova"
         className={cn(
-          'mb-3 flex rounded-[14px] bg-muted p-1',
+          'mb-3 flex rounded-[14px] bg-muted p-1 tablet:@min-[42rem]:col-start-2 tablet:@min-[42rem]:row-start-4',
           turIcinde && 'pointer-events-none opacity-50',
         )}
         role="tablist"
@@ -662,10 +675,13 @@ export function PomodoroEkrani({
       {/* Turda blok ekrana sığsın. `100dvh` body'deki tablet büyütmesinden
           (`zoom`) etkilenmiyor; bölünmezse iPad'de blok 1,2 kat uzuyor ve
           alt kenarı ekranın dışına taşıyordu (kart 6). */}
-      <div data-tanitim="pomodoro-calisma" style={demoVeri ? { maxHeight: "calc(100dvh / var(--olcek, 1) - 300px)", overflowY: "auto" } : undefined}>
-      <Kart data-tanitim="pomodoro-sayaci" className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5">
-        <Sayac kalan={kalan} oran={oran} mola={molaMi} boyut={168} kalinlik={10} altYazi={siradaki} />
-        <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-3" />
+      <div data-tanitim="pomodoro-calisma" className="tablet:@min-[42rem]:contents" style={demoVeri ? { maxHeight: "calc(100dvh / var(--olcek, 1) - 300px)", overflowY: "auto" } : undefined}>
+      <Kart data-tanitim="pomodoro-sayaci" className="mb-3 flex flex-col items-center rounded-3xl px-4 pt-4 pb-3.5 tablet:@min-[42rem]:col-start-1 tablet:@min-[42rem]:row-span-4 tablet:@min-[42rem]:row-start-4 tablet:@min-[42rem]:justify-center tablet:@min-[42rem]:rounded-[30px] tablet:@min-[42rem]:py-8">
+        {/* Tablette halka `zoom` ile büyüyor (boyut piksel olarak gidiyor). */}
+        <span className="tablet:[zoom:1.55]">
+          <Sayac kalan={kalan} oran={oran} mola={molaMi} boyut={168} kalinlik={10} altYazi={siradaki} />
+        </span>
+        <TurNoktalari tur={tur} turSayisi={ayar.turSayisi} gizli={prova !== null} className="mt-3 tablet:mt-6" />
       </Kart>
 
       {prova === null ? (
@@ -673,7 +689,7 @@ export function PomodoroEkrani({
            ekranda iki ayrı "ne çalışıyorsun" cevabı olamaz. Molada da yok —
            sıradaki çalışma turu başlarken yeniden görünüyor. */
         !molaMi && (
-          <div data-tanitim="pomodoro-ders" className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
+          <div data-tanitim="pomodoro-ders" className={cn('mb-3 tablet:@min-[42rem]:col-start-2 tablet:@min-[42rem]:row-start-5', turIcinde && 'pointer-events-none opacity-50')}>
             <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
               HANGİ DERSE?
             </p>
@@ -681,7 +697,7 @@ export function PomodoroEkrani({
           </div>
         )
       ) : (
-        <div className={cn('mb-3', turIcinde && 'pointer-events-none opacity-50')}>
+        <div className={cn('mb-3 tablet:@min-[42rem]:col-start-2 tablet:@min-[42rem]:row-start-5', turIcinde && 'pointer-events-none opacity-50')}>
           <p className="mb-2 ml-0.5 text-[12.5px] font-extrabold text-muted-foreground">
             HANGİ DENEMEYİ ÇÖZÜYORSUN?
           </p>
@@ -726,7 +742,7 @@ export function PomodoroEkrani({
         </div>
       )}
 
-      <Kart data-tanitim="pomodoro-ayarlar" className="mb-3 p-0">
+      <Kart data-tanitim="pomodoro-ayarlar" className="mb-3 p-0 tablet:@min-[42rem]:col-start-2 tablet:@min-[42rem]:row-start-6">
         {/* Süreler provada yok: o turda kullanılmıyorlar ve kilitli bir satır,
             kullanılıyormuş izlenimi verirdi. Ayarlar kaybolmuyor, prova
             kapatılınca aynı değerlerle geri geliyor. */}
@@ -814,13 +830,14 @@ export function PomodoroEkrani({
           (`ios-odak-ayarlari.tsx`). */}
       <div
         data-yuzen
-        className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3 tablet:bottom-[calc(0.5rem+var(--guvenli-alt))]"
+        className="sticky bottom-[calc(4.5rem+var(--guvenli-alt))] -mx-4 bg-background/95 px-4 pt-2 pb-3 tablet:bottom-[calc(0.5rem+var(--guvenli-alt))] tablet:@min-[42rem]:col-start-1 tablet:@min-[42rem]:row-start-8 tablet:@min-[42rem]:mx-0 tablet:@min-[42rem]:px-0"
       >
         <Buton className="h-[52px] w-full rounded-2xl text-[17px] shadow-[0_8px_18px_rgba(217,98,47,0.26)]" onClick={baslat}>
           <Play size={20} fill="currentColor" aria-hidden />
           {turIcinde ? 'Devam et' : 'Başlat'}
         </Buton>
       </div>
+    </div>
 
       <Cekmece acik={sureCekmecesi} baslik="Süreler" onKapat={() => setSureCekmecesi(false)}>
         <SureAyarlari ayar={ayar} setAyar={setAyar} />
@@ -912,7 +929,7 @@ function CalismaSahnesi({
       : 'duraklatıldı'
 
   return (
-    <div className="tam-katman-girisi fixed inset-0 z-50 flex yuk-ekran justify-center bg-background">
+    <div className="tam-katman-girisi fixed inset-0 z-50 flex yuk-ekran justify-center bg-background yatay:pr-[15.5rem]">
       {/*
         "Turu bitir" doğrudan bitirmiyor, önce soruyor: sayaç sıfırlanıyor ve
         tur kaydedilmiyor; düğme Duraklat'ın hemen yanında ve yanlışlıkla
@@ -927,8 +944,15 @@ function CalismaSahnesi({
         onOnayla={onBitir}
         onIptal={() => setBitirSoruluyor(false)}
       />
+      {/*
+        Yatay tablette odak düzeni: büyük sayaç ortada, sağda ince bilgi
+        şeridi (durum, ders, bitiş saati, turlar). Sahne tam ekran ve alt
+        menünün (iOS'ta cam ray) üstünde, ray görünmüyor; şerit yalnız sağ
+        güvenli alan kadar içeride. Telefonda ve dikey tablette şerit yok
+        (`hidden`), ortadaki sütun eskisi gibi; dikey tablette sayaç büyüyor.
+      */}
       <div
-        className="flex w-full max-w-md flex-col px-5"
+        className="flex w-full max-w-md flex-col px-5 yatay:max-w-[34rem]"
         style={{
           paddingTop: 'calc(1.5rem + var(--guvenli-ust))',
           paddingBottom: 'calc(1.375rem + var(--guvenli-alt))',
@@ -943,16 +967,18 @@ function CalismaSahnesi({
           >
             <ChevronLeft size={19} aria-hidden />
           </button>
-          <span className="text-[12.5px] font-extrabold tracking-[0.1em] text-muted-foreground">
+          <span className="text-[12.5px] font-extrabold tracking-[0.1em] text-muted-foreground yatay:invisible">
             {durum}
           </span>
           <span className="w-10" />
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center gap-5">
-          <span className="text-[15px] font-extrabold tracking-[0.14em] text-primary">{baslik}</span>
-          <Sayac kalan={kalan} oran={oran} mola={mola} boyut={300} kalinlik={10} altYazi={altSatir} buyuk />
-          <TurNoktalari tur={tur} turSayisi={turSayisi} gizli={turlarGizli} genis />
+          <span className="text-[15px] font-extrabold tracking-[0.14em] text-primary yatay:hidden">{baslik}</span>
+          <span className="tablet:[zoom:1.3] yatay:[zoom:1.25]">
+            <Sayac kalan={kalan} oran={oran} mola={mola} boyut={300} kalinlik={10} altYazi={altSatir} buyuk />
+          </span>
+          <TurNoktalari tur={tur} turSayisi={turSayisi} gizli={turlarGizli} genis className="yatay:hidden" />
         </div>
 
         <div className="flex shrink-0 items-center gap-2.5">
@@ -982,6 +1008,39 @@ function CalismaSahnesi({
           </SahneDugmesi>
         </div>
       </div>
+
+      <aside
+        aria-label="Tur bilgisi"
+        className="hidden yatay:absolute yatay:inset-y-0 yatay:right-0 yatay:flex yatay:w-[15.5rem] yatay:flex-col yatay:gap-6 yatay:border-l yatay:border-border yatay:bg-card yatay:px-6"
+        style={{
+          paddingTop: 'calc(2rem + var(--guvenli-ust))',
+          paddingBottom: 'calc(2rem + var(--guvenli-alt))',
+          paddingRight: 'calc(1.5rem + var(--guvenli-sag))',
+        }}
+      >
+        <SeritSatiri etiket="Durum">{durum}</SeritSatiri>
+        <SeritSatiri etiket="Bu tur">
+          <span className="text-primary">{baslik}</span>
+        </SeritSatiri>
+        <SeritSatiri etiket="Sayaç">
+          <span className="rakam">{altSatir}</span>
+        </SeritSatiri>
+        {!turlarGizli && (
+          <SeritSatiri etiket="Turlar">
+            <TurNoktalari tur={tur} turSayisi={turSayisi} gizli={false} className="mt-1.5" />
+          </SeritSatiri>
+        )}
+      </aside>
+    </div>
+  )
+}
+
+/** Odak düzenindeki bilgi şeridinin bir satırı: küçük başlık, altında değer. */
+function SeritSatiri({ etiket, children }: { etiket: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-muted-foreground">{etiket}</p>
+      <div className="mt-1 text-[15px] leading-snug font-extrabold tracking-[0.04em]">{children}</div>
     </div>
   )
 }
@@ -1096,15 +1155,15 @@ function Cekmece({
   if (!acik) return null
   return (
     <div
-      className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
+      className="katman-zemin tablet-orta-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
       onClick={onKapat}
     >
       <div
         ref={kaydir}
-        className="alt-pencere-girisi max-h-[86%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))]"
+        className="alt-pencere-girisi tablet-orta-pencere max-h-[86%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-[18px] pt-2 pb-[calc(1.5rem+var(--guvenli-alt))] tablet:px-6 tablet:pt-5"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-center pt-1.5 pb-3">
+        <div className="tablet-orta-tutamac flex justify-center pt-1.5 pb-3">
           <span className="h-[5px] w-[42px] rounded-[3px] bg-border" />
         </div>
         <div className="mb-[18px] flex items-center justify-between">
