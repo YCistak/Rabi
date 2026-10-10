@@ -114,6 +114,7 @@ export function SecimPenceresi({
   useGeriKatmani(true, onKapat)
   const kaydir = useAsagiKaydirKapat(onKapat)
   const [bakilan, setBakilan] = useState<HaritaSinifi>(secim.sinif)
+  const gorunenSiniflar = HARITA_SINIFLARI.filter((s) => !sinifPasifMi(s))
   /** Basılan ders; doluyken pencere vurguyu gösterip kapanmayı bekliyor. */
   const [secilen, setSecilen] = useState<Secim | null>(null)
   const [kapaniyor, setKapaniyor] = useState(false)
@@ -175,42 +176,41 @@ export function SecimPenceresi({
         <h2 className="mt-1 px-0.5 font-display text-[17px] font-extrabold tracking-tight">Ne çalışacaksın?</h2>
 
         <p className="mt-3 mb-2 px-1 text-[10.5px] font-black tracking-[0.14em] text-muted-foreground">SINIF</p>
-        <div role="group" aria-label="Sınıf" className="grid grid-cols-4 gap-1 rounded-[18px] bg-muted p-1">
-          {HARITA_SINIFLARI.map((sinif) => {
-            const pasif = sinifPasifMi(sinif)
+        {/* İçeriği yazılmamış sınıf (şimdilik 12) hiç listelenmiyor; kartları
+            yazılınca kendiliğinden görünüyor. "Yakında" rozeti App Store
+            incelemesinde yarım özellik gibi durduğu için kaldırıldı. */}
+        <div
+          role="group"
+          aria-label="Sınıf"
+          className="grid gap-1 rounded-[18px] bg-muted p-1"
+          style={{ gridTemplateColumns: `repeat(${gorunenSiniflar.length}, minmax(0, 1fr))` }}
+        >
+          {gorunenSiniflar.map((sinif) => {
             const secili = sinif === bakilan
             const ortalama = sinifOrtalamasi(sinif, ilerlemeler)
             return (
               <button
                 key={sinif}
                 type="button"
-                disabled={pasif}
                 onClick={() => setBakilan(sinif)}
                 aria-pressed={secili}
-                aria-label={`${sinif}. sınıf${pasif ? ', yakında' : `, yüzde ${ortalama ?? 0}`}`}
+                aria-label={`${sinif}. sınıf, yüzde ${ortalama ?? 0}`}
                 className={cn(
                   'flex min-h-[52px] flex-col items-center justify-center rounded-[14px] transition',
                   secili
                     ? 'bg-primary-parlak text-white shadow-[0_2px_8px_rgba(217,98,47,0.3)]'
                     : 'text-foreground active:bg-card/60',
-                  pasif && 'opacity-60',
                 )}
               >
                 <span className="rakam font-display text-[16px] leading-tight font-extrabold">{sinif}.</span>
-                {pasif ? (
-                  <span className="mt-0.5 rounded-full bg-background px-1.5 text-[9.5px] leading-[15px] font-extrabold text-muted-foreground">
-                    Yakında
-                  </span>
-                ) : (
-                  <span
-                    className={cn(
-                      'rakam mt-0.5 text-[11px] leading-[15px] font-bold',
-                      secili ? 'text-white/90' : 'text-muted-foreground',
-                    )}
-                  >
-                    %{ortalama ?? 0}
-                  </span>
-                )}
+                <span
+                  className={cn(
+                    'rakam mt-0.5 text-[11px] leading-[15px] font-bold',
+                    secili ? 'text-white/90' : 'text-muted-foreground',
+                  )}
+                >
+                  %{ortalama ?? 0}
+                </span>
               </button>
             )
           })}

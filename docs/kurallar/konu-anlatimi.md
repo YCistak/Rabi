@@ -121,8 +121,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   listeyi değiştirir, seçim derse basınca biter; bakılan sınıfta seçili ders yoksa
   `pencereBilgisi` satırı. **"sen" işareti yok** (kullanıcı kaldırttı). Emojiler
   `OlcekliEmoji` ile (kullanıcı istedi; hizalı satırda ham emoji telefona göre kayar).
-- **Pasif sınıf** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf) pencerede "Yakında"
-  rozetli, boş ekrana götürmez. 12, 8 dersle (2018 programı) `KONU_SINIFLARI`na girdi ve
+- **Pasif sınıf** (`sinifPasifMi`: hiçbir dersi yazılmamış sınıf) pencerede **hiç
+  listelenmez** (kullanıcı istedi, 2026-10: "Yakında" rozeti App Store incelemesinde
+  yarım özellik gibi duruyordu); dersi yazılınca kendiliğinden görünür. 12, 8 dersle (2018 programı) `KONU_SINIFLARI`na girdi ve
   hücre kendiliğinden açıldı; `HaritaSinifi` artık `KonuSinifi`nin eşi. Kilitli "yapım
   aşamasında" kartı yalnız içeriği boşalan sınıf ya da eski kayıt için duruyor.
 - **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
