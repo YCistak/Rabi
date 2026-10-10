@@ -36,6 +36,7 @@ export function GeriSayim({
   sinif,
   className,
   children,
+  kahraman = false,
 }: {
   tarih: string
   /** Öğrencinin sınıfı: geri sayım herkese sıradaki YKS'yi değil, onun gireceği YKS'yi sayıyor. */
@@ -47,6 +48,12 @@ export function GeriSayim({
    * ("ne kadar kaldı"), ayrı kartlarda dururken aralarındaki bağ kayboluyordu.
    */
   children?: React.ReactNode
+  /**
+   * Ana sayfanın tablet kahraman kartının içinde: tablette kart düzleşiyor
+   * (zemin ve gölge kahramandan), sayı büyüyor, hedef paneli dibe iniyor.
+   * Son haftanın dolu kartı rengini koruyor. Telefonda hiçbir şey değişmez.
+   */
+  kahraman?: boolean
 }) {
   const sayim = useMemo(() => geriSayim(tarih, sinif), [tarih, sinif])
 
@@ -64,6 +71,8 @@ export function GeriSayim({
       className={cn(
         'golge-kart overflow-hidden rounded-[26px] p-3.5',
         doluKart ? 'bg-ikincil text-white' : 'bg-card text-card-foreground',
+        kahraman && 'tablet:flex tablet:flex-col tablet:rounded-[22px]',
+        kahraman && !doluKart && 'tablet:bg-transparent tablet:p-1 tablet:shadow-none',
         className,
       )}
     >
@@ -93,15 +102,16 @@ export function GeriSayim({
           <span className="font-display text-[40px] leading-none font-extrabold">Bugün!</span>
         ) : (
           <>
-            <span className="rakam font-display text-[38px] leading-none font-extrabold tracking-tight">
+            <span className={cn('rakam font-display text-[38px] leading-none font-extrabold tracking-tight', kahraman && 'tablet:text-[72px] tablet:tracking-[-0.03em]')}>
               {sayim.kalanGun}
             </span>
             {/* Nokta ayracı "gün kaldı"nın ucunda, tarihin başında değil:
                 satır sarınca baştaki nokta alt satırda tek başına kalıyordu. */}
-            <span className="font-display text-base font-extrabold">gün kaldı ·</span>
+            <span className={cn('font-display text-base font-extrabold', kahraman && 'tablet:text-[22px]')}>gün kaldı ·</span>
             <span
               className={cn(
                 'text-[13px] font-semibold',
+                kahraman && 'tablet:text-[16px]',
                 doluKart ? 'text-white/85' : 'text-muted-foreground',
               )}
             >
@@ -150,6 +160,7 @@ export function GeriSayim({
         <div
           className={cn(
             'mt-2.5 rounded-[18px] p-2.5',
+            kahraman && 'tablet:mt-4 tablet:p-3.5',
             doluKart ? 'bg-white/15' : 'bg-background',
           )}
         >
