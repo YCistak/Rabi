@@ -1458,6 +1458,7 @@ function RabiUygulamasi() {
                 acilacakKonu={haritaIstegi}
                 onKonuAcildi={() => setHaritaIstegi(null)}
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
+                sesAcik={ayarlar.oyunSesi}
               />
             )}
             {sekme === 'daha' && <KartMenusu onKartAc={aracAc} />}

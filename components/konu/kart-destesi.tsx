@@ -72,6 +72,7 @@ export function KartDestesi({
   temaAdi,
   dersAdi,
   bicim,
+  sesAcik,
   onKapat,
 }: {
   konu: Konu
@@ -85,6 +86,7 @@ export function KartDestesi({
    * çubuk dersin rengini taşıyor.
    */
   bicim: HaritaTemasi
+  sesAcik: boolean
   onKapat: (sonuc: DesteSonucu) => void
 }) {
   /*
@@ -222,6 +224,7 @@ export function KartDestesi({
           kontrol={konu.kontroller[bu.sira]}
           okunan={okunanBuraya}
           toplam={toplam}
+          sesAcik={sesAcik}
           onKapat={kapat}
           onTekrarOku={() => kartaDon(konu.kontroller[bu.sira].kart)}
           onDevam={ilerle}

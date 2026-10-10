@@ -287,6 +287,7 @@ export function KonuHaritasiEkrani({
   ilerlemeler,
   setIlerlemeler,
   onOkumaSeansi,
+  sesAcik,
   acilacakKonu = null,
   onKonuAcildi,
 }: {
@@ -298,6 +299,8 @@ export function KonuHaritasiEkrani({
   setIlerlemeler: (guncelle: (onceki: KonuIlerlemeleri) => KonuIlerlemeleri) => void
   /** Deste kapanınca geçen süre buraya yazılıyor; kayıt `AppShell`de. */
   onOkumaSeansi: (seans: OkumaSeansi) => void
+  /** Ayarlar'daki oyun sesi; destedeki hızlı kontrol de ona uyuyor. */
+  sesAcik: boolean
   /**
    * Konu Takibi'nden gelen "bu konuyu aç" isteği. Harita o dersin ve sınıfın
    * programına geçip konunun kartını açıyor, sonra `onKonuAcildi` ile isteği
@@ -539,6 +542,7 @@ export function KonuHaritasiEkrani({
         temaAdi={acikKonu.temaAdi}
         dersAdi={dersAdi}
         bicim={bicim}
+        sesAcik={sesAcik}
         onKapat={(sonuc) => desteBitti(acikKonu, sonuc)}
       />
     )
