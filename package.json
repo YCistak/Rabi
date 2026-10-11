@@ -2,6 +2,7 @@
   "name": "rabi",
   "version": "1.0.2",
   "private": true,
+  "license": "AGPL-3.0-only",
   "scripts": {
     "predev": "node scripts/ocr-hazirla.mjs",
     "prebuild": "node scripts/ocr-hazirla.mjs",
