@@ -1,0 +1,34 @@
+name: Özellik önerisi
+description: Rabi'de görmek istediğin yeni bir şey var.
+title: "[Öneri] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Rabi'de bazı şeyler bilerek yok ve tasarım kararları [AGENTS.md](https://github.com/YCistak/Rabi/blob/master/AGENTS.md)
+        dosyasında yazılı. Önermeden önce göz atman iyi olur.
+  - type: textarea
+    id: sorun
+    attributes:
+      label: Hangi sorunu çözüyor?
+      description: Şu an ne yapamıyorsun ya da neyi zor buluyorsun?
+    validations:
+      required: true
+  - type: textarea
+    id: oneri
+    attributes:
+      label: Önerin
+      description: Nasıl çalışmasını istersin?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatif
+    attributes:
+      label: Düşündüğün başka yollar
+  - type: checkboxes
+    id: katki
+    attributes:
+      label: Katkı
+      options:
+        - label: Bunu kendim yapmak isterim (önce burada konuşalım).

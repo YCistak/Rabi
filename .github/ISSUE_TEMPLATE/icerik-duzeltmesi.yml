@@ -1,0 +1,58 @@
+name: İçerik düzeltmesi
+description: Müfredatta, konu kartında veya bir soruda yanlış ya da eksik bilgi var.
+title: "[İçerik] "
+labels: ["icerik"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Öğretmenler ve öğrenciler için: kod bilmen gerekmez. Yanlış bilgi, hatalı cevap
+        ya da müfredatta olup uygulamada bulunmayan bir konu varsa buradan bildir.
+  - type: dropdown
+    id: tur
+    attributes:
+      label: Ne tür bir sorun?
+      options:
+        - Yanlış bilgi
+        - Hatalı soru veya cevap
+        - Eksik konu (müfredatta var, uygulamada yok)
+        - Yazım veya anlatım hatası
+        - Diğer
+    validations:
+      required: true
+  - type: dropdown
+    id: yer
+    attributes:
+      label: Nerede?
+      options:
+        - Harita (konu kartı veya yoklama)
+        - Mini oyun
+        - Konu Takibi
+        - Diğer
+    validations:
+      required: true
+  - type: input
+    id: konum
+    attributes:
+      label: Sınıf, ders ve konu (veya oyun adı)
+      placeholder: "Örn. 11. sınıf Matematik, Trigonometri"
+    validations:
+      required: true
+  - type: textarea
+    id: simdi
+    attributes:
+      label: Şu an ne yazıyor?
+      description: Metni ya da soruyu aynen yaz veya ekran görüntüsü ekle.
+    validations:
+      required: true
+  - type: textarea
+    id: dogrusu
+    attributes:
+      label: Doğrusu ne olmalı?
+    validations:
+      required: true
+  - type: textarea
+    id: kaynak
+    attributes:
+      label: Kaynak
+      description: MEB ders kitabı sayfası, Talim ve Terbiye Kurulu müfredatı, ÖSYM kılavuzu vb. Varsa yaz.
