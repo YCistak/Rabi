@@ -187,10 +187,13 @@ jobs:
           whatsNewDirectory: android/surum-notlari
           mappingFile: ${{ steps.play.outputs.mapping }}
 
+      # Taslak: sürüm yalnızca yazma yetkisi olanlara görünür; APK/AAB herkese
+      # açık indirme olarak yayımlanmaz. Yayımlamak gerekirse elle yapılır.
       - name: Sürüm oluştur
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
+          draft: true
           files: |
             dist/*.apk
             dist/*.aab
