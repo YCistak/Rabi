@@ -28,7 +28,7 @@ body:
     id: surum
     attributes:
       label: Rabi sürümü
-      description: Ayarlar ekranının altında yazar.
+      description: Biliyorsan yaz (mağazadaki sürüm numarası).
   - type: dropdown
     id: platform
     attributes:
