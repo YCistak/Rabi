@@ -1,0 +1,51 @@
+name: Hata bildirimi
+description: Uygulama beklediğin gibi çalışmıyor.
+title: "[Hata] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bildirdiğin için teşekkürler. Lütfen kişisel bilgi (ad, e-posta, okul vb.) yazma.
+  - type: textarea
+    id: ne-oldu
+    attributes:
+      label: Ne oldu?
+      description: Beklediğin ile gördüğün arasındaki fark nedir?
+    validations:
+      required: true
+  - type: textarea
+    id: adimlar
+    attributes:
+      label: Nasıl yeniden üretilir?
+      description: Adım adım yaz.
+      placeholder: |
+        1. Ayarlar'ı aç
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: surum
+    attributes:
+      label: Rabi sürümü
+      description: Biliyorsan yaz (mağazadaki sürüm numarası).
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Android
+        - iOS
+        - Tarayıcı (geliştirme)
+    validations:
+      required: true
+  - type: input
+    id: cihaz
+    attributes:
+      label: Cihaz ve işletim sistemi sürümü
+      placeholder: "Örn. Pixel 7, Android 15"
+  - type: textarea
+    id: ekran-goruntusu
+    attributes:
+      label: Ekran görüntüsü
+      description: Varsa buraya sürükleyip bırak.
