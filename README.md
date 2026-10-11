@@ -12,7 +12,7 @@ Yakında App Store ve Google Play'de.
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
 ![Capacitor](https://img.shields.io/badge/Capacitor-8-119eff?logo=capacitor&logoColor=white)
-![License](https://img.shields.io/badge/license-MIT-green)
+![License](https://img.shields.io/badge/license-AGPL--3.0-blue)
 
 <sub><i>An offline-first study assistant for Turkish university-entrance exam (YKS) candidates.</i></sub>
 
@@ -129,7 +129,12 @@ Play Store güncelleme denetimi. Ayrıntılar: [gizlilik politikası](https://yc
 
 ## Lisans
 
-Kaynak kod [MIT](LICENSE) lisansıyla paylaşılır.
+Kaynak kod [GNU Affero Genel Kamu Lisansı v3.0](LICENSE) (AGPL-3.0-only) ile paylaşılır.
+Copyright (C) 2026 Fluxify Interactive ve katkıcılar.
+
+Kodu kullanabilir, değiştirebilir ve dağıtabilirsin; ancak değiştirilmiş hâlini dağıtır ya da
+bir ağ hizmeti olarak sunarsan kaynak kodunu da aynı lisansla açman gerekir.
+v1.0.2 ve önceki sürümler MIT lisansıyla yayımlanmıştı.
 
 **"Rabi" adı, logosu ve tavşan maskotu lisans kapsamı dışındadır**; Fluxify Interactive'e
 aittir ve izinsiz kullanılamaz.

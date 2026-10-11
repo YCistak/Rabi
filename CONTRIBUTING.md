@@ -4,6 +4,10 @@ Rabi'ye ilgi duyduğun için teşekkürler. Bu belge, nasıl katkı verebileceğ
 projeyi yerelde nasıl çalıştıracağını anlatır. Katılırken [Davranış Kuralları](CODE_OF_CONDUCT.md)
 geçerlidir.
 
+## Lisans
+
+Gönderdiğin katkılar projenin lisansı olan [AGPL-3.0](LICENSE) kapsamında kabul edilir.
+
 ## Önce issue aç
 
 Pull request (PR) açabilirsin, ama **önce bir issue aç** ve ne yapmak istediğini yaz.
