@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { denemeyiCoz, okumaPuani, sablonOnerisi } from './deneme-okuma'
+import { denemeyiCoz, ORNEK_KAGIT, okumaPuani, sablonOnerisi } from './deneme-okuma'
 import { HAZIR_SABLONLAR } from './sablonlar'
 import type { Sablon } from './types'
 
@@ -20,6 +20,9 @@ function tablo(metin: string, s: Sablon = TYT): Record<string, string> {
 }
 
 describe('önerilen yazım', () => {
+  it('Okut penceresindeki çok satırlı örnek TYT şablonuyla okunuyor', () => {
+    expect(tablo(ORNEK_KAGIT)).toEqual({ turkce: '32/6', matematik: '30/6', fizik: '5/1' })
+  })
   it('çelişen üçlü ve yinelenen sayıları forma yazmaz', () => {
     expect(tablo('Matematik 28D 8Y 5B')).toEqual({})
     expect(tablo('Matematik 28D 8Y 4B')).toEqual({ matematik: '28/8' })

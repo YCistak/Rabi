@@ -5,7 +5,7 @@ import { Camera, ImagePlus, LoaderCircle, ScanLine } from 'lucide-react'
 import { Camera as CihazKamerasi, CameraResultType, CameraSource } from '@capacitor/camera'
 import { Buton, Not } from '@/components/ui'
 import { cihazdaMi } from '@/lib/kamera'
-import { denemeyiCoz, type OkunanDers } from '@/lib/deneme-okuma'
+import { denemeyiCoz, ORNEK_KAGIT, type OkunanDers } from '@/lib/deneme-okuma'
 import { useGeriKatmani } from '@/lib/geri'
 import type { Sablon } from '@/lib/types'
 
@@ -105,7 +105,7 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
       <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-extrabold text-primary">Beta</span>
     </Buton>
     {acik && <div role="dialog" aria-modal="true" aria-labelledby="deneme-okut-baslik" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-xl">
+      <div className="max-h-[90dvh] w-full max-w-sm overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-xl">
         <h2 id="deneme-okut-baslik" className="font-display mb-2 text-lg font-semibold">Kâğıdı okut</h2>
         <input ref={girdi} type="file" accept="image/*" className="hidden" aria-label="Deneme fotoğrafı seç" onChange={(olay) => {
           const dosya = olay.target.files?.[0]
@@ -117,7 +117,17 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
           <Buton bicim="hayalet" onClick={kapat}>Vazgeç</Buton>
         </div> : <>
           <p className="mb-1 text-sm text-muted-foreground">Kâğıdı düz tut, iyi ışıkta çek; sonuç tablosunun tamamı kadrajda olsun.</p>
-          <p className="mb-4 text-sm font-semibold">Okunan sayıları kontrol et.</p>
+          <p className="mb-3 text-sm font-semibold">Okunan sayıları kontrol et.</p>
+          <section aria-labelledby="deneme-okut-ornek" className="mb-4 rounded-xl bg-primary-soft/40 p-3">
+            <h3 id="deneme-okut-ornek" className="mb-1.5 text-sm font-bold">Ne okutmalısın?</h3>
+            <p className="mb-2 text-xs text-muted-foreground">Her ders için tek satır: ders adı, sonra D (doğru), Y (yanlış), B (boş) sayıları.</p>
+            <pre className="rakam mb-2 overflow-x-auto rounded-lg border border-border bg-card px-3 py-2 font-mono text-xs leading-relaxed" aria-label="Örnek kâğıt satırları">{ORNEK_KAGIT}</pre>
+            <ul className="list-disc space-y-0.5 pl-4 text-xs text-muted-foreground">
+              <li>Sonuç tablosunu veya kitapçığın üstüne yazdığın satırları düz ve iyi ışıkta çek.</li>
+              <li>Ders adı ve D/Y/B sayıları net görünsün; üçünden ikisi yeter, üçüncüsü soru sayısından bulunur.</li>
+              <li>Okunamayan satır boş kalır; kutuları aktarmadan önce kontrol et.</li>
+            </ul>
+          </section>
           {hata && <Not tur="tehlike" className="mb-3">{hata}</Not>}
           <div className="flex flex-col gap-2">
             {cihazdaMi() && <Buton onClick={() => void fotografSec('kamera')}><Camera size={18} />Fotoğraf çek</Buton>}

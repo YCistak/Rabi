@@ -44,6 +44,17 @@ export const ORNEK_YAZIM = 'Matematik 38D 2Y'
  */
 export const ORNEK_YAZIM_BOS = 'Türkçe 15D 20B'
 
+/**
+ * Okut penceresinde gösterilen çok satırlı örnek.
+ *
+ * Sayılar bilerek tutarlı: TYT'de Türkçe 40, Temel Matematik 40, Fizik 7 soru
+ * ve D+Y+B soru sayısına eşit olmayan satırı ayrıştırıcı atlıyor. Testte TYT
+ * şablonuyla çözülüp üç dersin de okunduğu doğrulanıyor.
+ */
+export const ORNEK_KAGIT = `Türkçe 32D 6Y 2B
+Matematik 30D 6Y 4B
+Fizik 5D 1Y 1B`
+
 export type OkunanDers = {
   dersId: string
   dogru: number
