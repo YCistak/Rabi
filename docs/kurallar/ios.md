@@ -72,5 +72,7 @@ reddedildi.
   yollarını `scripts/ios-yol-duzelt.mjs` düzeltir), çıplak `cap sync ios` değil.
 - **Yayın:** `v*` etiketi Play'e (varsayılan kapalı test) otomatik yükler (kurulum ve
   akış `RELEASE.md` › "Otomatik yayın") ve `ios-testflight.yml` ile TestFlight'a; sürüm `android/app/build.gradle`dan
-  (`versionName`, `versionCode` + çalıştırma sayısı). Mağazaya App Store Connect'ten
-  elle gönderilir.
+  (`versionName`, `versionCode` + çalıştırma sayısı). Yüklemeden sonra
+  `app-store-gonder.yml` derlemeyi App Store incelemesine gönderir; "yenilikler"
+  metni Play'inkiyle aynı dosyadan (`android/surum-notlari/whatsnew-tr-TR`) gelir,
+  o yüzden notta başka platform/mağaza adı geçmez.

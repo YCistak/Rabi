@@ -1,0 +1,58 @@
+name: App Store incelemesine gönder
+
+# TestFlight'taki derlemeyi App Store incelemesine gönderiyor: derlemenin
+# işlenmesini bekler, sürümü oluşturur, "yenilikler" alanına Play'in sürüm
+# notunu yazar, derlemeyi bağlar ve gönderir. Ayrıntı:
+# `scripts/app-store-gonder.py`.
+#
+# İki yoldan çalışır:
+# - `ios-testflight.yml` etiketle tetiklendiğinde, yüklemeden sonra kendisi
+#   çağırır (`workflow_call`).
+# - Elle (`workflow_dispatch`): yükleme olmuş ama gönderim düşmüşse, ya da
+#   eski bir derlemeyi göndermek için.
+#
+# İşleme beklemesi uzun sürebildiği için macOS değil Linux makinesinde çalışır.
+# Secret'lar `ios-testflight.yml` ile aynı (APP_STORE_CONNECT_*).
+
+on:
+  workflow_call:
+    inputs:
+      surum:
+        type: string
+        required: true
+      derleme:
+        type: string
+        required: false
+        default: ''
+  workflow_dispatch:
+    inputs:
+      surum:
+        description: 'App Store sürümü (ör. 1.0.3)'
+        required: true
+      derleme:
+        description: 'Derleme numarası (ör. 106.42). Boşsa o sürümün en yeni derlemesi.'
+        required: false
+        default: ''
+
+jobs:
+  gonder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: İncelemeye gönder
+        env:
+          SURUM: ${{ inputs.surum }}
+          DERLEME: ${{ inputs.derleme }}
+          ANAHTAR: ${{ secrets.APP_STORE_CONNECT_KEY }}
+          ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          for ad in ANAHTAR ANAHTAR_KIMLIGI YAYINCI; do
+            if [ -z "${!ad}" ]; then echo "::error::$ad secret'ı eksik"; exit 1; fi
+          done
+          python3 -m venv "$RUNNER_TEMP/py"
+          "$RUNNER_TEMP/py/bin/pip" install -q pyjwt cryptography
+          "$RUNNER_TEMP/py/bin/python" -I scripts/app-store-gonder.py

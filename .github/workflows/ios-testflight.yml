@@ -1,8 +1,8 @@
 name: iOS'u TestFlight'a yükle
 
 # Android'deki `v*` etiketi iOS'u da yayına hazırlıyor: aynı etiket, aynı
-# derleme. TestFlight'a düşen derleme herkese açık değil; mağazaya ancak App
-# Store Connect'ten elle incelemeye gönderilince çıkıyor.
+# derleme. TestFlight'a yüklendikten sonra etiketli derleme
+# `app-store-gonder.yml` ile kendiliğinden App Store incelemesine gönderilir.
 #
 # İmza elle yönetilmiyor: sertifika ve provisioning profili Apple'ın bulut
 # imzalaması API anahtarıyla kendisi üretiyor (`-allowProvisioningUpdates`).
@@ -32,6 +32,9 @@ on:
 jobs:
   testflight:
     runs-on: macos-latest
+    outputs:
+      ad: ${{ steps.surum.outputs.ad }}
+      numara: ${{ steps.surum.outputs.numara }}
 
     steps:
       - uses: actions/checkout@v4
@@ -214,3 +217,15 @@ jobs:
       - name: Anahtarı sil
         if: always()
         run: rm -f "$RUNNER_TEMP/AuthKey.p8"
+
+  # Etiketle gelen derleme yüklendikten sonra kendiliğinden App Store
+  # incelemesine gider (`app-store-gonder.yml`). Elle tetiklenen derlemeler
+  # (cihaz kaydı, dal denemesi) gönderilmez.
+  incelemeye-gonder:
+    needs: testflight
+    if: github.ref_type == 'tag'
+    uses: ./.github/workflows/app-store-gonder.yml
+    secrets: inherit
+    with:
+      surum: ${{ needs.testflight.outputs.ad }}
+      derleme: ${{ needs.testflight.outputs.numara }}
