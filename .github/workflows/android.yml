@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       iz:
-        description: 'Play izi (track). Etiketle tetiklemede varsayılan alpha (kapalı test).'
+        description: 'Play izi (track). Etiketle tetiklemede girdi yoktur ve production kullanılır.'
         type: choice
         options: [alpha, internal, beta, production]
         default: alpha
@@ -152,10 +152,10 @@ jobs:
             echo "::warning::Paket imzasız; Play'e yükleme atlandı."
           fi
 
-          iz="${GIRDI_IZ:-alpha}"   # etiket tetiklemesinde girdi boş: kapalı test
-          # Production'da `completed` değil `draft`: etiket yanlışlıkla canlıya
-          # çıkmasın; taslak Console'da elle gözden geçirilip gönderilir.
-          if [ "$iz" = "production" ]; then durum=draft; else durum=completed; fi
+          iz="${GIRDI_IZ:-production}"   # etiket tetiklemesinde girdi boş: doğrudan production
+          # Her izde `completed`: sürüm taslak kalmaz, otomatik yayınlanır.
+          # Etiket atmak production'a canlı yayın demektir (kullanıcı kararı).
+          durum=completed
 
           paket=$(sed -nE 's/^[[:space:]]*applicationId "([^"]+)".*/\1/p' android/app/build.gradle)
           ad=$(sed -nE 's/^[[:space:]]*versionName "([^"]+)".*/\1/p' android/app/build.gradle)

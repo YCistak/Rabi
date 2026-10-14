@@ -1,0 +1,33 @@
+name: Play'de production'a yükselt
+
+# Alpha'daki var olan bir sürümü (yeniden yüklemeden) production'a çıkarır.
+on:
+  workflow_dispatch:
+    inputs:
+      versioncode:
+        description: 'Yükseltilecek versionCode (ör. 106)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  yukselt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install google-auth google-api-python-client
+
+      - name: Production'a yükselt
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          VERSIONCODE: ${{ inputs.versioncode }}
+        run: |
+          paket=$(sed -nE 's/^[[:space:]]*applicationId "([^"]+)".*/\1/p' android/app/build.gradle)
+          python scripts/play_yukselt.py "$paket" "$VERSIONCODE" --kaynak alpha --hedef production
