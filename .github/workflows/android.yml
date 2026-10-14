@@ -174,8 +174,13 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           echo "Play: iz=$iz durum=$durum paket=$paket yukle=$yukle"
 
+      # Production izni henüz yoksa (403) yükleme düşer. Yalnızca hedef iz
+      # production iken hata yutulur ve aşağıdaki yedek adım alpha'ya yükler;
+      # başka izlerde hata normal şekilde işi başarısız eder.
       - name: Play'e yükle
+        id: play_yukle
         if: steps.play.outputs.yukle == 'true'
+        continue-on-error: ${{ steps.play.outputs.iz == 'production' }}
         uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
@@ -186,6 +191,27 @@ jobs:
           status: ${{ steps.play.outputs.durum }}
           whatsNewDirectory: android/surum-notlari
           mappingFile: ${{ steps.play.outputs.mapping }}
+
+      # Yedek: production reddettiyse aynı AAB alpha'ya yüklenir. Bu da
+      # düşerse iş başarısız olur (continue-on-error yok).
+      - name: Production reddetti, alpha'ya yükle
+        if: steps.play.outputs.yukle == 'true' && steps.play.outputs.iz == 'production' && steps.play_yukle.outcome == 'failure'
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: ${{ steps.play.outputs.paket }}
+          releaseFiles: dist/rabi-${{ steps.cikti.outputs.ad }}.aab
+          releaseName: ${{ steps.play.outputs.ad }}
+          track: alpha
+          status: ${{ steps.play.outputs.durum }}
+          whatsNewDirectory: android/surum-notlari
+          mappingFile: ${{ steps.play.outputs.mapping }}
+
+      - name: Yedek yüklemeyi duyur
+        if: steps.play.outputs.yukle == 'true' && steps.play.outputs.iz == 'production' && steps.play_yukle.outcome == 'failure'
+        run: |
+          echo "::warning::Production yüklemesi reddedildi (izin yok olabilir); AAB alpha'ya yüklendi."
+          echo "Production reddetti, alpha'ya yüklendi." >> "$GITHUB_STEP_SUMMARY"
 
       # Taslak: sürüm yalnızca yazma yetkisi olanlara görünür; APK/AAB herkese
       # açık indirme olarak yayımlanmaz. Yayımlamak gerekirse elle yapılır.
