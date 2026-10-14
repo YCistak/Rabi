@@ -3,6 +3,10 @@
 Rabi'nin sürüm sürüm değişiklikleri; en yeni üstte. Sürüm numaraları `v0.9.x` ile
 başlar, `v1.0.0` mağaza öncesi ilk kararlı sürümdür.
 
+## 1.0.3 (14 Ekim 2026)
+
+- Denemeyi okut penceresine "Ne okutmalısın?" örneği ve çekim ipuçları eklendi.
+
 ## 1.0.2 (10 Ekim 2026)
 
 - Tablet: Ana Sayfa, Pomodoro ve Soru Takibi ekranları geniş ekrana göre yeniden yerleşti.
