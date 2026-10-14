@@ -33,11 +33,13 @@ def main():
     servis = build("androidpublisher", "v3", credentials=kimlik, cache_discovery=False)
     edits = servis.edits()
 
+    adim = "edits.insert"
     try:
         edit = edits.insert(packageName=g.paket, body={}).execute()
         eid = edit["id"]
 
         # Kaynak izde bu versionCode gerçekten var mı, onu doğrula.
+        adim = "tracks.get"
         kaynak = edits.tracks().get(packageName=g.paket, editId=eid, track=g.kaynak).execute()
         bulundu = any(g.versioncode in (int(v) for v in r.get("versionCodes", []))
                       for r in kaynak.get("releases", []))
@@ -59,12 +61,14 @@ def main():
             if g.versioncode in (int(v) for v in r.get("versionCodes", [])) and r.get("name"):
                 surum["name"] = r["name"]
 
+        adim = "tracks.update"
         edits.tracks().update(packageName=g.paket, editId=eid, track=g.hedef,
                               body={"track": g.hedef, "releases": [surum]}).execute()
+        adim = "edits.commit"
         sonuc = edits.commit(packageName=g.paket, editId=eid).execute()
         print("Yükseltme tamam:", json.dumps(sonuc))
     except HttpError as e:
-        print("Google API hatası (aynen):", file=sys.stderr)
+        print(f"Google API hatası, adım={adim} (aynen):", file=sys.stderr)
         print(e.content.decode("utf-8", "replace"), file=sys.stderr)
         sys.exit(2)
 
