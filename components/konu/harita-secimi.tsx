@@ -127,6 +127,20 @@ export function SecimPenceresi({
   }, [])
 
   /*
+    Pencere açıkken arkadaki harita kaymıyor: pencere `fixed` ama sayfanın
+    kaydırması body'de, ve pencerede kaydırılacak bir şey kalmayınca (ya da
+    zemine dokununca) parmak hareketi haritayı aşağı kaydırıyordu. Pencerenin
+    kendi kaydırması da sonuna gelince sayfaya geçmesin diye `overscroll-contain`.
+  */
+  useEffect(() => {
+    const oncekiTasma = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = oncekiTasma
+    }
+  }, [])
+
+  /*
     Ders seçilince pencere anında sökülüyordu: kullanıcı neyi seçtiğini
     göremiyordu. Şimdi seçim önce vurgulanıyor, sonra pencere animasyonla
     kapanıyor. Bu sürede pencere dokunuşları yutuyor — ikinci basış ya da
@@ -159,7 +173,7 @@ export function SecimPenceresi({
         aria-modal="true"
         aria-label="Sınıf ve ders seç"
         className={cn(
-          'flex max-h-[88dvh] w-full max-w-md flex-col overflow-y-auto rounded-t-[26px] bg-card px-4 pt-2.5 pb-[calc(var(--guvenli-alt)+20px)] shadow-[0_-12px_34px_rgba(90,60,35,0.18)]',
+          'flex max-h-[88dvh] w-full max-w-md flex-col overflow-y-auto overscroll-contain rounded-t-[26px] bg-card px-4 pt-2.5 pb-[calc(var(--guvenli-alt)+20px)] shadow-[0_-12px_34px_rgba(90,60,35,0.18)]',
           kapaniyor ? 'alt-pencere-cikisi' : 'alt-pencere-girisi',
           secilen && '[&_button]:pointer-events-none',
         )}
