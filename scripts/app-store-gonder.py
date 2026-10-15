@@ -30,6 +30,10 @@ ARALIK = 60
 
 SURUM = os.environ['SURUM'].strip().lstrip('v')
 DERLEME = os.environ.get('DERLEME', '').strip()
+# İncelemeyi bekleyen eski bir sürüm varsa Apple yeni sürüm açtırmıyor (409).
+# Bu bayrakla o gönderim iptal edilir; sürüm düzenlenebilir hâle düşer ve
+# aşağıda yeni sürüm numarasına çevrilir. Yayındaki sürüm etkilenmez.
+GERI_CEK = os.environ.get('GERI_CEK', '').strip().lower() in ('1', 'true', 'evet')
 OZET = os.environ.get('GITHUB_STEP_SUMMARY')
 
 
@@ -137,6 +141,37 @@ INCELEMEDE = {'WAITING_FOR_REVIEW', 'IN_REVIEW', 'PENDING_DEVELOPER_RELEASE',
 def durum_of(s):
     a = s['attributes']
     return a.get('appStoreState') or a.get('appVersionState') or '?'
+
+
+def surumleri_oku():
+    return al(f'/apps/{uygulama_id}/appStoreVersions?' + urllib.parse.urlencode(
+        {'filter[platform]': 'IOS', 'limit': '200'}), 'Sürümleri okuma')['data']
+
+
+bekleyen = [s for s in surumler if durum_of(s) == 'WAITING_FOR_REVIEW'
+            and s['attributes']['versionString'] != SURUM]
+if GERI_CEK and bekleyen:
+    gonderimler = al('/reviewSubmissions?' + urllib.parse.urlencode({
+        'filter[app]': uygulama_id, 'filter[platform]': 'IOS',
+        'filter[state]': 'WAITING_FOR_REVIEW', 'limit': '10'}), 'Bekleyen gönderimleri okuma')['data']
+    for g in gonderimler:
+        kod, yanit = istek('/reviewSubmissions/' + g['id'], {'data': {
+            'type': 'reviewSubmissions', 'id': g['id'],
+            'attributes': {'canceled': True}}}, 'PATCH')
+        if kod != 200:
+            dur('Bekleyen gönderimi geri çekme', kod, yanit)
+        print(f'Bekleyen gönderim geri çekildi: {g["id"]}')
+    # İptal eşzamansız; sürüm düzenlenebilir hâle düşene kadar bekle.
+    baslangic = time.time()
+    while True:
+        surumler = surumleri_oku()
+        hala = [s['attributes']['versionString'] for s in surumler
+                if durum_of(s) in ('WAITING_FOR_REVIEW', 'IN_REVIEW')]
+        if not hala:
+            break
+        if time.time() - baslangic > 15 * 60:
+            dur('Geri çekmeyi bekleme', 0, f'15 dk içinde düşmedi: {hala}')
+        time.sleep(20)
 
 
 for s in surumler:

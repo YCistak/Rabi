@@ -33,6 +33,10 @@ on:
         description: 'Derleme numarası (ör. 106.42). Boşsa o sürümün en yeni derlemesi.'
         required: false
         default: ''
+      geri_cek:
+        description: 'İncelemeyi bekleyen eski sürümü geri çekip bunu gönder'
+        type: boolean
+        default: false
 
 jobs:
   gonder:
@@ -46,6 +50,7 @@ jobs:
         env:
           SURUM: ${{ inputs.surum }}
           DERLEME: ${{ inputs.derleme }}
+          GERI_CEK: ${{ inputs.geri_cek }}
           ANAHTAR: ${{ secrets.APP_STORE_CONNECT_KEY }}
           ANAHTAR_KIMLIGI: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
           YAYINCI: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
