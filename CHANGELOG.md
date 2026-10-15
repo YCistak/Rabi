@@ -3,6 +3,12 @@
 Rabi'nin sürüm sürüm değişiklikleri; en yeni üstte. Sürüm numaraları `v0.9.x` ile
 başlar, `v1.0.0` mağaza öncesi ilk kararlı sürümdür.
 
+## 1.0.4 (15 Ekim 2026)
+
+- iOS 15 cihazlarda açılışta "Rabi açılamadı" hatası düzeltildi (derleme Safari 15 hedefliyor).
+- Hızlı kontrol sorularında doğru/yanlış cevapta oyun sesi.
+- Harita: Türkçe her sınıfta "Türk Dili ve Edebiyatı"; seçim penceresi açıkken arka plan kaymıyor.
+
 ## 1.0.3 (14 Ekim 2026)
 
 - Denemeyi okut penceresine "Ne okutmalısın?" örneği ve çekim ipuçları eklendi.
