@@ -6,6 +6,7 @@ import type { HizliKontrol } from '@/lib/konu'
 import type { HaritaTemasi } from '@/lib/konu/harita-temasi'
 import { useGeriKatmani } from '@/lib/geri'
 import { cn } from '@/lib/utils'
+import { oyunSesiCal } from '@/lib/oyunlar/oyun-sesi'
 import { Buton } from '@/components/ui'
 import { Sigdir } from './sigdir'
 import { Rabi } from '@/components/maskot/rabi'
@@ -40,6 +41,7 @@ export function HizliKontrolEkrani({
   kontrol,
   okunan,
   toplam,
+  sesAcik,
   onKapat,
   onTekrarOku,
   onDevam,
@@ -51,6 +53,8 @@ export function HizliKontrolEkrani({
   kontrol: HizliKontrol
   okunan: number
   toplam: number
+  /** Ayarlar'daki oyun sesi. */
+  sesAcik: boolean
   onKapat: () => void
   /** Sorunun dayandığı karta dönülüyor. */
   onTekrarOku: () => void
@@ -149,7 +153,11 @@ export function HizliKontrolEkrani({
                 key={metin}
                 type="button"
                 disabled={secim !== null}
-                onClick={() => setSecim(i as 0 | 1)}
+                onClick={() => {
+                  setSecim(i as 0 | 1)
+                  // Mini oyunlardaki doğru/yanlış sesi, aynı ayara bağlı (kullanıcı istedi, 2026-10).
+                  oyunSesiCal(i === kontrol.dogru ? 'dogru' : 'yanlis', sesAcik)
+                }}
                 className={cn(
                   'flex min-h-[66px] w-full items-center gap-3.5 rounded-[18px] border-[1.5px] px-4 py-3.5 text-left transition active:brightness-[0.97] disabled:pointer-events-none',
                   yesil && 'border-success bg-success-soft',

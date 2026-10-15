@@ -74,7 +74,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   arasına mola ve hızlı kontrol; kısa destede kontrol → mola, uzunda kontrol → mola →
   kontrol; ara ekranlar kart sayılmaz. On karttan uzun destede iki kontrol, kısada
   bir; kontrol dayandığı kart (`kart`) okunmadan sorulmaz, "Tekrar oku" oraya döner;
-  yanlışta "Devam et" uyarır ama engellemez. Başlık ortak (`deste-basligi.tsx`), zemin
+  yanlışta "Devam et" uyarır ama engellemez. Cevapta mini oyunların doğru/yanlış
+  sesi çalar (`oyunSesiCal`, Ayarlar'daki oyun sesine bağlı; kullanıcı istedi). Başlık ortak (`deste-basligi.tsx`), zemin
   dersin rengi, vurgu `bicim.murekkep`. Molada Rabi dinleniyor (zıplamaz), okunan
   kartların adları listelenir; metin `MOLA_METINLERI`; konfeti ve puan yok. `BilgiKarti.etiket` / `not` isteğe bağlı;
   not **konu başına bir kartta**, ≤ 120 karakter.
