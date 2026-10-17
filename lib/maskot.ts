@@ -33,7 +33,6 @@ export const MASKOT_POZLARI = [
   'uzgun',
   'dusunen',
   'kahveli',
-  'isaretci',
   'kafa',
   'ziplayan',
   // İkinci takım (v2)

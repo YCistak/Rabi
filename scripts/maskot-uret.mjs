@@ -73,8 +73,9 @@ const KUTU_ALFA = 8
  *
  * Kaynak klasöründeki her PNG kullanılmıyor. Dışarıda kalanların gerekçesi:
  * "sinirli" (ve onun ikinci kopyası "uyuyan") uygulamada karşılığı olmayan bir
- * ruh hâli — Rabi kullanıcıya kızmıyor; "sevinen 1/3" ile "çubuk tutan 1/2"
- * seçilenlerin başka açıdan çekilmiş eşleri.
+ * ruh hâli — Rabi kullanıcıya kızmıyor; "sevinen 1/3"
+ * seçilenin başka açıdan çekilmiş eşi. Üç "çubuk tutan" da bilerek dışarıda
+ * (kullanıcı kaldırttı, 2026-10).
  */
 const POZLAR = [
   // --- İkinci takım (v2). Nerede kullanıldıkları AGENTS.md › Maskotun pozları.
@@ -126,7 +127,6 @@ const POZLAR = [
   { ad: 'tavsan-uzgun', kaynak: 'üzülen maskot.png' },
   { ad: 'tavsan-dusunen', kaynak: 'düşünen maskot.png' },
   { ad: 'tavsan-kahveli', kaynak: 'kahve içen maskot.png' },
-  { ad: 'tavsan-isaretci', kaynak: 'çubuk tutan maskot 3.png' },
   // Kafa: `tavsan-yuz`ün elle kırpılmış hâlinin aksine kaynağın kendisi zaten
   // baş çekimi — kırpma gerekmiyor, kulaklar da tam giriyor. Ana sayfanın
   // selamlaması ve açılış tavşanı bunu kullanıyor.

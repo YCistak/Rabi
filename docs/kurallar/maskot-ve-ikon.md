@@ -84,6 +84,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     (`dusunen`), cetvelle çizen (abaküs), kitap ayracı ve kutuya kitap
     (okuyan/kitaplı), deftere yazan (yalnız durum kafası), teleskop (dürbün; Hedefim
     maskotu 64 px, tam boy okunmaz).
+  - Çubuk tutan üç poz (eski `isaretci`): kullanıcı kaldırttı (2026-10); kart
+    notunda `megafonlu`, tanıtımın dokunma adımında `el-sallayan` aldı. Geri koymadan sor.
   - Anlamı belirsiz ruh hâlleri: çömelen, koşan, parmak ucunda yürüyen,
     emekleyen, tek ayakta denge, yüzüstü ayak sallayan, utangaç, şaşırıp sıçrayan,
     çiçek tutan, silgiyle silen. Ekran bulununca kaynağı kopyalayıp
