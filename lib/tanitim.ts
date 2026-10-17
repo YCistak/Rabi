@@ -135,7 +135,7 @@ export type TanitimAdimi = {
   geriKapali?: boolean
 }
 
-/** Adım kimliğine göre varsayılan poz; burada olmayan adım dokunmalıysa işaret eden, değilse tam boy poz alır. */
+/** Adım kimliğine göre varsayılan poz; burada olmayan adım dokunmalıysa el sallayan (dikkat çeker), değilse tam boy poz alır. */
 const ADIM_POZLARI: Record<string, MaskotPozu> = {
   'sinav-hedefi': 'selamlayan', hedef: 'basparmak',
   'pomodoro-prova': 'saatli', pomodoro: 'saatli', 'pomodoro-kilit': 'elleri-belde',
@@ -152,7 +152,7 @@ const ADIM_POZLARI: Record<string, MaskotPozu> = {
 export function adimPozu(adim: TanitimAdimi, tur: TanitimTuru | null, sonAdimMi: boolean): MaskotPozu {
   if (adim.poz) return adim.poz
   if (sonAdimMi && tur === 'ana_tur') return 'alkislayan'
-  return ADIM_POZLARI[adim.kimlik] ?? (adim.tiklamali ? 'isaretci' : 'tam')
+  return ADIM_POZLARI[adim.kimlik] ?? (adim.tiklamali ? 'el-sallayan' : 'tam')
 }
 
 /**

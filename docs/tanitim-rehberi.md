@@ -121,7 +121,7 @@ Depolama yazılamazsa temizlik yine gerçekleşir ve oturum içindeki tamamlanma
 
 ## Maskot (Rabi)
 
-Her balonun üst satırında küçük bir Rabi tavşanı ve turun etiketi (`TUR_ETIKETLERI`) durur (`components/maskot/rabi.tsx`; 48 piksel, kısa balonda ve oyun adımında 36). Poz `lib/tanitim.ts` içindeki `adimPozu` ile seçilir: önce adımın isteğe bağlı `poz` alanı, ana turun son adımında `alkislayan` (kutlama), sonra `ADIM_POZLARI` tablosu (kimliğe göre), tabloda yoksa dokunma adımında `isaretci`, değilse `tam`. İlk adım `selamlayan`dır. Örnekler: Pomodoro `saatli`, deneme ekleme `fotografci`, görev `defterli`, konu takibi `okuyan`, harita `haritali`/`kitapli`, istatistik `buyutecli`/`tahtali`/`ziplayan`, oyun sonucu `sevinen`. Tavşan dekoratiftir (`aria-hidden`); balonun yüksekliği ölçülerek yerleştiğinden hedefi örtmez.
+Her balonun üst satırında küçük bir Rabi tavşanı ve turun etiketi (`TUR_ETIKETLERI`) durur (`components/maskot/rabi.tsx`; 48 piksel, kısa balonda ve oyun adımında 36). Poz `lib/tanitim.ts` içindeki `adimPozu` ile seçilir: önce adımın isteğe bağlı `poz` alanı, ana turun son adımında `alkislayan` (kutlama), sonra `ADIM_POZLARI` tablosu (kimliğe göre), tabloda yoksa dokunma adımında `el-sallayan`, değilse `tam`. İlk adım `selamlayan`dır. Örnekler: Pomodoro `saatli`, deneme ekleme `fotografci`, görev `defterli`, konu takibi `okuyan`, harita `haritali`/`kitapli`, istatistik `buyutecli`/`tahtali`/`ziplayan`, oyun sonucu `sevinen`. Tavşan dekoratiftir (`aria-hidden`); balonun yüksekliği ölçülerek yerleştiğinden hedefi örtmez.
 
 ## Yeniden deneme
 

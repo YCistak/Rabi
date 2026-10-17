@@ -13,7 +13,6 @@ export const KART_POZLARI = [
   'kitapli',
   'yazan',
   'tahtali',
-  'isaretci',
   'buyutecli',
   'dusunen',
   'ayracli',

@@ -392,7 +392,7 @@ function KartEkrani({
               </article>
 
               {/*
-                Rabi'nin notu: balon solda, maskot sağda ve karta işaret ediyor.
+                Rabi'nin notu: balon solda, maskot sağda, megafonu balona dönük.
                 Notu olmayan kartta ikisi de yok — boş balonun yanında duran
                 tavşan, söyleyecek sözü olmayan bir rehber gibi görünür.
               */}
@@ -412,7 +412,7 @@ function KartEkrani({
                   </div>
                   <Rabi
                     durum="calisiyor"
-                    poz="isaretci"
+                    poz="megafonlu"
                     boyut={104}
                     className="drop-shadow-[0_8px_12px_rgba(31,36,48,0.16)]"
                   />
