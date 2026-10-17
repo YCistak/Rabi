@@ -8,8 +8,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   "Seviye Tespit" düğmesi, altında `9 · 10 · 11 · 12`. 9 eski biçim (`okul`), 10 aynısı +
   Felsefe 6 soru (`okul-10`), 11 ve 12 alanın AYT'sinin aynı dersleri
   (`okul-<sınıf>-<alan>`, tür yine `okul`). Alan Ayarlar'dan; seçilmemişse 11-12'de
-  sınıfın altında alan satırı çıkar. Varsayılan sınıf öğrencininki (mezun → 12); turda
-  9, çünkü Okut'un örnek kâğıdı 9. sınıf seviye tespiti. Öteki seviye şablonları tür
+  sınıfın altında alan satırı çıkar. Varsayılan sınıf öğrencininki (mezun → 12). Öteki seviye şablonları tür
   satırında yer tutmaz (`secilebilirSablonlar`).
 - **"Dersleri düzenle"** (`components/seviye-dersleri.tsx`, `lib/seviye-tespit.ts`):
   ders ekle/çıkar, ad ve soru sayısı. Kayıt seçili sınıfa (11-12'de alana) yeni bir

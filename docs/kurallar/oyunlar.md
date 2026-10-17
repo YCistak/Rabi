@@ -83,6 +83,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   sonunda yazar; kapı `kayitliMi` / `turBitti`.
 - **Ayarlardan sonra tanıtım yok** (kullanıcı kaldırttı): "Başlat" doğrudan sayıma
   gider; kurallar turdaki "?"te. Tanıtım yalnız ayar çıkmayan turda (banka).
+- **Oyunlar ve Oyun Bankası'nın rehberli tanıtım turu (mini tur) yok** (kullanıcı
+  kaldırttı, 2026-10: "hiçbir zaman olmasın"): `miniTurSec` bu ekranlar için tur
+  seçmez; `OYUN_ADIMLARI`, `BANKA_ADIMLARI` ve `DemoOyun` kodda duruyor ama açılmıyor.
 - Oyun Bankası turu hep **Rahat** (`etkinMod`), ayar adımı yok (`secilebilir`), sayım
   yalnız ilk oyunda (`BankaTuru.ilk`).
 - Mod kartlarında **emoji** (kullanıcı istedi; hizalı kardeşlerde çizgi ikon

@@ -979,10 +979,15 @@ export function KalanHapi({ kalan }: { kalan: number }) {
  * Soru kartının köşesine oturan Rabi.
  *
  * Kartın başlık satırında eskiden 26–38 px'lik baş vardı; yapboz pozu tam boy
- * ve 70 pikselin altında leke oluyor. Satıra büyük tavşan koymak şekilli
- * oyunlarda (açı, üçgen) şekli küçültürdü: negatif üst boşlukla kulaklar
- * kartın üstüne taşıyor, satıra yalnızca ~16 px ekleniyor.
+ * ve çok küçülünce leke oluyor. Satıra büyük tavşan koymak şekilli oyunlarda
+ * (açı, üçgen) şekli küçültürdü, o yüzden 56 px ve negatif üst boşluk kartın
+ * üst dolgusunu (`pt-3`/`pt-4`, en az 12 px) yiyor.
+ *
+ * Kulaklar kartın içinde kalmalı: önce 68 px ve `-mt-8` ile kartın üstüne
+ * taşırılmıştı; kart kısa ekranda (Bölünme'de `my-auto` sıfırlanınca) sayaç
+ * şeridine dayanıyor ve tavşan kutudan fırlamış gibi görünüyordu (kullanıcı
+ * hata diye bildirdi). `-mt-2` (8 px) her kartın üst dolgusundan küçük.
  */
 export function KoseRabisi({ durum }: { durum: MaskotDurumu }) {
-  return <Rabi durum={durum} poz="yapboz" boyut={68} className="-mb-1 -ml-1 -mt-8" />
+  return <Rabi durum={durum} poz="yapboz" boyut={56} className="-mb-1 -ml-1 -mt-2" />
 }

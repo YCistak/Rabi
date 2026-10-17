@@ -777,7 +777,7 @@ export function Kurulum({
                   {secilenBolum ? (
                     <SecilenSatir
                       baslik={secilenBolum.ad}
-                      alt={`${PUAN_TURU_ADI[secilenBolum.puanTuru]} · ${secilenBolum.sure} yıl`}
+                      alt={PUAN_TURU_ADI[secilenBolum.puanTuru]}
                       onDegistir={() => setHedefBolum('')}
                     />
                   ) : (
@@ -799,7 +799,7 @@ export function Kurulum({
                           <SecimSatiri
                             key={b.id}
                             baslik={b.ad}
-                            alt={`${PUAN_TURU_ADI[b.puanTuru]} · ${b.sure} yıl`}
+                            alt={PUAN_TURU_ADI[b.puanTuru]}
                             onSec={() => bolumSec(b)}
                           />
                         ))}

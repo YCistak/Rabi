@@ -284,7 +284,7 @@ export function HedefEkrani({
                 {secilenBolum ? (
                   <SecilenSatir
                     baslik={secilenBolum.ad}
-                    alt={`${PUAN_TURU_ADI[secilenBolum.puanTuru]} · ${secilenBolum.sure} yıl`}
+                    alt={PUAN_TURU_ADI[secilenBolum.puanTuru]}
                     onDegistir={() => setBolum('')}
                   />
                 ) : (
@@ -308,7 +308,7 @@ export function HedefEkrani({
                           <SecimSatiri
                             key={b.id}
                             baslik={b.ad}
-                            alt={`${PUAN_TURU_ADI[b.puanTuru]} · ${b.sure} yıl`}
+                            alt={PUAN_TURU_ADI[b.puanTuru]}
                             sag={
                               <span className="rakam shrink-0 text-right text-[11px] leading-tight font-bold text-muted-foreground">
                                 ~{puanYaz(t.tabanPuan)}

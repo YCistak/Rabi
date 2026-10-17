@@ -9,11 +9,9 @@ import { denemeyiCoz, ORNEK_KAGIT, type OkunanDers } from '@/lib/deneme-okuma'
 import { useGeriKatmani } from '@/lib/geri'
 import type { Sablon } from '@/lib/types'
 
-export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
+export function DenemeOkut({ sablon, onAktar }: {
   sablon: Sablon
   onAktar: (sonuclar: OkunanDers[]) => void
-  /** Tam ekran okuma katmanı açıldı/kapandı (başlangıç turu rehberi o sırada çekiliyor). */
-  onAcikDegisti?: (acik: boolean) => void
 }) {
   const [acik, setAcik] = useState(false)
   const [okunuyor, setOkunuyor] = useState(false)
@@ -29,14 +27,6 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
     etkin.current = true
     return () => { etkin.current = false; islem.current?.abort() }
   }, [])
-
-  // Geri çağrı ref'te: her çizimde yeni işlev gelse de etki yalnızca `acik` değişince koşsun.
-  const acikBildir = useRef(onAcikDegisti)
-  acikBildir.current = onAcikDegisti
-  useEffect(() => {
-    acikBildir.current?.(acik)
-    return () => { if (acik) acikBildir.current?.(false) }
-  }, [acik])
 
   const kapat = () => {
     secimSurumu.current++
@@ -99,7 +89,7 @@ export function DenemeOkut({ sablon, onAktar, onAcikDegisti }: {
   }
 
   return <>
-    <Buton data-tanitim="deneme-okut" bicim="ikincil" className="mb-3 w-full" onClick={() => setAcik(true)}>
+    <Buton bicim="ikincil" className="mb-3 w-full" onClick={() => setAcik(true)}>
       <ScanLine size={19} aria-hidden />
       Okut
       <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-extrabold text-primary">Beta</span>

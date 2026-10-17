@@ -22,7 +22,7 @@ Kurulum ve açılış bitince yeni kullanıcıya bir kez **"Tanıtım ister misi
 
 ## Ana akış
 
-Ana tur **28 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Metinler kısa (≤ 85 karakter, testte), sayaç yok, atlanamaz. Balon bir düğme/sekme/satır adı anıyorsa ekrandaki yazıyı harfi harfine kullanır (büyük-küçük harf dahil); kesme işaretiyle ek almış adlar (`Kaydet’e`, `Soru Takibi’ne`) hedefin kaynak dosyasında aranır (`lib/tanitim-metin.test.ts`, yeni hedef o testin `KAYNAK` tablosuna da eklenir). Bilgi adımında (`tiklamali: false`, `etkilesimli` yok) hedef dokunmaya kilitlidir: balon orada "…’e dokun" diye buyurmaz, "…’le yaparsın" diye anlatır.
+Ana tur **23 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bulundu), sonra 12'ye indi ve deneme ekleme ile İstatistik mini turlara taşındı; kullanıcı o ikisini mini turda zayıf buldu ve Harita'dan sonra ana turda istedi. Sonra deneme ekleme formu turdan çıktı (kullanıcı kaldırttı, 2026-10): örnek denemenin netlerinden sonra doğrudan İstatistik'e geçilir. Metinler kısa (≤ 85 karakter, testte), sayaç yok. Balon bir düğme/sekme/satır adı anıyorsa ekrandaki yazıyı harfi harfine kullanır (büyük-küçük harf dahil); kesme işaretiyle ek almış adlar (`Kaydet’e`, `Soru Takibi’ne`) hedefin kaynak dosyasında aranır (`lib/tanitim-metin.test.ts`, yeni hedef o testin `KAYNAK` tablosuna da eklenir). Bilgi adımında (`tiklamali: false`, `etkilesimli` yok) hedef dokunmaya kilitlidir: balon orada "…’e dokun" diye buyurmaz, "…’le yaparsın" diye anlatır.
 
 1. Sınav geri sayımı ve hedef kartı.
 2. Günlük soru hedefi.
@@ -41,30 +41,21 @@ Ana tur **28 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön". Bilgi adımı. Kitap kilitli/yazılmamış olsa da bu adımda gerçek turuncu rengiyle çizilir (gri ve soluklaştırma yok, kilit rozeti kalır); yalnızca tur sırasında ve yalnızca bu kitap için (`Dugum`, `konu-haritasi.tsx`).
 13. Denemeler satırına dokunuş (iki örnek deneme hazır).
 14. Örnek denemenin kartına dokunuş (`deneme-ornek`, listedeki ilk kart). Kart turda adıma bağlı açılır (`DenemelerEkrani` → `tanitim.ornekAcik`); öteki kartlar kilitli.
-14a. Ders ders netler (`deneme-detay`, açılan tablo; bilgi adımı): doğru, yanlış, boş, net. Balon "ayrıntılı rapor" demez. Örnekler turun belleğinde (`demoDenemeleri`), cihaz deposuna yazılmaz.
-15. "Deneme ekle"ye dokunuş.
-16. "Okut" düğmesi (balon başlığı "Kâğıdı okut"; etkileşimli, okutmadan İleri denebilir).
-17. **Boş ders**: form bir ders hariç örnekle doldu; o dersin satırı aydınlanır, kullanıcı doğru ve yanlışı yazar. Geçerli giriş olmadan ilerlemez.
-18. "Yanlış soru ekle" düğmesi aydınlanır (bilgi adımı, İleri ile geçilir; düğme turda bir şey açmaz).
-19. Deneme formunun Kaydet'ine dokunuş (deneme turun belleğine).
-20. İstatistik satırına dokunuş.
-21–25. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf (kutuların adıyla "en güçlü / en kötü ders") · Deneme karşılaştır (düğmenin adı) → "Turu Bitir".
+14a. Ders ders netler (`deneme-detay`, açılan tablo; bilgi adımı): doğru, yanlış, boş, net. Balon "ayrıntılı rapor" demez. Örnekler turun belleğinde (`demoDenemeleri`), cihaz deposuna yazılmaz. → "Araçlara dön".
+15. İstatistik satırına dokunuş.
+16–20. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf (kutuların adıyla "en güçlü / en kötü ders") · Deneme karşılaştır (düğmenin adı) → "Turu Bitir".
 
 12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz. Konu Takibi kaydına tur hiçbir şey yazmaz.
 
-### Deneme formu: bir ders boş kalır
+İstatistik adımları iki örnek denemeden (eşi yoksa geçici bir eşle) çizilir (`istatistikTuruDenemeleri`). Turda Deneme ekle bir şey açmaz.
 
-- Okut adımında kullanıcı kâğıdı gerçekten okutabilir (rehber Okut açıkken gizlenir). Okutmadan İleri derse form, şablonun **ilk dersi hariç** örnek sonuçlarla dolar (`turFormuSonuclari`, `turBosDersi` — `lib/tanitim-veri.ts`). Okut bir sonuç yazdıysa forma dokunulmaz.
-- Boş kalan ilk ders: TYT'de **Türkçe**, AYT Sayısal/EA'da Matematik, Sözel'de Edebiyat, YDT'de tek ders. İlk satır "Elle gir" başlığının hemen altında: kaydırmadan görünür, açılan klavye onu örtmez ve öğrencinin netini en iyi bildiği derslerden biri.
-- Satır `data-tanitim="deneme-bos-ders"` ile aydınlanır. Adım `kayit: 'deneme-ders'` bekler; form, iki kutu da yazılmış, en az bir soru cevaplanmış ve toplam soru sayısını aşmıyorsa (`bosDersGirisiGecerli`) son tuştan 0,9 saniye sonra klavyeyi kapatıp bildirir — "12" yazan kullanıcı "1"de ileri atılmasın.
-- "Yanlış soru ekle" turda **yalnızca gösterilir** (`deneme-yanlis-ekle`, bilgi adımı, `tiklamali: false`): düğme aydınlanır, "Buradan … ekleyebilirsin" denir, İleri ile geçilir. Turda düğme hiçbir şey açmaz (kamera/izin penceresi turla çakışırdı, fotoğraf gerçek bankaya yazılırdı). Bir süre dokundurulup örnek bir soruyla ekleme formu açtırılıyor ve Kaydet'e bastırılıyordu; Android'de (Mi Note 10 Lite) hatalı bulundu, kullanıcı turda yanlış soru eklettirilmesin, yalnız gösterilsin istedi (2026-10). Formu turda yeniden açtırma; Oyunlar ve Oyun Bankası mini turlarında da yanlış soru ekleme etkileşimi yok.
-- Deneme Kaydet'le turun listesine (`demo.denemeler`, `tanitim-` önekli) gider, cihaz deposuna yazılmaz; İstatistik adımları bu deneme ile örneklerden çizilir (`turIstatistikDenemeleri`). Formun Vazgeç'i "Deneme ekle" adımına döner; kayıttan sonra Geri, forma değil listeye döner.
-
-Ana tur iki kitabı gösterdiyse Konu Haritası, deneme eklemeyi gösterdiyse Denemeler, İstatistik'i gösterdiyse İstatistik mini turu da görülmüş sayılır (`turuBitir`).
+Ana tur iki kitabı gösterdiyse Konu Haritası, örnek denemenin netlerini gösterdiyse Denemeler, İstatistik'i gösterdiyse İstatistik mini turu da görülmüş sayılır (`turuBitir`).
 
 ## Mini turlar
 
-Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTurSec`, `lib/tanitim.ts`; tetikleyen etki `app-shell.tsx`). Hepsi ana turla aynı altyapıda (`TanitimSaglayici`, `SpotIsigi`, `tanitimGecisi`): atlanamaz, sayaç yok, Escape kapatmaz, balonda Rabi var. Mini tur ekran değiştirmez; bitince kullanıcı aynı ekranda kalır.
+Mini tur, ilgili ekran **ilk kez** açıldığında bir kez çalışır (`miniTurSec`, `lib/tanitim.ts`; tetikleyen etki `app-shell.tsx`). Hepsi ana turla aynı altyapıda (`TanitimSaglayici`, `SpotIsigi`, `tanitimGecisi`): sayaç yok, Escape kapatmaz, balonda Rabi ve ✕ var.
+
+**Açılmayan turlar** (kullanıcı kaldırttı, 2026-10): Denemeler (deneme ekleme), Yapılacaklar, Oyunlar ve Oyun Bankası. `miniTurSec` onları hiç seçmez; aşağıdaki adımları ve anahtarları kodda duruyor (eski kayıtlar, "Tüm verileri sil"), geri getirilmez. Yalnız Konu Haritası, Pomodoro ve İstatistik mini turları açılır. Mini tur ekran değiştirmez; bitince kullanıcı aynı ekranda kalır.
 
 | Tur | Ne zaman | Adımlar |
 |---|---|---|
@@ -113,7 +104,7 @@ Ana tur açıkken mini tur başlamaz ve ana tur bitmeden hiçbiri başlamaz. **M
 | Oyunlar | `rabi-mini-tur-oyunlar-v1` |
 | Oyun Bankası | `rabi-mini-tur-oyun-bankasi-v1` |
 
-İlk üç anahtar eski adlarıyla kaldı (değişselerdi turu bitirmiş herkes yeniden görürdü); yeniler projenin anahtar kuralında (`rabi-` öneki, sürümlü). Her anahtara tur tamamlanınca `'true'` yazılır; ana tur ayrıca `rabi_ana_tur_surumu`na güncel sürümü yazar ve görülmüş sayılması **yalnız** bu sürüme bakar (`turGorulduOku`, `turBitisKayitlari`). Tur içeriği baştan değişirse `ANA_TUR_SURUMU` artırılır: herkes yeni turu bir kez görür. Tur atlanamaz: balonda "Turu Geç"/kapat düğmesi, adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Tek çıkış, son adımdaki "Turu Bitir" düğmesidir. Eski anahtarlar (`rabi_tanitim_tamamlandi`, `rabi_ana_tur_tamamlandi`) artık ana turu görülmüş saydırmaz. Güncellemeden sonra açılışta çökme sorusuyla tur bir kez çakışıp kullanıcıyı kilitlemişti; bu yüzden çökme sorusu açıkken hiçbir tur başlamaz, tur sürerken soru tur bitene kadar bekler (`lib/cokme-tanitim.ts`).
+İlk üç anahtar eski adlarıyla kaldı (değişselerdi turu bitirmiş herkes yeniden görürdü); yeniler projenin anahtar kuralında (`rabi-` öneki, sürümlü). Her anahtara tur tamamlanınca `'true'` yazılır; ana tur ayrıca `rabi_ana_tur_surumu`na güncel sürümü yazar ve görülmüş sayılması **yalnız** bu sürüme bakar (`turGorulduOku`, `turBitisKayitlari`). Tur içeriği baştan değişirse `ANA_TUR_SURUMU` artırılır: herkes yeni turu bir kez görür. **Çıkış:** balonun sağ üstündeki ✕ ("Tanıtımdan çık", 44 px) her adımda turu kapatır (kullanıcı istedi, 2026-10); "Turu Bitir" ile aynı işi yapar (`turuBitir`: tur görülmüş sayılır, demo verisi silinir), onay sormaz — tur Ayarlar > "Tanıtımı yeniden başlat"la geri gelir. Adım sayacı ve ilerleme göstergesi yoktur; Escape tuşu ve arka plana dokunma turu kapatmaz, Android geri tuşu bir adım geri alır. Eski anahtarlar (`rabi_tanitim_tamamlandi`, `rabi_ana_tur_tamamlandi`) artık ana turu görülmüş saydırmaz. Güncellemeden sonra açılışta çökme sorusuyla tur bir kez çakışıp kullanıcıyı kilitlemişti; bu yüzden çökme sorusu açıkken hiçbir tur başlamaz, tur sürerken soru tur bitene kadar bekler (`lib/cokme-tanitim.ts`).
 
 Demo cevapları, skor, örnek denemeler ve banka soruları yalnızca Context belleğindedir. Gerçek banka, oyun geçmişi, soru takibi veya Pomodoro kayıtlarına yazılmaz. `demoVerileriTemizle()` bitişte boş durumu döndürür. Sayfa yenileme de bellekteki demo verilerini kaldırır; tamamlanmayan tur yeniden başlar.
 

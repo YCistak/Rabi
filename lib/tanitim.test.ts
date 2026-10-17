@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { tanitimGeriKarari } from './tanitim-rehber'
 import {
-  DENEME_FORMU_ADIMLARI,
-  DENEME_VAZGEC,
   GOREV_FORMU_ADIMLARI,
   GOREV_VAZGEC,
   ANA_TUR_SURUM_ANAHTARI,
@@ -53,13 +51,13 @@ function adimaKadar(kimlik: string, turAdi: TanitimTuru = 'ana_tur'): TanitimDur
 const kimlik = (d: TanitimDurumu) => TUR_ADIMLARI[d.aktifTur!][d.aktifAdim!].kimlik
 
 describe('Ana tur kısa ve kritik akışta', () => {
-  it('ana sayfa, soru ekleme, Konu Takibi, Harita; ardından deneme ekleme ve İstatistik', () => {
+  it('ana sayfa, soru ekleme, Konu Takibi, Harita; ardından örnek denemeler ve İstatistik', () => {
     expect(TANITIM_ADIMLARI.map((a) => a.kimlik)).toEqual([
       'sinav-hedefi', 'hedef', 'araclar-ac',
       'soru-ac', 'soru-ekle', 'soru-form', 'soru-kaydedildi',
       'pomodoro-ac', 'pomodoro-sayac', 'pomodoro-odak',
       'konu-takibi-ac', 'konu-takibi', 'harita-ac', 'harita-ders', 'harita-soru',
-      'deneme-ac', 'deneme-liste', 'deneme-detay', 'deneme-ekle', 'deneme-okut', 'deneme-elle', 'deneme-yanlis', 'deneme-kaydet',
+      'deneme-ac', 'deneme-liste', 'deneme-detay',
       'istatistik-ac', 'istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir',
     ])
   })
@@ -79,19 +77,18 @@ describe('Ana tur kısa ve kritik akışta', () => {
   it('her adım kendi sekmesinde ve ekranında geçiyor', () => {
     const bul = (k: string) => TANITIM_ADIMLARI.find((a) => a.kimlik === k)!
     for (const k of ['sinav-hedefi', 'hedef', 'araclar-ac']) expect(tanitimKonumu(bul(k)).sekme).toBe('ana')
-    expect(tanitimKonumu(bul('soru-ac'))).toEqual({ sekme: 'daha', ekran: null, denemeFormu: false })
-    for (const k of ['soru-ekle', 'soru-form', 'soru-kaydedildi']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'soru', denemeFormu: false })
-    expect(tanitimKonumu(bul('konu-takibi-ac'))).toEqual({ sekme: 'daha', ekran: null, denemeFormu: false })
-    expect(tanitimKonumu(bul('konu-takibi'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi', denemeFormu: false })
-    expect(tanitimKonumu(bul('harita-ac'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi', denemeFormu: false })
-    for (const k of HARITA_TUR_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'harita', ekran: null, denemeFormu: false })
-    for (const k of ['deneme-ac', 'istatistik-ac']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: null, denemeFormu: false })
-    expect(tanitimKonumu(bul('pomodoro-ac'))).toEqual({ sekme: 'daha', ekran: null, denemeFormu: false })
-    for (const k of ['pomodoro-sayac', 'pomodoro-odak']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'pomodoro', denemeFormu: false })
-    for (const k of ['deneme-liste', 'deneme-detay', 'deneme-ekle']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: false })
-    for (const k of DENEME_FORMU_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme', denemeFormu: true })
+    expect(tanitimKonumu(bul('soru-ac'))).toEqual({ sekme: 'daha', ekran: null })
+    for (const k of ['soru-ekle', 'soru-form', 'soru-kaydedildi']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'soru' })
+    expect(tanitimKonumu(bul('konu-takibi-ac'))).toEqual({ sekme: 'daha', ekran: null })
+    expect(tanitimKonumu(bul('konu-takibi'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi' })
+    expect(tanitimKonumu(bul('harita-ac'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi' })
+    for (const k of HARITA_TUR_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'harita', ekran: null })
+    for (const k of ['deneme-ac', 'istatistik-ac']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: null })
+    expect(tanitimKonumu(bul('pomodoro-ac'))).toEqual({ sekme: 'daha', ekran: null })
+    for (const k of ['pomodoro-sayac', 'pomodoro-odak']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'pomodoro' })
+    for (const k of ['deneme-liste', 'deneme-detay']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'deneme' })
     for (const k of ['istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir']) {
-      expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'istatistik', denemeFormu: false })
+      expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'istatistik' })
     }
   })
 
@@ -150,44 +147,13 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(kimlik(tanitimGecisi(deneme, { tur: 'hedefe-dokun', hedef: 'arac-deneme' }))).toBe('deneme-liste')
   })
 
-  it('Okut’tan İleri ile boş ders adımına geçiliyor; geçerli giriş bildirilmeden ilerlemiyor', () => {
-    const okut = adimaKadar('deneme-okut')
-    const elle = tanitimGecisi(okut, { tur: 'ileri' })
-    expect(kimlik(elle)).toBe('deneme-elle')
-    expect(tanitimGecisi(elle, { tur: 'ileri' })).toBe(elle)
-    expect(tanitimGecisi(elle, { tur: 'hedefe-dokun', hedef: 'deneme-bos-ders' })).toBe(elle)
-    expect(tanitimGecisi(elle, { tur: 'kayit-eklendi', kayit: 'deneme' })).toBe(elle)
-    expect(kimlik(tanitimGecisi(elle, { tur: 'kayit-eklendi', kayit: 'deneme-ders' }))).toBe('deneme-yanlis')
-  })
-
-  it('"Yanlış soru ekle" yalnızca gösteriliyor: İleri ile geçiliyor, dokunuş formu açmıyor', () => {
-    const yanlis = adimaKadar('deneme-yanlis')
-    expect(TANITIM_ADIMLARI.find((a) => a.kimlik === 'deneme-yanlis')).toMatchObject({ tiklamali: false })
-    expect(tanitimGecisi(yanlis, { tur: 'hedefe-dokun', hedef: 'deneme-yanlis-ekle' })).toBe(yanlis)
-    const kaydet = tanitimGecisi(yanlis, { tur: 'ileri' })
-    expect(kimlik(kaydet)).toBe('deneme-kaydet')
-    expect(kimlik(tanitimGecisi(kaydet, { tur: 'geri' }))).toBe('deneme-yanlis')
-    expect(tanitimGecisi(kaydet, { tur: 'hedefe-dokun', hedef: 'deneme-kaydet' })).toBe(kaydet)
-    expect(kimlik(tanitimGecisi(kaydet, { tur: 'kayit-eklendi', kayit: 'deneme' }))).toBe('istatistik-ac')
-  })
-
   it('turda hiçbir adım yanlış soru formunu hedeflemiyor', () => {
     for (const adimlar of Object.values(TUR_ADIMLARI)) {
       for (const adim of adimlar) expect(adim.hedef, adim.kimlik).not.toBe('yanlis-soru-formu')
     }
   })
 
-  it('deneme formunun Vazgeç’i "Deneme ekle" adımına dönüyor; formun dışında yok sayılıyor', () => {
-    for (const k of DENEME_FORMU_ADIMLARI) expect(kimlik(tanitimGecisi(adimaKadar(k), { tur: 'hedefe-dokun', hedef: DENEME_VAZGEC })), k).toBe('deneme-ekle')
-    const liste = adimaKadar('deneme-liste')
-    expect(tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: DENEME_VAZGEC })).toBe(liste)
-  })
-
-  it('deneme kaydedildikten sonra geri, forma değil listeye dönüyor', () => {
-    expect(kimlik(tanitimGecisi(adimaKadar('istatistik-ac'), { tur: 'geri' }))).toBe('deneme-liste')
-  })
-
-  it('son adım İstatistik’in karşılaştırması; aşılamıyor, çıkış yalnızca Turu Bitir', () => {
+  it('son adım İstatistik’in karşılaştırması; ileri ile aşılamıyor', () => {
     const son = adimaKadar('istatistik-karsilastir')
     expect(son.aktifAdim).toBe(TANITIM_ADIMLARI.length - 1)
     expect(tanitimGecisi(son, { tur: 'ileri' })).toBe(son)
@@ -362,9 +328,6 @@ describe('Yapılacaklar turu: görev gerçekten ekleniyor', () => {
     expect(kimlik(tanitimGecisi(adimaKadar('gorev-form', 'yapilacaklar'), { tur: 'hedefe-dokun', hedef: GOREV_VAZGEC }))).toBe('gorev-ekle')
     const menuAc = adimaKadar('gorev-menu-ac', 'yapilacaklar')
     expect(tanitimGecisi(menuAc, { tur: 'hedefe-dokun', hedef: GOREV_VAZGEC })).toBe(menuAc)
-    // Ana turun deneme vazgeçi bu turda işlemiyor.
-    const form = adimaKadar('gorev-form', 'yapilacaklar')
-    expect(tanitimGecisi(form, { tur: 'hedefe-dokun', hedef: DENEME_VAZGEC })).toBe(form)
   })
 
   it('anahtar v3: v1 ve v2 turunu görenler yeni hâli bir kez görüyor', () => {
@@ -383,9 +346,11 @@ describe('Ana turda Denemeler: örnek deneme açtırılıyor', () => {
     expect(tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: 'deneme-listesi' })).toBe(liste)
     const detay = tanitimGecisi(liste, { tur: 'hedefe-dokun', hedef: 'deneme-ornek' })
     expect(kimlik(detay)).toBe('deneme-detay')
-    expect(kimlik(tanitimGecisi(detay, { tur: 'ileri' }))).toBe('deneme-ekle')
+    // Deneme ekleme turda yok (kullanıcı kaldırttı): netlerden sonra İstatistik.
+    expect(TANITIM_ADIMLARI[detay.aktifAdim!].ileriEtiketi).toBe('Araçlara dön')
+    expect(kimlik(tanitimGecisi(detay, { tur: 'ileri' }))).toBe('istatistik-ac')
     expect(kimlik(tanitimGecisi(detay, { tur: 'geri' }))).toBe('deneme-liste')
-    expect(kimlik(tanitimGecisi(adimaKadar('deneme-ekle'), { tur: 'geri' }))).toBe('deneme-detay')
+    expect(kimlik(tanitimGecisi(adimaKadar('istatistik-ac'), { tur: 'geri' }))).toBe('deneme-detay')
   })
 })
 
@@ -419,17 +384,20 @@ describe('Turların kayıtları', () => {
 
 describe('miniTurSec', () => {
   const yer = (pay: Partial<MiniTurKonumu>): MiniTurKonumu => ({
-    sekme: 'ana', ekran: null, denemeFormu: false, pomodoroIsliyor: false, pomodoroIstegi: false, genelTest: false, ...pay,
+    sekme: 'ana', ekran: null, pomodoroIsliyor: false, pomodoroIstegi: false, genelTest: false, ...pay,
   })
 
   it('ekranın kendi mini turunu seçiyor', () => {
-    expect(miniTurSec(yer({ sekme: 'daha', ekran: 'deneme' }))).toBe('denemeler')
     expect(miniTurSec(yer({ sekme: 'daha', ekran: 'pomodoro' }))).toBe('pomodoro')
-    expect(miniTurSec(yer({ sekme: 'daha', ekran: 'notlar' }))).toBe('yapilacaklar')
     expect(miniTurSec(yer({ sekme: 'daha', ekran: 'istatistik' }))).toBe('istatistik')
-    expect(miniTurSec(yer({ sekme: 'oyunlar', ekran: 'oyun-bankasi' }))).toBe('oyun_bankasi')
     expect(miniTurSec(yer({ sekme: 'harita' }))).toBe('konu_haritasi')
-    expect(miniTurSec(yer({ sekme: 'oyunlar' }))).toBe('oyunlar')
+  })
+
+  it('Denemeler, Yapılacaklar, Oyunlar ve Oyun Bankası turu hiç açılmıyor (kullanıcı kaldırttı)', () => {
+    expect(miniTurSec(yer({ sekme: 'daha', ekran: 'deneme' }))).toBeNull()
+    expect(miniTurSec(yer({ sekme: 'daha', ekran: 'notlar' }))).toBeNull()
+    expect(miniTurSec(yer({ sekme: 'oyunlar' }))).toBeNull()
+    expect(miniTurSec(yer({ sekme: 'oyunlar', ekran: 'oyun-bankasi' }))).toBeNull()
   })
 
   it('turu olmayan yerde ve engelli durumda tur yok', () => {
@@ -437,7 +405,6 @@ describe('miniTurSec', () => {
     expect(miniTurSec(yer({ sekme: 'daha' }))).toBeNull()
     expect(miniTurSec(yer({ sekme: 'ayarlar' }))).toBeNull()
     expect(miniTurSec(yer({ sekme: 'daha', ekran: 'soru' }))).toBeNull()
-    expect(miniTurSec(yer({ sekme: 'daha', ekran: 'deneme', denemeFormu: true }))).toBeNull()
     expect(miniTurSec(yer({ sekme: 'daha', ekran: 'pomodoro', pomodoroIsliyor: true }))).toBeNull()
     expect(miniTurSec(yer({ sekme: 'daha', ekran: 'pomodoro', pomodoroIstegi: true }))).toBeNull()
     expect(miniTurSec(yer({ sekme: 'oyunlar', genelTest: true }))).toBeNull()
