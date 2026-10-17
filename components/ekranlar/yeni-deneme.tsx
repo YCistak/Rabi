@@ -22,7 +22,6 @@ import {
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, SablonDers, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
-import { bosDersGirisiGecerli, turBosDersi, turFormuSonuclari } from '@/lib/tanitim-veri'
 import { bosSifir } from '@/lib/bos-sifir'
 import { TarihSecici } from '@/components/tarih-secici'
 import { SeviyeDersleri } from '@/components/seviye-dersleri'
@@ -61,7 +60,6 @@ export function YeniDenemeEkrani({
   onKaydet,
   onSeviyeDersleriKaydet,
   onVazgec,
-  tanitim,
 }: {
   sablonlar: Sablon[]
   varsayilanSablonId: string
@@ -74,18 +72,6 @@ export function YeniDenemeEkrani({
   onSeviyeDersleriKaydet: (sinif: SeviyeSinifi, alan: PuanTuru, dersler: SablonDers[]) => void
   onKaydet: (deneme: Deneme) => void
   onVazgec: () => void
-  /**
-   * Başlangıç turunda. `ornekDoldur`: tur Okut adımını geçti; form boşsa
-   * örnek sonuçlar bir ders hariç yazılıyor (`turFormuSonuclari`), boş
-   * dersi kullanıcı dolduruyor ve geçerli giriş `dersGirildi` ile bildiriliyor.
-   * "Yanlış soru ekle" turda yalnızca gösteriliyor: düğme katmanı açmıyor
-   * (turda yanlış soru eklettirilmiyor — kullanıcı istedi, 2026-10).
-   */
-  tanitim?: {
-    onOkutAcik: (acik: boolean) => void
-    ornekDoldur?: boolean
-    dersGirildi?: () => void
-  }
 }) {
   /*
     Seçim listesi sınıfa ve alana göre süzülü (`secilebilirSablonlar`);
@@ -101,11 +87,11 @@ export function YeniDenemeEkrani({
   /*
     Seviye tespit sınıfa göre (kullanıcı istedi, 2026-10): 9 eski biçim, 10'da
     Felsefe ekleniyor, 11 ve 12 alanın AYT'si gibi. Varsayılan öğrencinin kendi
-    sınıfı. Turda 9: turun Okut adımındaki örnek kâğıt 9. sınıf seviye tespiti.
+    sınıfı.
     Alan Ayarlar'dan; seçilmemişse 11-12'de altta soruluyor.
   */
   const [seviyeSinifi, setSeviyeSinifi] = useState<SeviyeSinifi>(() =>
-    tanitim ? 9 : varsayilanSeviyeSinifi(sinif),
+    varsayilanSeviyeSinifi(sinif),
   )
   const [seciliAlan, setSeciliAlan] = useState<PuanTuru>(puanTuru ?? 'say')
   const seviyeAlani = puanTuru ?? seciliAlan
@@ -167,7 +153,7 @@ export function YeniDenemeEkrani({
   const [yanlisAcik, setYanlisAcik] = useState(false)
   const [eklenenYanlis, setEklenenYanlis] = useState(0)
   const yanlisEkleme = useYanlisSoruEkleme(setYanlisSorular)
-  // Geri tuşu önce ekleme formunu, sonra katmanı kapatmalı. Turda katman hiç açılmıyor.
+  // Geri tuşu önce ekleme formunu, sonra katmanı kapatmalı.
   useGeriKatmani(yanlisAcik && yanlisEkleme.bekleyen === null, () => setYanlisAcik(false))
   useGeriKatmani(yanlisEkleme.bekleyen !== null, yanlisEkleme.vazgec)
 
@@ -211,47 +197,6 @@ export function YeniDenemeEkrani({
       }),
     [sablon, girisler],
   )
-
-  /*
-    Turun Okut'tan sonraki adımları: Okut ile okunan bir sonuç varsa ona
-    dokunulmuyor, form boşsa örnek sonuçlar bir ders hariç yazılıyor. Bir süre
-    hepsi doluyordu ve kullanıcı tabloya hiç dokunmuyordu; tek ders, klavyenin
-    ve balonun tabloyu kapatmadığı ilk satır (`turBosDersi`).
-  */
-  const ornekDoldur = !!tanitim?.ornekDoldur
-  /*
-    Boyamadan önce: sonuçlar bir sonraki karede yazılınca "Kaydetmek için en az
-    bir derse sonuç gir" notu bir kare görünüyor, Kaydet bölümü 24 px kısalıyor
-    ve rehberin spotu o arada ölçtüğü uzun hâle gidip ikinci kez oynuyordu
-    (yavaş telefonda iki karelik durgunluk o notun ömründen kısa).
-  */
-  useYerlesimEtkisi(() => {
-    if (!ornekDoldur) return
-    setGirisler((onceki) => {
-      const bos = sablon.dersler.every((d) => !Number(onceki[d.id]?.dogru || 0) && !Number(onceki[d.id]?.yanlis || 0))
-      if (!bos) return onceki
-      return { ...bosGirisler(sablon), ...Object.fromEntries(turFormuSonuclari(sablon).map((s) => [s.dersId, { dogru: String(s.dogru), yanlis: String(s.yanlis) }])) }
-    })
-  }, [ornekDoldur, sablon])
-
-  /*
-    Boş derse geçerli sonuç girilince tur bir sonraki adıma geçiyor; ama son
-    tuştan kısa bir süre sonra: "12" yazan kullanıcı "1"de ileri atılmasın.
-    Klavye de kapatılıyor, yoksa sıradaki adımın düğmesini örterdi.
-  */
-  const bosDers = ornekDoldur ? turBosDersi(sablon) : null
-  const bosGiris = bosDers ? girisler[bosDers] : undefined
-  const bosDersTanimi = bosDers ? sablon.dersler.find((d) => d.id === bosDers) : undefined
-  const bosDersGecerli = !!bosDersTanimi && bosDersGirisiGecerli(bosGiris, bosDersTanimi)
-  const dersGirildi = tanitim?.dersGirildi
-  useEffect(() => {
-    if (!bosDersGecerli || !dersGirildi) return
-    const zamanlayici = setTimeout(() => {
-      if (document.activeElement instanceof HTMLElement) document.activeElement.blur()
-      dersGirildi()
-    }, 900)
-    return () => clearTimeout(zamanlayici)
-  }, [bosDersGecerli, bosGiris, dersGirildi])
 
   const hataliDers = satirlar.find((s) => s.asim)
   const bosMu = satirlar.every((s) => s.dogru === 0 && s.yanlis === 0)
@@ -360,16 +305,14 @@ export function YeniDenemeEkrani({
         <div className="mb-4">
           <div className="mb-1.5 flex items-center justify-between gap-3">
             <Etiket className="mb-0">Sınıf</Etiket>
-            {!tanitim && (
-              <button
-                type="button"
-                onClick={() => setDerslerAcik(true)}
-                className="-my-1 inline-flex items-center gap-1 rounded-lg px-1.5 py-1 text-[12.5px] font-bold text-primary active:bg-muted"
-              >
-                <Pencil size={14} aria-hidden />
-                Dersleri düzenle
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => setDerslerAcik(true)}
+              className="-my-1 inline-flex items-center gap-1 rounded-lg px-1.5 py-1 text-[12.5px] font-bold text-primary active:bg-muted"
+            >
+              <Pencil size={14} aria-hidden />
+              Dersleri düzenle
+            </button>
           </div>
           <div className="grid grid-cols-4 gap-2">
             {SEVIYE_SINIFLARI.map((s) => (
@@ -435,14 +378,14 @@ export function YeniDenemeEkrani({
         </div>
       </div>
 
-      <DenemeOkut key={sablon.id} sablon={sablon} onAcikDegisti={tanitim?.onOkutAcik} onAktar={(okunanlar) => {
+      <DenemeOkut key={sablon.id} sablon={sablon} onAktar={(okunanlar) => {
         setGirisler((onceki) => {
           const yeni = { ...onceki }
           for (const ders of okunanlar) yeni[ders.dersId] = { dogru: String(ders.dogru), yanlis: String(ders.yanlis) }
           return yeni
         })
       }} />
-      <div data-tanitim="deneme-elle">
+      <div>
       <p className="mb-2 text-xs font-semibold text-muted-foreground">Elle gir</p>
       <Kart className="p-0">
         <div className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 text-xs font-medium text-muted-foreground">
@@ -456,7 +399,6 @@ export function YeniDenemeEkrani({
           {satirlar.map((satir) => (
             <li
               key={satir.ders.id}
-              data-tanitim={satir.ders.id === bosDers ? 'deneme-bos-ders' : undefined}
               className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 last:border-b-0"
             >
               <div className="min-w-0">
@@ -519,11 +461,9 @@ export function YeniDenemeEkrani({
         "sonra eklerim" pratikte "hiç eklemem" oluyordu.
       */}
       <Buton
-        data-tanitim="deneme-yanlis-ekle"
         bicim="ikincil"
         className="mt-4 w-full"
-        // Turda düğme yalnızca gösteriliyor; kamera/izin penceresi açılmasın.
-        onClick={() => { if (!tanitim) setYanlisAcik(true) }}
+        onClick={() => setYanlisAcik(true)}
       >
         <Camera size={18} aria-hidden />
         Yanlış soru ekle
@@ -536,7 +476,7 @@ export function YeniDenemeEkrani({
         </p>
       )}
 
-      <div data-tanitim="deneme-kaydet" className="mt-3">
+      <div className="mt-3">
       <div className="flex gap-2">
         <Buton bicim="ikincil" className="flex-1" onClick={onVazgec}>
           Vazgeç

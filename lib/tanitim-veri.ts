@@ -10,7 +10,6 @@
   `tanitimKayitlariniAyikla` onları ayırt edip yalnızca onları siliyor.
 */
 import { gunKaydir } from './utils'
-import { bosSifir, herhangiDolu } from './bos-sifir'
 import type { Deneme, DersSonuc, PuanTuru, Sablon } from './types'
 
 export const TANITIM_ONEKI = 'tanitim-'
@@ -72,12 +71,9 @@ export function demoDenemeleri(sinif: number, puanTuru: PuanTuru | null, bugunIs
 }
 
 /*
-  Turun "Deneme ekle" formuna kendiliğinden yazılan sonuçlar. Kullanıcıya
-  deneme elle girdirilmiyor: tabloyu doldurmak için açılan klavye ve balon
-  dersleri kapatıyordu. Bilinen şablonlarda ikinci örnekten birkaç net
-  yukarıda (İstatistik'te "en çok ilerleyen dersler" dolsun); öğrencinin
-  kendi şablonunda soru sayısına oranla ortalama bir aday. Hiçbir satır
-  soru sayısını aşmıyor.
+  Örnek deneme sonuçları: bilinen şablonlarda ikinci örnekten birkaç net
+  yukarıda; öğrencinin kendi şablonunda soru sayısına oranla ortalama bir
+  aday. Hiçbir satır soru sayısını aşmıyor.
 */
 const TUR_FORMU_SONUCLARI: Record<string, Satir[]> = {
   tyt: [['turkce', 31, 6], ['tarih', 3, 1], ['cografya', 4, 1], ['felsefe', 3, 1], ['din', 4, 1], ['matematik', 21, 8], ['fizik', 4, 2], ['kimya', 4, 2], ['biyoloji', 3, 1]],
@@ -99,12 +95,9 @@ export function ornekDenemeSonucu(sablon: Sablon): DersSonuc[] {
 
 /*
   Turun İstatistik ekranına giden denemeler. İstatistik bir türü ancak o
-  türden iki deneme varken açıyor. Turdaki deneme formu artık normal akışla
-  aynı şablonları ve aynı varsayılanı sunuyor (Okut aynı kâğıdı turda da
-  okusun diye); kullanıcı denemesini örneklerin türünden başka bir türde
-  (ör. Seviye Tespit) kaydedebiliyor. O türün eşi yoksa, kullanıcının
-  denemesinden birkaç net geride, bir hafta önceye tarihli geçici bir örnek
-  ekleniyor; o da `tanitim-` önekli ve tur bitince siliniyor.
+  türden iki deneme varken açıyor. Eklenen denemenin türünün eşi yoksa
+  birkaç net geride, bir hafta önceye tarihli geçici bir örnek ekleniyor;
+  o da `tanitim-` önekli ve tur bitince siliniyor.
 */
 export function turIstatistikDenemeleri(ornekler: readonly Deneme[], eklenenler: readonly Deneme[], sablonlar: readonly Sablon[]): Deneme[] {
   const liste = [...ornekler, ...eklenenler]
@@ -130,9 +123,7 @@ export function turIstatistikDenemeleri(ornekler: readonly Deneme[], eklenenler:
 /**
  * İstatistik mini turunun denemeleri.
  *
- * Ana turda kullanıcı kendi denemesini ekliyordu ve o, örneklerden biriyle
- * aynı türde ikinci deneme oluyordu. Mini turda eklenen deneme yok; iki örnek
- * de farklı türdeyse (TYT + alan sınavı) hiçbir tür iki denemeye ulaşmaz,
+ * Kullanıcı deneme eklemiyor; iki örnek de farklı türdeyse (TYT + alan sınavı) hiçbir tür iki denemeye ulaşmaz,
  * ekran "Henüz veri yok" der ve turun hedefleri hiç çizilmezdi. İkinci
  * örnek bu yüzden "eklenen" yerine geçiyor: eşi yoksa bir hafta önceye
  * tarihli geçici bir eş alıyor (`turIstatistikDenemeleri`).
@@ -140,37 +131,4 @@ export function turIstatistikDenemeleri(ornekler: readonly Deneme[], eklenenler:
 export function istatistikTuruDenemeleri(sinif: number, puanTuru: PuanTuru | null, bugunIso: string, sablonlar: readonly Sablon[]): Deneme[] {
   const ornekler = demoDenemeleri(sinif, puanTuru, bugunIso)
   return turIstatistikDenemeleri(ornekler.slice(0, 1), ornekler.slice(1), sablonlar)
-}
-
-/*
-  Ana turun deneme formu: okutmadan İleri diyen kullanıcıya örnek sonuçlar
-  yazılıyor ama **bir ders boş** kalıyor ve onu kullanıcı kendisi dolduruyor
-  (kullanıcı isteği: formu hiç ellemeden geçen tur, "doğru/yanlış nereye
-  yazılıyor"u göstermiyordu). Boş kalan, şablonun **ilk** dersi — TYT'de
-  Türkçe, AYT Sayısal/EA'da Matematik, Sözel'de Edebiyat. İlk satır "Elle gir"
-  başlığının hemen altında: kaydırmadan görünüyor, açılan klavye onu örtmüyor
-  ve öğrencinin netini en iyi bildiği derslerden biri.
-*/
-export function turBosDersi(sablon: Sablon): string {
-  return sablon.dersler[0]?.id ?? ''
-}
-
-/** Turun forma yazdığı sonuçlar: `ornekDenemeSonucu`ndan boş dersi çıkarır. */
-export function turFormuSonuclari(sablon: Sablon): DersSonuc[] {
-  const bos = turBosDersi(sablon)
-  return ornekDenemeSonucu(sablon).filter((s) => s.dersId !== bos)
-}
-
-/**
- * Boş bırakılan derse girilen sonuç turu geçirir mi: en az bir kutuya bir şey
- * yazılmış (boş kutu 0 sayılır, `bosSifir`), en az bir soru cevaplanmış ve
- * toplam o dersin soru sayısını aşmıyor. Hiçbir şey yazılmamış ya da yalnız
- * "0" yazılmış giriş geçirmiyor. Tur ilk rakamda ileri atlamasın diye
- * ekran geçişi kısa bir gecikmeyle yapıyor (`yeni-deneme.tsx`).
- */
-export function bosDersGirisiGecerli(giris: { dogru: string; yanlis: string } | undefined, ders: { soruSayisi: number }): boolean {
-  if (!giris || !herhangiDolu(giris.dogru, giris.yanlis)) return false
-  if (!/^\d*$/.test(giris.dogru) || !/^\d*$/.test(giris.yanlis)) return false
-  const toplam = bosSifir(giris.dogru) + bosSifir(giris.yanlis)
-  return toplam >= 1 && toplam <= ders.soruSayisi
 }

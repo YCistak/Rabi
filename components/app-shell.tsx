@@ -109,8 +109,8 @@ import {
 } from '@/lib/ozet'
 import { bugunKonuBittiMi, gorevlerBittiMi } from '@/lib/ana-maskot'
 import { RozetBildirimi } from '@/components/rozet-bildirimi'
-import { DENEME_FORMU_ADIMLARI, DENEME_VAZGEC, GOREV_VAZGEC, HARITA_TUR_ADIMLARI, gorevFormuTurdaAcik, gorevMenusuTurdaAcik, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
-import { demoDenemeleri, istatistikTuruDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi, turIstatistikDenemeleri } from '@/lib/tanitim-veri'
+import { GOREV_VAZGEC, HARITA_TUR_ADIMLARI, gorevFormuTurdaAcik, gorevMenusuTurdaAcik, miniTurSec, tanitimKonumu } from '@/lib/tanitim'
+import { demoDenemeleri, istatistikTuruDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla } from '@/lib/tanitim-veri'
 import { tanitimGeriKarari } from '@/lib/tanitim-rehber'
 import { taniKaydet } from '@/lib/tanitim-tani'
 import { TanitimSaglayici, useTanitim } from '@/components/tanitim/tanitim-baglami'
@@ -481,23 +481,21 @@ function RabiUygulamasi() {
   const sablonlar = useMemo(() => sablonlariBirlestir(kayitliSablonlar), [kayitliSablonlar])
 
   /*
-    Turda Denemeler ve İstatistik alana uygun iki örnek denemeyi ve
-    kullanıcının turda eklediğini gösteriyor; gerçek denemeler o sırada
-    görünmüyor ve hiçbirine yazılmıyor.
+    Turda Denemeler alana uygun iki örnek denemeyi gösteriyor; gerçek
+    denemeler o sırada görünmüyor ve hiçbirine yazılmıyor.
   */
   const turDenemeleri = useMemo(
-    () => (anaTurda ? [...demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso), ...tanitim.demo.denemeler] : null),
-    [anaTurda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler],
+    () => (anaTurda ? demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso) : null),
+    [anaTurda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso],
   )
   const gorunenDenemeler = turDenemeleri ?? denemeler
   // İstatistik'in mini turu örnek denemelerle: bölümlerinin çoğu iki
   // denemeden önce hiç çizilmiyor ve turun hedefleri boş kalırdı.
   const istatistikTurunda = tanitim.aktifTur === 'istatistik'
   const turIstatistigi = useMemo(
-    () => (anaTurda
-      ? turIstatistikDenemeleri(demoDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso), tanitim.demo.denemeler, sablonlar)
-      : istatistikTurunda ? istatistikTuruDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, sablonlar) : null),
-    [anaTurda, istatistikTurunda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, tanitim.demo.denemeler, sablonlar],
+    // Ana turda deneme eklenmiyor; İstatistik iki örnekten (gerekirse geçici eşiyle) çiziliyor.
+    () => (anaTurda || istatistikTurunda ? istatistikTuruDenemeleri(ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, sablonlar) : null),
+    [anaTurda, istatistikTurunda, ayarlar.buYilSinif, ayarlar.puanTuru, bugunIso, sablonlar],
   )
 
   /** Soru Takibi ve Yapılacaklar'ın ekleme sayfası turda turun adımına bağlı. */
@@ -676,13 +674,12 @@ function RabiUygulamasi() {
     const tur = miniTurSec({
       sekme,
       ekran,
-      denemeFormu: denemeFormu !== null,
       pomodoroIsliyor,
       pomodoroIstegi: pomodoroIstegi !== null,
       genelTest: genelTest !== null,
     })
     if (tur) tanitim.turuBaslat(tur)
-  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, ekran, sekme, denemeFormu, pomodoroIsliyor, pomodoroIstegi, genelTest, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, turBaslayabilir, ekran, sekme, pomodoroIsliyor, pomodoroIstegi, genelTest, tanitim.tanitimdaMi, tanitim.tamamlandi, tanitim.turuBaslat])
 
   // Oyunlar sekmesinden çıkınca hatırlanan ders unutuluyor; Oyunlar turu
   // bitince (kullanıcı hâlâ sekmedeyse) ders kutucuğundan gelinen ders geri açılıyor.
@@ -698,8 +695,7 @@ function RabiUygulamasi() {
       const konum = tanitimKonumu(tanitim.adim)
       setSekme(konum.sekme)
       setEkran(konum.ekran)
-      // Fonksiyonel: açık formun nesnesi her adımda yenilenmesin (yenilenirse sayfa başa kayıyor).
-      setDenemeFormu((onceki) => (konum.denemeFormu ? (onceki ?? { duzenlenen: null }) : null))
+      setDenemeFormu(null)
       setAcilacakDers(null)
       tanitimAcikti.current = true
     } else if (tanitimAcikti.current) {
@@ -1051,18 +1047,13 @@ function RabiUygulamasi() {
 
   const denemeKaydet = useCallback(
     (deneme: Deneme) => {
-      // Turda deneme turun listesine gidiyor; formu tur bir sonraki adımda kapatıyor.
-      if (anaTurda) {
-        tanitim.demoGuncelle('denemeler', (onceki) => [...onceki, { ...deneme, id: tanitimKimligi(deneme.id) }], 'deneme')
-        return
-      }
       setDenemeler((onceki) => {
         const varMi = onceki.some((d) => d.id === deneme.id)
         return varMi ? onceki.map((d) => (d.id === deneme.id ? deneme : d)) : [...onceki, deneme]
       })
       setDenemeFormu(null)
     },
-    [setDenemeler, anaTurda, tanitim.demoGuncelle],
+    [setDenemeler],
   )
 
   /**
@@ -1121,12 +1112,6 @@ function RabiUygulamasi() {
   ) : denemeFormu !== null ? (
     <div className="mx-auto en-az-ekran max-w-md px-4 pt-[calc(1.25rem+var(--guvenli-ust))] pb-[calc(2rem+var(--guvenli-alt))] tablet:max-w-[40rem] tablet:px-8">
       <YeniDenemeEkrani
-        /* Turda da normal akışla aynı şablonlar ve aynı varsayılan. Bir süre
-           yalnızca örneklerin türleri (TYT + alan) sunuluyor, TYT seçili
-           geliyordu: Okut kâğıdı seçili şablonun derslerine ve soru
-           sayılarına göre okuduğu için Seviye Tespit kâğıdı turda hiç
-           okunmuyor, tur dışında okunuyordu. İstatistik'in eşleşmesi artık
-           `turIstatistikDenemeleri`nde. */
         sablonlar={sablonlar}
         varsayilanSablonId={ayarlar.varsayilanSablonId}
         sinif={ayarlar.buYilSinif}
@@ -1140,13 +1125,7 @@ function RabiUygulamasi() {
             seviyeDersleriniKaydet(kayitli, sinif, alan, dersler, new Set(denemeler.map((d) => d.sablonId)), yeniId()),
           )
         }
-        onVazgec={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: DENEME_VAZGEC }) : setDenemeFormu(null))}
-        tanitim={anaTurda ? {
-          onOkutAcik: tanitim.setRehberGizli,
-          // Okut adımı geçilince (İleri) form bir ders hariç örnekle doluyor.
-          ornekDoldur: !!tanitim.adim && DENEME_FORMU_ADIMLARI.indexOf(tanitim.adim.kimlik) > 0,
-          dersGirildi: () => tanitim.gonder({ tur: 'kayit-eklendi', kayit: 'deneme-ders' }),
-        } : undefined}
+        onVazgec={() => setDenemeFormu(null)}
       />
     </div>
   ) : (
@@ -1326,7 +1305,7 @@ function RabiUygulamasi() {
                 hazir={anaTurda || denemelerHazir}
                 onSil={(id) => (anaTurda ? tanitim.demoGuncelle('denemeler', (o) => o.filter((d) => d.id !== id)) : setDenemeler((onceki) => onceki.filter((d) => d.id !== id)))}
                 onDuzenle={(deneme) => { if (!anaTurda) setDenemeFormu({ duzenlenen: deneme }) }}
-                onYeniyeGit={() => (anaTurda ? tanitim.gonder({ tur: 'hedefe-dokun', hedef: 'deneme-ekle' }) : setDenemeFormu({ duzenlenen: null }))}
+                onYeniyeGit={() => { if (!anaTurda) setDenemeFormu({ duzenlenen: null }) }}
                 // Turda örnek denemenin kartı adıma bağlı açılıyor (`deneme-detay`).
                 tanitim={anaTurda ? {
                   ornekAcik: tanitim.adim?.kimlik === 'deneme-detay',

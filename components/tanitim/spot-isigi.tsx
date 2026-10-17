@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal, flushSync } from 'react-dom'
+import { X } from 'lucide-react'
 import { Buton } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { adimPozu, TUR_ETIKETLERI } from '@/lib/tanitim'
@@ -794,11 +795,16 @@ export function SpotIsigi() {
           width: balon.genislik || 'calc(100% - 24px)', maxWidth: 340, maxHeight: ekran.yukseklik ? Math.max(120, ekran.yukseklik * 0.52) : '52dvh',
           visibility: ekran.genislik ? 'visible' : 'hidden',
         }}>
-        {/* Üst satır: Rabi ve turun etiketi. Sayaç, "Turu Geç" ya da kapatma düğmesi yok; tur yalnızca ilerleyerek biter. */}
+        {/* Üst satır: Rabi, turun etiketi ve ✕. Sayaç yok. ✕ her adımda turdan çıkarır (kullanıcı istedi, 2026-10):
+            "Turu Bitir" gibi turu görülmüş sayar, sormaz; tur Ayarlar'dan yeniden başlatılabilir. */}
         <div className="flex items-center gap-2.5" style={{ marginBottom: adim.kimlik === 'soru-bir' ? 0 : 8 }}>
           <span aria-hidden className="shrink-0"><Rabi poz={adimPozu(adim, aktifTur, aktifAdim === adimSayisi - 1)} boyut={adim.kimlik === 'soru-bir' || kisaBalon ? 36 : 48} /></span>
           {adim.kimlik === 'soru-bir' && <div><h2 data-tanitim-baslik tabIndex={-1} className="font-display text-sm font-extrabold outline-none">{adim.baslik}</h2><p className="text-[11px] text-muted-foreground">{aciklama}</p></div>}
           {adim.kimlik !== 'soru-bir' && <span className="text-[11px] font-extrabold tracking-wide text-primary">{aktifTur ? TUR_ETIKETLERI[aktifTur] : ''}</span>}
+          <button type="button" aria-label="Tanıtımdan çık" disabled={gecisSuruyor} onClick={turuBitir}
+            className="-mr-1.5 -mt-1.5 ml-auto flex size-11 shrink-0 items-center justify-center self-start rounded-full text-muted-foreground active:bg-muted">
+            <X aria-hidden size={20} strokeWidth={2.4} />
+          </button>
         </div>
         {adim.kimlik !== 'soru-bir' && <h2 data-tanitim-baslik tabIndex={-1} className={kisaBalon ? 'font-display text-sm font-extrabold outline-none' : 'font-display text-lg font-extrabold outline-none'}>{adim.baslik}</h2>}
         {(adim.kimlik !== 'soru-bir' || hedefEksik) && !(sikisik && !hedefEksik) && <p aria-live="polite" className={kisaBalon ? 'mt-1 text-xs leading-snug text-muted-foreground' : 'mt-2 text-[13px] leading-relaxed text-muted-foreground'}>{hedefEksik ? 'Bu adımın bileşeni bulunamadı. Geri dönerek yeniden deneyebilirsin.' : aciklama}</p>}

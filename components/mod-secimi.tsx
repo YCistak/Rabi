@@ -41,6 +41,8 @@ export function ModSecimi({
       {MOD_SIRASI.map((mod) => {
         const tanim = MODLAR[mod]
         const acik = mod === secili
+        // Yan dolgu `px-2`: 320 px ekranda kartın içi ~94 px kalıyordu ve tek
+        // satır (`whitespace-nowrap`) "Sıfır Tolerans" ~96 px, kenardan taşıyordu.
         return (
           <button
             key={mod}
@@ -48,7 +50,7 @@ export function ModSecimi({
             onClick={() => onSec(mod)}
             aria-pressed={acik}
             className={cn(
-              'flex flex-col items-center rounded-[20px] border-[1.5px] px-2.5 pt-4 pb-3.5 text-center transition-colors active:brightness-[0.97]',
+              'flex min-w-0 flex-col items-center rounded-[20px] border-[1.5px] px-2 pt-4 pb-3.5 text-center transition-colors active:brightness-[0.97]',
               'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
               acik
                 ? cn(RENKLER[mod], 'shadow-[0_0_0_1px_currentColor,0_4px_12px_rgb(27_26_25/0.10)]')

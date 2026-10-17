@@ -86,7 +86,7 @@ function useTanitimDurumu(deneyMi: boolean) {
 
   /*
     Sayım koruması: rehber geri sayım adımında beklenenden uzun gizli kaldıysa
-    "oyun başladı" olayı kaybolmuştur. Tur atlanamaz ve rehber gizliyken
+    "oyun başladı" olayı kaybolmuştur. Rehber (✕ dahil) gizliyken
     kullanıcının elinde hiçbir düğme yok; hazırlığa dönülüp rehber geri
     getiriliyor (oyun ekranı `DemoOyun`da yeniden kuruluyor).
   */
@@ -174,9 +174,9 @@ function useTanitimDurumu(deneyMi: boolean) {
     turuKaydet(durum.aktifTur)
     // Haritanın iki kitabını gösterdiyse Harita'nın kendi kısa turu da açılmıyor.
     if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'harita-ders')) turuKaydet('konu_haritasi')
-    // Deneme ekleme ve İstatistik ana turda geri geldi; ana turu bitiren
-    // kullanıcıya o ekranların eski mini turları bir daha açılmıyor.
-    if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'deneme-ekle')) turuKaydet('denemeler')
+    // Denemeler ve İstatistik ana turda; ana turu bitiren kullanıcıya o
+    // ekranların eski mini turları bir daha açılmıyor.
+    if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'deneme-detay')) turuKaydet('denemeler')
     if (durum.aktifTur === 'ana_tur' && durum.aktifAdim !== null && durum.aktifAdim >= TANITIM_ADIMLARI.findIndex((adim) => adim.kimlik === 'istatistik-tur')) turuKaydet('istatistik')
     /*
       Demo verisi (örnek banka, denemeler) katman sönerken ekranda kalıyor ve

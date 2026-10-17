@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { sablonlariBirlestir, secilebilirSablonlar } from './sablonlar'
-import { bosDersGirisiGecerli, demoDenemeleri, istatistikTuruDenemeleri, turBosDersi, turFormuSonuclari, demoSablonIdleri, ornekDenemeSonucu, turIstatistikDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
+import { demoDenemeleri, istatistikTuruDenemeleri, demoSablonIdleri, ornekDenemeSonucu, turIstatistikDenemeleri, tanitimKaydiMi, tanitimKayitlariniAyikla, tanitimKimligi } from './tanitim-veri'
 import { net } from './hesap'
 import type { PuanTuru } from './types'
 
@@ -63,111 +63,5 @@ describe('Tanıtım kayıtlarının temizliği', () => {
   })
   it('kimliği iki kez öneklemez', () => {
     expect(tanitimKimligi(tanitimKimligi('abc'))).toBe('tanitim-abc')
-  })
-})
-
-describe('Turun deneme formuna yazılan örnek sonuçlar', () => {
-  it.each(SABLONLAR.map((s) => [s.id]))('%s: her ders dolu, soru sayısını aşmıyor, gerçekçi', (id) => {
-    const sablon = SABLONLAR.find((s) => s.id === id)!
-    const sonuc = ornekDenemeSonucu(sablon)
-    expect(sonuc.map((s) => s.dersId)).toEqual(sablon.dersler.map((d) => d.id))
-    for (const s of sonuc) {
-      const ders = sablon.dersler.find((d) => d.id === s.dersId)!
-      expect(s.dogru + s.yanlis).toBeLessThanOrEqual(ders.soruSayisi)
-      expect(s.dogru).toBeGreaterThanOrEqual(s.yanlis)
-    }
-    const toplam = sonuc.reduce((t, s) => t + net(s.dogru, s.yanlis, sablon.yanlisKatsayi), 0)
-    const soru = sablon.dersler.reduce((t, d) => t + d.soruSayisi, 0)
-    expect(toplam / soru).toBeGreaterThan(0.3)
-    expect(toplam / soru).toBeLessThan(0.6)
-  })
-  it.each([['say'], ['ea'], ['soz'], ['dil'], [null]] as [PuanTuru | null][])('%s: örneklerin sonuncusundan iyi, en az bir ders ilerliyor', (puanTuru) => {
-    const ornekler = demoDenemeleri(12, puanTuru, '2026-10-03')
-    const tyt = SABLONLAR.find((s) => s.id === 'tyt')!
-    const onceki = [...ornekler].reverse().find((d) => d.sablonId === 'tyt')!
-    const yeni = ornekDenemeSonucu(tyt)
-    const toplamNet = (sonuclar: { dogru: number; yanlis: number }[]) => sonuclar.reduce((t, s) => t + net(s.dogru, s.yanlis, tyt.yanlisKatsayi), 0)
-    expect(toplamNet(yeni)).toBeGreaterThan(toplamNet(onceki.sonuclar))
-    expect(yeni.some((s) => { const o = onceki.sonuclar.find((x) => x.dersId === s.dersId)!; return net(s.dogru, s.yanlis, 4) > net(o.dogru, o.yanlis, 4) })).toBe(true)
-  })
-  it('özel şablonda soru sayısına oranla doldurur', () => {
-    const ozel = { id: 'ozel-1', ad: 'Okul sınavı', tur: 'okul', yanlisKatsayi: 4, hazir: false, dersler: [{ id: 'a', ad: 'A', soruSayisi: 20 }, { id: 'b', ad: 'B', soruSayisi: 1 }] } as unknown as Parameters<typeof ornekDenemeSonucu>[0]
-    expect(ornekDenemeSonucu(ozel)).toEqual([{ dersId: 'a', dogru: 11, yanlis: 3 }, { dersId: 'b', dogru: 1, yanlis: 0 }])
-  })
-})
-
-describe('Turun İstatistik denemeleri', () => {
-  const okul = SABLONLAR.find((s) => s.id === 'okul')!
-  const kullanicinin = { id: 'tanitim-k1', sablonId: 'okul', ad: 'Seviye', tarih: '2026-10-03', sonuclar: ornekDenemeSonucu(okul) }
-  it('örneklerin türünde olmayan kullanıcı denemesine geri tarihli bir eş ekler', () => {
-    const ornekler = demoDenemeleri(12, 'ea', '2026-10-03')
-    const liste = turIstatistikDenemeleri(ornekler, [kullanicinin], SABLONLAR)
-    const okulDenemeleri = liste.filter((d) => d.sablonId === 'okul')
-    expect(okulDenemeleri).toHaveLength(2)
-    const es = okulDenemeleri.find((d) => d.id !== kullanicinin.id)!
-    expect(tanitimKaydiMi(es)).toBe(true)
-    expect(es.tarih).toBe('2026-09-26')
-    const toplam = (d: typeof es) => d.sonuclar.reduce((t, s) => t + net(s.dogru, s.yanlis, 4), 0)
-    expect(toplam(es)).toBeLessThan(toplam(kullanicinin))
-    for (const s of es.sonuclar) {
-      const ders = okul.dersler.find((d) => d.id === s.dersId)!
-      expect(s.dogru).toBeGreaterThanOrEqual(0)
-      expect(s.dogru + s.yanlis).toBeLessThanOrEqual(ders.soruSayisi)
-    }
-  })
-  it('türün eşi zaten varsa bir şey eklemez', () => {
-    const ornekler = demoDenemeleri(12, null, '2026-10-03')
-    const tyt = { ...kullanicinin, sablonId: 'tyt', sonuclar: ornekDenemeSonucu(SABLONLAR.find((s) => s.id === 'tyt')!) }
-    expect(turIstatistikDenemeleri(ornekler, [tyt], SABLONLAR)).toEqual([...ornekler, tyt])
-  })
-})
-
-describe('İstatistik mini turunun denemeleri', () => {
-  it.each([
-    [12, 'say'],
-    [11, 'ea'],
-    [13, 'dil'],
-    [10, 'say'],
-    [12, null],
-  ] as const)('%i. sınıf, %s: en az bir tür iki denemeye ulaşıyor ve hepsi geçici', (sinif, puanTuru) => {
-    const liste = istatistikTuruDenemeleri(sinif, puanTuru as PuanTuru | null, '2026-10-03', SABLONLAR)
-    const sayilar = new Map<string, number>()
-    for (const d of liste) sayilar.set(d.sablonId, (sayilar.get(d.sablonId) ?? 0) + 1)
-    expect([...sayilar.values()].some((n) => n >= 2)).toBe(true)
-    expect(liste.every(tanitimKaydiMi)).toBe(true)
-    expect(new Set(liste.map((d) => d.id)).size).toBe(liste.length)
-  })
-})
-
-describe('Turun deneme formu: bir ders boş kalıyor', () => {
-  it('her şablonda yalnızca ilk ders boş; ötekiler soru sayısını aşmadan dolu', () => {
-    for (const sablon of SABLONLAR) {
-      const bos = turBosDersi(sablon)
-      expect(bos, sablon.id).toBe(sablon.dersler[0].id)
-      const sonuclar = turFormuSonuclari(sablon)
-      expect(sonuclar.map((s) => s.dersId), sablon.id).toEqual(sablon.dersler.slice(1).map((d) => d.id))
-      for (const s of sonuclar) {
-        const ders = sablon.dersler.find((d) => d.id === s.dersId)!
-        expect(s.dogru + s.yanlis, `${sablon.id}/${s.dersId}`).toBeLessThanOrEqual(ders.soruSayisi)
-        expect(s.dogru + s.yanlis, `${sablon.id}/${s.dersId}`).toBeGreaterThan(0)
-      }
-    }
-  })
-
-  it('TYT’de boş kalan Türkçe', () => {
-    expect(turBosDersi(SABLONLAR.find((s) => s.id === 'tyt')!)).toBe('turkce')
-  })
-
-  it('boş derse geçerli giriş: iki kutu dolu, en az bir soru, soru sayısını aşmıyor', () => {
-    const ders = { soruSayisi: 40 }
-    expect(bosDersGirisiGecerli(undefined, ders)).toBe(false)
-    expect(bosDersGirisiGecerli({ dogru: '', yanlis: '' }, ders)).toBe(false)
-    expect(bosDersGirisiGecerli({ dogru: '25', yanlis: '' }, ders)).toBe(true)
-    expect(bosDersGirisiGecerli({ dogru: '', yanlis: '5' }, ders)).toBe(true)
-    expect(bosDersGirisiGecerli({ dogru: '', yanlis: '41' }, ders)).toBe(false)
-    expect(bosDersGirisiGecerli({ dogru: '0', yanlis: '0' }, ders)).toBe(false)
-    expect(bosDersGirisiGecerli({ dogru: '30', yanlis: '11' }, ders)).toBe(false)
-    expect(bosDersGirisiGecerli({ dogru: '25', yanlis: '0' }, ders)).toBe(true)
-    expect(bosDersGirisiGecerli({ dogru: '30', yanlis: '10' }, ders)).toBe(true)
   })
 })
