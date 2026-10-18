@@ -38,8 +38,8 @@ sürümünden; kullanıcıdan öğrenilemiyor.
   birikir. Karar saf ve testli: `lib/cokme-karari.ts`. Cevaplanmadan kapatılan çökme
   `rabi-cokme-cevapsiz-v1` bayrağıyla bir sonraki açılışta yeniden sorulur.
 
-**3. Play güncelleme denetimi (In-App Updates).** Ağa çıkan Play Store; giden yalnız
-paket adı ve sürüm.
+**3. Güncelleme denetimi (Play In-App Updates, iOS'ta App Store araması).** Ağa çıkan
+Play Store / Apple; giden yalnız paket adı (Android'de sürüm de).
 - `lib/guncelleme.ts` köprü, `lib/guncelleme-kolu.ts` state,
   `components/guncelleme-seridi.tsx` şerit, yerli `guncelleme/GuncellemeEklentisi.kt`.
   Açılışta bir kez sorulur.
@@ -48,6 +48,11 @@ paket adı ve sürüm.
   kayda girmez (kalıcı "bir daha sorma" yok).
 - Elden kurulan APK'da `appUpdateInfo` hata döner; her yöntem yutup "güncelleme yok"
   der. Zorunlu kipe (`IMMEDIATE`) geçmeden önce sor.
+- **iOS** aynı şeridi kullanır: `appStoreKontrol` (`lib/guncelleme.ts`)
+  `itunes.apple.com/lookup`a `CapacitorHttp` ile yalnız paket kimliğini sorar (fetch
+  CORS'ta düşer), sürümü `surumYeniMi` (`lib/surum-karsilastir.ts`) karşılaştırır;
+  "Güncelle" App Store sayfasını açar, indirme hâlleri yok. Uygulama mağazada
+  değilse (yalnız TestFlight) şerit çıkmaz.
 
 ## Yasal metinler
 

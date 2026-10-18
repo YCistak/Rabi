@@ -10,12 +10,20 @@
  * güncellemesi kapalı kullanıcı düzeltilmiş bir hatayı haftalarca eski
  * sürümde yaşıyordu ve bunu ona söyleyecek bir yer yoktu.
  *
+ * iOS'ta App Store uygulamaya haber vermiyor ve sorulacak yerli bir API yok;
+ * orada Apple'ın herkese açık arama adresine (`itunes.apple.com/lookup`)
+ * yalnız paket kimliği gidiyor, kurulu sürümle karşılaştırma telefonda
+ * yapılıyor. "Güncelle" App Store'daki sayfayı açıyor — indirme ve kurulum
+ * App Store'un işi, şerit yalnız haber veriyor.
+ *
  * React'e bağlı kısım `lib/guncelleme-kolu.ts` içinde — `cokme.ts` /
  * `cokme-izni.ts` ikilisiyle aynı ayrım.
  */
 
-import { registerPlugin, type PluginListenerHandle } from '@capacitor/core'
-import { androidMu } from './platform'
+import { App } from '@capacitor/app'
+import { CapacitorHttp, registerPlugin, type PluginListenerHandle } from '@capacitor/core'
+import { androidMu, iosMu } from './platform'
+import { surumYeniMi } from './surum-karsilastir'
 
 /** Yerli taraftan gelen indirme durumu. */
 export type GuncellemeDurumu = 'indiriliyor' | 'indirildi' | 'kuruluyor' | 'kuruldu' | 'basarisiz'
@@ -40,10 +48,43 @@ const sahte: GuncellemeEklentisi = {
 
 const eklenti = registerPlugin<GuncellemeEklentisi>('Guncelleme', { web: () => sahte })
 
-// Play'e ait; iOS'ta güncellemeyi App Store kendisi dağıtıyor ve uygulamanın
-// soracağı bir şey yok.
+// Yerli eklenti Play'e ait; iOS kendi yolundan (`appStoreKontrol`) gidiyor.
 function destekleniyor(): boolean {
   return androidMu()
+}
+
+const PAKET = 'com.fluxifyinteractive.rabi'
+
+/** Son denetimde bulunan App Store sayfası; "Güncelle" bunu açıyor. */
+let appStoreAdresi: string | null = null
+
+/**
+ * App Store'daki sürümü kuruluyla karşılaştırır.
+ *
+ * `fetch` değil `CapacitorHttp`: arama adresi CORS başlığı vermiyor, istek
+ * yerli taraftan gidiyor. Adresin sonundaki zaman damgası Apple'ın önbelleğini
+ * deliyor — yoksa yayından sonra bir gün boyunca eski sürüm dönebiliyor.
+ * Uygulama mağazada yoksa (yalnız TestFlight) sonuç boş, şerit çıkmaz.
+ */
+async function appStoreKontrol(): Promise<{ var: boolean; indirildi: boolean }> {
+  const yok = { var: false, indirildi: false }
+  try {
+    const [{ version: kurulu }, yanit] = await Promise.all([
+      App.getInfo(),
+      CapacitorHttp.get({
+        url: 'https://itunes.apple.com/lookup',
+        params: { bundleId: PAKET, country: 'tr', t: String(Date.now()) },
+      }),
+    ])
+    const veri = typeof yanit.data === 'string' ? JSON.parse(yanit.data) : yanit.data
+    const kayit = veri?.results?.[0] as { version?: string; trackViewUrl?: string } | undefined
+    if (!kayit?.version || !kayit.trackViewUrl) return yok
+    if (!surumYeniMi(kayit.version, kurulu)) return yok
+    appStoreAdresi = kayit.trackViewUrl
+    return { var: true, indirildi: false }
+  } catch {
+    return yok
+  }
 }
 
 /**
@@ -53,6 +94,7 @@ function destekleniyor(): boolean {
  * doğrudan "Yeniden başlat" hâliyle çıkmalı.
  */
 export async function guncellemeKontrol(): Promise<{ var: boolean; indirildi: boolean }> {
+  if (iosMu()) return appStoreKontrol()
   if (!destekleniyor()) return { var: false, indirildi: false }
   try {
     return await eklenti.kontrol()
@@ -61,8 +103,15 @@ export async function guncellemeKontrol(): Promise<{ var: boolean; indirildi: bo
   }
 }
 
-/** "Güncelle": Play'in onay penceresi açılır, indirme arkada başlar. */
+/**
+ * "Güncelle": Play'in onay penceresi açılır, indirme arkada başlar. iOS'ta
+ * App Store sayfası açılır (Capacitor `_blank`ı sisteme veriyor).
+ */
 export async function guncellemeyiBaslat(): Promise<void> {
+  if (iosMu()) {
+    if (appStoreAdresi) window.open(appStoreAdresi, '_blank')
+    return
+  }
   if (!destekleniyor()) return
   try {
     await eklenti.baslat()

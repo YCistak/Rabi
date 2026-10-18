@@ -2,6 +2,7 @@
 
 import { Download, RefreshCw, X } from 'lucide-react'
 import { Rabi } from '@/components/maskot/rabi'
+import { iosMu } from '@/lib/platform'
 import { cn } from '@/lib/utils'
 import type { GuncellemeKolu } from '@/lib/guncelleme-kolu'
 
@@ -18,6 +19,9 @@ import type { GuncellemeKolu } from '@/lib/guncelleme-kolu'
  * (düğme pasif, dönen simge), **indirildi** (Yeniden başlat). Kurulum
  * başladığında da çiziliyor ama düğme pasif — uygulama kapanmak üzere ve
  * ikinci bir dokunuş ikinci bir kurulum isteği olurdu.
+ *
+ * iOS'ta yalnız **hazır** hâli var: "Güncelle" App Store'u açar, indirme
+ * durumu uygulamaya gelmez.
  *
  * Çarpı yalnızca hazır hâlde: inen bir paketi kurmanın tek yolu bu şerit ve
  * onu kapatan kullanıcı paketin telefonunda beklediğini bir daha öğrenemezdi.
@@ -37,7 +41,9 @@ export function GuncellemeSeridi({ kol }: { kol: GuncellemeKolu }) {
         ? 'Kuruluyor…'
         : indirildi
           ? 'Yeniden başlatınca hazır.'
-          : 'Play’de yeni bir sürüm var.'
+          : iosMu()
+            ? 'App Store’da yeni bir sürüm var.'
+            : 'Play’de yeni bir sürüm var.'
 
   return (
     <div

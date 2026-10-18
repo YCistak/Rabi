@@ -8,8 +8,9 @@ reddedildi.
 - **Platform `isNativePlatform()` ile sorulmaz** (iOS'ta da `true`); `androidMu()` /
   `iosMu()` (`lib/platform.ts`). Yeni yerli eklentinin hangi platformda olduğunu oradan
   söyle.
-- iOS'ta yok: Rahatsız Etme, ses odağı, Play güncellemesi, çökme raporu (Crashlytics
-  köprüsü yazılmadı, soru hiç çıkmıyor).
+- iOS'ta yok: Rahatsız Etme, ses odağı, çökme raporu (Crashlytics
+  köprüsü yazılmadı, soru hiç çıkmıyor). Güncelleme şeridi App Store aramasıyla çalışır
+  ([ag-ve-gizlilik.md](ag-ve-gizlilik.md) §3).
 - **Uygulamada başka platform/mağaza adı geçmez** (App Store 2.3.10): "Android",
   "Play" diyen metin ya yalnız Android'de çizilir ya platform adı olmadan yazılır.
 - **Live Activity sayaç:** köprü `lib/canli-sayac.ts`, Pomodoro onu `lib/odak-kilidi.ts`

@@ -6,7 +6,7 @@
  * Saf köprü `lib/guncelleme.ts`'te, React'e bağlı olan kısım burada —
  * `cokme-izni.ts` ile aynı desen.
  *
- * **Akış:** açılışta bir kez Play'e soruluyor. Yeni sürüm varsa şerit
+ * **Akış:** açılışta bir kez Play'e (iOS'ta App Store'a) soruluyor. Yeni sürüm varsa şerit
  * "Güncelle" ile çıkıyor; dokunulunca Play kendi onay penceresini açıyor ve
  * indirme arkada sürüyor. Paket inince şerit "Yeniden başlat"a dönüyor —
  * yeniden başlatmaya kullanıcı karar veriyor, uygulama onu turun ortasında
