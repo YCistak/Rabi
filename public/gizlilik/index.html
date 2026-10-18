@@ -362,8 +362,14 @@
 </p>
 <p>
   Rabi Play dışından (doğrudan APK olarak) kurulduysa bu denetim çalışmaz ve şerit hiç
-  görünmez. Bu denetim yalnızca Android'dedir; iPhone'da güncellemeleri App Store kendisi
-  yönetir ve Rabi böyle bir sorgu yapmaz.
+  görünmez.
+</p>
+<p>
+  iPhone'da Rabi, açılırken Apple'ın herkese açık App Store arama adresine yalnızca
+  uygulamanın paket kimliğini göndererek mağazadaki son sürümü sorar ve bunu telefonda
+  kurulu sürümle karşılaştırır. Adın, kullanımın ya da başka bir bilgi gönderilmez. Yeni
+  sürüm varsa aynı şerit çıkar; &ldquo;Güncelle&rdquo; App Store'daki sayfayı açar, indirmeyi
+  App Store yapar.
 </p>
 
 <h2>5. İzinler ve neden isteniyor</h2>
@@ -371,7 +377,7 @@
 <div class="sar">
 <table>
   <tr><th>İzin</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
-  <tr><td>İnternet</td><td>§3, §4 ve §4a'daki üç gönderim ile Play'in güncelleme denetimi (§4b)</td><td>Yalnızca izin verirsen</td></tr>
+  <tr><td>İnternet</td><td>§3, §4 ve §4a'daki üç gönderim ile güncelleme denetimi (§4b)</td><td>Yalnızca izin verirsen</td></tr>
   <tr><td>Bildirim gönderme</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
   <tr><td>Kamera / galeri (sistem seçicisi üzerinden; iPhone'da kamera izni)</td><td>Yanlış soru fotoğrafı ve deneme sonuç kâğıdını okutma</td><td>Hayır</td></tr>
   <tr><td>Kullanım verisi erişimi (<code>PACKAGE_USAGE_STATS</code>)</td><td>Odak kilidi sırasında hangi uygulamanın ön planda olduğunu anlamak</td><td>Hayır — okunan bilgi telefondan çıkmaz</td></tr>
