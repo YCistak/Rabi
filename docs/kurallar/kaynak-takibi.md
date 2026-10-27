@@ -37,9 +37,10 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
   mevcut kayda dokunulmaz). En çok `EN_COK_KAYNAK` (60) kaynak, ad `EN_UZUN_KAYNAK_ADI` (40).
 - **Yayınevi önerisi ad kutusunda** (kullanıcı istedi, 2026-10; `yayinevleri.ts`): ayrı
   yayınevi kutusu/çip satırı **yok**. Ad kutusu odaktayken Hedefim'deki arama gibi
-  altında liste açılır: üstte yazılanı içeren eski kaynak adları (`gecmisOneriler`, en
-  çok 3), altta yayınevleri (`yayineviOnerileri`: kutu boşken 18'i, yazdıkça ad ya da
-  kelime başı eşleşenler; adın başında yayınevi varsa liste kapanır). Yayınevi seçilince
+  altında liste açılır: üstte adı yazılanla başlayan eski kaynak adları (`gecmisOneriler`,
+  en çok 3), altta yayınevleri (`yayineviOnerileri`: kutu boşken liste **yok** — kullanıcı istedi;
+  yazdıkça adı yazılanla başlayanlar, "o" → Orijinal; adın başında yayınevi varsa liste
+  kapanır). Yayınevi seçilince
   kutuya kısa adı yazılır ("Limit "), gerisini öğrenci yazar; hiçbiri seçilmezse yazılan
   ad olduğu gibi kaydedilir. Satırlar `pointerdown`da odağı almaz (liste tıklamadan
   önce kapanmasın). **Marka kuralları:** düz yazı (logo, kapak, yayınevi rengi yok),

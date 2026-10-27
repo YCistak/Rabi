@@ -21,11 +21,13 @@ describe('yayınevleri', () => {
     expect(adinYayinevi('Paraf')).toBe('Paraf')
   })
 
-  it('yazdıkça süzülür: ad başı ya da kelime başı, harf farkı gözetmeden', () => {
-    expect(yayineviOnerileri('')).toHaveLength(YAYINEVLERI.length)
+  it('boş kutuda öneri yok; yazıldıkça adı yazılanla başlayanlar, harf farkı gözetmeden', () => {
+    expect(yayineviOnerileri('')).toEqual([])
+    expect(yayineviOnerileri('  ')).toEqual([])
+    expect(yayineviOnerileri('o')).toEqual(['Orijinal'])
     expect(yayineviOnerileri('lim')).toEqual(['Limit'])
     expect(yayineviOnerileri('HIZ')).toEqual(['Hız ve Renk'])
-    expect(yayineviOnerileri('renk')).toEqual(['Hız ve Renk'])
+    expect(yayineviOnerileri('renk')).toEqual([])
     expect(yayineviOnerileri('cap')).toEqual(['Çap'])
     expect(yayineviOnerileri('pa')).toEqual(['Palme', 'Paraf'])
     expect(yayineviOnerileri('Fizik Soru')).toEqual([])
@@ -40,7 +42,8 @@ describe('yayınevleri', () => {
 describe('geçmiş öneriler', () => {
   const liste = [kaynak('a', 'Limit AYT Fizik'), kaynak('b', 'Paraf Paragraf'), kaynak('c', 'Limit AYT Fizik')]
 
-  it('yazılanı içeren eski adları tekrarsız önerir', () => {
+  it('adı yazılanla başlayan eski adları tekrarsız önerir', () => {
+    expect(gecmisOneriler(liste, 'ayt')).toEqual([])
     expect(gecmisOneriler(liste, 'limit')).toEqual(['Limit AYT Fizik'])
     expect(gecmisOneriler(liste, 'Par')).toEqual(['Paraf Paragraf'])
   })

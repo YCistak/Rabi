@@ -47,36 +47,34 @@ export function adinYayinevi(ad: string): string | null {
 
 /**
  * Ad kutusu yazılırken açılan listedeki yayınevleri (Hedefim'deki arama
- * gibi). Kutu boşken hepsi; yazıldıkça adı ya da adındaki bir kelime yazılanla
- * başlayanlar ("lim" → Limit, "renk" → Hız ve Renk; büyük/küçük harf ve
- * Türkçe harf farkı gözetilmez). Adın başında zaten bir yayınevi varsa liste
+ * gibi). Kutu boşken liste yok (kullanıcı istedi, 2026-10: hazır öneri
+ * yazmadan çıkmasın); yazıldıkça adı yazılanla **başlayanlar** ("o" → Orijinal,
+ * "lim" → Limit; büyük/küçük harf ve Türkçe harf farkı gözetilmez). Adın başında zaten bir yayınevi varsa liste
  * yok: öğrenci kitabın adını yazıyor. Hiçbiri seçilmezse yazılan ad olduğu
  * gibi kaydedilir.
  */
 export function yayineviOnerileri(ad: string): string[] {
   if (adinYayinevi(ad) !== null) return []
   const aranan = sadelestir(ad)
-  if (aranan === '') return YAYINEVLERI.map((y) => y.on)
-  return YAYINEVLERI.filter((y) => {
-    const on = sadelestir(y.on)
-    return on.startsWith(aranan) || on.split(' ').some((kelime) => kelime.startsWith(aranan))
-  }).map((y) => y.on)
+  if (aranan === '') return []
+  return YAYINEVLERI.filter((y) => sadelestir(y.on).startsWith(aranan)).map((y) => y.on)
 }
 
 /**
  * Öğrencinin daha önce yazdığı kaynak adlarından öneriler: aynı serinin
  * başka dersini eklerken ("Limit AYT Fizik" → "Limit AYT Kimya") adı
- * baştan yazmasın. Yazılan metni içerenler, yeni eklenen önce; yazılanla
- * birebir aynı olan önerilmez. Kutu boşken öneri yok (liste yayınevlerinin).
+ * baştan yazmasın. Adı yazılanla başlayanlar (yayınevleriyle aynı kural),
+ * yeni eklenen önce; yazılanla birebir aynı olan önerilmez. Kutu boşken
+ * öneri yok.
  */
 export function gecmisOneriler(kaynaklar: Kaynak[], yazilan: string, enCok = 3): string[] {
-  const aranan = kucuk(yazilan.trim())
+  const aranan = sadelestir(yazilan)
   if (aranan === '') return []
   const gorulen = new Set<string>()
   const sonuc: string[] = []
   for (const k of kaynaklar) {
-    const ad = kucuk(k.ad)
-    if (ad === aranan || gorulen.has(ad) || !ad.includes(aranan)) continue
+    const ad = sadelestir(k.ad)
+    if (ad === aranan || gorulen.has(ad) || !ad.startsWith(aranan)) continue
     gorulen.add(ad)
     sonuc.push(k.ad)
     if (sonuc.length >= enCok) break
