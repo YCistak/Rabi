@@ -1,6 +1,6 @@
 import type { KonuDersId } from '../konu/tip'
 import { varsayilanSinif } from '../konu-takibi/sinif'
-import { KAYNAK_SINIFLARI, konuKimligi, uniteler, type KaynakSinifi, type Unite } from './konular'
+import { DERS_SIRASI, KAYNAK_SINIFLARI, konuKimligi, uniteler, type KaynakSinifi, type Unite } from './konular'
 
 /**
  * Kaynak Takibi — öğrencinin test kitapları ve her kitapta bitirdiği konular.
@@ -27,10 +27,6 @@ export const EN_UZUN_KAYNAK_ADI = 40
 /** Liste sınırı; localStorage küçük veri için ve 60 kitap zaten bir kütüphane. */
 export const EN_COK_KAYNAK = 60
 
-const DERS_KIMLIKLERI: readonly KonuDersId[] = [
-  'matematik', 'turkce', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya', 'ingilizce',
-]
-
 /** Baştaki/sondaki ve art arda boşlukları atıp sınıra kırpar. */
 export function kaynakAdiKirp(ad: string): string {
   return ad.replace(/\s+/g, ' ').trim().slice(0, EN_UZUN_KAYNAK_ADI).trim()
@@ -54,7 +50,7 @@ export function kaynaklariCoz(ham: unknown): Kaynak[] {
     if (typeof n.id !== 'string' || n.id === '' || gorulen.has(n.id)) continue
     if (typeof n.ad !== 'string' || kaynakAdiKirp(n.ad) === '') continue
     if (!KAYNAK_SINIFLARI.includes(n.sinif as KaynakSinifi)) continue
-    if (!DERS_KIMLIKLERI.includes(n.ders as KonuDersId)) continue
+    if (!DERS_SIRASI.includes(n.ders as KonuDersId)) continue
     gorulen.add(n.id)
     temiz.push({
       id: n.id,
@@ -153,4 +149,17 @@ export function kaynakBittiMi(kaynak: Kaynak): boolean {
  */
 export function siraliKaynaklar(liste: Kaynak[]): Kaynak[] {
   return [...liste.filter((k) => !kaynakBittiMi(k)), ...liste.filter(kaynakBittiMi)]
+}
+
+export type DersGrubu = { ders: KonuDersId; kaynaklar: Kaynak[] }
+
+/**
+ * Kaynakları derse göre ayırır (kullanıcı istedi, 2026-10): gruplar ders
+ * seçicinin sırasında, boş ders yok; grup içi `siraliKaynaklar` sırası.
+ */
+export function derseGoreGrupla(liste: Kaynak[]): DersGrubu[] {
+  return DERS_SIRASI.map((ders) => ({
+    ders,
+    kaynaklar: siraliKaynaklar(liste.filter((k) => k.ders === ders)),
+  })).filter((g) => g.kaynaklar.length > 0)
 }

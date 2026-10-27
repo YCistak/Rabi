@@ -12,10 +12,11 @@ import {
   kaynakIlerlemesi,
   kaynakSil,
   konuIsaretle,
-  siraliKaynaklar,
+  derseGoreGrupla,
   uniteIlerlemesi,
   uniteIsaretle,
   varsayilanKaynakSinifi,
+  type DersGrubu,
   type Kaynak,
 } from '@/lib/kaynak-takibi/kaynak'
 import {
@@ -35,7 +36,7 @@ import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { dersVurgusu } from '@/components/ders-renkleri'
 import { OlcekliEmoji } from '@/components/olcekli-emoji'
 import { AlanBasligi, SecimDugmesi } from '@/components/ekranlar/yapilacaklar'
-import { BaslikSatiri, Buton, Kart, Onay, kartGirisi, useKapatmaOnayi } from '@/components/ui'
+import { BaslikSatiri, Buton, Kart, Onay, SuzgecKutusu, kartGirisi, useKapatmaOnayi } from '@/components/ui'
 
 /**
  * Kaynak Takibi — öğrencinin test kitapları.
@@ -69,6 +70,7 @@ export function KaynakTakibiEkrani({
   const [eylemli, setEylemli] = useState<Kaynak | null>(null)
   const [silinecek, setSilinecek] = useState<Kaynak | null>(null)
   const [suzgec, setSuzgec] = useState<KaynakSinifi | null>(null)
+  const [dersSuzgeci, setDersSuzgeci] = useState<KonuDersId | null>(null)
   const [mesaj, setMesaj] = useState<string | null>(null)
 
   const acik = kaynaklar.find((k) => k.id === acikId) ?? null
@@ -95,10 +97,21 @@ export function KaynakTakibiEkrani({
   */
   const siniflar = KAYNAK_SINIFLARI.filter((s) => kaynaklar.some((k) => k.sinif === s))
   const etkinSuzgec = suzgec !== null && siniflar.includes(suzgec) && siniflar.length > 1 ? suzgec : null
-  const gorunenler = useMemo(
-    () => siraliKaynaklar(etkinSuzgec === null ? kaynaklar : kaynaklar.filter((k) => k.sinif === etkinSuzgec)),
+  /*
+    Ders ders ayrım (kullanıcı istedi, 2026-10): liste her zaman ders
+    başlıklarıyla bölünüyor; ders süzgeci tek bir dersi bırakıyor. Süzgeç,
+    sınıf süzgeci gibi, yalnız birden çok ders varken çıkıyor ve seçili
+    dersin kaynağı kalmayınca "Tümü"ne düşüyor.
+  */
+  const sinifGruplari = useMemo(
+    () => derseGoreGrupla(etkinSuzgec === null ? kaynaklar : kaynaklar.filter((k) => k.sinif === etkinSuzgec)),
     [kaynaklar, etkinSuzgec],
   )
+  const etkinDers =
+    dersSuzgeci !== null && sinifGruplari.length > 1 && sinifGruplari.some((g) => g.ders === dersSuzgeci)
+      ? dersSuzgeci
+      : null
+  const gruplar = etkinDers === null ? sinifGruplari : sinifGruplari.filter((g) => g.ders === etkinDers)
 
   const ekle = (ad: string, kaynakSinifi: KaynakSinifi, ders: KonuDersId) => {
     const id = yeniId()
@@ -115,6 +128,9 @@ export function KaynakTakibiEkrani({
       kendiliğinden açılınca öğrenci listeyi hiç görmüyor, ikinci kitabı
       ekleyecek düğmeyi bulamıyordu. Yeni kaynak listenin başında.
     */
+    // Süzgeç yeni kaynağı gizlemesin: başka sınıf ya da ders eklendiyse süzgeç kalkıyor.
+    if (suzgec !== null && suzgec !== kaynakSinifi) setSuzgec(null)
+    if (dersSuzgeci !== null && dersSuzgeci !== ders) setDersSuzgeci(null)
     window.scrollTo(0, 0)
     soyle('Kaynak eklendi. Konuları için üstüne dokun.')
   }
@@ -169,6 +185,27 @@ export function KaynakTakibiEkrani({
                 </div>
               )}
 
+              {sinifGruplari.length > 1 && (
+                // Ders sayısı sekizi bulabiliyor: sığmayınca yana kayıyor, sayfa genişlemiyor.
+                <div className="-mx-4 mb-3 flex gap-1.5 overflow-x-auto px-4 pb-0.5 [scrollbar-width:none]">
+                  <SuzgecKutusu secili={etkinDers === null} onClick={() => setDersSuzgeci(null)}>
+                    Tüm dersler
+                  </SuzgecKutusu>
+                  {sinifGruplari.map((g) => (
+                    <SuzgecKutusu
+                      key={g.ders}
+                      secili={etkinDers === g.ders}
+                      onClick={() => setDersSuzgeci(g.ders)}
+                      className="gap-1.5 pl-2"
+                    >
+                      <OlcekliEmoji emoji={dersIkonu(g.ders)} boyut={16} />
+                      {grupAdi(g)}
+                      <span className="rakam text-[11.5px] opacity-70">{g.kaynaklar.length}</span>
+                    </SuzgecKutusu>
+                  ))}
+                </div>
+              )}
+
               <div className="flex items-center gap-2 px-0.5 pb-2">
                 <h2 className="shrink-0 font-display text-[15px] font-extrabold tracking-tight">Kaynakların</h2>
                 <span aria-hidden className="h-px flex-1 bg-border" />
@@ -187,17 +224,42 @@ export function KaynakTakibiEkrani({
                 </button>
               </div>
 
-              <div className="flex flex-col gap-2.5">
-                {gorunenler.map((kaynak, sira) => (
-                  <KaynakKarti
-                    key={kaynak.id}
-                    kaynak={kaynak}
-                    sira={sira}
-                    onAc={() => {
-                      listeKaydirma.current = window.scrollY
-                      setAcikId(kaynak.id)
-                    }}
-                  />
+              <div className="flex flex-col gap-4">
+                {gruplar.map((grup, grupSirasi) => (
+                  <section key={grup.ders}>
+                    {/* Başlık dersin renginde: kartların simge kutusuyla aynı aile. */}
+                    <div className="mb-2 flex items-center gap-2 px-1">
+                      <span
+                        className="grid size-6 shrink-0 place-items-center rounded-[8px]"
+                        style={{ background: renkler(grup.ders).zemin }}
+                        aria-hidden
+                      >
+                        <OlcekliEmoji emoji={dersIkonu(grup.ders)} boyut={14} />
+                      </span>
+                      <h3
+                        className="text-[12px] font-extrabold tracking-[0.07em] uppercase"
+                        style={{ color: renkler(grup.ders).koyu }}
+                      >
+                        {grupAdi(grup)}
+                      </h3>
+                      <span className="rakam text-[11.5px] font-bold text-muted-foreground">
+                        {grup.kaynaklar.length} kaynak
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-2.5">
+                      {grup.kaynaklar.map((kaynak, sira) => (
+                        <KaynakKarti
+                          key={kaynak.id}
+                          kaynak={kaynak}
+                          sira={grupSirasi * 2 + sira}
+                          onAc={() => {
+                            listeKaydirma.current = window.scrollY
+                            setAcikId(kaynak.id)
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </section>
                 ))}
               </div>
             </>
@@ -217,6 +279,7 @@ export function KaynakTakibiEkrani({
         <KaynakSayfasi
           duzenlenen={sayfa.kaynak}
           varsayilanSinif={etkinSuzgec ?? varsayilanKaynakSinifi(sinif)}
+          varsayilanDers={etkinDers}
           onKapat={() => setSayfa(null)}
           onEkle={ekle}
           onAdlandir={(ad) => {
@@ -263,6 +326,15 @@ function renkler(ders: KonuDersId) {
     koyu: `var(--konu-${ders}-koyu)`,
     dolgu: `var(--konu-${ders}-ok)`,
   }
+}
+
+/**
+ * Grubun adı. 12'nin Tarih'i "İnkılap Tarihi"; grupta başka sınıfın Tarih
+ * kitabı da varsa ortak ad "Tarih".
+ */
+function grupAdi(grup: DersGrubu): string {
+  const hepsi12 = grup.kaynaklar.every((k) => k.sinif === 12)
+  return dersAdi(grup.ders, hepsi12 ? 12 : 11)
 }
 
 function yuzde({ biten, toplam }: { biten: number; toplam: number }): number {
@@ -586,19 +658,22 @@ function KaynakEylemleri({
 function KaynakSayfasi({
   duzenlenen,
   varsayilanSinif,
+  varsayilanDers,
   onKapat,
   onEkle,
   onAdlandir,
 }: {
   duzenlenen?: Kaynak
   varsayilanSinif: KaynakSinifi
+  /** Listede bir ders süzülüyse form o dersle açılıyor. */
+  varsayilanDers: KonuDersId | null
   onKapat: () => void
   onEkle: (ad: string, sinif: KaynakSinifi, ders: KonuDersId) => void
   onAdlandir: (ad: string) => void
 }) {
   const [ad, setAd] = useState(duzenlenen?.ad ?? '')
   const [sinif, setSinif] = useState<KaynakSinifi>(varsayilanSinif)
-  const [ders, setDers] = useState<KonuDersId | null>(null)
+  const [ders, setDers] = useState<KonuDersId | null>(varsayilanDers)
   const [hata, setHata] = useState(false)
 
   useGeriKatmani(true, onKapat)

@@ -51,6 +51,9 @@ const DERSLER: readonly KaynakDersi[] = [
   { id: 'ingilizce', ad: 'İngilizce', ikon: '🌐' },
 ]
 
+/** Derslerin ekrandaki sırası: ders seçicide, listedeki ders gruplarında. */
+export const DERS_SIRASI: readonly KonuDersId[] = DERSLER.map((d) => d.id)
+
 /** Sınıfın, konu listesi olan dersleri; sıra ders seçicinin sırası. */
 export function kaynakDersleri(sinif: KaynakSinifi): KaynakDersi[] {
   return DERSLER.filter((d) => PROGRAMLAR[`${sinif}-${d.id}`] !== undefined).map((d) => ({

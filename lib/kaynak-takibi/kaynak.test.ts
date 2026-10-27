@@ -9,6 +9,7 @@ import {
   kaynakIlerlemesi,
   kaynaklariCoz,
   kaynakSil,
+  derseGoreGrupla,
   konuIsaretle,
   siraliKaynaklar,
   uniteIlerlemesi,
@@ -149,5 +150,21 @@ describe('yedek', () => {
     expect('yedek' in yeni && yeni.yedek.kaynakTakibi?.map((k) => k.id)).toEqual(['a'])
     const eski = yedegiDogrula(JSON.stringify({ uygulama: 'rabi' }))
     expect('yedek' in eski && eski.yedek.kaynakTakibi).toBeUndefined()
+  })
+})
+
+describe('ders grupları', () => {
+  it('ders sırasıyla gruplar, boş dersi atlar, grup içinde bitmemiş üstte', () => {
+    const tumu = uniteler(10, 'fizik').flatMap((u) => u.konular.map(konuKimligi))
+    const liste = [
+      ornek({ id: 'f1', bitenler: tumu }),
+      ornek({ id: 'm', ders: 'matematik' }),
+      ornek({ id: 'f2' }),
+    ]
+    expect(derseGoreGrupla(liste).map((g) => [g.ders, g.kaynaklar.map((k) => k.id)])).toEqual([
+      ['matematik', ['m']],
+      ['fizik', ['f2', 'f1']],
+    ])
+    expect(derseGoreGrupla([])).toEqual([])
   })
 })

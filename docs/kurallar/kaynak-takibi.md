@@ -23,8 +23,12 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
   **bağlanmaz**.
 - Renk derse ait (`--konu-<ders>`): kartın simge kutusu, alt satır ve çubuk; kaynağın
   içi `dersVurgusu` ile ders renginde. Bitince çubuk yeşil.
-- Liste: bitmemiş kaynaklar üstte, eklenme sırası (yeni üstte). Sınıf süzgeci
-  yalnız birden çok sınıfın kaynağı varken. **Eklenen kaynak açılmaz**, listenin başında
+- **Liste ders ders ayrılır** (kullanıcı istedi, 2026-10; `derseGoreGrupla`): ders
+  başlıkları ders seçicinin sırasında, grup içinde bitmemiş kaynaklar üstte, eklenme
+  sırası (yeni üstte). Üstte sınıf süzgeci (segment) ve ders süzgeci (yana kayan
+  `SuzgecKutusu`); ikisi de yalnız birden çok seçenek varken çıkar, birlikte çalışır,
+  yeni kaynağı gizliyorsa eklemede kalkar. Form süzülen sınıf/dersle açılır. 12'nin
+  Tarih grubu yalnız 12'lik kitaplar varken "İnkılap Tarihi". **Eklenen kaynak açılmaz**, listenin başında
   kalır; konular karta dokununca açılır (kullanıcı istedi, 2026-10: kendiliğinden açılınca
   ikinci kitabı ekleyecek yer bulunmuyordu).
 - Tek geri: açık kaynak bir geri katmanı; kabuğun "Geri"si önce kaynağı kapatır.
