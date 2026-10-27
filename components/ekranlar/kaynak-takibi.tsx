@@ -101,12 +101,13 @@ export function KaynakTakibiEkrani({
 
   const ekle = (ad: string, kaynakSinifi: KaynakSinifi, ders: KonuDersId) => {
     const id = yeniId()
-    const sonuc = kaynakEkle(kaynaklar, { id, ad, sinif: kaynakSinifi, ders, eklenme: bugun() })
-    if (!sonuc) {
-      soyle(`En çok ${EN_COK_KAYNAK} kaynak eklenebilir.`)
+    const yeni = { id, ad, sinif: kaynakSinifi, ders, eklenme: bugun() }
+    if (!kaynakEkle(kaynaklar, yeni)) {
+      soyle(kaynaklar.length >= EN_COK_KAYNAK ? `En çok ${EN_COK_KAYNAK} kaynak eklenebilir.` : 'Kaynak eklenemedi.')
       return
     }
-    setKaynaklar(() => sonuc)
+    // Güncelleyici en son listeden hesaplıyor: arada gelen bir değişiklik ezilmesin.
+    setKaynaklar((o) => kaynakEkle(o, yeni) ?? o)
     setSayfa(null)
     // Eklenen kaynak hemen açılıyor: eklemenin sebebi konularını işaretlemek.
     listeKaydirma.current = window.scrollY
@@ -215,8 +216,10 @@ export function KaynakTakibiEkrani({
           onKapat={() => setSayfa(null)}
           onEkle={ekle}
           onAdlandir={(ad) => {
-            if (sayfa.kaynak) setKaynaklar((o) => kaynakAdlandir(o, sayfa.kaynak!.id, ad))
+            const eski = sayfa.kaynak
             setSayfa(null)
+            if (!eski || eski.ad === ad) return
+            setKaynaklar((o) => kaynakAdlandir(o, eski.id, ad))
             soyle('Kaynağın adı değişti.')
           }}
         />

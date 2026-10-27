@@ -881,7 +881,7 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
       ],
     },
     {
-      ad: 'Savaşlar Sarmalında Osmanlı (1908- 1918)',
+      ad: 'Savaşlar Sarmalında Osmanlı (1908-1918)',
       konular: [
         '1908-1918 Siyasi ve Askerî Gelişmeler',
         '1908-1918 Göçler ve Salgınlar',
@@ -1143,6 +1143,7 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
         'Anorganik ve Organik Bileşikler',
         'Basit ve Molekül Formülü',
         'Doğada Karbon',
+        'Lewis Formülleri',
         'Hibritleşme ve Molekül Geometrisi',
       ],
     },
@@ -1165,6 +1166,8 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
       konular: [
         'Fosil Yakıtlar',
         'Alternatif Enerji Kaynakları',
+        'Sürdürülebilirlik',
+        'Nanoteknoloji',
       ],
     },
   ],

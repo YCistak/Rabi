@@ -141,3 +141,13 @@ describe('kaynak kaydı', () => {
     expect(varsayilanKaynakSinifi(NaN)).toBe(9)
   })
 })
+
+describe('yedek', () => {
+  it('kaynaklar yedekten süzülerek okunur, eski yedekte alan yoksa dokunulmaz', async () => {
+    const { yedegiDogrula } = await import('../depo')
+    const yeni = yedegiDogrula(JSON.stringify({ uygulama: 'rabi', kaynakTakibi: [ornek(), { id: 'bozuk' }] }))
+    expect('yedek' in yeni && yeni.yedek.kaynakTakibi?.map((k) => k.id)).toEqual(['a'])
+    const eski = yedegiDogrula(JSON.stringify({ uygulama: 'rabi' }))
+    expect('yedek' in eski && eski.yedek.kaynakTakibi).toBeUndefined()
+  })
+})
