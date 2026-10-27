@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { BookOpen, Check, ChevronRight, History, MoreHorizontal, Pencil, Plus, Trash2, X } from 'lucide-react'
+import { BookOpen, Check, ChevronRight, MoreHorizontal, Pencil, Plus, Trash2, X } from 'lucide-react'
 import {
   EN_COK_KAYNAK,
   EN_UZUN_KAYNAK_ADI,
@@ -649,8 +649,12 @@ function KaynakEylemleri({
   )
 }
 
-/** Öneri listesinin satırı (Hedefim'in `SecimSatiri` düzeni): simge, ad, küçük açıklama. */
-function OneriSatiri({ ad, alt, gecmis = false, onSec }: { ad: string; alt: string; gecmis?: boolean; onSec: () => void }) {
+/**
+ * Öneri listesinin satırı: yalnız ad. Simge yok, yayınevinin altında
+ * "Yayınevi" yazısı yok (kullanıcı kaldırttı, 2026-10); eski kaynak adının
+ * altında kaynağını söyleyen küçük not duruyor.
+ */
+function OneriSatiri({ ad, alt, onSec }: { ad: string; alt?: string; onSec: () => void }) {
   return (
     <li>
       <button
@@ -659,14 +663,11 @@ function OneriSatiri({ ad, alt, gecmis = false, onSec }: { ad: string; alt: stri
         aria-selected={false}
         onPointerDown={(olay) => olay.preventDefault()}
         onClick={onSec}
-        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition active:bg-muted"
+        className="flex min-h-11 w-full items-center px-3.5 py-2.5 text-left transition active:bg-muted"
       >
-        <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-muted/70 text-muted-foreground" aria-hidden>
-          {gecmis ? <History size={14} strokeWidth={2.4} /> : <BookOpen size={14} strokeWidth={2.4} />}
-        </span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm leading-tight font-bold">{ad}</span>
-          <span className="block text-xs font-medium text-muted-foreground">{alt}</span>
+          {alt && <span className="block text-xs font-medium text-muted-foreground">{alt}</span>}
         </span>
       </button>
     </li>
@@ -811,10 +812,10 @@ function KaynakSayfasi({
           <div className="mt-2 overflow-hidden rounded-xl border border-border">
             <ul className="max-h-56 divide-y divide-border overflow-y-auto" role="listbox" aria-label="Öneriler">
               {oneriler.map((oneri) => (
-                <OneriSatiri key={`g-${oneri}`} ad={oneri} alt="Daha önce eklediğin" gecmis onSec={() => adiYaz(oneri)} />
+                <OneriSatiri key={`g-${oneri}`} ad={oneri} alt="Daha önce eklediğin" onSec={() => adiYaz(oneri)} />
               ))}
               {yayinevleri.map((on) => (
-                <OneriSatiri key={`y-${on}`} ad={on} alt="Yayınevi" onSec={() => adiYaz(`${on} `)} />
+                <OneriSatiri key={`y-${on}`} ad={on} onSec={() => adiYaz(`${on} `)} />
               ))}
             </ul>
             {yayinevleri.length > 0 && (

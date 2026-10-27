@@ -42,7 +42,8 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
   yazdıkça adı yazılanla başlayanlar, "o" → Orijinal; adın başında yayınevi varsa liste
   kapanır). Yayınevi seçilince
   kutuya kısa adı yazılır ("Limit "), gerisini öğrenci yazar; hiçbiri seçilmezse yazılan
-  ad olduğu gibi kaydedilir. Satırlar `pointerdown`da odağı almaz (liste tıklamadan
+  ad olduğu gibi kaydedilir. Satırda **simge yok**, yayınevinin altında "Yayınevi" yazmaz (kullanıcı kaldırttı); eski
+  adın altında "Daha önce eklediğin". Satırlar `pointerdown`da odağı almaz (liste tıklamadan
   önce kapanmasın). **Marka kuralları:** düz yazı (logo, kapak, yayınevi rengi yok),
   liste **alfabetik** (test denetler), "sahiplerine aittir, bağlantılı değildir" notu
   listenin altında, mağaza açıklamasına/anahtar kelimelere yayınevi adı yazılmaz. Kitap
