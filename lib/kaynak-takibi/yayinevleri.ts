@@ -1,4 +1,5 @@
-import { EN_UZUN_KAYNAK_ADI, type Kaynak } from './kaynak'
+import { sadelestir } from '../metin'
+import type { Kaynak } from './kaynak'
 
 /**
  * Kaynak eklerken hızlı seçim için yayınevleri (kullanıcı seçti, 2026-10).
@@ -9,8 +10,8 @@ import { EN_UZUN_KAYNAK_ADI, type Kaynak } from './kaynak'
  * notu duruyor. Mağaza açıklamasına yayınevi adı yazılmaz.
  *
  * Kitap adları değil yayınevi adları: kitaplar her yıl değişiyor, liste
- * eskirdi. Öğrenci yayınevini seçiyor, kitabın gerisini kendisi yazıyor.
- * `on` kutuya yazılan kısa ad ("Limit AYT Fizik").
+ * eskirdi. Öğrenci ad kutusuna yazarken yayınevi önerilir, seçince kutuya
+ * kısa adı (`on`) yazılır; kitabın gerisini kendisi yazar ("Limit AYT Fizik").
  */
 export const YAYINEVLERI: readonly { on: string }[] = [
   { on: '345' },
@@ -45,23 +46,28 @@ export function adinYayinevi(ad: string): string | null {
 }
 
 /**
- * Yayınevi çipine dokununca ad: eski yayınevi önekini yenisiyle değiştirir,
- * gerisini korur ("Limit AYT Fizik" → "Paraf AYT Fizik"). Seçili yayınevine
- * yeniden dokunmak öneki kaldırır. Sondaki boşluk, öğrenci yazmaya devam
- * etsin diye.
+ * Ad kutusu yazılırken açılan listedeki yayınevleri (Hedefim'deki arama
+ * gibi). Kutu boşken hepsi; yazıldıkça adı ya da adındaki bir kelime yazılanla
+ * başlayanlar ("lim" → Limit, "renk" → Hız ve Renk; büyük/küçük harf ve
+ * Türkçe harf farkı gözetilmez). Adın başında zaten bir yayınevi varsa liste
+ * yok: öğrenci kitabın adını yazıyor. Hiçbiri seçilmezse yazılan ad olduğu
+ * gibi kaydedilir.
  */
-export function yayineviniUygula(ad: string, on: string): string {
-  const mevcut = adinYayinevi(ad)
-  const geri = (mevcut ? ad.trimStart().slice(mevcut.length) : ad).trimStart()
-  if (mevcut === on) return geri
-  return `${on} ${geri}`.slice(0, EN_UZUN_KAYNAK_ADI)
+export function yayineviOnerileri(ad: string): string[] {
+  if (adinYayinevi(ad) !== null) return []
+  const aranan = sadelestir(ad)
+  if (aranan === '') return YAYINEVLERI.map((y) => y.on)
+  return YAYINEVLERI.filter((y) => {
+    const on = sadelestir(y.on)
+    return on.startsWith(aranan) || on.split(' ').some((kelime) => kelime.startsWith(aranan))
+  }).map((y) => y.on)
 }
 
 /**
  * Öğrencinin daha önce yazdığı kaynak adlarından öneriler: aynı serinin
  * başka dersini eklerken ("Limit AYT Fizik" → "Limit AYT Kimya") adı
  * baştan yazmasın. Yazılan metni içerenler, yeni eklenen önce; yazılanla
- * birebir aynı olan önerilmez. Kutu boşken öneri yok (yer yayınevlerinin).
+ * birebir aynı olan önerilmez. Kutu boşken öneri yok (liste yayınevlerinin).
  */
 export function gecmisOneriler(kaynaklar: Kaynak[], yazilan: string, enCok = 3): string[] {
   const aranan = kucuk(yazilan.trim())

@@ -35,12 +35,14 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
 - **Kayıt** `rabi-kaynak-takibi` (`Kaynak[]`), okurken `kaynaklariCoz` süzer; bilinmeyen
   konu kimliği atılmaz, sayılmaz. Yedeğe girer (`Yedek.kaynakTakibi`; eski yedekte yoksa
   mevcut kayda dokunulmaz). En çok `EN_COK_KAYNAK` (60) kaynak, ad `EN_UZUN_KAYNAK_ADI` (40).
-- **Yayınevi hızlı seçimi** (kullanıcı seçti, 2026-10; `yayinevleri.ts`): 18 yayınevinin
-  kısa adı, formda yana kayan çipler. Çip kutuya öneki yazar ("Limit "), başka çip
-  öneki değiştirir, seçili çipe dokunmak kaldırır; kitabın gerisini öğrenci yazar.
-  **Marka kuralları:** yalnız düz yazı (logo, kapak, yayınevi rengi yok), liste
-  **alfabetik** (test denetler), "sahiplerine aittir, bağlantılı değildir" notu çiplerin
-  altında kalır, mağaza açıklamasına/anahtar kelimelere yayınevi adı yazılmaz. Kitap
+- **Yayınevi önerisi ad kutusunda** (kullanıcı istedi, 2026-10; `yayinevleri.ts`): ayrı
+  yayınevi kutusu/çip satırı **yok**. Ad kutusu odaktayken Hedefim'deki arama gibi
+  altında liste açılır: üstte yazılanı içeren eski kaynak adları (`gecmisOneriler`, en
+  çok 3), altta yayınevleri (`yayineviOnerileri`: kutu boşken 18'i, yazdıkça ad ya da
+  kelime başı eşleşenler; adın başında yayınevi varsa liste kapanır). Yayınevi seçilince
+  kutuya kısa adı yazılır ("Limit "), gerisini öğrenci yazar; hiçbiri seçilmezse yazılan
+  ad olduğu gibi kaydedilir. Satırlar `pointerdown`da odağı almaz (liste tıklamadan
+  önce kapanmasın). **Marka kuralları:** düz yazı (logo, kapak, yayınevi rengi yok),
+  liste **alfabetik** (test denetler), "sahiplerine aittir, bağlantılı değildir" notu
+  listenin altında, mağaza açıklamasına/anahtar kelimelere yayınevi adı yazılmaz. Kitap
   adları listelenmez (her yıl değişiyor). Ankara ve Tonguç kullanıcı isteğiyle yok.
-- **Geçmiş öneri** (`gecmisOneriler`): yazılan metni içeren eski kaynak adları, en çok 3,
-  kutu boşken yok.

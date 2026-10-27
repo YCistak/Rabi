@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Kaynak } from './kaynak'
-import { YAYINEVLERI, adinYayinevi, gecmisOneriler, yayineviniUygula } from './yayinevleri'
+import { YAYINEVLERI, adinYayinevi, gecmisOneriler, yayineviOnerileri } from './yayinevleri'
 
 const kaynak = (id: string, ad: string): Kaynak => ({
   id, ad, sinif: 12, ders: 'fizik', eklenme: '2026-10-27', bitenler: [],
@@ -21,11 +21,19 @@ describe('yayınevleri', () => {
     expect(adinYayinevi('Paraf')).toBe('Paraf')
   })
 
-  it('çip öneki ekler, değiştirir ve ikinci dokunuşta kaldırır', () => {
-    expect(yayineviniUygula('', 'Limit')).toBe('Limit ')
-    expect(yayineviniUygula('AYT Fizik', 'Limit')).toBe('Limit AYT Fizik')
-    expect(yayineviniUygula('Limit AYT Fizik', 'Paraf')).toBe('Paraf AYT Fizik')
-    expect(yayineviniUygula('Limit AYT Fizik', 'Limit')).toBe('AYT Fizik')
+  it('yazdıkça süzülür: ad başı ya da kelime başı, harf farkı gözetmeden', () => {
+    expect(yayineviOnerileri('')).toHaveLength(YAYINEVLERI.length)
+    expect(yayineviOnerileri('lim')).toEqual(['Limit'])
+    expect(yayineviOnerileri('HIZ')).toEqual(['Hız ve Renk'])
+    expect(yayineviOnerileri('renk')).toEqual(['Hız ve Renk'])
+    expect(yayineviOnerileri('cap')).toEqual(['Çap'])
+    expect(yayineviOnerileri('pa')).toEqual(['Palme', 'Paraf'])
+    expect(yayineviOnerileri('Fizik Soru')).toEqual([])
+  })
+
+  it('adın başında yayınevi varsa liste kapanır', () => {
+    expect(yayineviOnerileri('Limit ')).toEqual([])
+    expect(yayineviOnerileri('Limit AYT')).toEqual([])
   })
 })
 

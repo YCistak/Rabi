@@ -29,7 +29,7 @@ import {
   type KaynakSinifi,
   type Unite,
 } from '@/lib/kaynak-takibi/konular'
-import { YAYINEVLERI, adinYayinevi, gecmisOneriler, yayineviniUygula } from '@/lib/kaynak-takibi/yayinevleri'
+import { gecmisOneriler, yayineviOnerileri } from '@/lib/kaynak-takibi/yayinevleri'
 import type { KonuDersId } from '@/lib/konu/tip'
 import { bugun, cn, yeniId } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
@@ -649,6 +649,30 @@ function KaynakEylemleri({
   )
 }
 
+/** Öneri listesinin satırı (Hedefim'in `SecimSatiri` düzeni): simge, ad, küçük açıklama. */
+function OneriSatiri({ ad, alt, gecmis = false, onSec }: { ad: string; alt: string; gecmis?: boolean; onSec: () => void }) {
+  return (
+    <li>
+      <button
+        type="button"
+        role="option"
+        aria-selected={false}
+        onPointerDown={(olay) => olay.preventDefault()}
+        onClick={onSec}
+        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition active:bg-muted"
+      >
+        <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-muted/70 text-muted-foreground" aria-hidden>
+          {gecmis ? <History size={14} strokeWidth={2.4} /> : <BookOpen size={14} strokeWidth={2.4} />}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm leading-tight font-bold">{ad}</span>
+          <span className="block text-xs font-medium text-muted-foreground">{alt}</span>
+        </span>
+      </button>
+    </li>
+  )
+}
+
 /**
  * Kaynak ekleme alt sayfası: ad, sınıf, ders. Ad değiştirmede yalnız ad
  * soruluyor — sınıf ya da ders değişseydi atılmış tikler başka bir listenin
@@ -681,11 +705,14 @@ function KaynakSayfasi({
   const [ders, setDers] = useState<KonuDersId | null>(varsayilanDers)
   const [hata, setHata] = useState(false)
   const adKutusu = useRef<HTMLInputElement>(null)
-  const seciliYayinevi = adinYayinevi(ad)
+  /** Ad kutusu odakta mı: öneri listesi yalnız yazarken açık (Hedefim'deki arama gibi). */
+  const [odakta, setOdakta] = useState(false)
+  const yayinevleri = yayineviOnerileri(ad)
   const oneriler = gecmisOneriler(
     oncekiler.filter((k) => k.id !== duzenlenen?.id),
     ad,
   )
+  const listeAcik = odakta && (yayinevleri.length > 0 || oneriler.length > 0)
 
   /** Öneri ya da yayınevi seçilince kutuya dön, imleç sonda: öğrenci yazmaya devam etsin. */
   const adiYaz = (yeni: string) => {
@@ -753,6 +780,9 @@ function KaynakSayfasi({
         <input
           ref={adKutusu}
           value={ad}
+          onFocus={() => setOdakta(true)}
+          onBlur={() => setOdakta(false)}
+          autoComplete="off"
           onChange={(olay) => setAd(olay.target.value.slice(0, EN_UZUN_KAYNAK_ADI))}
           onKeyDown={(olay) => {
             // Bilgisayarda Enter, ad değiştirmede telefonun "Git" tuşu formu gönderir.
@@ -760,7 +790,7 @@ function KaynakSayfasi({
           }}
           enterKeyHint={duzenlenen ? 'done' : 'next'}
           maxLength={EN_UZUN_KAYNAK_ADI}
-          placeholder="Örn. Fizik Soru Bankası"
+          placeholder="Yayınevi ya da kitabın adı"
           aria-label="Kaynağın adı"
           className={cn(
             'h-[52px] w-full rounded-[16px] border bg-background px-3.5 text-[15px] font-bold outline-none transition placeholder:font-semibold placeholder:text-muted-foreground/70 focus-visible:border-primary-parlak focus-visible:bg-card',
@@ -768,44 +798,32 @@ function KaynakSayfasi({
           )}
         />
 
-        {/* Daha önce yazılan adlar: aynı serinin başka dersini eklerken. */}
-        {oneriler.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {oneriler.map((oneri) => (
-              <button
-                key={oneri}
-                type="button"
-                onClick={() => adiYaz(oneri)}
-                className="flex h-8 max-w-full items-center gap-1.5 rounded-[10px] bg-muted/70 px-2.5 text-[12.5px] font-bold text-foreground transition active:brightness-95"
-              >
-                <History size={13} strokeWidth={2.4} className="shrink-0 text-muted-foreground" aria-hidden />
-                <span className="truncate">{oneri}</span>
-              </button>
-            ))}
+        {/*
+          Yazdıkça açılan öneri listesi (kullanıcı istedi, 2026-10: ayrı
+          yayınevi kutusu yerine Hedefim'deki gibi). Üstte daha önce yazılan
+          adlar, altta yayınevleri; seçilen yayınevinin kısa adı kutuya
+          yazılır, kitabın gerisini öğrenci tamamlar. Hiçbiri seçilmezse
+          yazılan ad olduğu gibi kaydedilir. Satırlar `pointerdown`da odağı
+          almıyor: kutu odağı kaybedip liste tıklamadan önce kapanmasın.
+          Marka kuralları `lib/kaynak-takibi/yayinevleri.ts` başında.
+        */}
+        {listeAcik && (
+          <div className="mt-2 overflow-hidden rounded-xl border border-border">
+            <ul className="max-h-56 divide-y divide-border overflow-y-auto" role="listbox" aria-label="Öneriler">
+              {oneriler.map((oneri) => (
+                <OneriSatiri key={`g-${oneri}`} ad={oneri} alt="Daha önce eklediğin" gecmis onSec={() => adiYaz(oneri)} />
+              ))}
+              {yayinevleri.map((on) => (
+                <OneriSatiri key={`y-${on}`} ad={on} alt="Yayınevi" onSec={() => adiYaz(`${on} `)} />
+              ))}
+            </ul>
+            {yayinevleri.length > 0 && (
+              <p className="border-t border-border bg-muted/40 px-3 py-1.5 text-[10.5px] leading-snug font-semibold text-muted-foreground/80">
+                Yayınevi adları sahiplerine aittir; Rabi bu yayınevleriyle bağlantılı değildir.
+              </p>
+            )}
           </div>
         )}
-
-        {/*
-          Yayınevi hızlı seçimi: kutuya yayınevinin kısa adını yazar, kitabın
-          gerisini öğrenci tamamlar. Düz yazı, alfabetik, logosuz; altındaki
-          not markaların sahiplerine ait olduğunu söylüyor
-          (`lib/kaynak-takibi/yayinevleri.ts`).
-        */}
-        <AlanBasligi baslik="Yayınevi" sayac="isteğe bağlı" />
-        <div className="-mx-[18px] flex gap-1.5 overflow-x-auto px-[18px] pb-0.5 [scrollbar-width:none]">
-          {YAYINEVLERI.map((y) => (
-            <SuzgecKutusu
-              key={y.on}
-              secili={seciliYayinevi === y.on}
-              onClick={() => adiYaz(yayineviniUygula(ad, y.on))}
-            >
-              {y.on}
-            </SuzgecKutusu>
-          ))}
-        </div>
-        <p className="mt-1.5 px-0.5 text-[10.5px] leading-snug font-semibold text-muted-foreground/75">
-          Yayınevi adları sahiplerine aittir; Rabi bu yayınevleriyle bağlantılı değildir.
-        </p>
 
         {!duzenlenen && (
           <>
