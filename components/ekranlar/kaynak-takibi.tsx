@@ -33,6 +33,7 @@ import { bugun, cn, yeniId } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { dersVurgusu } from '@/components/ders-renkleri'
+import { OlcekliEmoji } from '@/components/olcekli-emoji'
 import { AlanBasligi, SecimDugmesi } from '@/components/ekranlar/yapilacaklar'
 import { BaslikSatiri, Buton, Kart, Onay, kartGirisi, useKapatmaOnayi } from '@/components/ui'
 
@@ -109,10 +110,13 @@ export function KaynakTakibiEkrani({
     // Güncelleyici en son listeden hesaplıyor: arada gelen bir değişiklik ezilmesin.
     setKaynaklar((o) => kaynakEkle(o, yeni) ?? o)
     setSayfa(null)
-    // Eklenen kaynak hemen açılıyor: eklemenin sebebi konularını işaretlemek.
-    listeKaydirma.current = window.scrollY
-    setAcikId(id)
-    soyle('Kaynak eklendi.')
+    /*
+      Eklenen kaynak açılmıyor, listede kalıyor (kullanıcı istedi, 2026-10):
+      kendiliğinden açılınca öğrenci listeyi hiç görmüyor, ikinci kitabı
+      ekleyecek düğmeyi bulamıyordu. Yeni kaynak listenin başında.
+    */
+    window.scrollTo(0, 0)
+    soyle('Kaynak eklendi. Konuları için üstüne dokun.')
   }
 
   const isaretle = (kaynak: Kaynak, konuId: string) => {
@@ -305,7 +309,7 @@ function KaynakKarti({ kaynak, sira, onAc }: { kaynak: Kaynak; sira: number; onA
         style={{ background: r.zemin, borderColor: r.kenar }}
         aria-hidden
       >
-        <span className="emoji text-[22px] leading-none">{dersIkonu(kaynak.ders)}</span>
+        <OlcekliEmoji emoji={dersIkonu(kaynak.ders)} boyut={24} />
         {bitti && (
           <span className="absolute -right-1 -bottom-1 grid size-5 place-items-center rounded-full border-2 border-card bg-success text-white">
             <Check size={11} strokeWidth={3.4} />
@@ -366,7 +370,7 @@ function KaynakIci({
             style={{ borderColor: r.kenar }}
             aria-hidden
           >
-            <span className="emoji text-[25px] leading-none">{dersIkonu(kaynak.ders)}</span>
+            <OlcekliEmoji emoji={dersIkonu(kaynak.ders)} boyut={27} />
           </span>
           <div className="min-w-0 flex-1 pt-0.5">
             <h1 className="font-display text-[21px] leading-tight font-extrabold tracking-tight break-words">{kaynak.ad}</h1>
@@ -652,6 +656,11 @@ function KaynakSayfasi({
         <input
           value={ad}
           onChange={(olay) => setAd(olay.target.value.slice(0, EN_UZUN_KAYNAK_ADI))}
+          onKeyDown={(olay) => {
+            // Bilgisayarda Enter, ad değiştirmede telefonun "Git" tuşu formu gönderir.
+            if (olay.key === 'Enter') gonder()
+          }}
+          enterKeyHint={duzenlenen ? 'done' : 'next'}
           maxLength={EN_UZUN_KAYNAK_ADI}
           placeholder="Örn. Fizik Soru Bankası"
           aria-label="Kaynağın adı"
@@ -695,11 +704,11 @@ function KaynakSayfasi({
                     style={secili ? { background: r.zemin, borderColor: r.dolgu, color: r.koyu } : undefined}
                   >
                     <span
-                      className="emoji grid size-8 shrink-0 place-items-center rounded-[10px] text-[17px] leading-none"
+                      className="grid size-8 shrink-0 place-items-center rounded-[10px]"
                       style={{ background: secili ? 'var(--card)' : r.zemin }}
                       aria-hidden
                     >
-                      {d.ikon}
+                      <OlcekliEmoji emoji={d.ikon} boyut={18} />
                     </span>
                     <span className="min-w-0 flex-1 truncate">{d.ad}</span>
                     {secili && <Check size={16} strokeWidth={3} className="shrink-0" aria-hidden />}

@@ -24,7 +24,9 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
 - Renk derse ait (`--konu-<ders>`): kartın simge kutusu, alt satır ve çubuk; kaynağın
   içi `dersVurgusu` ile ders renginde. Bitince çubuk yeşil.
 - Liste: bitmemiş kaynaklar üstte, eklenme sırası (yeni üstte). Sınıf süzgeci
-  yalnız birden çok sınıfın kaynağı varken. Eklenen kaynak hemen açılır.
+  yalnız birden çok sınıfın kaynağı varken. **Eklenen kaynak açılmaz**, listenin başında
+  kalır; konular karta dokununca açılır (kullanıcı istedi, 2026-10: kendiliğinden açılınca
+  ikinci kitabı ekleyecek yer bulunmuyordu).
 - Tek geri: açık kaynak bir geri katmanı; kabuğun "Geri"si önce kaynağı kapatır.
 - **Kayıt** `rabi-kaynak-takibi` (`Kaynak[]`), okurken `kaynaklariCoz` süzer; bilinmeyen
   konu kimliği atılmaz, sayılmaz. Yedeğe girer (`Yedek.kaynakTakibi`; eski yedekte yoksa
