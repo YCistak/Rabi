@@ -97,6 +97,8 @@ import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
 import { KonuTakibiEkrani } from '@/components/ekranlar/konu-takibi'
 import { BOS_TAKIP, takibiCoz, type YksTakip } from '@/lib/konu-takibi/kayit'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
+import { KaynakTakibiEkrani } from '@/components/ekranlar/kaynak-takibi'
+import { kaynaklariCoz, type Kaynak } from '@/lib/kaynak-takibi/kaynak'
 import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
 import { okumaSeansiEkle, type OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import {
@@ -339,6 +341,13 @@ function RabiUygulamasi() {
   const setYksTakip = useCallback(
     (guncelle: (onceki: YksTakip) => YksTakip) => setYksTakipHam((onceki) => guncelle(takibiCoz(onceki))),
     [setYksTakipHam],
+  )
+  /* Kaynak Takibi: Konu Takibi'yle aynı düzen, depodan geleni `kaynaklariCoz` süzüyor. */
+  const [kaynaklarHam, setKaynaklarHam] = useYerelDepo<Kaynak[]>(ANAHTARLAR.kaynakTakibi, [])
+  const kaynaklar = useMemo(() => kaynaklariCoz(kaynaklarHam), [kaynaklarHam])
+  const setKaynaklar = useCallback(
+    (guncelle: (onceki: Kaynak[]) => Kaynak[]) => setKaynaklarHam((onceki) => guncelle(kaynaklariCoz(onceki))),
+    [setKaynaklarHam],
   )
   /*
     Konu Takibi'nden "Haritaya git" isteği: harita sekmesi açılınca bu konunun
@@ -1358,6 +1367,9 @@ function RabiUygulamasi() {
                 }}
               />
             )}
+            {ekran === 'kaynak-takibi' && (
+              <KaynakTakibiEkrani kaynaklar={kaynaklar} setKaynaklar={setKaynaklar} sinif={ayarlar.buYilSinif} />
+            )}
             {ekran === 'yasal' && <YasalEkrani />}
             {ekran === 'geri-bildirim' && <GeriBildirimEkrani kol={geriBildirim} />}
           </>
@@ -1472,6 +1484,7 @@ function RabiUygulamasi() {
                   konuIlerleme,
                   bilinmeyenKartlar,
                   yksKonuTakibi: yksTakip,
+                  kaynakTakibi: kaynaklar,
                   aylikOzetler,
                   okumaGecmisi,
                   pomodoroGecmis,

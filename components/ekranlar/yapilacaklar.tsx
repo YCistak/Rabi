@@ -972,8 +972,8 @@ function EklemeSayfasi({
   )
 }
 
-/** Alt sayfadaki alan başlığı: solda ad, sağda sayaç ya da hata. */
-function AlanBasligi({
+/** Alt sayfadaki alan başlığı: solda ad, sağda sayaç ya da hata. Kaynak Takibi'nin formu da kullanıyor. */
+export function AlanBasligi({
   baslik,
   sayac,
   hata,
@@ -1000,8 +1000,8 @@ function AlanBasligi({
   )
 }
 
-/** Alt sayfadaki seçim düğmesi. */
-function SecimDugmesi({
+/** Alt sayfadaki seçim düğmesi. Kaynak Takibi'nin formu da kullanıyor. */
+export function SecimDugmesi({
   secili,
   onClick,
   etiket,

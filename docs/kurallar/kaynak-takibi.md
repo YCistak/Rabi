@@ -1,0 +1,31 @@
+# Kaynak Takibi
+
+Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md](../../AGENTS.md).
+
+Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takibi.tsx`, mantık
+`lib/kaynak-takibi/`): öğrencinin test kitapları ve her kitapta bitirdiği konular.
+
+- **Kaynak = ad + sınıf + ders** (kullanıcı istedi, 2026-10). Konular o sınıfın o
+  dersinin listesinden hazır gelir; öğrenci konu yazmaz. Ad değiştirilebilir, sınıf
+  ve ders **değiştirilemez** (tikler başka listenin konularına düşerdi).
+- **Konu listesi** `konular.ts`, haritadan ayrı: 9–11 **Maarif** (ünite = program
+  teması, konu = haritanın destesi), 12 **2018 programı**. Harita 12'de 9–11'de kartı
+  olan 2018 konularını yazmıyor; burada yazılır (logaritma, trigonometrik denklem,
+  dönüşümler, Canlılarda Enerji Dönüşümleri, düzgün çembersel hareket, İnkılap
+  Tarihi 1. ünite). 12'nin Tarih'i ekranda "İnkılap Tarihi". İngilizce'de konu =
+  ünite (tek "Üniteler" bölümü, sıra numarası yazılmaz).
+- **Konu kimliği adından türer** (`konuKimligi`): konunun adını değiştirmek o konuya
+  atılmış tikleri öksüz bırakır. Düzeltme gerekirse eski adı kimlik olarak koruyan
+  bir eşleme ekle. `kaynak.test.ts` her listede kimliklerin tekil olduğunu denetler.
+- **Tik yalnız bitti/bitmedi**, Yapılacaklar'daki görev gibi: bütün satır dokunulur,
+  bitince yeşil ve üstü çizili. Ünite başlığındaki yuvarlak üniteyi toplu işaretler,
+  hepsi işaretliyse toplu kaldırır. Konu Takibi'nin aşamalarıyla (okul, soru)
+  **bağlanmaz**.
+- Renk derse ait (`--konu-<ders>`): kartın simge kutusu, alt satır ve çubuk; kaynağın
+  içi `dersVurgusu` ile ders renginde. Bitince çubuk yeşil.
+- Liste: bitmemiş kaynaklar üstte, eklenme sırası (yeni üstte). Sınıf süzgeci
+  yalnız birden çok sınıfın kaynağı varken. Eklenen kaynak hemen açılır.
+- Tek geri: açık kaynak bir geri katmanı; kabuğun "Geri"si önce kaynağı kapatır.
+- **Kayıt** `rabi-kaynak-takibi` (`Kaynak[]`), okurken `kaynaklariCoz` süzer; bilinmeyen
+  konu kimliği atılmaz, sayılmaz. Yedeğe girer (`Yedek.kaynakTakibi`; eski yedekte yoksa
+  mevcut kayda dokunulmaz). En çok `EN_COK_KAYNAK` (60) kaynak, ad `EN_UZUN_KAYNAK_ADI` (40).
