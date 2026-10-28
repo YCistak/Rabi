@@ -17,6 +17,7 @@ import {
   varsayilanKaynakSinifi,
   type Kaynak,
 } from './kaynak'
+import { programBul } from '../konu'
 import { KAYNAK_SINIFLARI, dersAdi, kaynakDersleri, konuKimligi, uniteler } from './konular'
 
 const ornek = (ek: Partial<Kaynak> = {}): Kaynak => ({
@@ -61,16 +62,18 @@ describe('konu listeleri', () => {
     expect(konuKimligi('Mustafa Kemal’in Hayatı (1881-1918)')).toBe('mustafa-kemal-in-hayati-1881-1918')
   })
 
-  it('12. sınıf 2018 programının haritada olmayan konularını da taşır', () => {
-    const ad = (ders: Parameters<typeof uniteler>[1]) => uniteler(12, ders).map((u) => u.ad)
-    expect(ad('matematik')).toEqual([
-      'Üstel ve Logaritmik Fonksiyonlar', 'Diziler', 'Trigonometri', 'Dönüşümler', 'Türev', 'İntegral',
-      'Çemberin Analitik İncelenmesi',
-    ])
-    expect(ad('biyoloji')).toContain('Canlılarda Enerji Dönüşümleri')
-    expect(ad('tarih')[0]).toBe('20. Yüzyıl Başlarında Osmanlı Devleti ve Dünya')
-    expect(dersAdi('tarih', 12)).toBe('İnkılap Tarihi')
-    expect(dersAdi('tarih', 11)).toBe('Tarih')
+  // Kullanıcı istedi (2026-10): 12. sınıf listesi haritanınkiyle birebir aynı.
+  // Harita değişince bu test düşer, `konular.ts`teki 12 de güncellenir.
+  it('12. sınıf ünite ve konuları haritadakiyle aynı', () => {
+    for (const ders of kaynakDersleri(12)) {
+      const harita = programBul(ders.id, 12)
+      expect(harita, ders.id).not.toBeNull()
+      expect(
+        uniteler(12, ders.id).map((u) => ({ ad: u.ad, konular: [...u.konular] })),
+        ders.id,
+      ).toEqual(harita!.temalar.map((t) => ({ ad: t.ad, konular: t.konular.map((k) => k.ad) })))
+    }
+    expect(dersAdi('tarih')).toBe('Tarih')
   })
 })
 

@@ -200,7 +200,7 @@ export function KaynakTakibiEkrani({
                       className="gap-1.5 pl-2"
                     >
                       <OlcekliEmoji emoji={dersIkonu(g.ders)} boyut={16} />
-                      {grupAdi(g)}
+                      {dersAdi(g.ders)}
                       <span className="rakam text-[11.5px] opacity-70">{g.kaynaklar.length}</span>
                     </SuzgecKutusu>
                   ))}
@@ -241,7 +241,7 @@ export function KaynakTakibiEkrani({
                         className="text-[12px] font-extrabold tracking-[0.07em] uppercase"
                         style={{ color: renkler(grup.ders).koyu }}
                       >
-                        {grupAdi(grup)}
+                        {dersAdi(grup.ders)}
                       </h3>
                       <span className="rakam text-[11.5px] font-bold text-muted-foreground">
                         {grup.kaynaklar.length} kaynak
@@ -330,14 +330,6 @@ function renkler(ders: KonuDersId) {
   }
 }
 
-/**
- * Grubun adı. 12'nin Tarih'i "İnkılap Tarihi"; grupta başka sınıfın Tarih
- * kitabı da varsa ortak ad "Tarih".
- */
-function grupAdi(grup: DersGrubu): string {
-  const hepsi12 = grup.kaynaklar.every((k) => k.sinif === 12)
-  return dersAdi(grup.ders, hepsi12 ? 12 : 11)
-}
 
 function yuzde({ biten, toplam }: { biten: number; toplam: number }): number {
   return toplam > 0 ? Math.round((biten / toplam) * 100) : 0
@@ -394,7 +386,7 @@ function KaynakKarti({ kaynak, sira, onAc }: { kaynak: Kaynak; sira: number; onA
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[15px] leading-snug font-extrabold">{kaynak.ad}</span>
         <span className="mt-0.5 block text-[12px] font-bold" style={{ color: r.koyu }}>
-          {kaynak.sinif}. sınıf · {dersAdi(kaynak.ders, kaynak.sinif)}
+          {kaynak.sinif}. sınıf · {dersAdi(kaynak.ders)}
         </span>
         <span className="mt-2 flex items-center gap-2">
           <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
@@ -449,7 +441,7 @@ function KaynakIci({
           <div className="min-w-0 flex-1 pt-0.5">
             <h1 className="font-display text-[21px] leading-tight font-extrabold tracking-tight break-words">{kaynak.ad}</h1>
             <p className="mt-1 text-[12.5px] font-extrabold" style={{ color: r.koyu }}>
-              {kaynak.sinif}. sınıf · {dersAdi(kaynak.ders, kaynak.sinif)}
+              {kaynak.sinif}. sınıf · {dersAdi(kaynak.ders)}
             </p>
           </div>
           <button
@@ -624,7 +616,7 @@ function KaynakEylemleri({
         </div>
         <p className="truncate px-1 font-display text-[17px] font-extrabold tracking-tight">{kaynak.ad}</p>
         <p className="px-1 pb-3 text-[12.5px] font-bold text-muted-foreground">
-          {kaynak.sinif}. sınıf · {dersAdi(kaynak.ders, kaynak.sinif)}
+          {kaynak.sinif}. sınıf · {dersAdi(kaynak.ders)}
         </p>
         <div className="flex flex-col gap-2">
           <button
@@ -877,7 +869,7 @@ function KaynakSayfasi({
                 konularıyla mı açılacak. */}
             <p className="mt-2.5 min-h-[18px] px-0.5 text-[12px] font-bold text-muted-foreground">
               {ders
-                ? `${sinif}. sınıf ${dersAdi(ders, sinif)}: ${secilenUniteler.length} ünite, ${konuSayisi} konu`
+                ? `${sinif}. sınıf ${dersAdi(ders)}: ${secilenUniteler.length} ünite, ${konuSayisi} konu`
                 : sinif === 12
                   ? '12. sınıfta 2018 programının konuları listelenir.'
                   : `${sinif}. sınıfta Maarif Modeli'nin konuları listelenir.`}

@@ -6,13 +6,12 @@ import type { KonuDersId } from '../konu/tip'
  * - **9, 10, 11: Türkiye Yüzyılı Maarif Modeli.** Ünite adları programın
  *   temaları (tymm.meb.gov.tr, `lib/konu/maarif/iskelet.json`), konu adları
  *   haritanın Maarif'e göre yazılmış destelerinden (`lib/konu/icerik/`).
- * - **12: 2018 programı.** Maarif'in 12. sınıfı yayımlanmadı; bu yılın
- *   12'leri ve mezunlar 2018 programını görüyor. Harita 12'de 9–11'de kartı
- *   olan konuları tekrar yazmıyor (logaritma, trigonometrik denklem,
- *   dönüşümler, enerji dönüşümleri, düzgün çembersel hareket, İnkılap
- *   Tarihi'nin 1. ünitesi); test kitabı onları 12'de işlediği için burada
- *   2018 ünite sırasıyla **yazıldı**.
- * - **İngilizce** test kitapları üniteyle ilerliyor: konu = ünite.
+ * - **12: haritanın 12. sınıfıyla birebir aynı** (kullanıcı istedi, 2026-10):
+ *   2018 programı, ünite = haritanın teması, konu = destesi. Harita 12'de
+ *   9–11'de kartı olan konuları yazmıyor; burada da yok. `kaynak.test.ts`
+ *   12'yi haritayla karşılaştırır: harita değişince bu liste de güncellenir.
+ * - **İngilizce** 9–11'de test kitapları üniteyle ilerliyor: konu = ünite.
+ *   12'de haritadaki gibi ünite → konu.
  *
  * Liste haritadan **ayrı** tutuluyor: harita destesinin adı ya da bölünmesi
  * değişince öğrencinin kitapta attığı tikler kaybolmasın. Haritayı içe
@@ -58,17 +57,16 @@ export const DERS_SIRASI: readonly KonuDersId[] = DERSLER.map((d) => d.id)
 export function kaynakDersleri(sinif: KaynakSinifi): KaynakDersi[] {
   return DERSLER.filter((d) => PROGRAMLAR[`${sinif}-${d.id}`] !== undefined).map((d) => ({
     ...d,
-    ad: dersAdi(d.id, sinif),
+    ad: dersAdi(d.id),
   }))
 }
 
 /**
- * Ekrandaki ders adı. 12'nin Tarih'i 2018'de T.C. İnkılap Tarihi ve
- * Atatürkçülük dersi (Çağdaş Türk ve Dünya Tarihi seçmeli; üniteleri
- * İnkılap Tarihi'nin 4–8. üniteleriyle örtüşüyor).
+ * Ekrandaki ders adı; her sınıfta aynı. 12'nin Tarih'i de "Tarih": haritadaki
+ * gibi İnkılap Tarihi ile Çağdaş Türk ve Dünya Tarihi'nin ünitelerini birlikte
+ * taşıyor.
  */
-export function dersAdi(ders: KonuDersId, sinif: KaynakSinifi): string {
-  if (ders === 'tarih' && sinif === 12) return 'İnkılap Tarihi'
+export function dersAdi(ders: KonuDersId): string {
   return DERSLER.find((d) => d.id === ders)?.ad ?? ders
 }
 
@@ -965,14 +963,6 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
   ],
   '12-matematik': [
     {
-      ad: 'Üstel ve Logaritmik Fonksiyonlar',
-      konular: [
-        'Üstel Fonksiyon',
-        'Logaritma Fonksiyonu',
-        'Üstel ve Logaritmik Denklem ve Eşitsizlikler',
-      ],
-    },
-    {
       ad: 'Diziler',
       konular: [
         'Gerçek Sayı Dizileri',
@@ -984,13 +974,6 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
       ad: 'Trigonometri',
       konular: [
         'Toplam-Fark ve İki Kat Açı Formülleri',
-        'Trigonometrik Denklemler',
-      ],
-    },
-    {
-      ad: 'Dönüşümler',
-      konular: [
-        'Analitik Düzlemde Temel Dönüşümler',
       ],
     },
     {
@@ -1009,7 +992,7 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
       ],
     },
     {
-      ad: 'Çemberin Analitik İncelenmesi',
+      ad: 'Analitik Geometri',
       konular: [
         'Çemberin Analitik İncelenmesi',
       ],
@@ -1076,7 +1059,6 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
     {
       ad: 'Çembersel Hareket',
       konular: [
-        'Düzgün Çembersel Hareket',
         'Dönerek Öteleme Hareketi',
         'Açısal Momentum',
         'Kütle Çekim Kuvveti',
@@ -1146,7 +1128,6 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
         'Anorganik ve Organik Bileşikler',
         'Basit ve Molekül Formülü',
         'Doğada Karbon',
-        'Lewis Formülleri',
         'Hibritleşme ve Molekül Geometrisi',
       ],
     },
@@ -1169,8 +1150,6 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
       konular: [
         'Fosil Yakıtlar',
         'Alternatif Enerji Kaynakları',
-        'Sürdürülebilirlik',
-        'Nanoteknoloji',
       ],
     },
   ],
@@ -1186,15 +1165,6 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
         'Translasyon: Proteinin Kurulması',
         'Genetik Mühendisliği ve Biyoteknoloji',
         'Biyoteknoloji Uygulamaları ve Etkileri',
-      ],
-    },
-    {
-      ad: 'Canlılarda Enerji Dönüşümleri',
-      konular: [
-        'Canlılık ve Enerji (ATP)',
-        'Fotosentez',
-        'Kemosentez',
-        'Hücresel Solunum ve Fermantasyon',
       ],
     },
     {
@@ -1220,16 +1190,9 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
   ],
   '12-tarih': [
     {
-      ad: '20. Yüzyıl Başlarında Osmanlı Devleti ve Dünya',
-      konular: [
-        'Mustafa Kemal’in Hayatı (1881-1918)',
-        'Trablusgarp ve Balkan Savaşları',
-        'I. Dünya Savaşı',
-      ],
-    },
-    {
       ad: 'Millî Mücadele',
       konular: [
+        'Mustafa Kemal’in Hayatı (1881-1918)',
         'Mondros Ateşkesi ve İşgaller',
         'Millî Mücadele’nin Hazırlık Dönemi',
         'TBMM’nin Açılışı ve İç Ayaklanmalar',
@@ -1319,9 +1282,9 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
       ],
     },
     {
-      ad: 'Küresel Ortam',
+      ad: 'Küresel Ortam: Bölgeler ve Ülkeler',
       konular: [
-        'Bölgeler ve Ülkeler: Kıta ve Okyanusların Değişen Önemi',
+        'Kıta ve Okyanusların Değişen Önemi',
         'Ülkelerin Konumunun Bölgesel ve Küresel Etkisi',
         'Türkiye’nin Tarihsel Jeopolitik Konumu',
         'Türkiye ve Yakın Jeopolitik Bölgeler',
@@ -1345,18 +1308,73 @@ const PROGRAMLAR: Partial<Record<string, readonly Unite[]>> = {
   ],
   '12-ingilizce': [
     {
-      ad: 'Üniteler',
+      ad: 'Music',
       konular: [
-        'Music',
-        'Friendship',
-        'Human Rights',
-        'Coming Soon',
-        'Psychology',
-        'Favors',
-        'News Stories',
-        'Alternative Energy',
-        'Technology',
-        'Manners',
+        'Expressing Opinions About Music',
+        'Expressing Preferences and Music Surveys',
+      ],
+    },
+    {
+      ad: 'Friendship',
+      konular: [
+        'Describing Personal Features',
+        'Making Conclusions and Stating Reasons',
+      ],
+    },
+    {
+      ad: 'Human Rights',
+      konular: [
+        'Expressing Ideas on Human Rights',
+        'Making Suggestions and Discussing Problems',
+      ],
+    },
+    {
+      ad: 'Coming Soon',
+      konular: [
+        'Making Predictions and Expressing Certainty',
+        'Cyber Games, Virtual Reality and Cyber Crime',
+      ],
+    },
+    {
+      ad: 'Psychology',
+      konular: [
+        'Describing Mood',
+        'Suggestions to Change Mood and Giving Instructions',
+      ],
+    },
+    {
+      ad: 'Favors',
+      konular: [
+        'Making Requests',
+        'Accepting, Declining and Asking for Favors',
+      ],
+    },
+    {
+      ad: 'News Stories',
+      konular: [
+        'Narrating Past Events in News Stories',
+        'Presenting and Writing News Stories',
+      ],
+    },
+    {
+      ad: 'Alternative Energy',
+      konular: [
+        'Describing Energy Problems and Making Complaints',
+        'Offering Solutions and Debating Alternative Energy',
+      ],
+    },
+    {
+      ad: 'Technology',
+      konular: [
+        'Having Things Done: Causative Forms',
+        'Discussing Technology: Opinions, Interviews and Essays',
+      ],
+    },
+    {
+      ad: 'Manners',
+      konular: [
+        'Expressing Wishes, Regrets and Apologies',
+        'Manners in Different Cultures',
       ],
     },
   ],

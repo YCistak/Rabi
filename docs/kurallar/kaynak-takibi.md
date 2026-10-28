@@ -9,11 +9,11 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
   dersinin listesinden hazır gelir; öğrenci konu yazmaz. Ad değiştirilebilir, sınıf
   ve ders **değiştirilemez** (tikler başka listenin konularına düşerdi).
 - **Konu listesi** `konular.ts`, haritadan ayrı: 9–11 **Maarif** (ünite = program
-  teması, konu = haritanın destesi), 12 **2018 programı**. Harita 12'de 9–11'de kartı
-  olan 2018 konularını yazmıyor; burada yazılır (logaritma, trigonometrik denklem,
-  dönüşümler, Canlılarda Enerji Dönüşümleri, düzgün çembersel hareket, İnkılap
-  Tarihi 1. ünite). 12'nin Tarih'i ekranda "İnkılap Tarihi". İngilizce'de konu =
-  ünite (tek "Üniteler" bölümü, sıra numarası yazılmaz).
+  teması, konu = haritanın destesi). **12 haritanın 12. sınıfıyla birebir aynı**
+  (kullanıcı istedi, 2026-10; 2018 programı, 9–11'de kartı olan konular 12'de yok);
+  `kaynak.test.ts` haritayla karşılaştırır, harita değişince liste de güncellenir.
+  Ders adları her sınıfta aynı (12'nin Tarih'i de "Tarih"). İngilizce 9–11'de konu =
+  ünite (tek "Üniteler" bölümü, sıra numarası yazılmaz), 12'de haritadaki gibi.
 - **Konu kimliği adından türer** (`konuKimligi`): konunun adını değiştirmek o konuya
   atılmış tikleri öksüz bırakır. Düzeltme gerekirse eski adı kimlik olarak koruyan
   bir eşleme ekle. `kaynak.test.ts` her listede kimliklerin tekil olduğunu denetler.
@@ -27,8 +27,7 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
   başlıkları ders seçicinin sırasında, grup içinde bitmemiş kaynaklar üstte, eklenme
   sırası (yeni üstte). Üstte sınıf süzgeci (segment) ve ders süzgeci (yana kayan
   `SuzgecKutusu`); ikisi de yalnız birden çok seçenek varken çıkar, birlikte çalışır,
-  yeni kaynağı gizliyorsa eklemede kalkar. Form süzülen sınıf/dersle açılır. 12'nin
-  Tarih grubu yalnız 12'lik kitaplar varken "İnkılap Tarihi". **Eklenen kaynak açılmaz**, listenin başında
+  yeni kaynağı gizliyorsa eklemede kalkar. Form süzülen sınıf/dersle açılır. **Eklenen kaynak açılmaz**, listenin başında
   kalır; konular karta dokununca açılır (kullanıcı istedi, 2026-10: kendiliğinden açılınca
   ikinci kitabı ekleyecek yer bulunmuyordu).
 - Tek geri: açık kaynak bir geri katmanı; kabuğun "Geri"si önce kaynağı kapatır.
