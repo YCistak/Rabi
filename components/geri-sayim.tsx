@@ -102,16 +102,16 @@ export function GeriSayim({
           <span className="font-display text-[40px] leading-none font-extrabold">Bugün!</span>
         ) : (
           <>
-            <span className={cn('rakam font-display text-[38px] leading-none font-extrabold tracking-tight', kahraman && 'tablet:text-[72px] tablet:tracking-[-0.03em]')}>
+            <span className={cn('rakam font-display text-[38px] leading-none font-extrabold tracking-tight', kahraman && 'tablet:text-[46px] tablet:tracking-[-0.02em]')}>
               {sayim.kalanGun}
             </span>
             {/* Nokta ayracı "gün kaldı"nın ucunda, tarihin başında değil:
                 satır sarınca baştaki nokta alt satırda tek başına kalıyordu. */}
-            <span className={cn('font-display text-base font-extrabold', kahraman && 'tablet:text-[22px]')}>gün kaldı ·</span>
+            <span className={cn('font-display text-base font-extrabold', kahraman && 'tablet:text-[18px]')}>gün kaldı ·</span>
             <span
               className={cn(
                 'text-[13px] font-semibold',
-                kahraman && 'tablet:text-[16px]',
+                kahraman && 'tablet:text-[14px]',
                 doluKart ? 'text-white/85' : 'text-muted-foreground',
               )}
             >
@@ -160,7 +160,7 @@ export function GeriSayim({
         <div
           className={cn(
             'mt-2.5 rounded-[18px] p-2.5',
-            kahraman && 'tablet:mt-4 tablet:p-3.5',
+            kahraman && 'tablet:mt-4 tablet:p-3',
             doluKart ? 'bg-white/15' : 'bg-background',
           )}
         >

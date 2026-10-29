@@ -153,8 +153,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           telefonlar 360–430, 8" tabletler 533'ten başlıyor. Ölçek kısa
           kenardan hesaplanıyor ki döndürünce yazı boyutu değişmesin.
 
-          Tablette ölçek 1,2 ile sınırlı (iPad'de `IOS_EN_COK`, Android'de
-          `TABLET_EN_COK`); gerekçe betikte. Betik tablette ayrıca
+          Tablette ölçek bugün 1 (iPad'de `IOS_EN_COK`, Android'de
+          `TABLET_EN_COK`; bir süre 1,2 idi); gerekçe betikte. Betik tablette ayrıca
           `data-yerlesim="tablet"` ve `data-yon` yazıyor: arayüz artık telefon
           sütununun büyütülmüşü değil, tablete göre diziliyor (sağda ray,
           yatayda iki sütun). Telefonda ikisi de yok.
@@ -181,7 +181,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     var pl = window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform();
     ios = pl === 'ios' || /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   } catch (e) {}
-  var IOS_EN_COK = 1.2;
+  var IOS_EN_COK = 1;
   // Tablet yerleşimi (sağda dikey ray, geniş sayfa, yatayda iki sütun;
   // \`globals.css\` → "Tablet yerleşimi"). Artık telefon görüntüsü büyütülmüyor,
   // tablete göre dizilmiş arayüz hafifçe büyütülüyor; bu yüzden tavan
@@ -192,7 +192,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   //
   // Telefonda (kısa kenar ESIK altı) iki öznitelik de konmuyor ve ölçek 1:
   // telefon görünümü bu betikten önceki hâliyle aynı.
-  var TABLET_EN_COK = 1.2;
+  //
+  // Tavan 1 (2026-10-29): tablette büyütme yok. 1,2 bile fazlaydı; tablet
+  // düzeni de kendi yazılarını büyütünce (ana sayfada 30 px başlık, 72 px
+  // sayı, 1,9 kat halka) her şey telefonun iki katından iriye çıkıyordu,
+  // kullanıcı "her şey kafam kadar" dedi. Tablet uygulamaları telefonla aynı
+  // punto boylarını kullanır; geniş ekran büyük yazıyla değil çok sütunla
+  // doldurulur. Mekanizma (--olcek, .yuk-ekran) yerinde: tavanı yeniden
+  // açmak tek sayı.
+  var TABLET_EN_COK = 1;
   var kok = document.documentElement;
   function uygula(){
     var kisa = Math.min(window.innerWidth, window.innerHeight);

@@ -199,12 +199,15 @@ export function AnaSayfa({
 
   return (
     /*
-      Tablet düzeni (`tablet:` / `yatay:`, telefonda hiçbiri eşleşmiyor):
-      solda "Bugün" kahraman kartı (selam, geri sayım + hedef, günlük hedef
-      halkası + hafta), sağda araçlar, oyunlar ve aylık özet. Yatayda iki
-      sütun yan yana ve ekranın boyu kadar; dikeyde kahraman üstte, altında
-      Araçlar ile Oyunlar yan yana. Izgara ekran boyunu doldurduğu için alt
-      yarı boş kalmıyor (kartlar `flex-1` ile uzuyor).
+      Tablet düzeni (`tablet:`, telefonda hiçbiri eşleşmiyor): iki sütunlu
+      ızgara. Üstte enine "Bugün" kahraman kartı (selam; altında yan yana
+      geri sayım + hedef ve günlük hedef halkası + hafta), altında Araçlar
+      ve Oyunlar, her biri dört kutucuk tek satır: yatayda yan yana,
+      dikeyde alt alta (yan yana 310 piksele sıkışıp adlar kırılıyordu). Boylar
+      telefondakine yakın; geniş ekran büyük yazıyla değil sütunla doluyor.
+      Bir süre ızgara ekran boyunu dolduruyor, kartlar `flex-1` ile
+      uzuyordu ve yazılar büyütülmüştü: kutucuklar ve halka devasa duruyordu
+      (kullanıcı: "her şey kafam kadar").
 
       Telefonda iki sarmalayıcı `space-y-3.5` taşıyor: dıştaki aralığı
       ikisinin arasına, içteki kendi kartlarının arasına koyuyor; dizilim ve
@@ -212,17 +215,16 @@ export function AnaSayfa({
     */
     <div
       className={cn(
-        'space-y-3.5 tablet:grid tablet:min-h-[calc(100dvh/var(--olcek)-3.75rem-var(--guvenli-ust)-var(--guvenli-alt))] tablet:gap-5 tablet:space-y-0',
-        ozetHazir ? 'tablet:grid-rows-[auto_auto_1fr] yatay:grid-rows-[auto_1fr]' : 'tablet:grid-rows-[auto_1fr] yatay:grid-rows-[1fr]',
-        'yatay:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)]',
+        'space-y-3.5 tablet:grid tablet:gap-x-5 tablet:gap-y-6 tablet:space-y-0 yatay:grid-cols-2',
       )}
     >
       {ozetHazir && <OzetDaveti onAc={onOzetAc} />}
 
-      {/* Kahraman: tablette tek kart, içindeki kartlar düzleşiyor. */}
-      <div className="ana-kahraman space-y-3.5 tablet:flex tablet:flex-col tablet:gap-5 tablet:space-y-0 tablet:rounded-[30px] tablet:bg-card tablet:p-6 tablet:shadow-[var(--shadow-kart)]">
+      {/* Kahraman: tablette enine tek kart, içindeki kartlar düzleşiyor;
+          geri sayım ile günlük hedef yan yana. */}
+      <div className="ana-kahraman space-y-3.5 tablet:col-span-full tablet:grid tablet:grid-cols-2 tablet:gap-x-5 tablet:gap-y-4 tablet:space-y-0 tablet:rounded-[28px] tablet:bg-card tablet:p-5 tablet:shadow-[var(--shadow-kart)]">
       {/* Selamlama — tasarımda ad sorulmuyor, kurulumda ad adımı yok. */}
-      <header className="flex items-center gap-2.5 pt-2 pr-0.5 pb-1 pl-2 tablet:p-0">
+      <header className="flex items-center gap-2.5 pt-2 pr-0.5 pb-1 pl-2 tablet:col-span-2 tablet:p-0 tablet:pl-1">
         {/* `key`: poz değişince öğe yeniden kuruluyor ve kısa bir solmayla
             geliyor (`ana-maskot-gecis`). Yerinde src değiştirmek bir kare
             boş görsel bırakıyordu. Poz tam boy ve kesilmiyor: bir süre 58
@@ -244,7 +246,7 @@ export function AnaSayfa({
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-extrabold tracking-wide text-ikincil">Rabi</p>
-          <h1 className="mt-px font-display text-[22px] leading-[1.15] font-extrabold tracking-tight text-balance tablet:text-[30px]">
+          <h1 className="mt-px font-display text-[22px] leading-[1.15] font-extrabold tracking-tight text-balance tablet:text-[25px]">
             {/* Ad kurulumda boş bırakılmış olabilir; o zaman selamlama adsız
                 kalıyor, "Merhaba  👋" gibi çift boşluk oluşmuyor. */}
             {ayarlar.ad ? `Merhaba ${ayarlar.ad} 👋` : 'Merhaba 👋'}
@@ -254,7 +256,7 @@ export function AnaSayfa({
               başlık, ikinci bir cümle ve ok; kullanıcı kartı kökten kaldırttı
               ve buraya tek bir cümle istedi. Hedef sıfırken cümle yok. */}
           {gununCumlesi && (
-            <p className="mt-0.5 text-[13.5px] leading-snug font-semibold text-muted-foreground text-pretty tablet:mt-1 tablet:text-[16px]">
+            <p className="mt-0.5 text-[13.5px] leading-snug font-semibold text-muted-foreground text-pretty tablet:mt-1 tablet:text-[14.5px]">
               {gununCumlesi}
             </p>
           )}
@@ -272,7 +274,7 @@ export function AnaSayfa({
       {/* Günlük hedef. Yedi günlük seri buranın altında, ayrı kart değil: seri
           "bugünkü hedefi tutturdun mu"nun yedi günlük hâli, ayrı kartta
           dururken iki ayrı ölçü gibi okunuyordu. */}
-      <Kart data-tanitim="gunluk-hedef" className="px-4 py-4 tablet:flex tablet:flex-1 tablet:flex-col tablet:rounded-[22px] tablet:bg-background/70 tablet:px-5 tablet:py-5">
+      <Kart data-tanitim="gunluk-hedef" className="px-4 py-4 tablet:flex tablet:flex-col tablet:justify-center tablet:rounded-[22px] tablet:bg-background/70 tablet:p-4">
         {/* Halka ve yanındaki satır tıklanabilir: karttaki sayı "bugün kaç soru
             çözdün" ve o sayıyı büyütmenin tek yolu soru takibi ekranı. Kartın
             tamamı değil yalnızca bu satır — altındaki hafta şeridi yedi günü
@@ -280,14 +282,15 @@ export function AnaSayfa({
         <button
           type="button"
           onClick={() => onKartAc('soru')}
-          className="flex w-full items-center gap-4 text-left tablet:flex-1 tablet:gap-7 tablet:px-2"
+          className="flex w-full items-center gap-4 text-left tablet:gap-5 tablet:px-1"
         >
           {/* Halkanın içinde hedef ("/300") yazmıyor: hedef zaten yanda,
               "300 hedefin var" cümlesinde geçiyordu ve iki kez yazılınca göz
               hangisinin bugünkü sayı olduğunu ayırt edemiyordu. */}
-          {/* Tablette halka `zoom` ile büyüyor: boyutu piksel olarak
-              `Halka`ya gidiyor, telefondaki 78 piksel değişmesin. */}
-          <span className="tablet:[zoom:1.9]">
+          {/* Tablette halka `zoom` ile biraz büyüyor (78 → ~94 px): boyutu
+              piksel olarak `Halka`ya gidiyor, telefondaki 78 değişmesin. Bir
+              süre 1,9 kattı, kartın yarısını kaplıyordu. */}
+          <span className="tablet:[zoom:1.2]">
           <Halka deger={bugunku.toplam} hedef={ayarlar.gunlukHedef} boyut={78} kalinlik={8}>
             <span className="rakam font-display text-[23px] leading-none font-extrabold">
               {bugunku.toplam}
@@ -302,7 +305,7 @@ export function AnaSayfa({
               alıyor, `h2`/`p` orada geçersiz iç içe geçme oluyor. Görünüş
               `block` ile aynı kalıyor. */}
           <span className="min-w-0 flex-1 space-y-0.5">
-            <span className="block font-display text-base leading-tight font-extrabold tracking-tight tablet:text-[20px]">
+            <span className="block font-display text-base leading-tight font-extrabold tracking-tight tablet:text-[17px]">
               Bugünkü soru hedefin
             </span>
             {/*
@@ -321,15 +324,15 @@ export function AnaSayfa({
               hedefin" yazıyor ve birimi ikinci kez söylemek kesiri okumayı
               yavaşlatıyordu.
             */}
-            <span className="rakam block text-[19px] leading-tight font-extrabold tablet:mt-1 tablet:text-[30px]">
+            <span className="rakam block text-[19px] leading-tight font-extrabold tablet:mt-0.5 tablet:text-[22px]">
               {bugunku.toplam}
               {ayarlar.gunlukHedef > 0 && (
-                <span className="text-[15px] font-bold text-muted-foreground tablet:text-[20px]">
+                <span className="text-[15px] font-bold text-muted-foreground tablet:text-[16px]">
                   /{ayarlar.gunlukHedef}
                 </span>
               )}
             </span>
-            <span className="block text-[11.5px] leading-snug font-semibold text-muted-foreground tablet:mt-1 tablet:text-[14.5px]">
+            <span className="block text-[11.5px] leading-snug font-semibold text-muted-foreground tablet:mt-0.5 tablet:text-[12.5px]">
               {gunlukHedefMesaji(bugunku.toplam, ayarlar.gunlukHedef, tarih)}
             </span>
           </span>
@@ -349,7 +352,7 @@ export function AnaSayfa({
                   gun.gelecekMi ? 'henüz gelmedi' : gun.tuttu ? 'hedef tuttu' : 'hedef tutmadı'
                 }`}
                 className={cn(
-                  'grid h-7 place-items-center rounded-full text-[11.5px] font-extrabold tablet:h-10 tablet:text-[13.5px]',
+                  'grid h-7 place-items-center rounded-full text-[11.5px] font-extrabold tablet:h-8 tablet:text-[12px]',
                   gun.bugunMu
                     ? 'bg-primary-derin text-primary-foreground'
                     : gun.tuttu
@@ -367,12 +370,13 @@ export function AnaSayfa({
       </Kart>
       </div>
 
-      {/* Sağ sütun (dikey tablette kahramanın altı): Araçlar ile Oyunlar
-          dikeyde yan yana, uyarı ve özet ikisini birden kaplıyor. */}
-      <div className="space-y-3.5 tablet:grid tablet:grid-cols-2 tablet:grid-rows-[auto_1fr_auto] tablet:gap-5 tablet:space-y-0 yatay:flex yatay:flex-col">
+      {/* Kahramanın altı: tablette sarmalayıcı ızgaraya karışıyor
+          (`contents`), Araçlar ile Oyunlar yatayda yan yana (aynı boyda),
+          dikeyde alt alta; uyarı ve özet iki sütunu birden kaplıyor. */}
+      <div className="space-y-3.5 tablet:contents tablet:space-y-0">
       {/* Devamsızlık uyarısı — yalnızca gerektiğinde görünür */}
       {(devamsizlikDurumu.asildi || devamsizlikDurumu.uyari) && (
-        <Not tur={devamsizlikDurumu.asildi ? 'tehlike' : 'uyari'} className="tablet:col-span-2">
+        <Not tur={devamsizlikDurumu.asildi ? 'tehlike' : 'uyari'} className="tablet:col-span-full">
           <span className="flex items-start gap-2">
             <AlertTriangle size={16} className="mt-0.5 shrink-0" aria-hidden />
             <span>
@@ -436,7 +440,7 @@ function Bolum({
   children: React.ReactNode
 }) {
   return (
-    <section className="tablet:row-start-2 tablet:flex tablet:min-h-0 tablet:flex-col yatay:flex-1">
+    <section className="tablet:flex tablet:flex-col">
       {/* Başlığın altında bir ara açıklama satırı vardı ("Çalışmanı takip
           et"); kaldırıldı. Ana sayfada üst üste üç bölüm var ve her birinin
           altındaki ikinci satır, kutucukların kendisini aşağı itiyordu —
@@ -451,10 +455,11 @@ function Bolum({
           olarak kaldırıldı (`kisayol-duzenle.tsx` silindi). Dört yüz yalnızca
           son kullanılanlardan geliyor: sıralamayı kullanan belirliyor, ayrıca
           kurulacak bir tercih yok. */}
-      {/* Tablette kutucuklar 2×2 ve kartın boyunu dolduruyor; yatayda her
-          kutucuk bir satır (simge + ad). */}
-      <Kart className="px-2.5 py-3.5 tablet:flex-1 tablet:p-3">
-        <div className="grid grid-cols-4 gap-2 tablet:h-full tablet:auto-rows-fr tablet:grid-cols-2 tablet:gap-2.5">{children}</div>
+      {/* Tablette de dört kutucuk tek satır, telefondaki gibi. Bir süre 2×2
+          ve kartın boyunu dolduruyordu; kutucuklar telefonun üç katı
+          büyüyordu. */}
+      <Kart className="px-2.5 py-3.5 tablet:flex-1 tablet:px-3 tablet:py-4">
+        <div className="grid grid-cols-4 gap-2 tablet:gap-3">{children}</div>
       </Kart>
     </section>
   )
@@ -505,9 +510,7 @@ function Kutucuk({
       style={giris.style}
       className={cn(
         'flex flex-col items-center gap-1.5 rounded-2xl px-1 py-1.5 transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-        'tablet:min-h-[76px] tablet:justify-center tablet:gap-2 tablet:rounded-[18px] tablet:bg-background/70 tablet:px-2 tablet:py-2.5',
-        // Dikey tablette sütun dar: simge üstte; yatayda yan yana.
-        'yatay:flex-row yatay:justify-start yatay:gap-3 yatay:px-3 yatay:text-left',
+        'tablet:gap-2',
         giris.className,
       )}
     >
@@ -515,13 +518,13 @@ function Kutucuk({
           telefonda küçülüyor. Üst sınır olmasaydı geniş ekranda dört kocaman
           kare olurdu. */}
       <span
-        className={cn('grid aspect-square w-full max-w-[64px] place-items-center rounded-[18px] tablet:w-14 tablet:max-w-none tablet:shrink-0 yatay:w-16', renk)}
+        className={cn('grid aspect-square w-full max-w-[64px] place-items-center rounded-[18px]', renk)}
       >
         <span className="emoji text-[26px] leading-none" aria-hidden>
           {ikon}
         </span>
       </span>
-      <span className="text-[11px] leading-tight font-bold text-balance text-muted-foreground tablet:min-w-0 tablet:text-[14px] tablet:font-extrabold tablet:text-foreground yatay:text-[15.5px]">
+      <span className="text-[11px] leading-tight font-bold text-balance text-muted-foreground tablet:text-[12.5px]">
         {ad}
       </span>
     </button>
@@ -584,7 +587,7 @@ function OzetBekliyor({ tarih, yetersiz }: { tarih: string; yetersiz: boolean })
   return (
     <div
       aria-disabled
-      className="flex w-full items-center gap-3.5 rounded-2xl border border-dashed border-muted-foreground/30 tablet:col-span-2 tablet:row-start-3 bg-card/60 px-4 py-3.5 text-left opacity-70"
+      className="flex w-full items-center gap-3.5 rounded-2xl border border-dashed border-muted-foreground/30 tablet:col-span-full bg-card/60 px-4 py-3.5 text-left opacity-70"
     >
       <Rabi durum="uykulu" poz="kahveli" boyut={40} className="shrink-0 grayscale" />
       <span className="min-w-0 flex-1">
