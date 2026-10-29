@@ -25,6 +25,7 @@ import { DenemeOkut } from '@/components/deneme-okut'
 import { bosSifir } from '@/lib/bos-sifir'
 import { TarihSecici } from '@/components/tarih-secici'
 import { SeviyeDersleri } from '@/components/seviye-dersleri'
+import { Rabi } from '@/components/maskot/rabi'
 
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
@@ -303,17 +304,7 @@ export function YeniDenemeEkrani({
 
       {seviyeSecili && (
         <div className="mb-4">
-          <div className="mb-1.5 flex items-center justify-between gap-3">
-            <Etiket className="mb-0">Sınıf</Etiket>
-            <button
-              type="button"
-              onClick={() => setDerslerAcik(true)}
-              className="-my-1 inline-flex items-center gap-1 rounded-lg px-1.5 py-1 text-[12.5px] font-bold text-primary active:bg-muted"
-            >
-              <Pencil size={14} aria-hidden />
-              Dersleri düzenle
-            </button>
-          </div>
+          <Etiket>Sınıf</Etiket>
           <div className="grid grid-cols-4 gap-2">
             {SEVIYE_SINIFLARI.map((s) => (
               <button
@@ -346,6 +337,29 @@ export function YeniDenemeEkrani({
               </div>
             </>
           )}
+          {/*
+            "Dersleri düzenle" Rabi'nin balonunda. Önce sınıf satırının
+            sağında küçük bir bağlantıydı; kullanıcı fark edilmediğini söyledi
+            (2026-10-29): okulun denemesi hazır şablondan farklıysa çıkış yolu
+            bu, göze girmesi gerekiyor.
+          */}
+          <div className="mt-3 flex items-end gap-1.5">
+            <Rabi poz="defterli" boyut={72} className="-mb-1 shrink-0" />
+            <div className="relative min-w-0 flex-1 rounded-2xl bg-primary-soft px-3.5 py-3">
+              <span aria-hidden className="absolute bottom-4 -left-1.5 size-3 rotate-45 rounded-[2px] bg-primary-soft" />
+              <p className="relative text-[13px] leading-snug font-bold text-foreground">
+                Okulundaki denemenin dersleri ya da soru sayıları farklı mı? Buradan değiştirebilirsin.
+              </p>
+              <button
+                type="button"
+                onClick={() => setDerslerAcik(true)}
+                className="relative mt-2.5 inline-flex h-9 items-center gap-1.5 rounded-xl bg-primary-parlak px-3.5 text-[13px] font-extrabold text-white transition active:scale-[0.98] active:brightness-95"
+              >
+                <Pencil size={15} aria-hidden />
+                Dersleri düzenle
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
