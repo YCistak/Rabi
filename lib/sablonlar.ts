@@ -170,8 +170,13 @@ function temelSablon(id: string): Sablon {
 /**
  * 10, 11 ve 12. sınıfın seviye tespit şablonları (kullanıcı istedi, 2026-10).
  *
- * - 10. sınıf: 9'un dersleri ve Felsefe. 10'da Felsefe dersi başlıyor; soru
- *   sayısı Din Kültürü'yle aynı tutuldu (kullanıcı seçti).
+ * - 10. sınıf: 9'un dersleri ve Felsefe. 10'da Felsefe dersi başlıyor.
+ *   Soru sayıları `okul-10-b`de: Tarih 10, Coğrafya 10, Felsefe 5, Din 5
+ *   (kullanıcı istedi, 2026-10-29). İlk sürüm `okul-10` (Tarih/Coğrafya 12,
+ *   Felsefe/Din 6) `eski` işaretiyle duruyor: yayınlandı, denemeler ona bağlı
+ *   ve boş sayısı şablondan hesaplanıyor — yerinde değişseydi eski denemelerin
+ *   boşu ve neti kayardı, 11 doğrulu Tarih geçersiz olurdu. Yeni deneme
+ *   `okul-10-b`ye yazılıyor (`hazirSeviyeSablonu` eskiyi atlıyor).
  * - 11 ve 12: AYT'nin aynısı, öğrencinin alanına göre. Dersler ve kimlikler
  *   AYT şablonundan kopya; tür yine `okul`, deneme listesinde seviye
  *   tespitlerin yanında duruyor (tahmin türe değil testlere bakıyor).
@@ -185,11 +190,24 @@ const SEVIYE_SABLONLARI: Sablon[] = [
     ...temelSablon('okul'),
     id: 'okul-10',
     ad: 'Seviye Tespit · 10. sınıf',
-    seviye: { sinif: 10 },
+    seviye: { sinif: 10, eski: true },
     dersler: [
       ...temelSablon('okul').dersler.filter((d) => d.id !== 'din'),
       { id: 'felsefe', ad: 'Felsefe', soruSayisi: 6, osymTesti: 'ayt-felsefe' },
       ...temelSablon('okul').dersler.filter((d) => d.id === 'din'),
+    ],
+  },
+  {
+    ...temelSablon('okul'),
+    id: 'okul-10-b',
+    ad: 'Seviye Tespit · 10. sınıf',
+    seviye: { sinif: 10 },
+    dersler: [
+      ...temelSablon('okul').dersler
+        .filter((d) => d.id !== 'din')
+        .map((d) => (d.id === 'tarih' || d.id === 'cografya' ? { ...d, soruSayisi: 10 } : d)),
+      { id: 'felsefe', ad: 'Felsefe', soruSayisi: 5, osymTesti: 'ayt-felsefe' },
+      { ...temelSablon('okul').dersler.find((d) => d.id === 'din')!, soruSayisi: 5 },
     ],
   },
   ...[11, 12].flatMap((sinif) =>
