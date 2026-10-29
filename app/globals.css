@@ -223,6 +223,11 @@ body {
   --muted: #efeeeb;
   --muted-foreground: #6b6764;
   --border: #eae9e6;
+  /* Rabi'nin konuşma balonu (Yeni deneme › Dersleri düzenle). Açıkta kart
+     gibi beyaz ve kenarlı: turuncumsu `--primary-soft` sayfada sırıtıyordu.
+     Koyuda sıcak kahve, kenarsız. */
+  --rabi-balon: #ffffff;
+  --rabi-balon-kenar: #eae9e6;
   --input: #eae9e6;
   --grid: #e4e2de;
   --radius: 0.8rem;
@@ -518,6 +523,8 @@ body {
   --muted: #312a24;
   --muted-foreground: #ab9f94;
   --border: #3a322b;
+  --rabi-balon: #3b2519;
+  --rabi-balon-kenar: transparent;
   --input: #3a322b;
   --grid: #3a322b;
 
