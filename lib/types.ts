@@ -8,6 +8,7 @@ import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
 import type { OkumaSeansi } from './konu/okuma-suresi'
 import type { YksTakip } from './konu-takibi/kayit'
+import type { TemaTercihi } from './tema'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -405,6 +406,8 @@ export type Ayarlar = {
   oyunMuzikTuru: OyunMuzikTuru
   /** İlk açılış kurulumu tamamlandı mı; false ise kurulum ekranı gösterilir. */
   kurulumTamamlandi: boolean
+  /** Görünüm: Telefona uy · Açık · Koyu (`lib/tema.ts`). Kurulumda sorulmaz. */
+  tema: TemaTercihi
 }
 
 /**

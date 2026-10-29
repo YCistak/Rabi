@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Manrope, Nunito, Rubik } from 'next/font/google'
 import './globals.css'
+import { ilkKareTemaBetigi } from '@/lib/tema'
 
 // Tasarımın tek yazı tipi. 400-900 arası kalınlıkların hepsi isteniyor:
 // başlıklar 800/900, gövde 500/600, ince yardımcı metinler 400.
@@ -66,8 +67,10 @@ export const viewport: Viewport = {
   // 0 bildiriyordu — alt menünün yazıları gezinme çubuğunun altında kalıyordu.
   // Boşluklar `--guvenli-ust` / `--guvenli-alt` ile elle veriliyor.
   viewportFit: 'cover',
-  // Tek tema var; cihaz gece modundayken bile uygulama açık kalıyor.
-  colorScheme: 'light',
+  // İki tema var (`lib/tema.ts`). Sayfa koyuyu da desteklediğini söylüyor ki
+  // Android WebView gece modunda sayfayı kendi kendine karartmasın; hangi
+  // temanın çizildiğini `<html data-tema>` ve CSS'teki `color-scheme` belirliyor.
+  colorScheme: 'light dark',
   themeColor: '#f8f8f7',
 }
 
@@ -213,6 +216,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     var p = window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform();
     if (p) document.documentElement.setAttribute('data-platform', p);
   } catch (e) {}
+  // Tema da ilk karede: React'i bekleseydik koyu seçen kullanıcı açılışta bir
+  // kare açık zemin görürdü. Kural temaCoz ile aynı.
+  ${ilkKareTemaBetigi()}
 })();`,
           }}
         />

@@ -5,6 +5,7 @@ import { ANA_TUR_SURUM_ANAHTARI, TUR_ANAHTARLARI } from './tanitim'
 import { ANIMASYON_ANAHTARI } from './tanitim-animasyonu'
 import { TANITIM_TERCIH_ANAHTARI } from './tanitim-tercih'
 import { CEVAPSIZ_COKME_ANAHTARI } from './cokme-karari'
+import { VARSAYILAN_TEMA, temaTercihiNormalize } from './tema'
 import type {
   Ayarlar,
   Deneme,
@@ -331,6 +332,7 @@ export const VARSAYILAN_AYARLAR: Ayarlar = {
   oyunMuzigi: true,
   oyunMuzikTuru: 'mod',
   kurulumTamamlandi: false,
+  tema: VARSAYILAN_TEMA,
 }
 
 /**
@@ -415,6 +417,9 @@ export function ayarlariNormalize(ham: Partial<Ayarlar> | null | undefined): Aya
     // Alan artık okunmuyor (oyun müziği kaldırıldı) ama yedek uyumluluğu için
     // bilinen ikiliye zorlanmaya devam ediyor; eski kurulumlarda 'sakin' var.
     oyunMuzikTuru: birlesik.oyunMuzikTuru === 'lofi' ? 'lofi' : 'mod',
+    // Alan koyu temayla geldi. Eski kullanıcı da "Telefona uy"a geçer
+    // (kullanıcı kararı, 2026-10-28); sürüm notunda duyurulur.
+    tema: temaTercihiNormalize(birlesik.tema),
   }
 }
 

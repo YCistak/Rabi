@@ -68,6 +68,7 @@ import { haritaSinifiBul, programBul, type HaritaSinifi, type KonuDersId } from 
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import { kullanildi } from '@/lib/son-kullanilan'
 import { useBugun, useUygulamaGorunur } from '@/lib/gorunurluk'
+import { useTema } from '@/lib/tema-kancasi'
 import { katmanVarMi, tumKatmanlariKapat, ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SOLMA_SURESI, GECIS_SURESI, KurulumGecisi } from '@/components/acilis'
 import { Buton } from '@/components/ui'
@@ -239,6 +240,7 @@ function RabiUygulamasi() {
     VARSAYILAN_AYARLAR,
   )
   const ayarlar = ayarlariNormalize(ayarlarHam)
+  useTema(ayarlar.tema)
 
   const [denemeler, setDenemeler, denemelerHazir] = useYerelDepo<Deneme[]>(
     ANAHTARLAR.denemeler,
