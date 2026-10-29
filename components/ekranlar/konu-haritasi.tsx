@@ -1102,7 +1102,7 @@ function Dugum({
   const turAdimi = useContext(TanitimBaglami)?.adim?.kimlik
   const turdaAydinlik = tanitimHedefi === 'harita-soru' && turAdimi === 'harita-soru'
   const gri = !turdaAydinlik && (durum === 'kilitli' || durum === 'yazilmadi')
-  const ton = soru ? 'var(--primary-parlak)' : 'var(--success)'
+  const ton = soru ? 'var(--patika-kitap-soru)' : 'var(--success)'
 
   const nedeni =
     durum === 'yazilmadi'
@@ -1232,10 +1232,10 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
         style={{
           background: gri
             ? 'var(--patika-kitap-kilitli-arka)'
-            : 'color-mix(in srgb, var(--primary-parlak) 80%, var(--primary-derin))',
+            : 'color-mix(in srgb, var(--patika-kitap-soru) 80%, var(--patika-kitap-soru-derin))',
           boxShadow: gri
             ? '0 3px 0 var(--patika-kitap-kilitli-golge)'
-            : '0 3px 0 color-mix(in srgb, var(--primary-derin) 85%, #000)',
+            : '0 3px 0 color-mix(in srgb, var(--patika-kitap-soru-derin) 85%, #000)',
           transform: 'rotate(-13deg)',
         }}
       />
@@ -1244,8 +1244,8 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
         style={{
           background: gri
             ? 'var(--patika-kitap-kilitli)'
-            : 'linear-gradient(color-mix(in srgb, var(--primary-parlak) 88%, #fff), var(--primary-parlak))',
-          boxShadow: gri ? '0 4px 0 var(--patika-kitap-kilitli-golge)' : '0 4px 0 var(--primary-derin)',
+            : 'linear-gradient(color-mix(in srgb, var(--patika-kitap-soru) 88%, #fff), var(--patika-kitap-soru))',
+          boxShadow: gri ? '0 4px 0 var(--patika-kitap-kilitli-golge)' : '0 4px 0 var(--patika-kitap-soru-derin)',
           transform: 'rotate(-3deg)',
         }}
       >

@@ -446,6 +446,11 @@ body {
   --patika-kitap-kilitli-golge: #cdc7bb;
   --patika-kitap-kilitli-sirt: #d6d0c4;
   --patika-kitap-kilitli-yazi: #57534e;
+  /* Soru kitabı (turuncu çift). Açıkta düğme turuncusu; koyuda kendi kısık
+     tonu var: koyu zeminde `--primary-parlak` yeşil kitabın yanında
+     bağırıyordu. */
+  --patika-kitap-soru: var(--primary-parlak);
+  --patika-kitap-soru-derin: var(--primary-derin);
   --patika-serit: #f6e0a6;
   /* Yolun sonundaki hazine sandığı: ahşap üç ton ve altın bant. */
   --patika-sandik: #9a6234;
@@ -663,6 +668,8 @@ body {
   --patika-kitap-kilitli-golge: #241f1a;
   --patika-kitap-kilitli-sirt: #342e27;
   --patika-kitap-kilitli-yazi: #a69a8e;
+  --patika-kitap-soru: #b4552a;
+  --patika-kitap-soru-derin: #853a18;
   --patika-serit: #6b5a2e;
   --patika-hale: rgba(255, 238, 220, 0.12);
   --patika-simge: rgba(240, 225, 200, 0.05);
@@ -835,6 +842,15 @@ body {
     font-weight: 400;
     font-style: normal;
     font-synthesis: none;
+  }
+  /*
+    Koyu temada emojiler kısılıyor. Renkli emoji açık zemine göre çizilmiş;
+    koyu kahve zeminde etrafındaki kısık renklerden çok canlı ve parlak
+    duruyordu. Doygunluk ve parlaklık biraz iniyor, emoji tanınır kalıyor.
+    `OlcekliEmoji` tuvali de aynı süzgeçten geçiyor.
+  */
+  :root[data-tema='koyu'] :is(.emoji, .olcekli-emoji) {
+    filter: saturate(0.78) brightness(0.88);
   }
 
   .font-display {
