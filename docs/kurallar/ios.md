@@ -67,7 +67,7 @@ reddedildi.
 - Ses oturumu `.playback` + `.mixWithOthers` (`AppDelegate.swift`): sessizde de çalar,
   arkadaki müziği kesmez. Sayfa ve iç kutularda kaydırma çubuğu yok
   (`showsVerticalScrollIndicator`, `globals.css`).
-- iPhone + iPad (`TARGETED_DEVICE_FAMILY = "1,2"`); iPad'de `--olcek` zoom,
+- iPhone + iPad (`TARGETED_DEVICE_FAMILY = "1,2"`); iPad'de `--olcek` zoom (bugün 1, büyütme yok; `app/layout.tsx`),
   `UIRequiresFullScreen` yok, dört yön açık; iPhone yalnız dikey.
 - **Windows'ta derlenmez:** CI `.github/workflows/ios.yml`. `npm run sync:ios` (Windows
   yollarını `scripts/ios-yol-duzelt.mjs` düzeltir), çıplak `cap sync ios` değil.
