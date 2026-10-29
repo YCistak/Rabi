@@ -73,11 +73,15 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   `acilacakDers`, `oyunlar.tsx`te bir kez tüketilir. Ders geçmişi oyunlardan türetilir
   (`oyunlarinDersleri`).
 - **Tablet düzeni** (yalnız `tablet:` / `yatay:`; telefonda DOM aynı, piksel farkı
-  yok — iki sarmalayıcı da `space-y-3.5` taşıyor): solda "Bugün" kahraman kartı
-  (`ana-kahraman`: selam, `GeriSayim kahraman`, günlük hedef halkası + hafta), sağda
-  Araçlar, Oyunlar, aylık özet. Yatayda iki sütun ekran boyu kadar (`min-h` →
-  `--olcek`e bölünmüş `100dvh`), dikeyde kahraman üstte, altında Araçlar | Oyunlar.
+  yok — iki sarmalayıcı da `space-y-3.5` taşıyor): üstte enine "Bugün" kahraman kartı
+  (`ana-kahraman`: selam; altında yan yana `GeriSayim kahraman` + hedef ve günlük hedef
+  halkası + hafta), altında Araçlar ve Oyunlar — yatayda yan yana, dikeyde alt alta;
+  her birinde dört kutucuk tek satır, telefondaki kutucuğun aynısı. İçerik
+  `SayfaGecisi`nin 60rem sınırında ortalı; ekran boyunu doldurmaz.
+  **Boylar telefona yakın kalır** (başlık 25 px, geri sayım 46 px, halka `zoom` 1,2):
+  bir süre ızgara ekran boyunu dolduruyor, kartlar uzuyor, yazılar 30–72 px'e, halka
+  1,9 kata büyüyordu ve `body` zoom'u (1,2) üstüne biniyordu; kullanıcı "her şey
+  kafam kadar" dedi (2026-10-29). Geniş ekran büyük yazıyla değil sütunla doldurulur.
   Kahramanın içindeki kartların gölgesi `globals.css`te katmansız kuralla kalkar.
-  Halka `zoom` ile büyür (piksel boyut telefonda 78 kalsın). Kutucuklar tablette 2×2,
-  yatayda simge + ad yan yana. Bugünkü görev listesi ana sayfada yok, tablette de
+  Bugünkü görev listesi ana sayfada yok, tablette de
   eklenmedi (yeni özellik sayılır, sorulmadan eklenmez).
