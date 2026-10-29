@@ -2,6 +2,11 @@
 
 Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md](../../AGENTS.md).
 
+**Arayüzden gizli** (kullanıcı kaldırttı, 2026-10-29; "ileride açarız"): bayrak
+`AYLIK_OZET_ACIK` (`lib/ozet.ts`) kapalı — ana sayfa kartları çizilmez, katman açılmaz.
+Kod, tasarım, arşiv ve yedek **yerinde**; kapalıyken de her ay arşive yazılır. Geri
+açmak tek satır. Aşağıdaki kurallar açıldığında geçerli.
+
 `components/ekranlar/aylik-ozet.tsx`, `lib/ozet.ts`, afiş `lib/ozet-gorsel.ts`, tasarım
 `tasarim/aylik-ozet.dc.html`. Araçlar listesinde **yok**. Ay takvim ayı.
 - Bir ayın özeti **yalnız sonraki ayın açılış gününde** açılır (`bekleyenOzetAyi`;

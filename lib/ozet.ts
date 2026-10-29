@@ -89,6 +89,18 @@ export function ayKaydir(anahtar: AyAnahtari, adim: number): AyAnahtari {
  * çıkmasın ve pasif kart bugün "10 Ekim" değil "10 Kasım" desin.
  */
 export const OZET_ACILIS_GUNU = 10
+
+/**
+ * Aylık özet arayüzde görünsün mü.
+ *
+ * Kapalı (kullanıcı kaldırttı, 2026-10-29: "ileride açarız"): ana sayfadaki
+ * davet ve bekleme kartları çizilmiyor, özet katmanı açılmıyor. Hesap, arşiv
+ * (`rabi-aylik-ozetler`) ve yedek bayrağa **bağlı değil** — kapalıyken de her
+ * kapanan ay arşive yazılıyor, açıldığında geçmiş aylar hazır olsun.
+ * `ozetGorulen` ise yazılmıyor (özet hiç açılmıyor); açılınca bekleyen ay doğru
+ * hesaplanır.
+ */
+export const AYLIK_OZET_ACIK = false
 const OZET_ACILIS_GECIS_AYI: AyAnahtari = '2026-11'
 
 /** Verilen ayda özetin açıldığı günün tarihi. */
