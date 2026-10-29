@@ -58,21 +58,14 @@ export function seviyeSablonu(sablonlar: Sablon[], sinif: SeviyeSinifi, alan: Pu
 }
 
 /**
- * "Ders ekle" listesi. Kimlikler 9. sınıf şablonunun kimlikleri: aynı ders
- * aynı kimlikle kalsın. ÖSYM testi, hazır seviye tespitlerdeki gibi AYT'nin
- * karşılığı; Türkçe'ninki TYT'de.
+ * "Ders ekle" listesi: yalnız Felsefe ve İngilizce (kullanıcı istedi,
+ * 2026-10-29). Öteki dersler hazır şablonlarda zaten var; çıkarılan ders
+ * "Varsayılana dön"le geri geliyor, okula özel ders "Başka ders"le yazılıyor.
+ * Kimlikler hazır şablonlardaki kimlikler: aynı ders aynı kimlikle kalsın.
+ * ÖSYM testi AYT/YDT karşılığı.
  */
 export const SEVIYE_DERS_SECENEKLERI: readonly SablonDers[] = [
-  { id: 'turkce', ad: 'Türkçe', soruSayisi: 10, osymTesti: 'tyt-turkce' },
-  { id: 'edebiyat', ad: 'Edebiyat', soruSayisi: 10, osymTesti: 'ayt-edebiyat' },
-  { id: 'matematik', ad: 'Matematik', soruSayisi: 10, osymTesti: 'ayt-mat' },
-  { id: 'fizik', ad: 'Fizik', soruSayisi: 10, osymTesti: 'ayt-fizik' },
-  { id: 'kimya', ad: 'Kimya', soruSayisi: 10, osymTesti: 'ayt-kimya' },
-  { id: 'biyoloji', ad: 'Biyoloji', soruSayisi: 10, osymTesti: 'ayt-biyoloji' },
-  { id: 'tarih', ad: 'Tarih', soruSayisi: 10, osymTesti: 'ayt-tarih1' },
-  { id: 'cografya', ad: 'Coğrafya', soruSayisi: 10, osymTesti: 'ayt-cografya1' },
   { id: 'felsefe', ad: 'Felsefe', soruSayisi: 10, osymTesti: 'ayt-felsefe' },
-  { id: 'din', ad: 'Din Kültürü', soruSayisi: 10, osymTesti: 'ayt-din' },
   { id: 'ingilizce', ad: 'İngilizce', soruSayisi: 10, osymTesti: 'ydt' },
 ]
 
