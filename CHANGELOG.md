@@ -5,7 +5,15 @@ başlar, `v1.0.0` mağaza öncesi ilk kararlı sürümdür.
 
 ## Sıradaki sürüm
 
+## 1.0.6 (29 Ekim 2026)
+
 - Koyu tema geldi: Rabi artık telefonunun temasına uyar (telefonun gece modundaysa koyu açılır). Ayarlar → Görünüm → Tema'dan Telefona uy / Açık / Koyu seçilebilir. Önceki sürümden gelenler de "Telefona uy" ile başlar.
+- Kaynak Takibi aracı: test kitaplarında konu konu ilerleme, ders ders kaynak listesi, yayınevi önerileri.
+- Seviye tespit: "Dersleri düzenle" Rabi'nin balonunda; bir derste en çok 40 soru; 10. sınıf soru sayıları güncellendi.
+- Yeni uygulama ikonu (yalnız kafa).
+- Tablette arayüz ölçeklenmiyor, ana sayfa çok sütunlu ızgara.
+- Soru sahnesinde kart ortalandı.
+- Aylık özet arayüzden gizlendi, veri toplanmaya devam ediyor.
 
 ## 1.0.5 (17 Ekim 2026)
 
