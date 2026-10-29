@@ -35,8 +35,6 @@
 	<string>Paylaşım penceresinden aylık özet afişini galerine kaydedebilmen için.</string>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDarkContent</string>
-	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

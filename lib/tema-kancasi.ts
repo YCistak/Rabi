@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { KOYU_SORGU, TEMA_DEGISIYOR, TEMA_ZEMINI, temaCoz, type Tema, type TemaTercihi } from './tema'
+import { yerliTemayaYaz } from './tema-yerli'
 
 function uygula(tema: Tema) {
   const kok = document.documentElement
@@ -20,6 +21,7 @@ function uygula(tema: Tema) {
  */
 export function useTema(tercih: TemaTercihi) {
   useEffect(() => {
+    yerliTemayaYaz(tercih)
     const sorgu = window.matchMedia?.(KOYU_SORGU)
     const guncelle = () => uygula(temaCoz(tercih, sorgu?.matches ?? false))
     guncelle()

@@ -1,6 +1,7 @@
 package com.fluxifyinteractive.rabi.odak
 
 import android.content.Context
+import com.fluxifyinteractive.rabi.tema.TemaAyari
 import android.graphics.PixelFormat
 import android.os.Handler
 import android.os.Looper
@@ -108,7 +109,8 @@ class EngelKatmani(private val baglam: Context) {
      * üst üste binen tıklama işleyicileri demek olurdu.
      */
     private fun duzenKur(): View {
-        val yeni = LayoutInflater.from(baglam).inflate(R.layout.engel_katmani, null)
+        // Tema bağlamı: servis AppCompat'in gece modunu görmüyor (TemaAyari.baglam).
+        val yeni = LayoutInflater.from(TemaAyari.baglam(baglam)).inflate(R.layout.engel_katmani, null)
         yeni.isFocusableInTouchMode = true
         // Geri tuşu katmanı kapatmasın; çıkış yolu "Rabi'ye dön" ya da
         // "kilidi kapat" olmalı. Ana ekran tuşu zaten engellenemiyor, gerek de yok.
