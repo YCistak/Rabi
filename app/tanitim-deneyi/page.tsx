@@ -23,7 +23,7 @@ function AnimasyonDeneyi() {
         <input aria-label={ad} className="mt-1 h-11 w-full accent-primary" type="range" min="0" max={anahtar === 'karartma' ? 0.9 : 3000} step={anahtar === 'karartma' ? 0.01 : 50} value={animasyon[anahtar]} onChange={(olay) => animasyonuAyarla({ ...animasyon, [anahtar]: Number(olay.target.value) })} />
       </label>)}
       <div className="mt-4 flex flex-wrap gap-2">
-        <button className="min-h-11 rounded-xl bg-primary px-4 font-bold text-primary-foreground" onClick={() => tanitimdaMi ? (aktifAdim === 0 ? sonrakiAdimaGec() : oncekiAdimaDon()) : turuBaslat('ana_tur')}>{tanitimdaMi ? 'Geçişi oynat' : 'Önizlemeyi başlat'}</button>
+        <button className="min-h-11 rounded-xl bg-primary-derin px-4 font-bold text-primary-foreground" onClick={() => tanitimdaMi ? (aktifAdim === 0 ? sonrakiAdimaGec() : oncekiAdimaDon()) : turuBaslat('ana_tur')}>{tanitimdaMi ? 'Geçişi oynat' : 'Önizlemeyi başlat'}</button>
         <button className="min-h-11 rounded-xl border border-border px-3" onClick={() => animasyonuAyarla(VARSAYILAN_ANIMASYON)}>Varsayılanlar</button>
         {tanitimdaMi && <button className="min-h-11 rounded-xl border border-border px-3" onClick={turuBitir}>Önizlemeyi kapat</button>}
       </div>

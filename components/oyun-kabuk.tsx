@@ -41,42 +41,42 @@ const DERS_AILESI: Record<
   turkce: {
     zemin: 'bg-konu-turkce',
     yazi: 'text-konu-turkce-koyu',
-    dolgu: 'bg-konu-turkce-koyu',
+    dolgu: 'bg-konu-turkce-dolgu',
     kenar: 'border-l-konu-turkce-koyu',
     degisken: 'var(--konu-turkce-koyu)',
   },
   matematik: {
     zemin: 'bg-konu-matematik',
     yazi: 'text-konu-matematik-koyu',
-    dolgu: 'bg-konu-matematik-koyu',
+    dolgu: 'bg-konu-matematik-dolgu',
     kenar: 'border-l-konu-matematik-koyu',
     degisken: 'var(--konu-matematik-koyu)',
   },
   cografya: {
     zemin: 'bg-konu-cografya',
     yazi: 'text-konu-cografya-koyu',
-    dolgu: 'bg-konu-cografya-koyu',
+    dolgu: 'bg-konu-cografya-dolgu',
     kenar: 'border-l-konu-cografya-koyu',
     degisken: 'var(--konu-cografya-koyu)',
   },
   tarih: {
     zemin: 'bg-konu-tarih',
     yazi: 'text-konu-tarih-koyu',
-    dolgu: 'bg-konu-tarih-koyu',
+    dolgu: 'bg-konu-tarih-dolgu',
     kenar: 'border-l-konu-tarih-koyu',
     degisken: 'var(--konu-tarih-koyu)',
   },
   biyoloji: {
     zemin: 'bg-konu-biyoloji',
     yazi: 'text-konu-biyoloji-koyu',
-    dolgu: 'bg-konu-biyoloji-koyu',
+    dolgu: 'bg-konu-biyoloji-dolgu',
     kenar: 'border-l-konu-biyoloji-koyu',
     degisken: 'var(--konu-biyoloji-koyu)',
   },
   kimya: {
     zemin: 'bg-konu-kimya',
     yazi: 'text-konu-kimya-koyu',
-    dolgu: 'bg-konu-kimya-koyu',
+    dolgu: 'bg-konu-kimya-dolgu',
     kenar: 'border-l-konu-kimya-koyu',
     degisken: 'var(--konu-kimya-koyu)',
   },
@@ -534,7 +534,7 @@ function SeriRozeti({ seri, gorunur }: { seri: number; gorunur: boolean }) {
       className={cn(
         'rakam flex h-[30px] shrink-0 items-center gap-1.5 rounded-full px-2.5 text-[12.5px] font-extrabold transition',
         !gorunur && 'invisible',
-        yaniyor ? 'bg-ikincil text-white' : 'bg-foreground/[0.07] text-muted-foreground',
+        yaniyor ? 'bg-ikincil-dolu text-white' : 'bg-foreground/[0.07] text-muted-foreground',
       )}
     >
       <span aria-hidden>🔥</span>
@@ -808,7 +808,7 @@ export function TurSonu({
           <span
             className={cn(
               'flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 text-[11.5px] font-extrabold',
-              yeniRekor ? 'bg-warning text-white' : 'bg-warning-soft text-warning',
+              yeniRekor ? 'bg-warning-dolu text-white' : 'bg-warning-soft text-warning',
             )}
           >
             <Trophy size={13} aria-hidden />
@@ -826,7 +826,7 @@ export function TurSonu({
             <span
               className={cn(
                 'absolute -bottom-1 -top-1 w-[3px] rounded-sm',
-                yeniRekor ? 'bg-border' : 'bg-foreground',
+                yeniRekor ? 'bg-border' : 'bg-ters',
               )}
               style={{ left: `${cizgi}%` }}
             />

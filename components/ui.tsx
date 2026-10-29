@@ -368,7 +368,7 @@ export function Onay({
             Vazgeç
           </Buton>
           <Buton
-            className={cn('flex-1', tehlikeli && 'bg-danger text-white')}
+            className={cn('flex-1', tehlikeli && 'bg-danger-dolu text-white')}
             onClick={() => {
               onOnayla()
               onIptal()

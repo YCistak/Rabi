@@ -166,7 +166,7 @@ export function KurulumHazir({
               </span>
               <span className="mt-2 text-[14.5px] font-extrabold leading-tight">{kutu.ad}</span>
               <span className={`mt-0.5 line-clamp-2 text-xs font-bold leading-snug ${yazi}`}>{kutu.satir}</span>
-              <span className="hazir-tik absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-success text-white" aria-hidden>
+              <span className="hazir-tik absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-success-dolu text-white" aria-hidden>
                 <Check className="h-3 w-3" strokeWidth={3.2} />
               </span>
             </li>

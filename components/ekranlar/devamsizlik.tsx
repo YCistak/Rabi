@@ -234,11 +234,11 @@ export function DevamsizlikEkrani({
               />
               <div className="mt-3 flex items-center justify-center gap-4 pb-1 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden />
+                  <span className="h-1.5 w-1.5 rounded-full bg-danger-dolu" aria-hidden />
                   özürsüz
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden />
+                  <span className="h-1.5 w-1.5 rounded-full bg-warning-dolu" aria-hidden />
                   özürlü
                 </span>
               </div>
@@ -457,7 +457,7 @@ function HakCubugu({
         <div
           className={cn(
             'h-full rounded-full transition-[width] duration-400',
-            asildi ? 'bg-danger' : 'bg-primary-parlak',
+            asildi ? 'bg-danger-dolu' : 'bg-primary-parlak',
           )}
           style={{ width: `${Math.round(oran * 100)}%` }}
         />

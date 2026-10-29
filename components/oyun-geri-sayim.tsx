@@ -58,7 +58,7 @@ export function GeriSayim({ onBitti, tanitimHedefi }: { onBitti: () => void; tan
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-white px-6"
+      className="fixed inset-0 z-50 grid place-items-center bg-card px-6"
       // Ekran okuyucuya tek tek rakam okutmak yerine ne olduğunu bir kez
       // söylüyor: sayım görsel bir hazırlık, taşıdığı bilgi "tur başlıyor".
       role="status"

@@ -674,7 +674,7 @@ function Kapanis({
 
           {listelenen.length > 0 && (
             <div
-              className="kapanis-gel mt-2.5 rounded-[18px] border border-[var(--kapanis-cerceve)] bg-white px-4 py-3 shadow-[var(--kapanis-golge)]"
+              className="kapanis-gel mt-2.5 rounded-[18px] border border-[var(--kapanis-cerceve)] bg-[var(--kapanis-kart)] px-4 py-3 shadow-[var(--kapanis-golge)]"
               style={{ animationDelay: '1260ms' }}
             >
               <p className="text-[10px] font-extrabold tracking-[0.18em] text-[var(--kapanis-soluk)] uppercase">
@@ -769,7 +769,7 @@ function Kutu({
 }) {
   return (
     <div
-      className="kapanis-gel flex-1 rounded-[16px] border border-[var(--kapanis-cerceve)] bg-white px-2 py-2.5 text-center shadow-[var(--kapanis-golge)]"
+      className="kapanis-gel flex-1 rounded-[16px] border border-[var(--kapanis-cerceve)] bg-[var(--kapanis-kart)] px-2 py-2.5 text-center shadow-[var(--kapanis-golge)]"
       style={{ animationDelay: `${gecikme}ms` }}
     >
       <p className="rakam text-[22px] leading-none font-black" style={{ color: renk }}>

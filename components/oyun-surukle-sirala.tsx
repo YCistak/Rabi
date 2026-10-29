@@ -129,8 +129,8 @@ export function SurukleSirala({
                 'rakam grid h-6 w-6 shrink-0 place-items-center rounded-full text-[11.5px] font-extrabold',
                 kilitli
                   ? yerinde
-                    ? 'bg-success text-white'
-                    : 'bg-ikincil text-white'
+                    ? 'bg-success-dolu text-white'
+                    : 'bg-ikincil-dolu text-white'
                   : 'bg-konu-tarih text-konu-tarih-koyu',
               )}
             >

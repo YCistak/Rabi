@@ -673,7 +673,7 @@ export function AyarlarEkrani({
               <button
                 type="button"
                 onClick={() => setSifirlamaAcik(true)}
-                className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-ikincil px-3.5 text-[12.5px] font-extrabold text-white transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ikincil"
+                className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-ikincil-dolu px-3.5 text-[12.5px] font-extrabold text-white transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ikincil"
               >
                 <Trash2 size={14} aria-hidden />
                 Sıfırla

@@ -162,7 +162,7 @@ export function SecimPenceresi({
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex items-end justify-center bg-foreground/35',
+        'fixed inset-0 z-50 flex items-end justify-center bg-perde',
         kapaniyor ? 'katman-zemin-cikisi' : 'katman-zemin',
       )}
       onClick={secilen ? undefined : onKapat}
