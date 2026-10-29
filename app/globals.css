@@ -415,6 +415,15 @@ body {
   --konu-tarih-dolgu: #7a4f2a;
   --konu-cografya-dolgu: #1d7067;
   --konu-ingilizce-dolgu: #2c746b;
+  /* Ders zeminli tam ekranda kart (oyunlar): açıkta düz kart, koyuda dersin tonu. */
+  --konu-matematik-kart: #ffffff;
+  --konu-turkce-kart: #ffffff;
+  --konu-fizik-kart: #ffffff;
+  --konu-kimya-kart: #ffffff;
+  --konu-biyoloji-kart: #ffffff;
+  --konu-tarih-kart: #ffffff;
+  --konu-cografya-kart: #ffffff;
+  --konu-ingilizce-kart: #ffffff;
 
   /* Patikanın kendi renkleri: yol, geçilmiş yol ve kilitli kitap.
 
@@ -627,6 +636,14 @@ body {
   --konu-ingilizce-cubuk: #2b4843;
   --konu-ingilizce-ok: #4c9a8e;
   --konu-ingilizce-dolgu: #2f7a6f;
+  --konu-matematik-kart: #253549;
+  --konu-turkce-kart: #3a321b;
+  --konu-fizik-kart: #352b47;
+  --konu-kimya-kart: #432e21;
+  --konu-biyoloji-kart: #2a3825;
+  --konu-tarih-kart: #3a2f25;
+  --konu-cografya-kart: #1d3b36;
+  --konu-ingilizce-kart: #223a36;
 
   --patika-golge: rgba(0, 0, 0, 0.25);
   --patika-yol: #3d342b;
@@ -656,6 +673,56 @@ body {
   --gorev-hardal: #dcb25e;
   --gorev-kahve: #d2a587;
   --gorev-gri: #b0b5bd;
+}
+
+/*
+  Ders zemininin içindeki yüzeyler koyu temada o dersin tonunu alır.
+
+  Açıkta beyaz kart her ders zemininde temiz duruyor; koyuda genel kahve kart
+  mavi/yeşil zeminde çamurlaşıyordu (oyun tuşları, soru kartı, cevap kutusu).
+  Kural yalnız koyu takımda: açık temada hiçbir değer değişmiyor. Zemin
+  sınıfı oyun kabuğunun, Oyunlar'daki ders kartlarının ve haritadaki bandın
+  kendisi; içindeki her `bg-card` / `border` / `bg-muted` kendiliğinden döner.
+*/
+:root[data-tema='koyu'] .bg-konu-matematik {
+  --card: var(--konu-matematik-kart);
+  --muted: var(--konu-matematik-kenar);
+  --border: var(--konu-matematik-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-turkce {
+  --card: var(--konu-turkce-kart);
+  --muted: var(--konu-turkce-kenar);
+  --border: var(--konu-turkce-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-fizik {
+  --card: var(--konu-fizik-kart);
+  --muted: var(--konu-fizik-kenar);
+  --border: var(--konu-fizik-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-kimya {
+  --card: var(--konu-kimya-kart);
+  --muted: var(--konu-kimya-kenar);
+  --border: var(--konu-kimya-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-biyoloji {
+  --card: var(--konu-biyoloji-kart);
+  --muted: var(--konu-biyoloji-kenar);
+  --border: var(--konu-biyoloji-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-tarih {
+  --card: var(--konu-tarih-kart);
+  --muted: var(--konu-tarih-kenar);
+  --border: var(--konu-tarih-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-cografya {
+  --card: var(--konu-cografya-kart);
+  --muted: var(--konu-cografya-kenar);
+  --border: var(--konu-cografya-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-ingilizce {
+  --card: var(--konu-ingilizce-kart);
+  --muted: var(--konu-ingilizce-kenar);
+  --border: var(--konu-ingilizce-kenar);
 }
 
 /* Tema değişirken renkler kaymasın: bir iki kare bütün geçişler kapalı

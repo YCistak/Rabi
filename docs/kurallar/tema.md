@@ -29,6 +29,10 @@ Yol haritası ve kalan işler: [koyu-tema-plani.md](../koyu-tema-plani.md).
   dolgu olarak yazı tonu, `bg-foreground` yakalar (muaf/izinli satırlar gerekçeli).
   `lib/tema-kontrast.test.ts` iki takımda yazı/zemin çiftlerini ölçer (4,5; büyük
   yazı/ikon/dolgu 3).
+- **Ders zemininin içi:** koyuda `.bg-konu-<ders>` içindeki `--card`, `--muted`,
+  `--border` o dersin tonuna döner (`--konu-<ders>-kart`, `-kenar`; yalnız koyu
+  takımda). Oyun tuşları, şıklar, soru kartı bu yüzden ayrıca boyanmaz; ders zeminli
+  yeni ekran da kendiliğinden uyar.
 - **Henüz koyu değeri olmayanlar** (plan PR 3–6): `.sahne`, `.kapanis`, `.deste-*`,
   cam menü (`--cam-*`), açılış (`acilis.tsx` → `ZEMIN`, yerli açılış), durum çubuğu,
   odak engel katmanı. Bunlara dokunan iş koyu karşılığını da yazar.
