@@ -56,7 +56,7 @@ export function SeviyeDersleri({
   const kapat = () => (degisti ? onay.sor(onKapat) : onKapat())
   useGeriKatmani(true, kapat)
 
-  const hata = dersleriDenetle(derslere(satirlar))
+  const hata = dersleriDenetle(derslere(satirlar), hazir.dersler)
   const eklenebilir = SEVIYE_DERS_SECENEKLERI.filter((d) => !satirlar.some((s) => s.id === d.id))
   const toplam = satirlar.reduce((t, s) => t + (Number(s.soru) || 0), 0)
 
