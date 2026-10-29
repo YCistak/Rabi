@@ -102,13 +102,19 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - İkonda **gövde görünmez**: yalnız kafa. Yeni kaynakta da çene altı zemin rengi olmalı.
 - Zemin rengi kaynağın köşelerinden örneklenir (≈ rgb(177, 80, 37)). Uyarlanabilir
   ikonda arka plan (`mipmap-*/ic_launcher_background.png`) bu düz renk, ön plan
-  kafa görselinin küçültülmüş hâli; ön planın kenarları saydama eriyor, dikiş yok.
-- Güvenli alan: kafa (kulak uçları ve çene dahil) kaynak kenarının ~%0,50'si yarıçaplı
-  bir daireye sığıyor (`KAFA` sabiti, ölçüldü). Uyarlanabilir ön planda görsel tuvalin
-  %65'i (güvenli daire %66), web `icon-maskelenebilir-512.png`te %80'i (güvenli daire %80).
-  Kaynak değişirse `KAFA` yeniden ölçülmeli.
-- `ic_launcher.png` kaynağın tamamı (kare), `ic_launcher_round.png` %88 küçültülüp daire
-  maskeli. `icon-192/512.png` squircle maskeli, köşeler saydam. iOS ikonu
+  kaynak görsel; kaynağın kenarı zemin rengiyle aynı, dikiş görünmez.
+- **Kadraj kuralı: küçültme yok.** Kaynak kadrajı (kulak uçları üst kenara, yanaklar yan
+  kenarlara, çene alt kenara yakın) ikonun kendisidir; kullanıcı büyük kafa istiyor,
+  "güvenli alan için küçültüp etrafına turuncu boşluk bırakma" reddedildi (2. tur).
+  Kadraj kullanıcının referansına göre ölçüldü (kafa genişliği ~%63, kulak üstü boşluğu
+  ~%2,5, çene alta ~%3 mesafede).
+- Android uyarlanabilir: 108 birimlik katmanın ortadaki 72 birimi (%66,7) görünür;
+  ön planda kaynak tuvalin %66,7'si boyunda ortalanır, yani görünen alan kaynağın
+  **tamamı**. Daire maskeli launcher'larda kulak uçları ve yanak kenarları biraz
+  kesilir (kabul edildi). Web `icon-maskelenebilir-512.png`: kaynak tuvalin %80'i
+  boyunda zemin üstüne ortalanır (görünen alan %80).
+- `ic_launcher.png` ve `ic_launcher_round.png` (daire maskeli) kaynağın tamamı.
+  `icon-192/512.png` kaynağın tamamı, squircle maskeli, köşeler saydam. iOS ikonu
   `AppIcon-512@2x.png` (1024) köşesiz ve **alfasız**. `public/icon.svg` yok.
 - Mağaza dosyaları (Play 512 32-bit, App Store 1024 alfasız) depoya girmez; aynı
   kaynaktan üretilir.

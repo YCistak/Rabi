@@ -15,16 +15,21 @@
  * maskot (`public/tavsan-*.png`) ikondan bağımsız: ikon artık onu kullanmıyor.
  *
  * Zemin rengi kaynağın köşelerinden örnekleniyor. Uyarlanabilir ikonda
- * arka plan bu düz renk, ön plan ise kaynağın küçültülmüş hâli; ön planın
- * kenarları saydamlığa eriyor, böylece iki katman arasında dikiş görünmüyor.
+ * arka plan bu düz renk, ön plan ise kaynağın büyütülmüş hâli.
  *
- * ## Güvenli alan
+ * ## Kadraj kuralı: küçültme yok
  *
- * Kafa kaynağın yaklaşık %90 yüksekliğinde; kulak uçları ve çene merkezden
- * kaynak kenarının ~%0,50'si kadar uzakta (`KAFA.r`). Android'in uyarlanabilir
- * ikonu ortadaki %66'lık daireyi (yarıçap %33), web "maskable" ise %80'lik
- * daireyi (yarıçap %40) kırpmadan gösteriyor; görsel buna göre küçültülüyor
- * (kafa dairesi güvenli dairenin biraz içinde kalsın diye pay bırakıldı).
+ * Kaynak kadrajı (kulak uçları üst kenara, yanaklar yan kenarlara, çene alt
+ * kenara yakın) ikonun kendisidir; hiçbir çıktıda küçültülüp etrafına zemin
+ * eklenmez. Kullanıcı büyük kafa istiyor, güvenli alan için küçültme reddedildi.
+ *
+ * - iOS, Android eski tip, web 192/512: kaynak tam kadraj.
+ * - Android uyarlanabilir: 108 birimlik katmanın ortadaki 72 birimi (%66,7)
+ *   kaynağın tamamını gösterir; yani ön planda kaynak tuvalin %66,7'si boyunda
+ *   ortalanır (kaynak ölçüsü görünen alanla BİREBİR aynı, ekstra küçültme yok).
+ *   Daire maskeli launcher'da kulak uçları ve yanak kenarları biraz kesilir.
+ * - Web maskable: görünen alan (%80) kaynağın tamamı; kaynak tuvalin %80'i boyunda
+ *   zemin üstüne ortalanır.
  */
 
 import { Buffer } from 'node:buffer'
@@ -37,13 +42,6 @@ const kok = join(dirname(fileURLToPath(import.meta.url)), '..')
 const res = join(kok, 'android/app/src/main/res')
 const KAYNAK = join(kok, 'assets/ikon/rabi-ikon-kaynak.png')
 
-/**
- * Kafayı (kulak uçları ve çene dahil) çevreleyen en küçük dairenin merkezi ve
- * yarıçapı, kaynak kenarına oran olarak ölçüldü: kafa dairesi ortada değil,
- * hafif yukarıda ve sola yakın.
- */
-const KAFA = { x: 0.497, y: 0.482, r: 0.496 }
-
 /** Android yoğunlukları: uyarlanabilir ikonun 108 biriminin piksel karşılığı. */
 const YOGUNLUKLAR = [
   ['mdpi', 48, 108],
@@ -53,12 +51,10 @@ const YOGUNLUKLAR = [
   ['xxxhdpi', 192, 432],
 ]
 
-/** Uyarlanabilir ikonda kafa görselinin tuvale oranı (güvenli alan %66). */
-const ADAPTIF_ORAN = 0.65
-/** Web maskable'da (güvenli alan %80). */
-const MASKELENEBILIR_ORAN = 0.8
-/** Yuvarlak eski ikonda görselin küçülmesi: daire köşeleri yer, kulaklar sınıra yaklaşmasın. */
-const YUVARLAK_ORAN = 0.88
+/** Uyarlanabilir ikonda görünen kısım (108 birimin 72'si): kaynak tam bu oranda yer alır. */
+const ADAPTIF_GORUNEN = 72 / 108
+/** Web maskable'da görünen güvenli alan. */
+const MASKELENEBILIR_GORUNEN = 0.8
 
 /**
  * Köşe eğrisi daire değil "squircle" (iOS'un yumuşak köşesi gibi). `pay`
@@ -107,61 +103,24 @@ const ZEMIN = await zeminRengi()
 const zeminDuz = (kenar) =>
   sharp({ create: { width: kenar, height: kenar, channels: 4, background: { ...ZEMIN, alpha: 1 } } })
 
-/** Kaynağın `yan` pikselliğe küçültülmüş hâli; `erit` ise kenarları saydamlığa eritir. */
-async function gorsel(yan, erit = false) {
-  const g = await sharp(KAYNAK).removeAlpha().resize(yan, yan).ensureAlpha().png().toBuffer()
-  if (!erit) return g
-  // Kenardan %7 içeride tam opak, kenarda saydam: yumuşak bir dikdörtgen maske.
-  const pay = Math.round(yan * 0.07)
-  const maske = await sharp({
-    create: { width: yan, height: yan, channels: 4, background: '#000' },
-  })
-    .composite([
-      {
-        input: {
-          create: { width: yan - 2 * pay, height: yan - 2 * pay, channels: 4, background: '#fff' },
-        },
-        left: pay,
-        top: pay,
-      },
-    ])
-    .blur(Math.max(0.5, pay / 2.5))
-    .extractChannel(0)
-    .raw()
-    .toBuffer()
-  return sharp(g)
-    .removeAlpha()
-    .joinChannel(maske, { raw: { width: yan, height: yan, channels: 1 } })
-    .png()
-    .toBuffer()
-}
-
-/** Kafa dairesinin merkezini tuvalin ortasına getirerek yerleştirir. */
-async function yerlestir(tuval, oran, erit) {
-  const yan = Math.round(tuval * oran)
-  return {
-    input: await gorsel(yan, erit),
-    left: Math.round(tuval / 2 - KAFA.x * yan),
-    top: Math.round(tuval / 2 - KAFA.y * yan),
-  }
-}
-
-/** Zemin + kafa katmanı (düz renk üstüne), isteğe bağlı maskeli. */
-async function katmanli(tuval, oran, erit = true) {
-  return zeminDuz(tuval)
-    .composite([await yerlestir(tuval, oran, erit)])
+/**
+ * Kaynağın tamamı tuvalin ortasında `gorunen` oranında yer alır (görünen alanı
+ * tam doldurur); çevresi `zemin` ya da saydam. Kaynak kenarı zemin rengiyle
+ * aynı düz renkte olduğundan katmanlar arasında dikiş görünmez.
+ */
+async function yerlestirilmis(tuval, gorunen, zemin) {
+  const yan = Math.round(tuval * gorunen)
+  const sol = Math.round((tuval - yan) / 2)
+  const taban = zemin ? zeminDuz(tuval) : sharp({ create: { width: tuval, height: tuval, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+  return taban
+    .composite([{ input: await sharp(KAYNAK).removeAlpha().resize(yan, yan).png().toBuffer(), left: sol, top: sol }])
     .png({ compressionLevel: 9 })
     .toBuffer()
 }
 
-/** Tam ikon: görsel tuvali dolduruyor; `maske` squircle, daire ya da yok. */
-async function ikon(kenar, { maske = 'squircle', oran = 1 } = {}) {
-  let taban
-  if (oran === 1) {
-    taban = await sharp(KAYNAK).removeAlpha().resize(kenar, kenar).ensureAlpha().png().toBuffer()
-  } else {
-    taban = await katmanli(kenar, oran)
-  }
+/** Tam ikon: kaynak tuvali tam dolduruyor; `maske` squircle, daire ya da yok. */
+async function ikon(kenar, { maske = 'squircle' } = {}) {
+  const taban = await sharp(KAYNAK).removeAlpha().resize(kenar, kenar).ensureAlpha().png().toBuffer()
   if (maske === 'yok') return taban
   const sekil =
     maske === 'squircle'
@@ -178,15 +137,8 @@ async function ikon(kenar, { maske = 'squircle', oran = 1 } = {}) {
     .toBuffer()
 }
 
-/** Uyarlanabilir ikonun ön planı: yalnız kafa görseli, kenarları saydama eriyor. */
-async function onPlan(tuval) {
-  return sharp({
-    create: { width: tuval, height: tuval, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
-  })
-    .composite([await yerlestir(tuval, ADAPTIF_ORAN, true)])
-    .png({ compressionLevel: 9 })
-    .toBuffer()
-}
+/** Uyarlanabilir ikonun ön planı: kaynak görünen alanı (72/108) tam dolduracak boyda, çevresi saydam. */
+const onPlan = (tuval) => yerlestirilmis(tuval, ADAPTIF_GORUNEN, false)
 
 const yaz = async (yol, veri) => {
   await writeFile(yol, veri)
@@ -197,9 +149,8 @@ console.log(`» Zemin rengi: rgb(${ZEMIN.r}, ${ZEMIN.g}, ${ZEMIN.b})`)
 
 console.log('» Web ikonları')
 for (const boy of [192, 512]) await yaz(join(kok, `public/icon-${boy}.png`), await ikon(boy))
-// Maskelenebilir sürüm: köşeler yuvarlatılmıyor, zemin kenara kadar sürüyor ve
-// kafa ortadaki güvenli daireye (%80) oturuyor.
-await yaz(join(kok, 'public/icon-maskelenebilir-512.png'), await katmanli(512, MASKELENEBILIR_ORAN))
+// Maskelenebilir sürüm: köşeler yuvarlatılmıyor; görünen alan (%80) kaynağın tamamı.
+await yaz(join(kok, 'public/icon-maskelenebilir-512.png'), await yerlestirilmis(512, MASKELENEBILIR_GORUNEN, true))
 
 console.log('» Uyarlanabilir ikon (zemin + ön plan)')
 for (const [ad, , tuval] of YOGUNLUKLAR) {
@@ -212,7 +163,7 @@ console.log('» Eski sürüm ikonları (kare ve yuvarlak)')
 // dosyanın kendisi kare ya da yuvarlak olmalı.
 for (const [ad, boy] of YOGUNLUKLAR) {
   await yaz(join(res, `mipmap-${ad}/ic_launcher.png`), await ikon(boy, { maske: 'yok' }))
-  await yaz(join(res, `mipmap-${ad}/ic_launcher_round.png`), await ikon(boy, { maske: 'daire', oran: YUVARLAK_ORAN }))
+  await yaz(join(res, `mipmap-${ad}/ic_launcher_round.png`), await ikon(boy, { maske: 'daire' }))
 }
 
 console.log('» iOS ikonu')
