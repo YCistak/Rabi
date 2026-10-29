@@ -166,9 +166,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           dangerouslySetInnerHTML={{
             __html: `(function(){
   var TELEFON_GENISLIGI = 430, ESIK = 480;
-  // Masaüstü tarayıcıda (fare + imleç) kapalı: geliştirirken pencere
-  // yüksekliği tablet sayılıp her şey 2 kat büyüyordu. DevTools cihaz modu
-  // dokunmatik taklit ettiği için orada tablet emülasyonu çalışmaya devam eder.
+  // Masaüstü tarayıcıda (fare + imleç) kapalı, ölçek de yerleşim de:
+  // geliştirirken pencere tablet sayılıp her şey 2 kat büyüyordu, sonra da
+  // localhost'u açan telefon görünümü yerine tablet rayını görüyordu. DevTools
+  // cihaz modu dokunmatik taklit ettiği için orada tablet emülasyonu çalışır.
   var masaustu = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   // iPad'de ölçek tavanı. Tavan olmadan 820 pt'lik iPad 1,9 kat büyüyordu:
   // telefonun iki katı, her şey devasa. 1,2'de içerik okunaklı kalıyor ve
@@ -195,9 +196,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   var kok = document.documentElement;
   function uygula(){
     var kisa = Math.min(window.innerWidth, window.innerHeight);
-    var tablet = kisa >= ESIK;
+    var tablet = !masaustu && kisa >= ESIK;
     var olcek = Math.min(kisa / TELEFON_GENISLIGI, ios ? IOS_EN_COK : TABLET_EN_COK);
-    kok.style.setProperty('--olcek', masaustu || !tablet ? '1' : String(olcek));
+    kok.style.setProperty('--olcek', tablet ? String(olcek) : '1');
     if (tablet) {
       kok.setAttribute('data-yerlesim', 'tablet');
       kok.setAttribute('data-yon', window.innerWidth > window.innerHeight ? 'yatay' : 'dikey');
