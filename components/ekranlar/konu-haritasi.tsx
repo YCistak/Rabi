@@ -1271,7 +1271,10 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
             clipPath: 'polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)',
           }}
         />
-        <svg viewBox="0 0 24 24" width="22" height="22" className="mt-1 ml-2" aria-hidden>
+        {/* Sola pay sırtın genişliği (w-2) + 2 px: liste simgesi sırtın dışında
+            kalan aydınlık yüzün tam ortasına geliyor. `ml-2` yarım sırt kadar
+            kaydırıyordu ve simge 1 px solda, kayık duruyordu (kullanıcı). */}
+        <svg viewBox="0 0 24 24" width="22" height="22" className="mt-1 ml-2.5" aria-hidden>
           <g fill={gri ? 'var(--patika-kitap-kilitli-yazi)' : '#fff'}>
             <rect x="4" y="6" width="5" height="5" rx="1.4" />
             <rect x="11.5" y="7" width="9" height="3" rx="1.5" />
