@@ -101,6 +101,7 @@ import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
 import { okumaSeansiEkle, type OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import {
   arsivdeEksikAylar,
+  AYLIK_OZET_ACIK,
   aylikOzet,
   bekleyenOzetAyi,
   ozetGosterilebilirMi,
@@ -611,14 +612,14 @@ function RabiUygulamasi() {
    * "aylık" hikâye diye sunmuyor.
    */
   const gosterilebilirOzet = ozet !== null && ozetGosterilebilirMi(ozet)
-  const ozetHazir = bekleyenAy !== null && gosterilebilirOzet
+  const ozetHazir = AYLIK_OZET_ACIK && bekleyenAy !== null && gosterilebilirOzet
   const ozetYetersiz = bekleyenAy !== null && ozet !== null && !gosterilebilirOzet
   const sonrakiOzet = sonrakiOzetGunu(bugunIso)
 
   // Ay "izlendi" sayılıyor — kapatıldığında değil, **açıldığında**: özet
   // açıkken uygulamayı kapatan kullanıcı aynı hikâyeyi yeniden bulmasın.
   const ozetiAc = useCallback(() => {
-    if (!bekleyenAy) return
+    if (!AYLIK_OZET_ACIK || !bekleyenAy) return
     setOzetAcik(bekleyenAy)
     setOzetGorulen((onceki) =>
       onceki.includes(bekleyenAy) ? onceki : [...onceki, bekleyenAy].slice(-36),
