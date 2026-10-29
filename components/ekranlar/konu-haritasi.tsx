@@ -1102,7 +1102,7 @@ function Dugum({
   const turAdimi = useContext(TanitimBaglami)?.adim?.kimlik
   const turdaAydinlik = tanitimHedefi === 'harita-soru' && turAdimi === 'harita-soru'
   const gri = !turdaAydinlik && (durum === 'kilitli' || durum === 'yazilmadi')
-  const ton = soru ? 'var(--patika-kitap-soru)' : 'var(--success)'
+  const ton = soru ? 'var(--patika-kitap-soru)' : 'var(--patika-kitap-anlatim-halka)'
 
   const nedeni =
     durum === 'yazilmadi'
@@ -1188,12 +1188,12 @@ function KartKitabi({ no, gri, simdi }: { no: number; gri: boolean; simdi: boole
       style={{
         background: gri
           ? 'var(--patika-kitap-kilitli)'
-          : 'linear-gradient(color-mix(in srgb, var(--success-dolu) 82%, #9dd08a), var(--success-dolu))',
+          : 'linear-gradient(color-mix(in srgb, var(--patika-kitap-anlatim) 82%, var(--patika-kitap-anlatim-isik)), var(--patika-kitap-anlatim))',
         boxShadow: gri
           ? '0 5px 0 var(--patika-kitap-kilitli-golge)'
           : simdi
-            ? '0 6px 0 color-mix(in srgb, var(--success-dolu) 72%, #000), 0 12px 20px color-mix(in srgb, var(--success-dolu) 24%, transparent)'
-            : '0 5px 0 color-mix(in srgb, var(--success-dolu) 72%, #000), 0 9px 16px color-mix(in srgb, var(--success-dolu) 18%, transparent)',
+            ? '0 6px 0 color-mix(in srgb, var(--patika-kitap-anlatim) 72%, #000), 0 12px 20px color-mix(in srgb, var(--patika-kitap-anlatim) 24%, transparent)'
+            : '0 5px 0 color-mix(in srgb, var(--patika-kitap-anlatim) 72%, #000), 0 9px 16px color-mix(in srgb, var(--patika-kitap-anlatim) 18%, transparent)',
         paddingLeft: 9,
         paddingTop: 6,
       }}
