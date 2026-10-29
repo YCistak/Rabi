@@ -1,6 +1,7 @@
 'use client'
 
 import { useLayoutEffect, useRef } from 'react'
+import { cn } from '@/lib/utils'
 
 /**
  * Emojiyi yazı olarak değil, kendi çizimine göre ölçülüp ortalanmış bir resim
@@ -118,7 +119,7 @@ export function OlcekliEmoji({
     <canvas
       ref={ref}
       aria-hidden
-      className={className}
+      className={cn('olcekli-emoji', className)}
       style={{ width: boyut, height: boyut }}
     />
   )

@@ -1102,7 +1102,7 @@ function Dugum({
   const turAdimi = useContext(TanitimBaglami)?.adim?.kimlik
   const turdaAydinlik = tanitimHedefi === 'harita-soru' && turAdimi === 'harita-soru'
   const gri = !turdaAydinlik && (durum === 'kilitli' || durum === 'yazilmadi')
-  const ton = soru ? 'var(--primary-parlak)' : 'var(--success)'
+  const ton = soru ? 'var(--patika-kitap-soru)' : 'var(--patika-kitap-anlatim-halka)'
 
   const nedeni =
     durum === 'yazilmadi'
@@ -1188,12 +1188,12 @@ function KartKitabi({ no, gri, simdi }: { no: number; gri: boolean; simdi: boole
       style={{
         background: gri
           ? 'var(--patika-kitap-kilitli)'
-          : 'linear-gradient(color-mix(in srgb, var(--success-dolu) 82%, #9dd08a), var(--success-dolu))',
+          : 'linear-gradient(color-mix(in srgb, var(--patika-kitap-anlatim) 82%, var(--patika-kitap-anlatim-isik)), var(--patika-kitap-anlatim))',
         boxShadow: gri
           ? '0 5px 0 var(--patika-kitap-kilitli-golge)'
           : simdi
-            ? '0 6px 0 color-mix(in srgb, var(--success-dolu) 72%, #000), 0 12px 20px color-mix(in srgb, var(--success-dolu) 24%, transparent)'
-            : '0 5px 0 color-mix(in srgb, var(--success-dolu) 72%, #000), 0 9px 16px color-mix(in srgb, var(--success-dolu) 18%, transparent)',
+            ? '0 6px 0 color-mix(in srgb, var(--patika-kitap-anlatim) 72%, #000), 0 12px 20px color-mix(in srgb, var(--patika-kitap-anlatim) 24%, transparent)'
+            : '0 5px 0 color-mix(in srgb, var(--patika-kitap-anlatim) 72%, #000), 0 9px 16px color-mix(in srgb, var(--patika-kitap-anlatim) 18%, transparent)',
         paddingLeft: 9,
         paddingTop: 6,
       }}
@@ -1232,10 +1232,10 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
         style={{
           background: gri
             ? 'var(--patika-kitap-kilitli-arka)'
-            : 'color-mix(in srgb, var(--primary-parlak) 80%, var(--primary-derin))',
+            : 'color-mix(in srgb, var(--patika-kitap-soru) 80%, var(--patika-kitap-soru-derin))',
           boxShadow: gri
             ? '0 3px 0 var(--patika-kitap-kilitli-golge)'
-            : '0 3px 0 color-mix(in srgb, var(--primary-derin) 85%, #000)',
+            : '0 3px 0 color-mix(in srgb, var(--patika-kitap-soru-derin) 85%, #000)',
           transform: 'rotate(-13deg)',
         }}
       />
@@ -1244,8 +1244,8 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
         style={{
           background: gri
             ? 'var(--patika-kitap-kilitli)'
-            : 'linear-gradient(color-mix(in srgb, var(--primary-parlak) 88%, #fff), var(--primary-parlak))',
-          boxShadow: gri ? '0 4px 0 var(--patika-kitap-kilitli-golge)' : '0 4px 0 var(--primary-derin)',
+            : 'linear-gradient(color-mix(in srgb, var(--patika-kitap-soru) 88%, #fff), var(--patika-kitap-soru))',
+          boxShadow: gri ? '0 4px 0 var(--patika-kitap-kilitli-golge)' : '0 4px 0 var(--patika-kitap-soru-derin)',
           transform: 'rotate(-3deg)',
         }}
       >
@@ -1271,7 +1271,10 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
             clipPath: 'polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)',
           }}
         />
-        <svg viewBox="0 0 24 24" width="22" height="22" className="mt-1 ml-2" aria-hidden>
+        {/* Sola pay sırtın genişliği (w-2) + 2 px: liste simgesi sırtın dışında
+            kalan aydınlık yüzün tam ortasına geliyor. `ml-2` yarım sırt kadar
+            kaydırıyordu ve simge 1 px solda, kayık duruyordu (kullanıcı). */}
+        <svg viewBox="0 0 24 24" width="22" height="22" className="mt-1 ml-2.5" aria-hidden>
           <g fill={gri ? 'var(--patika-kitap-kilitli-yazi)' : '#fff'}>
             <rect x="4" y="6" width="5" height="5" rx="1.4" />
             <rect x="11.5" y="7" width="9" height="3" rx="1.5" />

@@ -28,6 +28,8 @@ export type Ekran =
   | 'oyun-bankasi'
   /** Konu Takibi — TYT/AYT konularının aşamaları (`lib/konu-takibi/`). */
   | 'konu-takibi'
+  /** Kaynak Takibi — test kitaplarında bitirilen konular (`lib/kaynak-takibi/`). */
+  | 'kaynak-takibi'
   /** Gizlilik ve Koşullar — yalnızca Ayarlar'dan açılıyor, kart menüsünde yok. */
   | 'yasal'
   /** Öneri ve hata bildir — o da yalnızca Ayarlar'dan. */
@@ -138,5 +140,12 @@ export const KARTLAR: KartTanimi[] = [
     aciklama: 'TYT ve AYT konularını bitirdikçe işaretle',
     ikon: '📚',
     renk: 'nane',
+  },
+  {
+    id: 'kaynak-takibi',
+    ad: 'Kaynak Takibi',
+    aciklama: 'Test kitaplarında bitirdiğin konular',
+    ikon: '📘',
+    renk: 'mavi',
   },
 ]

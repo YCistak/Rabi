@@ -280,7 +280,7 @@ function SegmentDugmesi({
       className={cn(
         'flex h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-[11px] text-sm font-extrabold transition-[background-color,box-shadow] duration-200',
         secili
-          ? 'bg-card text-primary shadow-[0_1px_3px_rgba(27,26,25,0.12),0_1px_1px_rgba(27,26,25,0.04)]'
+          ? 'bg-secili text-primary shadow-[0_1px_3px_rgba(27,26,25,0.12),0_1px_1px_rgba(27,26,25,0.04)] ring-1 ring-secili-kenar'
           : 'text-muted-foreground',
       )}
     >

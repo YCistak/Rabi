@@ -1089,7 +1089,7 @@ function KipDugmesi({
       onClick={onClick}
       className={cn(
         'h-9 flex-1 rounded-[10px] text-[13px] font-extrabold transition',
-        secili ? 'bg-card text-primary shadow-[0_1px_3px_rgba(90,60,35,0.12)]' : 'text-muted-foreground',
+        secili ? 'bg-secili text-primary shadow-[0_1px_3px_rgba(90,60,35,0.12)] ring-1 ring-secili-kenar' : 'text-muted-foreground',
       )}
     >
       {children}

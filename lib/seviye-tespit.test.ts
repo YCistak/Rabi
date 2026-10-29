@@ -19,9 +19,21 @@ describe('hazır seviye tespit şablonları', () => {
   it('10. sınıf 9 ile aynı, bir de Felsefe', () => {
     const dokuz = hazirSeviyeSablonu(9, 'say')
     const on = hazirSeviyeSablonu(10, 'say')
-    expect(on.id).toBe('okul-10')
+    expect(on.id).toBe('okul-10-b')
     expect(dersIdleri(on.dersler).filter((id) => id !== 'felsefe')).toEqual(dersIdleri(dokuz.dersler))
-    expect(on.dersler.find((d) => d.id === 'felsefe')).toMatchObject({ soruSayisi: 6, osymTesti: 'ayt-felsefe' })
+    expect(on.dersler.find((d) => d.id === 'felsefe')).toMatchObject({ soruSayisi: 5, osymTesti: 'ayt-felsefe' })
+  })
+
+  it('10. sınıf soru sayıları: Tarih 10, Coğrafya 10, Felsefe 5, Din 5', () => {
+    const sayilar = Object.fromEntries(hazirSeviyeSablonu(10, 'say').dersler.map((d) => [d.id, d.soruSayisi]))
+    expect(sayilar).toMatchObject({ tarih: 10, cografya: 10, felsefe: 5, din: 5, edebiyat: 30, matematik: 30 })
+  })
+
+  it('eski 10. sınıf şablonu eski denemeler için yerinde, sayıları değişmedi', () => {
+    const eski = HAZIR_SABLONLAR.find((s) => s.id === 'okul-10')!
+    expect(eski.seviye?.eski).toBe(true)
+    expect(Object.fromEntries(eski.dersler.map((d) => [d.id, d.soruSayisi]))).toMatchObject({ tarih: 12, cografya: 12, felsefe: 6, din: 6 })
+    expect(secilebilirSablonlar(sablonlariBirlestir([]), 10, null).some((s) => s.id === 'okul-10')).toBe(false)
   })
 
   it.each([
@@ -67,7 +79,7 @@ describe('Dersleri düzenle', () => {
     expect(seviyeSablonu(sablonlar, 10, 'say').id).toBe('y1')
     expect(seviyeSablonu(sablonlar, 9, 'say').id).toBe('okul')
     expect(seviyeSablonu(sablonlar, 11, 'say').id).toBe('okul-11-say')
-    expect(sablonlar.find((s) => s.id === 'okul-10')?.dersler.length).toBe(9)
+    expect(sablonlar.find((s) => s.id === 'okul-10-b')?.dersler.length).toBe(9)
   })
 
   it('11-12de alan ayrı tutuluyor', () => {
@@ -88,7 +100,7 @@ describe('Dersleri düzenle', () => {
   it('hazırla aynı derslere dönmek düzenlemeyi kaldırır', () => {
     const ilk = seviyeDersleriniKaydet([], 10, 'say', dersler, new Set(['y1']), 'y1')
     const geri = seviyeDersleriniKaydet(ilk, 10, 'say', hazirSeviyeSablonu(10, 'say').dersler, new Set(['y1']), 'y2')
-    expect(seviyeSablonu(sablonlariBirlestir(geri), 10, 'say').id).toBe('okul-10')
+    expect(seviyeSablonu(sablonlariBirlestir(geri), 10, 'say').id).toBe('okul-10-b')
   })
 
   it('denetim boş listeyi, adsız dersi, tekrarı ve geçersiz sayıyı yakalıyor', () => {
@@ -97,6 +109,14 @@ describe('Dersleri düzenle', () => {
     expect(dersleriDenetle([{ id: 'a', ad: '  ', soruSayisi: 5 }])).not.toBeNull()
     expect(dersleriDenetle([...dersler, { id: 'b', ad: 'matematik', soruSayisi: 5 }])).toContain('iki kez')
     expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 0 }])).not.toBeNull()
-    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 201 }])).not.toBeNull()
+    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 41 }])).toContain('1 ile 40')
+    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 40 }])).toBeNull()
+  })
+
+  it('hazırda 40tan fazla sorusu olan ders (Dil alanında Yabancı Dil 80) o sayıya kadar kalabiliyor', () => {
+    const hazir = hazirSeviyeSablonu(12, 'dil').dersler
+    expect(dersleriDenetle(hazir, hazir)).toBeNull()
+    expect(dersleriDenetle([{ ...hazir[0], soruSayisi: 81 }], hazir)).not.toBeNull()
+    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 41 }], hazir)).not.toBeNull()
   })
 })

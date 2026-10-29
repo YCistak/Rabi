@@ -41,7 +41,8 @@ function ayniSeviye(sablon: Sablon, sinif: SeviyeSinifi, alan: PuanTuru): boolea
 
 /** Sınıfın (11-12'de alanın) hazır seviye tespit şablonu. */
 export function hazirSeviyeSablonu(sinif: SeviyeSinifi, alan: PuanTuru): Sablon {
-  return HAZIR_SABLONLAR.find((s) => ayniSeviye(s, sinif, alan)) ?? HAZIR_SABLONLAR[0]
+  // Emekliye ayrılan hazır şablon (`okul-10`) eski denemeler için duruyor, yeni denemeye gelmiyor.
+  return HAZIR_SABLONLAR.find((s) => !s.seviye?.eski && ayniSeviye(s, sinif, alan)) ?? HAZIR_SABLONLAR[0]
 }
 
 /**
@@ -58,29 +59,34 @@ export function seviyeSablonu(sablonlar: Sablon[], sinif: SeviyeSinifi, alan: Pu
 }
 
 /**
- * "Ders ekle" listesi. Kimlikler 9. sınıf şablonunun kimlikleri: aynı ders
- * aynı kimlikle kalsın. ÖSYM testi, hazır seviye tespitlerdeki gibi AYT'nin
- * karşılığı; Türkçe'ninki TYT'de.
+ * "Ders ekle" listesi: yalnız Felsefe ve İngilizce (kullanıcı istedi,
+ * 2026-10-29). Öteki dersler hazır şablonlarda zaten var; çıkarılan ders
+ * "Varsayılana dön"le geri geliyor, okula özel ders "Başka ders"le yazılıyor.
+ * Kimlikler hazır şablonlardaki kimlikler: aynı ders aynı kimlikle kalsın.
+ * ÖSYM testi AYT/YDT karşılığı.
  */
 export const SEVIYE_DERS_SECENEKLERI: readonly SablonDers[] = [
-  { id: 'turkce', ad: 'Türkçe', soruSayisi: 10, osymTesti: 'tyt-turkce' },
-  { id: 'edebiyat', ad: 'Edebiyat', soruSayisi: 10, osymTesti: 'ayt-edebiyat' },
-  { id: 'matematik', ad: 'Matematik', soruSayisi: 10, osymTesti: 'ayt-mat' },
-  { id: 'fizik', ad: 'Fizik', soruSayisi: 10, osymTesti: 'ayt-fizik' },
-  { id: 'kimya', ad: 'Kimya', soruSayisi: 10, osymTesti: 'ayt-kimya' },
-  { id: 'biyoloji', ad: 'Biyoloji', soruSayisi: 10, osymTesti: 'ayt-biyoloji' },
-  { id: 'tarih', ad: 'Tarih', soruSayisi: 10, osymTesti: 'ayt-tarih1' },
-  { id: 'cografya', ad: 'Coğrafya', soruSayisi: 10, osymTesti: 'ayt-cografya1' },
   { id: 'felsefe', ad: 'Felsefe', soruSayisi: 10, osymTesti: 'ayt-felsefe' },
-  { id: 'din', ad: 'Din Kültürü', soruSayisi: 10, osymTesti: 'ayt-din' },
   { id: 'ingilizce', ad: 'İngilizce', soruSayisi: 10, osymTesti: 'ydt' },
 ]
 
-/** Bir derste en çok bu kadar soru: kutu üç hane alıyor, gerçek sınavlarda ders başı 80'i geçmiyor. */
-export const DERS_EN_COK_SORU = 200
+/**
+ * Bir derste en çok bu kadar soru (kullanıcı istedi, 2026-10-29; önceden 200).
+ * Okul denemelerinde ders başı 40'ı geçen yok. Tek istisna hazır şablonda
+ * zaten fazlası olan ders: 12. sınıf Dil alanının seviye tespiti YDT'nin
+ * aynısı ve Yabancı Dil 80 soru — sınır onu da kessin, öğrenci o alanda
+ * dersleri hiç kaydedemezdi. O ders hazırdaki sayısına kadar çıkabiliyor.
+ */
+export const DERS_EN_COK_SORU = 40
+
+/** Dersin üst sınırı: 40, ya da hazır şablonda aynı derste daha çok soru varsa o. */
+export function dersSoruSiniri(dersId: string, hazir: readonly SablonDers[] = []): number {
+  const hazirdaki = hazir.find((d) => d.id === dersId)?.soruSayisi ?? 0
+  return Math.max(DERS_EN_COK_SORU, hazirdaki)
+}
 
 /** Ders listesinde kaydı engelleyen ilk sorun; yoksa null. */
-export function dersleriDenetle(dersler: readonly SablonDers[]): string | null {
+export function dersleriDenetle(dersler: readonly SablonDers[], hazir: readonly SablonDers[] = []): string | null {
   if (dersler.length === 0) return 'En az bir ders olmalı.'
   const adlar = new Set<string>()
   for (const ders of dersler) {
@@ -89,8 +95,9 @@ export function dersleriDenetle(dersler: readonly SablonDers[]): string | null {
     const anahtar = ad.toLocaleLowerCase('tr')
     if (adlar.has(anahtar)) return `"${ad}" iki kez yazılmış.`
     adlar.add(anahtar)
-    if (!Number.isInteger(ders.soruSayisi) || ders.soruSayisi < 1 || ders.soruSayisi > DERS_EN_COK_SORU) {
-      return `${ad}: soru sayısı 1 ile ${DERS_EN_COK_SORU} arasında olmalı.`
+    const sinir = dersSoruSiniri(ders.id, hazir)
+    if (!Number.isInteger(ders.soruSayisi) || ders.soruSayisi < 1 || ders.soruSayisi > sinir) {
+      return `${ad}: soru sayısı 1 ile ${sinir} arasında olmalı.`
     }
   }
   return null

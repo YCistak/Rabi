@@ -4,6 +4,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-secili: var(--secili);
+  --color-secili-kenar: var(--secili-kenar);
   --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -221,8 +223,18 @@ body {
   --card: #ffffff;
   --card-foreground: #1b1a19;
   --muted: #efeeeb;
+  /* Seçici şeritteki seçili dilim (Tümü · 10. sınıf, Pomodoro · Deneme provası…).
+     Şerit `--muted`; dilim ondan açık durmalı. Açıkta kartın beyazı, koyuda kart
+     şeritten koyu kaldığı için kendi tonu ve ince açık bir kenarı var. */
+  --secili: #ffffff;
+  --secili-kenar: transparent;
   --muted-foreground: #6b6764;
   --border: #eae9e6;
+  /* Rabi'nin konuşma balonu (Yeni deneme › Dersleri düzenle). Açıkta kart
+     gibi beyaz ve kenarlı: turuncumsu `--primary-soft` sayfada sırıtıyordu.
+     Koyuda sıcak kahve, kenarsız. */
+  --rabi-balon: #ffffff;
+  --rabi-balon-kenar: #eae9e6;
   --input: #eae9e6;
   --grid: #e4e2de;
   --radius: 0.8rem;
@@ -446,6 +458,15 @@ body {
   --patika-kitap-kilitli-golge: #cdc7bb;
   --patika-kitap-kilitli-sirt: #d6d0c4;
   --patika-kitap-kilitli-yazi: #57534e;
+  /* Soru kitabı (turuncu çift). Açıkta düğme turuncusu; koyuda kendi kısık
+     tonu var: koyu zeminde `--primary-parlak` yeşil kitabın yanında
+     bağırıyordu. */
+  --patika-kitap-soru: var(--primary-parlak);
+  --patika-kitap-soru-derin: var(--primary-derin);
+  /* Anlatım kitabı (yeşil): dolgu, üstteki parlama ve seçiliyken halka. */
+  --patika-kitap-anlatim: var(--success-dolu);
+  --patika-kitap-anlatim-isik: #9dd08a;
+  --patika-kitap-anlatim-halka: var(--success);
   --patika-serit: #f6e0a6;
   /* Yolun sonundaki hazine sandığı: ahşap üç ton ve altın bant. */
   --patika-sandik: #9a6234;
@@ -507,8 +528,12 @@ body {
   --card: #25201b;
   --card-foreground: #f2ebe4;
   --muted: #312a24;
+  --secili: #433930;
+  --secili-kenar: rgb(255 240 225 / 0.1);
   --muted-foreground: #ab9f94;
   --border: #3a322b;
+  --rabi-balon: #3b2519;
+  --rabi-balon-kenar: transparent;
   --input: #3a322b;
   --grid: #3a322b;
 
@@ -663,6 +688,11 @@ body {
   --patika-kitap-kilitli-golge: #241f1a;
   --patika-kitap-kilitli-sirt: #342e27;
   --patika-kitap-kilitli-yazi: #a69a8e;
+  --patika-kitap-soru: #b4552a;
+  --patika-kitap-soru-derin: #853a18;
+  --patika-kitap-anlatim: #42613b;
+  --patika-kitap-anlatim-isik: #6e8a65;
+  --patika-kitap-anlatim-halka: #63835a;
   --patika-serit: #6b5a2e;
   --patika-hale: rgba(255, 238, 220, 0.12);
   --patika-simge: rgba(240, 225, 200, 0.05);
@@ -835,6 +865,15 @@ body {
     font-weight: 400;
     font-style: normal;
     font-synthesis: none;
+  }
+  /*
+    Koyu temada emojiler kısılıyor. Renkli emoji açık zemine göre çizilmiş;
+    koyu kahve zeminde etrafındaki kısık renklerden çok canlı ve parlak
+    duruyordu. Doygunluk ve parlaklık biraz iniyor, emoji tanınır kalıyor.
+    `OlcekliEmoji` tuvali de aynı süzgeçten geçiyor.
+  */
+  :root[data-tema='koyu'] :is(.emoji, .olcekli-emoji) {
+    filter: saturate(0.78) brightness(0.88);
   }
 
   .font-display {

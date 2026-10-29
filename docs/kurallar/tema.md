@@ -29,6 +29,10 @@ Yol haritası ve kalan işler: [koyu-tema-plani.md](../koyu-tema-plani.md).
   dolgu olarak yazı tonu, `bg-foreground` yakalar (muaf/izinli satırlar gerekçeli).
   `lib/tema-kontrast.test.ts` iki takımda yazı/zemin çiftlerini ölçer (4,5; büyük
   yazı/ikon/dolgu 3).
+- **Emoji ve canlı dolgular koyuda kısılır:** `.emoji` ve `OlcekliEmoji` koyuda
+  `filter: saturate(.78) brightness(.88)` alır (`globals.css`); yeni emoji kutusu
+  bu iki yoldan birini kullanır. Haritadaki soru kitabı `--patika-kitap-soru` /
+  `-derin` okur, `--primary-parlak` değil: koyuda düğme turuncusu kitapta bağırıyordu.
 - **Ders zemininin içi:** koyuda `.bg-konu-<ders>` içindeki `--card`, `--muted`,
   `--border` o dersin tonuna döner (`--konu-<ders>-kart`, `-kenar`; yalnız koyu
   takımda). Oyun tuşları, şıklar, soru kartı bu yüzden ayrıca boyanmaz; ders zeminli

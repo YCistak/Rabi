@@ -6,13 +6,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   şablonuna bağlı. Seviye tespitin 9. sınıf şablonu bu yüzden hâlâ `okul`.
 - **Seviye tespit sınıfa göre** (kullanıcı istedi, 2026-10): tür satırında tek
   "Seviye Tespit" düğmesi, altında `9 · 10 · 11 · 12`. 9 eski biçim (`okul`), 10 aynısı +
-  Felsefe 6 soru (`okul-10`), 11 ve 12 alanın AYT'sinin aynı dersleri
+  Felsefe; Tarih 10, Coğrafya 10, Felsefe 5, Din 5 (`okul-10-b`; ilk sürüm `okul-10` `eski`
+  işaretli, yalnız eski denemeler için — hazır şablonun sayısı yerinde değişmez), 11 ve 12 alanın AYT'sinin aynı dersleri
   (`okul-<sınıf>-<alan>`, tür yine `okul`). Alan Ayarlar'dan; seçilmemişse 11-12'de
   sınıfın altında alan satırı çıkar. Varsayılan sınıf öğrencininki (mezun → 12). Öteki seviye şablonları tür
   satırında yer tutmaz (`secilebilirSablonlar`).
 - **"Dersleri düzenle"** (`components/seviye-dersleri.tsx`, `lib/seviye-tespit.ts`):
-  ders ekle/çıkar, ad ve soru sayısı. Kayıt seçili sınıfa (11-12'de alana) yeni bir
+  ders ekle/çıkar, ad ve soru sayısı. "Ders ekle" listesinde
+  yalnız Felsefe ve İngilizce (kullanıcı istedi, 2026-10-29); öteki ders "Başka ders"le. Kayıt seçili sınıfa (11-12'de alana) yeni bir
   kullanıcı şablonu olarak yazılır ve hazır olanın önüne geçer. **Deneme girilmiş
   şablon yerinde değiştirilmez** (eski denemenin boşu ve neti değişirdi): `seviye.eski`
   işaretlenir, yanına yenisi gelir; kullanılmamışsa silinir. Hazırla aynı derslere
   dönmek ("Varsayılana dön") düzenlemeyi kaldırır.
+- **Dersleri düzenle soru sınırı:** ders başı en çok 40 (`DERS_EN_COK_SORU`, kullanıcı
+  istedi, 2026-10-29). Hazırda fazlası olan ders (Dil alanında Yabancı Dil 80)
+  hazırdaki sayıya kadar çıkar (`dersSoruSiniri`); yoksa o alanda kayıt yapılamazdı.

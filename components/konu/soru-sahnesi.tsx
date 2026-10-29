@@ -345,17 +345,14 @@ export function SoruSahnesi({
           yukarı yapıştırmıyor.
 
           Kaydırma kutusunun üstünde ve yanlarında pay var: rozet çerçevenin
-          dışına taşıyor ve paysız bir `overflow` onu kırpıyordu.
-
-          Tablette kutu ortalanıyor: `-mx-3` aynı öznitelikte `mx-auto`yu
-          eziyordu ve geniş ekranda kart sola yapışık kalıyordu (şıklar
-          ortadayken). `self-center` paylı kutuyu (iki yanda 0,75rem taşan)
-          sütunun ortasına koyuyor; genişlik şık sütunu + iki yandaki pay.
-          Telefonda sınıflar eşleşmiyor, görünüm aynı.
+          dışına taşıyor ve paysız bir `overflow` onu kırpıyordu. Yan pay
+          genişliğe eklenip kutu `self-center` ile ortalanıyor: eskiden
+          `mx-auto` ile `-mx-3` aynı kutudaydı, `-mx-3` kazanıyor ve geniş
+          ekranda kart sola yapışıyordu.
         */}
         <Sigdir
           anahtar={soru.id}
-          className="mx-auto w-full max-w-md min-h-0 flex-1 px-3 pt-5 -mx-3 tablet:w-[calc(100%+1.5rem)] tablet:max-w-[calc(28rem+1.5rem)] tablet:self-center"
+          className="w-[calc(100%+1.5rem)] max-w-[29.5rem] min-h-0 flex-1 self-center px-3 pt-5"
         >
           {(sikisik) => (
           <>
