@@ -41,7 +41,8 @@ function ayniSeviye(sablon: Sablon, sinif: SeviyeSinifi, alan: PuanTuru): boolea
 
 /** Sınıfın (11-12'de alanın) hazır seviye tespit şablonu. */
 export function hazirSeviyeSablonu(sinif: SeviyeSinifi, alan: PuanTuru): Sablon {
-  return HAZIR_SABLONLAR.find((s) => ayniSeviye(s, sinif, alan)) ?? HAZIR_SABLONLAR[0]
+  // Emekliye ayrılan hazır şablon (`okul-10`) eski denemeler için duruyor, yeni denemeye gelmiyor.
+  return HAZIR_SABLONLAR.find((s) => !s.seviye?.eski && ayniSeviye(s, sinif, alan)) ?? HAZIR_SABLONLAR[0]
 }
 
 /**

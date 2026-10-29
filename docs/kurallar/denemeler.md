@@ -6,7 +6,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   şablonuna bağlı. Seviye tespitin 9. sınıf şablonu bu yüzden hâlâ `okul`.
 - **Seviye tespit sınıfa göre** (kullanıcı istedi, 2026-10): tür satırında tek
   "Seviye Tespit" düğmesi, altında `9 · 10 · 11 · 12`. 9 eski biçim (`okul`), 10 aynısı +
-  Felsefe 6 soru (`okul-10`), 11 ve 12 alanın AYT'sinin aynı dersleri
+  Felsefe; Tarih 10, Coğrafya 10, Felsefe 5, Din 5 (`okul-10-b`; ilk sürüm `okul-10` `eski`
+  işaretli, yalnız eski denemeler için — hazır şablonun sayısı yerinde değişmez), 11 ve 12 alanın AYT'sinin aynı dersleri
   (`okul-<sınıf>-<alan>`, tür yine `okul`). Alan Ayarlar'dan; seçilmemişse 11-12'de
   sınıfın altında alan satırı çıkar. Varsayılan sınıf öğrencininki (mezun → 12). Öteki seviye şablonları tür
   satırında yer tutmaz (`secilebilirSablonlar`).
