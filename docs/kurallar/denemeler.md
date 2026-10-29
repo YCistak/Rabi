@@ -11,7 +11,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   sınıfın altında alan satırı çıkar. Varsayılan sınıf öğrencininki (mezun → 12). Öteki seviye şablonları tür
   satırında yer tutmaz (`secilebilirSablonlar`).
 - **"Dersleri düzenle"** (`components/seviye-dersleri.tsx`, `lib/seviye-tespit.ts`):
-  ders ekle/çıkar, ad ve soru sayısı. Kayıt seçili sınıfa (11-12'de alana) yeni bir
+  ders ekle/çıkar, ad ve soru sayısı. "Ders ekle" listesinde
+  yalnız Felsefe ve İngilizce (kullanıcı istedi, 2026-10-29); öteki ders "Başka ders"le. Kayıt seçili sınıfa (11-12'de alana) yeni bir
   kullanıcı şablonu olarak yazılır ve hazır olanın önüne geçer. **Deneme girilmiş
   şablon yerinde değiştirilmez** (eski denemenin boşu ve neti değişirdi): `seviye.eski`
   işaretlenir, yanına yenisi gelir; kullanılmamışsa silinir. Hazırla aynı derslere
