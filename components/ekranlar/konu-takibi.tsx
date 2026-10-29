@@ -1039,7 +1039,7 @@ function SinifSekmesi({
             aria-label={etiket}
             className={cn(
               'relative flex min-h-[52px] min-w-0 flex-col items-center justify-center rounded-[14px] transition',
-              seciliMi ? 'golge-kart bg-card text-foreground' : 'text-muted-foreground active:bg-card/60',
+              seciliMi ? 'golge-kart bg-secili text-foreground ring-1 ring-secili-kenar' : 'text-muted-foreground active:bg-card/60',
             )}
           >
             {sen && (

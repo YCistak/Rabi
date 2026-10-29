@@ -4,6 +4,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-secili: var(--secili);
+  --color-secili-kenar: var(--secili-kenar);
   --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -221,6 +223,11 @@ body {
   --card: #ffffff;
   --card-foreground: #1b1a19;
   --muted: #efeeeb;
+  /* Seçici şeritteki seçili dilim (Tümü · 10. sınıf, Pomodoro · Deneme provası…).
+     Şerit `--muted`; dilim ondan açık durmalı. Açıkta kartın beyazı, koyuda kart
+     şeritten koyu kaldığı için kendi tonu ve ince açık bir kenarı var. */
+  --secili: #ffffff;
+  --secili-kenar: transparent;
   --muted-foreground: #6b6764;
   --border: #eae9e6;
   --input: #eae9e6;
@@ -516,6 +523,8 @@ body {
   --card: #25201b;
   --card-foreground: #f2ebe4;
   --muted: #312a24;
+  --secili: #433930;
+  --secili-kenar: rgb(255 240 225 / 0.1);
   --muted-foreground: #ab9f94;
   --border: #3a322b;
   --input: #3a322b;

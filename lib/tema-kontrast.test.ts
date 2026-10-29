@@ -53,6 +53,8 @@ const CIFTLER: [string, string, number][] = [
   ['--muted-foreground', '--background', 4.5],
   ['--primary', '--card', 4.5],
   ['--primary', '--background', 4.5],
+  ['--foreground', '--secili', 4.5],
+  ['--primary', '--secili', 4.5],
   ['--ters-yazi', '--ters', 4.5],
   ['--ikincil', '--card', 4.5],
   ['--success', '--card', 3],
