@@ -41,6 +41,7 @@ const bos: Omit<Yedek, 'uygulama' | 'surum' | 'tarih'> = {
     oyunMuzigi: true,
   oyunMuzikTuru: 'mod' as const,
     kurulumTamamlandi: true,
+    tema: 'sistem' as const,
   },
 }
 

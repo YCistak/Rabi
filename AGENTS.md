@@ -32,6 +32,7 @@ kuralı oraya yazılır, buraya değil; yeni dosya açarsan aşağıdaki dizine 
 | [aylik-ozet.md](docs/kurallar/aylik-ozet.md) | aylık özet, arşiv, paylaşım afişi |
 | [basarimlar.md](docs/kurallar/basarimlar.md) | başarımlar/rozetler, ödül sistemi fikirleri |
 | [hedef-katalogu.md](docs/kurallar/hedef-katalogu.md) | hedef üniversite/bölüm, puan türü, sıralama |
+| [tema.md](docs/kurallar/tema.md) | açık/koyu tema, renk değişkenleri, ilk kare betiği, yeni renk eklemek |
 | [ios.md](docs/kurallar/ios.md) | iOS'a dokunan her iş (Live Activity, Screen Time, imza, geri/sekme kaydırma) |
 
 ## Dil
@@ -78,7 +79,10 @@ paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
 
 - Mobil öncelikli, `max-w-md` tek sütun. Hover yerine `active:`.
 - Renkler doğrudan yazılmaz, tema değişkenlerinden gelir (`var(--primary)` /
-  `text-primary`). **Tek tema**: `dark:` kullanma, Ayarlar'da tema seçeneği yok.
+  `text-primary`). **İki tema** (Telefona uy · Açık · Koyu, `lib/tema.ts`): `dark:`
+  kullanma; koyu tema `globals.css`te `:root[data-tema='koyu']` değer takımı. Yeni
+  renk değişkenine **iki takıma birden** değer yaz; `lib/tema-kontrast.test.ts`
+  ölçer. Ayrıntı [tema.md](docs/kurallar/tema.md).
   - `--primary` #B3491F **yazı ve ikon**, `--primary-parlak` #D9622F **dolgu** (halka,
     çubuk, düğme, büyük sayı). İkincil tuğla `--ikincil` #A8432B, zemin `--background`
     #F8F8F7. Kart yüzeyi `golge-kart`.

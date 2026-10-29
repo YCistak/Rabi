@@ -94,7 +94,7 @@ Ayrıntıları [AGENTS.md](AGENTS.md) içinde; PR açmadan önce özellikle şun
 - **Mimari:** durum kütüphanesi yok, saf mantık `lib/` altında ve testli, sunucu yok.
   Ağa çıkan yeni bir şey ekleme; ağ istisnaları [docs/kurallar/ag-ve-gizlilik.md](docs/kurallar/ag-ve-gizlilik.md)
   dosyasında sayılıdır.
-- **Tasarım:** mobil öncelikli tek sütun, tek tema (koyu tema yok), renkler tema
+- **Tasarım:** mobil öncelikli tek sütun, açık ve koyu tema (renk iki takımda da), renkler tema
   değişkenlerinden gelir, her ders her yerde aynı renkte.
 - **Doğruluk:** puan ve sıralama tahmindir ve arayüzde böyle sunulur.
 - Kayıtlı veri anahtarları yeniden adlandırılmaz; eski kullanıcı verisini bozar.
