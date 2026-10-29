@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--
-      Rabi'nin koyu teması yok: uygulama telefon gece modundayken de açık
-      renkte açılıyor. Bu dosya, sistemin gece modunda `values/colors.xml`
-      yerine buradaki değerleri okumasını engellemek için duruyor — değerler
-      bilerek `values/` ile birebir aynı. Silinirse Android gece modunda
-      kaynakları kendi varsayılanlarına düşürüp zemini karartıyor.
+      Koyu tema. Bu dosya yalnız uygulama koyu göründüğünde okunuyor: gece modu
+      telefonun değil uygulamanın tercihine bağlı (tema/TemaAyari.kt). "Açık"
+      seçen kullanıcı telefon gece modundayken de values/colors.xml'i görür.
+
+      Değerler web'in koyu takımıyla aynı (globals.css, data-tema koyu): zemin
+      background, metin foreground, soluk muted-foreground, çip muted, çizgi
+      border. Zemin üç yerde (açılış, WebView arkası, engel katmanı) ve web
+      açılış katmanıyla aynı olmalı, yoksa açılışta renk sıçrar.
     -->
-    <color name="acilis_zemin">#F8F8F7</color>
-    <color name="uygulama_zemin">#F8F8F7</color>
-    <color name="odak_zemin">#F8F8F7</color>
+    <color name="acilis_zemin">#1A1612</color>
+    <color name="uygulama_zemin">#1A1612</color>
+    <color name="odak_zemin">#1A1612</color>
     <color name="marka_amber">#D9622F</color>
-    <color name="odak_metin">#1B1A19</color>
-    <color name="odak_soluk">#6B6764</color>
-    <!--
-      Engel katmanının yüzey renkleri.
-
-      İkisi de web tarafındaki karşılıklarıyla aynı: çip zemini muted
-      tonu, çizgi de border tonu. (XML yorumunda iki tire yan yana
-      yazılamıyor, o yüzden değişken adları tema öneki olmadan.) Katman
-      uygulamanın devamı gibi görünmeli — kendi paletini kuran bir engel
-      ekranı, başka bir uygulamadan gelmiş gibi duruyordu.
-    -->
-    <color name="odak_cip">#EFEEEB</color>
-    <color name="odak_cizgi">#EAE9E6</color>
+    <color name="odak_metin">#F2EBE4</color>
+    <color name="odak_soluk">#AB9F94</color>
+    <color name="odak_cip">#312A24</color>
+    <color name="odak_cizgi">#3A322B</color>
 
     <!--
-      Bildirim renkleri burada da aynı — zaten iki zemin için birden
-      seçildiler, gece modunda değişmeleri gerekmiyor. Dosyanın varlık
-      sebebi yukarıdaki: eksik bırakılan bir ad Android'i varsayılana
-      düşürüyor.
+      Bildirim renkleri aynı kalıyor: bildirim uygulamanın değil telefonun
+      temasında çiziliyor ve bu tonlar zaten iki zemin için birden seçildi.
     -->
     <color name="bildirim_amber">#E8783F</color>
     <color name="bildirim_cizgi">#33888888</color>

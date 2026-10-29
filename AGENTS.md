@@ -97,10 +97,11 @@ paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
     `docs/koyu-tema-plani.md`.
   - Eski aileler (`yzm`, `isl`, `edb`, `cog`, `trh`, `byl`, `fzk`) ders kimliği değil,
     genel pastel: araç kutucukları, rozet kademeleri, harita göstergeleri (deniz, kara).
-- **Zemin rengi dört yerde, birlikte değişir:** `--background` (globals.css),
-  `acilis.tsx` → `ZEMIN`, Android `acilis_zemin` / `uygulama_zemin`, iOS
-  `LaunchScreen.storyboard` + `capacitor.config.ts` → `ios.backgroundColor`.
-  Ayrılırsa açılışta renk sıçrar.
+- **Zemin rengi, iki takım hâlinde, birlikte değişir:** `--background` (globals.css,
+  açık ve koyu; `acilis.tsx` → `ZEMIN` onu okur), Android `acilis_zemin` /
+  `uygulama_zemin` (`values` ve `values-night`), iOS `AcilisZemini` renk varlığı
+  (LaunchScreen + `AnaDenetleyici`), `capacitor.config.ts` → `ios.backgroundColor`
+  (açık). Ayrılırsa açılışta renk sıçrar.
 - Yazı tipi tek: **Nunito**; başlık ayrı aile değil kalınlık (`font-display`). İki
   istisna, ikisi de tek başlık: açılıştaki "RABI" **Rubik** (`font-acilis`), aylık
   özet kapağındaki ay adı **Manrope** (`font-marka`). Başka yerde kullanma.

@@ -34,6 +34,17 @@ Yol haritası ve kalan işler: [koyu-tema-plani.md](../koyu-tema-plani.md).
   takımda). Oyun tuşları, şıklar, soru kartı bu yüzden ayrıca boyanmaz; ders zeminli
   yeni ekran da kendiliğinden uyar.
 - Konu Anlatımı: deste zemini `zeminSinifi` (`lib/konu/harita-temasi.ts`) ile ders kuralına girer; yoklama `.sahne` ve kapanış `.kapanis` koyuda kendi koyu kâğıt değerlerini alır.
-- **Henüz koyu değeri olmayanlar** (plan PR 5–6):
-  cam menü (`--cam-*`), açılış (`acilis.tsx` → `ZEMIN`, yerli açılış), durum çubuğu,
-  odak engel katmanı. Bunlara dokunan iş koyu karşılığını da yazar.
+- **Yerli taraf:** tercih web'den `lib/tema-yerli.ts` ile yazılır (Android
+  `tema/TemaEklentisi.kt` → `SharedPreferences`, iOS `AnaDenetleyici.swift` →
+  `TemaEklentisi` → `UserDefaults`); kayıt yoksa "Telefona uy".
+  - Android: gece modu uygulamanın tercihinden (`TemaAyari.uygula`, `RabiUygulamasi`
+    açılışta; 12+ `setApplicationNightMode`). Tema `DayNight` olmalı (Light kalırsa
+    WebView hep açık bildirir). `values-night/colors.xml` = koyu takım; bildirim
+    renkleri iki dosyada aynı. Manifest `uiMode`u karşılar (yeniden kurulum yok),
+    `onConfigurationChanged` sistem çubuklarını yeniler. Odak engel katmanı
+    servisten açıldığı için `TemaAyari.baglam` ile şişirilir.
+  - iOS: `Info.plist`te görünüm zorlaması yok; pencereye tercih yazılır
+    (`overrideUserInterfaceStyle`; "Telefona uy" `.unspecified`). Durum çubuğu
+    `.default`. Açılış ekranı telefonun modunu izler: farklı tema seçende soğuk
+    açılışta bir kesir an telefonun rengi görünür (bilinen sınır).
+  - Cam menü koyu temada hep koyu cam (`--cam-*` koyu takımı).

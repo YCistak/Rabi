@@ -9,6 +9,8 @@ const config: CapacitorConfig = {
     // zemininden sonra bir kare beyaz yanıp sönüyordu. Açılış zemininin
     // yazıldığı yerlerden biri (bkz. LaunchScreen.storyboard).
     backgroundColor: '#F8F8F7',
+    // Koyu temada yerli kod (`AnaDenetleyici`) WebView arkasını `AcilisZemini`
+    // varlığıyla temaya göre değiştiriyor; buradaki ilk değer açık zemin.
     // Güvenli alanı iOS değil CSS veriyor (`--guvenli-ust`, `env()`); iOS da
     // içeriği kaydırsaydı boşluk iki kez uygulanırdı — Android'deki kuralın
     // aynısı.

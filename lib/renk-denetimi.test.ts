@@ -36,8 +36,6 @@ const MUAF_DOSYALAR = new Set([
 
 /** Tek tek izinli satırlar: dosya + satırda geçen parça + neden. */
 const IZINLI: { dosya: string; parca: string }[] = [
-  // Açılış zemini yerli açılış ekranıyla aynı olmalı; koyu takım PR 6'da gelecek.
-  { dosya: 'components/acilis.tsx', parca: "const ZEMIN = '#F8F8F7'" },
   // Çökme ekranı React'ten önce, CSS yüklenmeden çiziliyor.
   { dosya: 'app/layout.tsx', parca: 'background:#fff;color:#111' },
   { dosya: 'app/layout.tsx', parca: "themeColor: '#f8f8f7'" },

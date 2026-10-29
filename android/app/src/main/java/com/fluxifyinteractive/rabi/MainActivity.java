@@ -19,6 +19,8 @@ import com.fluxifyinteractive.rabi.cokme.RaporlayanWebChromeClient;
 import com.fluxifyinteractive.rabi.cokme.RaporlayanWebViewClient;
 import com.fluxifyinteractive.rabi.guncelleme.GuncellemeEklentisi;
 import com.fluxifyinteractive.rabi.odak.OdakKilidiEklentisi;
+import com.fluxifyinteractive.rabi.tema.TemaEklentisi;
+import android.content.res.Configuration;
 
 public class MainActivity extends BridgeActivity {
 
@@ -38,6 +40,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(OdakKilidiEklentisi.class);
         registerPlugin(CokmeEklentisi.class);
         registerPlugin(GuncellemeEklentisi.class);
+        registerPlugin(TemaEklentisi.class);
         SplashScreen.installSplashScreen(this);
         // Android 15'te zorunlu olan uçtan uca görünümü eski sürümlerde de
         // aynı davranacak şekilde aç. WebView'ın sistem çubuklarının altında
@@ -48,6 +51,18 @@ public class MainActivity extends BridgeActivity {
         webHatalariniRaporla();
         gorevTaniminiAyarla();
         geriKaydirmayiBagla();
+    }
+
+    /**
+     * Tema değişti (uygulamanın tercihi ya da "Telefona uy"da telefonun gece
+     * modu). Manifest `uiMode`u karşıladığı için etkinlik yeniden kurulmuyor;
+     * sistem çubuklarının ikon rengi kendiliğinden güncellenmiyor, `EdgeToEdge`
+     * yeniden çağrılınca yeni temaya göre (koyu zeminde açık ikon) kuruluyor.
+     */
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration yeni) {
+        super.onConfigurationChanged(yeni);
+        EdgeToEdge.enable(this);
     }
 
     /**

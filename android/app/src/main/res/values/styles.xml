@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <!-- DayNight değil Light: Rabi'nin koyu teması yok, telefon gece
-         modundayken de uygulama açık renkte açılmalı. -->
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- DayNight: gece modu uygulamanın tema tercihinden geliyor
+         (tema/TemaAyari.kt). Light kalsaydı WebView prefers-color-scheme'i
+         hep açık bildirirdi ve "Telefona uy" hiç koyuya dönmezdi. -->
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <!--

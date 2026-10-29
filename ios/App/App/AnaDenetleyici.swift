@@ -26,8 +26,18 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
         // kendiliğinden bulamıyor (Android'de `MainActivity.registerPlugin`).
         bridge?.registerPluginInstance(EkranSuresiEklentisi())
         bridge?.registerPluginInstance(CanliSayacEklentisi())
+        bridge?.registerPluginInstance(TemaEklentisi())
 
         guard let webView = webView else { return }
+
+        // WebView'ın arkası (sayfa boyanana kadar ve esneyerek kaydırınca
+        // görünen kenar) temayla dönen renk: açıkta #F8F8F7, koyuda #1A1612 —
+        // açılış ekranının `AcilisZemini` varlığıyla aynı. `capacitor.config`
+        // tek bir sabit renk alabildiği için burada.
+        let zemin = UIColor(named: "AcilisZemini") ?? .systemBackground
+        view.backgroundColor = zemin
+        webView.backgroundColor = zemin
+        webView.scrollView.backgroundColor = zemin
 
         // Sağda beliren kaydırma çubuğu: sayfanın kaydırması WKWebView'ın kendi
         // kaydırma görünümü ve çubuğu CSS'in değil UIKit'in. Uygulama bir belge
@@ -91,11 +101,63 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
         true
     }
 
-    /// Tek tema var ve açık; durum çubuğu her koşulda koyu yazıyla çiziliyor.
-    /// Sistemin gece modunu izleseydi koyu modda beyaz saat, krem zeminin
-    /// üstünde okunmaz olurdu. Web tarafından (`SystemBars`) değil burada:
-    /// JS yüklenmeden çizilen ilk karede de doğru olmalı.
+    /// Durum çubuğu pencerenin görünümünü izliyor: pencereye uygulamanın
+    /// teması yazılıyor (`TemaEklentisi.uygula`), açıkta koyu, koyuda açık saat.
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        .darkContent
+        .default
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // Pencere ancak burada var; kayıtlı tema JS yüklenmeden uygulansın.
+        TemaEklentisi.uygula(TemaEklentisi.kayitli(), pencere: view.window)
+    }
+}
+
+/// Web'in tema tercihini yerli tarafa taşıyan köprü (`lib/tema-yerli.ts`;
+/// Android'deki karşılığı `tema/TemaEklentisi.kt`).
+///
+/// Ayrı dosyada değil, çünkü yeni bir Swift dosyası Xcode projesine ayrıca
+/// eklenmeyi gerektiriyor. Tercih `UserDefaults`ta: açılışta JS yüklenmeden
+/// okunuyor. Pencereye yazılan görünüm klavyeyi, yerli seçicileri, durum
+/// çubuğunu ve WebView arkasının rengini temaya döndürüyor. "Telefona uy"da
+/// görünüm zorlanmıyor (`.unspecified`) ve WKWebView telefonun modunu
+/// `prefers-color-scheme` olarak bildiriyor. Kayıt yoksa (ilk yükleme) de
+/// "Telefona uy" — web'deki varsayılan.
+///
+/// Yerli açılış ekranı uygulamanın kaydını okuyamıyor, telefonun modunu
+/// izliyor: telefonundan farklı temayı seçen kullanıcı soğuk açılışta bir
+/// kesir an telefonun rengini görür (plan: docs/koyu-tema-plani.md, Faz 6).
+public class TemaEklentisi: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "TemaEklentisi"
+    public let jsName = "Tema"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "ayarla", returnType: CAPPluginReturnPromise),
+    ]
+
+    private static let anahtar = "rabi_tema"
+
+    static func kayitli() -> String {
+        UserDefaults.standard.string(forKey: anahtar) ?? "sistem"
+    }
+
+    static func uygula(_ tercih: String, pencere: UIWindow?) {
+        switch tercih {
+        case "acik": pencere?.overrideUserInterfaceStyle = .light
+        case "koyu": pencere?.overrideUserInterfaceStyle = .dark
+        default: pencere?.overrideUserInterfaceStyle = .unspecified
+        }
+    }
+
+    @objc func ayarla(_ call: CAPPluginCall) {
+        guard let tercih = call.getString("tercih"), ["sistem", "acik", "koyu"].contains(tercih) else {
+            call.reject("tanınmayan tema")
+            return
+        }
+        UserDefaults.standard.set(tercih, forKey: TemaEklentisi.anahtar)
+        DispatchQueue.main.async {
+            TemaEklentisi.uygula(tercih, pencere: self.bridge?.viewController?.view.window)
+            call.resolve()
+        }
     }
 }

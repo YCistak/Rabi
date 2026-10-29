@@ -2,6 +2,7 @@ package com.fluxifyinteractive.rabi
 
 import android.app.Application
 import com.fluxifyinteractive.rabi.cokme.CokmeRaporu
+import com.fluxifyinteractive.rabi.tema.TemaAyari
 
 /**
  * Uygulamanın Application sınıfı.
@@ -32,5 +33,8 @@ class RabiUygulamasi : Application() {
         // (sistem sağlayıcıları `attachBaseContext` ile `onCreate` arasında
         // kuruyor), yani burada Crashlytics örneği hazır.
         CokmeRaporu.hazirla(this)
+        // Gece modu ilk etkinlik açılmadan: açılış ekranı ve WebView zemini
+        // daha ilk karede uygulamanın temasında çizilsin.
+        TemaAyari.uygula(this)
     }
 }
