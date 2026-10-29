@@ -177,7 +177,7 @@ export function KaynakTakibiEkrani({
                       aria-pressed={etkinSuzgec === s}
                       className={cn(
                         'h-9 rounded-[11px] text-[13px] font-extrabold transition',
-                        etkinSuzgec === s ? 'bg-card text-foreground shadow-kart' : 'text-muted-foreground active:bg-card/60',
+                        etkinSuzgec === s ? 'bg-secili text-foreground shadow-kart ring-1 ring-secili-kenar' : 'text-muted-foreground active:bg-card/60',
                       )}
                     >
                       {s === null ? 'Tümü' : `${s}. sınıf`}

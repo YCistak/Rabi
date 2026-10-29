@@ -298,7 +298,7 @@ function SuzgecDugmesi({
         'flex-1 rounded-full py-2 text-[13px] font-bold transition',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         secili
-          ? 'bg-card text-primary shadow-[0_1px_4px_rgba(90,60,35,0.12)]'
+          ? 'bg-secili text-primary shadow-[0_1px_4px_rgba(90,60,35,0.12)] ring-1 ring-secili-kenar'
           : 'text-muted-foreground active:bg-card/50',
       )}
       {...props}
