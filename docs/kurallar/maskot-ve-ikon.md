@@ -92,9 +92,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 ## Uygulama ikonu
 
-- Tek kaynak `assets/ikon/rabi-ikon-kaynak.png` (1024 kare, **yalnız tavşanın kafası**,
-  gövde yok, düz turuncu zemin; kullanıcının görselinden kırpıldı, çene altındaki gövde
-  zemin rengiyle silindi). Üretici `scripts/ikon-uret.mjs` (`sharp`, `devDependencies`te);
+- Tek kaynak `assets/ikon/rabi-ikon-kaynak.png` (1024 kare, tavşanın kafası ve çene altındaki
+  gövde şeridi dahil, düz turuncu zemin; 1. tur A adayı olduğu gibi: kullanıcının görselinden
+  x300 y100, 1000 px kırpım, 1024'e ölçekli; gövde silinmedi, yeniden kırpılmadı). Üretici `scripts/ikon-uret.mjs` (`sharp`, `devDependencies`te);
   `public/icon-*.png`, `android/.../mipmap-*` ve iOS `AppIcon-512@2x.png` oradan.
   Çıktılar depoda, **elle düzenlenmez**; ikon değişecekse kaynak PNG değişir.
   İkon uygulama içindeki maskottan (`public/tavsan-*.png`) **bağımsız**: oradaki
