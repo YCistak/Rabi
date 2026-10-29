@@ -345,11 +345,14 @@ export function SoruSahnesi({
           yukarı yapıştırmıyor.
 
           Kaydırma kutusunun üstünde ve yanlarında pay var: rozet çerçevenin
-          dışına taşıyor ve paysız bir `overflow` onu kırpıyordu.
+          dışına taşıyor ve paysız bir `overflow` onu kırpıyordu. Yan pay
+          genişliğe eklenip kutu `self-center` ile ortalanıyor: eskiden
+          `mx-auto` ile `-mx-3` aynı kutudaydı, `-mx-3` kazanıyor ve geniş
+          ekranda kart sola yapışıyordu.
         */}
         <Sigdir
           anahtar={soru.id}
-          className="mx-auto w-full max-w-md min-h-0 flex-1 px-3 pt-5 -mx-3"
+          className="w-[calc(100%+1.5rem)] max-w-[29.5rem] min-h-0 flex-1 self-center px-3 pt-5"
         >
           {(sikisik) => (
           <>
