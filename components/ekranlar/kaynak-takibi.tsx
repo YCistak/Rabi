@@ -270,7 +270,7 @@ export function KaynakTakibiEkrani({
 
       {mesaj !== null && (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+var(--guvenli-alt))] z-40 flex justify-center px-6 tablet:right-[var(--ray)] tablet:bottom-[calc(1.5rem+var(--guvenli-alt))]">
-          <p className="acilir-giris max-w-md rounded-2xl bg-foreground px-4 py-3 text-center text-[13.5px] font-bold text-background shadow-kart">
+          <p className="acilir-giris max-w-md rounded-2xl bg-ters px-4 py-3 text-center text-[13.5px] font-bold text-ters-yazi shadow-kart">
             {mesaj}
           </p>
         </div>
@@ -377,7 +377,7 @@ function KaynakKarti({ kaynak, sira, onAc }: { kaynak: Kaynak; sira: number; onA
       >
         <OlcekliEmoji emoji={dersIkonu(kaynak.ders)} boyut={24} />
         {bitti && (
-          <span className="absolute -right-1 -bottom-1 grid size-5 place-items-center rounded-full border-2 border-card bg-success text-white">
+          <span className="absolute -right-1 -bottom-1 grid size-5 place-items-center rounded-full border-2 border-card bg-success-dolu text-white">
             <Check size={11} strokeWidth={3.4} />
           </span>
         )}
@@ -392,7 +392,7 @@ function KaynakKarti({ kaynak, sira, onAc }: { kaynak: Kaynak; sira: number; onA
           <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
             <span
               className="block h-full rounded-full transition-[width] duration-500"
-              style={{ width: `${yuzde(ilerleme)}%`, background: bitti ? 'var(--success)' : r.dolgu }}
+              style={{ width: `${yuzde(ilerleme)}%`, background: bitti ? 'var(--success-dolu)' : r.dolgu }}
             />
           </span>
           <span className="rakam shrink-0 text-[11.5px] font-extrabold text-muted-foreground">
@@ -467,7 +467,7 @@ function KaynakIci({
           <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-muted">
             <div
               className="h-full rounded-full transition-[width] duration-500"
-              style={{ width: `${oran}%`, background: bitti ? 'var(--success)' : r.dolgu }}
+              style={{ width: `${oran}%`, background: bitti ? 'var(--success-dolu)' : r.dolgu }}
             />
           </div>
         </div>
@@ -535,7 +535,7 @@ function UniteBolumu({
           <span
             className={cn(
               'grid size-[26px] place-items-center rounded-full border-2 transition',
-              tamam ? 'border-success bg-success text-white' : 'border-dashed border-primary-parlak/60 text-primary/70',
+              tamam ? 'border-success bg-success-dolu text-white' : 'border-dashed border-primary-parlak/60 text-primary/70',
             )}
           >
             <Check size={12} strokeWidth={3.2} aria-hidden />
@@ -573,7 +573,7 @@ function KonuSatiri({ ad, bitti, onIsaretle }: { ad: string; bitti: boolean; onI
         aria-hidden
         className={cn(
           'grid size-[26px] shrink-0 place-items-center rounded-full border-2 transition',
-          bitti ? 'border-success bg-success text-white' : 'border-border bg-card text-transparent',
+          bitti ? 'border-success bg-success-dolu text-white' : 'border-border bg-card text-transparent',
         )}
       >
         <Check size={12} strokeWidth={3.2} />

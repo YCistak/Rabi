@@ -549,8 +549,8 @@ function CevapAlani({
         'golge-kart flex h-[54px] flex-none items-center justify-center rounded-[18px] px-4',
         'rakam font-display text-[27px] font-extrabold tracking-[3px]',
         !geriBildirim && 'bg-card',
-        dogruMu && 'bg-success text-white',
-        yanlisMi && 'bg-ikincil text-white',
+        dogruMu && 'bg-success-dolu text-white',
+        yanlisMi && 'bg-ikincil-dolu text-white',
         // Pas yanlış değil: alan nötr kalıyor.
         pas && 'bg-foreground/10 text-foreground',
       )}
@@ -626,7 +626,7 @@ function Tus({
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         bicim === 'rakam' && 'golge-kart rakam bg-card text-[21px] font-extrabold',
         bicim === 'sil' && 'bg-ikincil/12 text-ikincil',
-        bicim === 'onay' && 'bg-konu-matematik-koyu text-sm font-extrabold text-white active:brightness-95',
+        bicim === 'onay' && 'bg-konu-matematik-dolgu text-sm font-extrabold text-white active:brightness-95',
       )}
     >
       {children}
@@ -669,8 +669,8 @@ function EvetHayir({
               'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
               geriBildirim === null && 'bg-card text-foreground active:brightness-95',
               // Cevaptan sonra: doğru şık yeşil, yanlış seçilen mercan, öbürü sönük.
-              dogruSik && 'bg-success text-white',
-              geriBildirim !== null && !dogruSik && secildi && 'bg-ikincil text-white',
+              dogruSik && 'bg-success-dolu text-white',
+              geriBildirim !== null && !dogruSik && secildi && 'bg-ikincil-dolu text-white',
               geriBildirim !== null && !dogruSik && !secildi && 'bg-card text-muted-foreground/60',
             )}
           >
@@ -825,7 +825,7 @@ function BolenSatiri({ ad, sayi, oran }: { ad: string; sayi: number; oran: numbe
       <span className={cn('rakam w-24 shrink-0 leading-tight', bos && 'font-semibold')}>{ad}</span>
       <span className="h-[7px] flex-1 overflow-hidden rounded-full bg-muted">
         <span
-          className="block h-full rounded-full bg-ikincil"
+          className="block h-full rounded-full bg-ikincil-dolu"
           style={{ width: `${Math.round(oran * 100)}%` }}
         />
       </span>

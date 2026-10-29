@@ -11,6 +11,7 @@ import {
   Download,
   GraduationCap,
   Images,
+  Palette,
   MessageSquare,
   RotateCcw,
   Shield,
@@ -26,6 +27,7 @@ import { SaatSecici, SayiTekerlegi } from '@/components/secici'
 import { TaniPaneli, useTaniKapisi } from '@/components/tanitim/tani-paneli'
 import { SINIF_SECENEKLERI, egitimYili, mezunMu, sinifAdi } from '@/lib/hesap'
 import type { Gorev } from '@/lib/yapilacaklar'
+import type { TemaTercihi } from '@/lib/tema'
 import type { AylikOzetArsivi } from '@/lib/ozet'
 import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import {
@@ -103,6 +105,10 @@ type AyarId =
   | 'alan'
   | 'sinif'
   | 'hatirlatma-saati'
+  | 'tema'
+
+/** Görünüm satırında yazan ad; sıra çiplerdeki sırayla aynı. */
+const TEMA_ADI: Record<TemaTercihi, string> = { sistem: 'Telefona uy', acik: 'Açık', koyu: 'Koyu' }
 
 /** Bayt sayısını okunur hâle getirir: 5242880 → "5,0 MB". */
 function boyutYaz(bayt: number): string {
@@ -563,6 +569,23 @@ export function AyarlarEkrani({
           )}
         </Bolum>
 
+        {/* ---------------------------- Görünüm --------------------------- */}
+        {/* Tema kurulumda sorulmuyor, yalnız burada (kullanıcı kararı, 2026-10-28). */}
+        <Bolum baslik="Görünüm" ton="gorunum">
+          <Satir Simge={Palette} baslik="Tema" deger={TEMA_ADI[ayarlar.tema]} {...acilir('tema')} />
+          {acikAyar === 'tema' && (
+          <GenisAlan>
+            <Cipler>
+              {(Object.keys(TEMA_ADI) as TemaTercihi[]).map((tema) => (
+                <Cip key={tema} secili={ayarlar.tema === tema} onClick={() => setAyarlar((o) => ({ ...o, tema }))}>
+                  {TEMA_ADI[tema]}
+                </Cip>
+              ))}
+            </Cipler>
+          </GenisAlan>
+          )}
+        </Bolum>
+
         {/* ------------------------------ Ses ----------------------------- */}
         <Bolum baslik="Ses" ton="ses">
           <Satir
@@ -676,7 +699,7 @@ export function AyarlarEkrani({
               <button
                 type="button"
                 onClick={() => setSifirlamaAcik(true)}
-                className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-ikincil px-3.5 text-[12.5px] font-extrabold text-white transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ikincil"
+                className="flex h-[34px] shrink-0 items-center gap-1.5 rounded-full bg-ikincil-dolu px-3.5 text-[12.5px] font-extrabold text-white transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ikincil"
               >
                 <Trash2 size={14} aria-hidden />
                 Sıfırla
@@ -812,14 +835,15 @@ function YedekSecimi({
 
 /**
  * Satır ikonunun zemini bölümün rengini taşır: Çalışma kırmızı, Hatırlatma sarı,
- * Ses mor, Yasal mavi, Destek yeşil, Veri turkuaz. Satır ayrı renk almaz; ton
+ * Görünüm turuncu, Ses mor, Yasal mavi, Destek yeşil, Veri turkuaz. Satır ayrı renk almaz; ton
  * `Bolum`dan bağlamla gelir ki bir kategorideki kutucuklar hep aynı renkte kalsın.
  */
-type SatirRengi = 'calisma' | 'hatirlatma' | 'ses' | 'yasal' | 'destek' | 'veri'
+type SatirRengi = 'calisma' | 'hatirlatma' | 'gorunum' | 'ses' | 'yasal' | 'destek' | 'veri'
 
 const IKON_RENGI: Record<SatirRengi, string> = {
   calisma: 'bg-ayar-calisma text-ayar-calisma-koyu',
   hatirlatma: 'bg-ayar-hatirlatma text-ayar-hatirlatma-koyu',
+  gorunum: 'bg-ayar-gorunum text-ayar-gorunum-koyu',
   ses: 'bg-ayar-ses text-ayar-ses-koyu',
   yasal: 'bg-ayar-yasal text-ayar-yasal-koyu',
   destek: 'bg-ayar-destek text-ayar-destek-koyu',

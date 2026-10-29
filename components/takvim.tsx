@@ -150,9 +150,9 @@ function GunHucresi({
           !isaret?.nokta
             ? 'bg-transparent'
             : isaret.nokta === 'ozursuz'
-              ? 'bg-danger'
+              ? 'bg-danger-dolu'
               : isaret.nokta === 'ozurlu'
-                ? 'bg-warning'
+                ? 'bg-warning-dolu'
                 : seciliMi
                   ? 'bg-white'
                   : soluk || kapali

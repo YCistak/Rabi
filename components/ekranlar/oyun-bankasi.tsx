@@ -138,7 +138,7 @@ export function OyunBankasiEkrani({
       */}
       <Buton
         data-tanitim={demoVeri ? 'banka-genel-test' : undefined}
-        className="mb-4 w-full bg-ikincil text-white"
+        className="mb-4 w-full bg-ikincil-dolu text-white"
         disabled={banka.length < 2}
         onClick={onTestBaslat}
       >
@@ -213,7 +213,7 @@ function SuzgecCipi({
         'flex h-9 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-[12.5px] font-extrabold transition',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         etkin
-          ? 'border-foreground bg-foreground text-background'
+          ? 'border-ters bg-ters text-ters-yazi'
           : 'border-border bg-card text-muted-foreground',
       )}
     >
@@ -339,7 +339,7 @@ function KayitKarti({
           'absolute bottom-2.5 right-2.5 flex h-9 items-center gap-1.5 rounded-lg px-3 text-[13px] font-extrabold transition active:brightness-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
           // Basılınca dolu yeşile dönüyor: kart gitmeden önce kararın alındığı
           // görünüyor ve gidişin sebebi tikte kalıyor.
-          kalkiyor ? 'tik-dolu bg-success text-white' : 'bg-success-soft text-success',
+          kalkiyor ? 'tik-dolu bg-success-dolu text-white' : 'bg-success-soft text-success',
         )}
       >
         <Check size={16} strokeWidth={3} aria-hidden />

@@ -89,7 +89,7 @@ export function SayiCubugu({
   }
 
   const doluRenk =
-    durum === 'dogru' ? 'bg-success' : durum === 'yanlis' ? 'bg-ikincil' : 'bg-konu-matematik-ok'
+    durum === 'dogru' ? 'bg-success-dolu' : durum === 'yanlis' ? 'bg-ikincil-dolu' : 'bg-konu-matematik-ok'
 
   return (
     <div className="select-none">

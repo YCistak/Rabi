@@ -76,7 +76,7 @@ export function KisaMola({
             aria-hidden
             className="pointer-events-none absolute top-1/2 left-1/2 size-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              background: 'radial-gradient(closest-side, rgba(255,255,255,0.9), rgba(255,255,255,0))',
+              background: 'radial-gradient(closest-side, var(--maskot-hale), var(--maskot-hale-dis))',
             }}
           />
           <div className="mola-maskot relative">

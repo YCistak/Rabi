@@ -33,6 +33,7 @@ kuralı oraya yazılır, buraya değil; yeni dosya açarsan aşağıdaki dizine 
 | [aylik-ozet.md](docs/kurallar/aylik-ozet.md) | aylık özet, arşiv, paylaşım afişi |
 | [basarimlar.md](docs/kurallar/basarimlar.md) | başarımlar/rozetler, ödül sistemi fikirleri |
 | [hedef-katalogu.md](docs/kurallar/hedef-katalogu.md) | hedef üniversite/bölüm, puan türü, sıralama |
+| [tema.md](docs/kurallar/tema.md) | açık/koyu tema, renk değişkenleri, ilk kare betiği, yeni renk eklemek |
 | [ios.md](docs/kurallar/ios.md) | iOS'a dokunan her iş (Live Activity, Screen Time, imza, geri/sekme kaydırma) |
 
 ## Dil
@@ -79,7 +80,10 @@ paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
 
 - Mobil öncelikli, `max-w-md` tek sütun. Hover yerine `active:`.
 - Renkler doğrudan yazılmaz, tema değişkenlerinden gelir (`var(--primary)` /
-  `text-primary`). **Tek tema**: `dark:` kullanma, Ayarlar'da tema seçeneği yok.
+  `text-primary`). **İki tema** (Telefona uy · Açık · Koyu, `lib/tema.ts`): `dark:`
+  kullanma; koyu tema `globals.css`te `:root[data-tema='koyu']` değer takımı. Yeni
+  renk değişkenine **iki takıma birden** değer yaz; `lib/tema-kontrast.test.ts`
+  ölçer. Ayrıntı [tema.md](docs/kurallar/tema.md).
   - `--primary` #B3491F **yazı ve ikon**, `--primary-parlak` #D9622F **dolgu** (halka,
     çubuk, düğme, büyük sayı). İkincil tuğla `--ikincil` #A8432B, zemin `--background`
     #F8F8F7. Kart yüzeyi `golge-kart`.
@@ -87,12 +91,18 @@ paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
     kutucuklar): `--konu-<ders>` (`bg-konu-turkce`, `text-konu-tarih-koyu`,
     `bg-konu-kimya-ok`…). Matematik mavi, Türkçe/Edebiyat sarı, Fizik mor, Kimya
     turuncu, Biyoloji yeşil, Tarih kahverengi, Coğrafya turkuaz.
+  - **Yazı tonu dolgu olmaz** (koyu tema hazırlığı): zemin/dolgu için `bg-primary-derin`,
+    `bg-success-dolu`, `bg-ikincil-dolu`, `bg-konu-<ders>-dolgu`; Rabi balonu ve kısa
+    bildirim `bg-ters text-ters-yazi`; kart `bg-card` (`bg-white` değil). Bileşende
+    onaltılık renk yok. `lib/renk-denetimi.test.ts` denetler; plan
+    `docs/koyu-tema-plani.md`.
   - Eski aileler (`yzm`, `isl`, `edb`, `cog`, `trh`, `byl`, `fzk`) ders kimliği değil,
     genel pastel: araç kutucukları, rozet kademeleri, harita göstergeleri (deniz, kara).
-- **Zemin rengi dört yerde, birlikte değişir:** `--background` (globals.css),
-  `acilis.tsx` → `ZEMIN`, Android `acilis_zemin` / `uygulama_zemin`, iOS
-  `LaunchScreen.storyboard` + `capacitor.config.ts` → `ios.backgroundColor`.
-  Ayrılırsa açılışta renk sıçrar.
+- **Zemin rengi, iki takım hâlinde, birlikte değişir:** `--background` (globals.css,
+  açık ve koyu; `acilis.tsx` → `ZEMIN` onu okur), Android `acilis_zemin` /
+  `uygulama_zemin` (`values` ve `values-night`), iOS `AcilisZemini` renk varlığı
+  (LaunchScreen + `AnaDenetleyici`), `capacitor.config.ts` → `ios.backgroundColor`
+  (açık). Ayrılırsa açılışta renk sıçrar.
 - Yazı tipi tek: **Nunito**; başlık ayrı aile değil kalınlık (`font-display`). İki
   istisna, ikisi de tek başlık: açılıştaki "RABI" **Rubik** (`font-acilis`), aylık
   özet kapağındaki ay adı **Manrope** (`font-marka`). Başka yerde kullanma.

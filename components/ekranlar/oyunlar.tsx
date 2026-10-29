@@ -459,7 +459,7 @@ export function OyunlarEkrani({
                   )}
                 >
                   <span
-                    className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[14px] bg-white/80 text-[21px] leading-none emoji"
+                    className="grid h-[42px] w-[42px] shrink-0 place-items-center rounded-[14px] bg-yuzey-saydam text-[21px] leading-none emoji"
                     aria-hidden
                   >
                     {ders.ikon}
@@ -875,7 +875,7 @@ function BankaSatiri({
         {/* Ok daire yerine yazılı düğme: bankaya girmek "ileri gitmek" değil,
             biriken soruları **oynamak** — dokunulduğunda ne olacağı okunsun. */}
         <span
-          className="shrink-0 rounded-full bg-ikincil px-4 py-2 text-[13px] font-extrabold text-white"
+          className="shrink-0 rounded-full bg-ikincil-dolu px-4 py-2 text-[13px] font-extrabold text-white"
           aria-hidden
         >
           Oyna
@@ -953,7 +953,7 @@ export function OyunKarti({
       )}
 
       <span
-        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none emoji"
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-yuzey-saydam text-[23px] leading-none emoji"
         aria-hidden
       >
         {oyun.ikon}
@@ -1021,7 +1021,7 @@ function BolumKarti({
       )}
     >
       <span
-        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-white/80 text-[23px] leading-none emoji"
+        className="grid h-[46px] w-[46px] shrink-0 place-items-center rounded-[15px] bg-yuzey-saydam text-[23px] leading-none emoji"
         aria-hidden
       >
         {bolum.ikon}

@@ -154,10 +154,10 @@ function YonSeridi({ yon, belirginlik }: { yon: 'dogru' | 'yanlis'; belirginlik:
         'flex h-9 flex-1 items-center justify-center gap-1.5 rounded-full border-2 text-[12.5px] font-extrabold uppercase tracking-wide transition-colors',
         yon === 'dogru'
           ? belirginlik > 0.35
-            ? 'border-success bg-success text-white'
+            ? 'border-success bg-success-dolu text-white'
             : 'border-success/40 text-success'
           : belirginlik > 0.35
-            ? 'border-ikincil bg-ikincil text-white'
+            ? 'border-ikincil bg-ikincil-dolu text-white'
             : 'border-ikincil/40 text-ikincil',
       )}
     >

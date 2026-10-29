@@ -815,7 +815,7 @@ function BolumCubugu({
   }).length
   return (
     <span aria-hidden className="flex h-1.5 w-[70px] shrink-0 overflow-hidden rounded-full bg-muted">
-      <i className="block h-full bg-success" style={{ width: `${(bitti / n) * 100}%` }} />
+      <i className="block h-full bg-success-dolu" style={{ width: `${(bitti / n) * 100}%` }} />
       <i className="block h-full" style={{ width: `${(yolda / n) * 100}%`, background: r.kenar }} />
     </span>
   )
@@ -1095,7 +1095,7 @@ function BildirimSeridi({
     >
       <div
         role="status"
-        className="acilir-giris pointer-events-auto flex max-w-md items-center gap-1 rounded-2xl bg-foreground py-1 pr-1 pl-4 text-background shadow-kart"
+        className="acilir-giris pointer-events-auto flex max-w-md items-center gap-1 rounded-2xl bg-ters py-1 pr-1 pl-4 text-ters-yazi shadow-kart"
       >
         <p className="min-w-0 flex-1 py-2.5 text-[13.5px] font-bold">{bildirim.metin}</p>
         {bildirim.geriAl && (

@@ -24,13 +24,13 @@ import { cn } from '@/lib/utils'
  * yere uçmuyor (kullanıcının şartı): yalnızca son makarada, I'dan önceki bir
  * an, bir simge olarak görünüyor.
  *
- * Zemin rengi sistemin açılış ekranıyla **birebir aynı** (`#F8F8F7`,
- * `android/app/src/main/res/values/colors.xml` içindeki `acilis_zemin`). İkisi
- * arasındaki geçiş böylece görünmüyor; farklı olsaydı açılışta bir renk
- * sıçraması olurdu. Sabit yazılı çünkü CSS değişkeni Android tarafından
- * okunamıyor; ikisini birlikte değiştir.
+ * Zemin rengi sistemin açılış ekranıyla **birebir aynı**: `--background`
+ * (açık #F8F8F7, koyu #1A1612) = Android `acilis_zemin` (`values` /
+ * `values-night`) = iOS `AcilisZemini` renk varlığı. İkisi arasındaki geçiş
+ * böylece görünmüyor; farklı olsaydı açılışta bir renk sıçraması olurdu.
+ * Hepsini birlikte değiştir. Tema ilk karede `layout.tsx` betiğinde çözülüyor.
  */
-const ZEMIN = '#F8F8F7'
+const ZEMIN = 'var(--background)'
 
 /**
  * Ekranın ömrü (ms) — tasarımın kendi süresi.

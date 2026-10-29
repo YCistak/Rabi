@@ -234,7 +234,7 @@ export function YanlisBankaEkrani({
               <button
                 type="button"
                 onClick={tekrarBaslat}
-                className="flex h-[50px] w-full items-center justify-center gap-2.5 rounded-2xl bg-foreground text-[15px] font-extrabold text-white shadow-[0_10px_24px_rgba(27,26,25,0.25)] active:scale-[0.98]"
+                className="flex h-[50px] w-full items-center justify-center gap-2.5 rounded-2xl bg-ters text-[15px] font-extrabold text-ters-yazi shadow-[0_10px_24px_rgba(27,26,25,0.25)] active:scale-[0.98]"
               >
                 <Shuffle size={18} aria-hidden />
                 Karışık tekrar
@@ -301,12 +301,14 @@ function SegmentDugmesi({
 function renkler(ders: string) {
   const aile = dersRengi(ders)
   if (!aile) {
-    return { zemin: 'var(--muted)', kenar: 'var(--border)', koyu: 'var(--muted-foreground)' }
+    return { zemin: 'var(--muted)', kenar: 'var(--border)', koyu: 'var(--muted-foreground)', dolgu: 'var(--ters)' }
   }
   return {
     zemin: `var(--konu-${aile})`,
     kenar: `var(--konu-${aile}-kenar)`,
     koyu: `var(--konu-${aile}-koyu)`,
+    // Seçili çipin zemini: koyu temada `-koyu` yazı için açılıyor.
+    dolgu: `var(--konu-${aile}-dolgu)`,
   }
 }
 
@@ -347,12 +349,12 @@ function DersCipleri({
     const r = deger === '' ? null : renkler(deger)
     const stil: React.CSSProperties = r
       ? acik
-        ? { borderColor: r.koyu, background: r.koyu, color: '#fff' }
+        ? { borderColor: r.dolgu, background: r.dolgu, color: 'white' }
         : { borderColor: r.kenar, background: r.zemin, color: r.koyu }
       : acik
-        ? { borderColor: 'var(--foreground)', background: 'var(--foreground)', color: '#fff' }
+        ? { borderColor: 'var(--ters)', background: 'var(--ters)', color: 'var(--ters-yazi)' }
         : { borderColor: 'var(--border)', background: 'var(--card)', color: 'var(--muted-foreground)' }
-    const nokta = acik ? '#fff' : r ? r.koyu : '#c9c6c1'
+    const nokta = acik ? 'white' : r ? r.koyu : 'var(--nokta-pasif)'
     return (
       <button
         key={deger || 'tumu'}
@@ -464,7 +466,7 @@ function Kucuk({
       </span>
       <span className="absolute inset-y-0 left-0 w-1" style={{ background: r.koyu }} aria-hidden />
       {soru.cozuldu ? (
-        <span className="absolute right-[5px] top-[5px] rounded-full bg-success p-1 text-white">
+        <span className="absolute right-[5px] top-[5px] rounded-full bg-success-dolu p-1 text-white">
           <Check size={11} strokeWidth={2.4} aria-hidden />
         </span>
       ) : (
@@ -473,7 +475,7 @@ function Kucuk({
         <span
           className={cn(
             'rakam absolute right-[5px] top-[5px] rounded-full px-1.5 py-0.5 text-[10px] font-extrabold',
-            eski ? 'bg-danger text-white' : 'bg-white/90 text-foreground',
+            eski ? 'bg-danger-dolu text-white' : 'bg-white/90 text-karartma',
           )}
         >
           {yasEtiketi(gun)}

@@ -24,6 +24,16 @@
   --color-warning: var(--warning);
   --color-warning-soft: var(--warning-soft);
   --color-grid: var(--grid);
+  --color-primary-derin: var(--primary-derin);
+  --color-ikincil-dolu: var(--ikincil-dolu);
+  --color-success-dolu: var(--success-dolu);
+  --color-danger-dolu: var(--danger-dolu);
+  --color-warning-dolu: var(--warning-dolu);
+  --color-ters: var(--ters);
+  --color-ters-yazi: var(--ters-yazi);
+  --color-perde: var(--perde);
+  --color-karartma: var(--karartma);
+  --color-yuzey-saydam: var(--yuzey-saydam);
 
   /* Ders renkleri — konu haritası ve mini oyunlar aynı paleti okuyor. */
   --color-konu-matematik: var(--konu-matematik);
@@ -58,6 +68,14 @@
   --color-konu-ingilizce-kenar: var(--konu-ingilizce-kenar);
   --color-konu-ingilizce-koyu: var(--konu-ingilizce-koyu);
   --color-konu-ingilizce-ok: var(--konu-ingilizce-ok);
+  --color-konu-matematik-dolgu: var(--konu-matematik-dolgu);
+  --color-konu-turkce-dolgu: var(--konu-turkce-dolgu);
+  --color-konu-fizik-dolgu: var(--konu-fizik-dolgu);
+  --color-konu-kimya-dolgu: var(--konu-kimya-dolgu);
+  --color-konu-biyoloji-dolgu: var(--konu-biyoloji-dolgu);
+  --color-konu-tarih-dolgu: var(--konu-tarih-dolgu);
+  --color-konu-cografya-dolgu: var(--konu-cografya-dolgu);
+  --color-konu-ingilizce-dolgu: var(--konu-ingilizce-dolgu);
 
   /* Genel pastel aileler (araç kutucukları, rozetler, harita göstergesi) */
   --color-yzm: var(--yzm);
@@ -100,6 +118,8 @@
   --color-ayar-destek-koyu: var(--ayar-destek-koyu);
   --color-ayar-veri: var(--ayar-veri);
   --color-ayar-veri-koyu: var(--ayar-veri-koyu);
+  --color-ayar-gorunum: var(--ayar-gorunum);
+  --color-ayar-gorunum-koyu: var(--ayar-gorunum-koyu);
   --color-dil: var(--dil);
   --color-dil-kart: var(--dil-kart);
   --color-dil-koyu: var(--dil-koyu);
@@ -138,8 +158,9 @@
    ama doygunluğu neredeyse sıfır, böylece turuncu tek başına konuşuyor. Beyaz
    kartlar bu zeminin üstünde yüzüyor.
 
-   Koyu tema **yok** — bilerek. Tek palet, tek gölge kuralı, `dark:` sınıfı
-   hiç kullanılmıyor. Ayarlar'da tema seçeneği de bu yüzden yok.
+   Bu açık takım; koyu takım aşağıda `:root[data-tema='koyu']` bloğunda
+   (`lib/tema.ts`). `dark:` sınıfı hiç kullanılmıyor: iki tema yalnız
+   değişkenlerin iki değer takımı.
 
    Ders aileleri (yzm/isl/edb/cog/trh/byl/fzk): her dersin pastel zemini ve o
    zeminin üstünde okunan koyu tonu. Oyun kartı, tur sonu ekranı ve Oyun
@@ -210,6 +231,9 @@ body {
   /* Dolgular için bir tık parlak ton; yazıda kullanılmaz (kontrastı yetmez). */
   --primary-parlak: #d9622f;
   --primary-soft: #fbeee7;
+  /* `--primary-soft`un saydamlaşan hâlleri (hazır ekranının halesi). */
+  --primary-soft-yari: rgb(251 238 231 / 0.55);
+  --primary-soft-sifir: rgb(251 238 231 / 0);
   --primary-foreground: #ffffff;
   /* Dolu eylem yüzeyi: düğme, seçili çip, açık anahtar. Parlak tonun kendisi;
      ayrı bir ad olarak duruyor çünkü ekranlar "dolgu" ile "eylem"i ayrı ayrı
@@ -233,12 +257,44 @@ body {
   --danger-soft: #f7e5e2;
 
   /*
+    Dolgu adları. Açık temada yazı tonunun kendisi (`--primary` ile aynı
+    #b3491f, `--success` ile aynı yeşil…), çünkü bu tonlar beyaz yazıyı
+    taşıyacak kadar koyu. Koyu temada yazı tonu açılıyor ve dolgu olarak
+    beyaz yazıyı taşıyamıyor; o yüzden dolgu olarak kullanılan her yer bu
+    adları çağırıyor (`bg-success-dolu`, `fill="var(--success-dolu)"`).
+  */
+  --primary-derin: #b3491f;
+  --ikincil-dolu: #a8432b;
+  --success-dolu: #4f7a4a;
+  --danger-dolu: #b23b2b;
+  --warning-dolu: #a87c24;
+
+  /*
+    Ters yüzey: Rabi'nin konuşma balonu, alttan çıkan kısa bildirimler. Açık
+    temada koyu balon + açık yazı; temadan bağımsız ad, çünkü koyu temada
+    balonun rengine ayrıca karar veriliyor (ön plan rengi orada açık).
+  */
+  --ters: #1b1a19;
+  --ters-yazi: #f8f8f7;
+  /* Pencere arkasındaki karartma ve tanıtım turunun perdesi — iki temada da koyu. */
+  --perde: rgb(27 26 25 / 0.35);
+  --karartma: #1b1a19;
+  /* Seçili olmayan nötr çipteki nokta (Yanlış Banka, ders yok). */
+  --nokta-pasif: #c9c6c1;
+  /* Renkli ders kartının üstündeki yarı saydam emoji kutusu. */
+  --yuzey-saydam: rgb(255 255 255 / 0.8);
+  /* Maskotun arkasındaki yumuşak ışık (Hızlı Kontrol, Kısa Mola). */
+  --maskot-hale: rgba(255, 255, 255, 0.9);
+  --maskot-hale-dis: rgba(255, 255, 255, 0);
+  /* Konu destesi zeminindeki nokta dokusu. */
+  --nokta-desen: rgba(24, 23, 22, 0.07);
+
+  /*
     Ders aileleri — pastel zemin + üstünde okunan koyu ton.
 
     İki ayrı yüzey var: `--yzm` oyun ekranının **zemini** (tam ekran),
-    `--yzm-kart` ise listedeki **kart** yüzeyi. Tek tema kaldığı için ikisi
-    aynı pastele çözülüyor; ayrım koyu temaya aitti, o gittiğinde anlamı da
-    gitti. Değişkenler duruyor çünkü ekranlar ikisini ayrı ayrı çağırıyor.
+    `--yzm-kart` ise listedeki **kart** yüzeyi. Açık temada ikisi aynı
+    pastele çözülüyor; koyu temada kart zeminden bir tık açık.
   */
   --yzm: #f9ebee;
   --yzm-kart: var(--yzm);
@@ -290,6 +346,8 @@ body {
   --ayar-destek-koyu: #2d6a3a;
   --ayar-veri: #dcf1ee;
   --ayar-veri-koyu: #1b6860;
+  --ayar-gorunum: #fbe9dc;
+  --ayar-gorunum-koyu: #9a3f12;
   --dil: #e6f2ef;
   --dil-kart: var(--dil);
   --dil-koyu: #2c746b;
@@ -351,6 +409,25 @@ body {
   --konu-ingilizce-koyu: #2c746b;
   --konu-ingilizce-cubuk: #cde5df;
   --konu-ingilizce-ok: #4c9a8e;
+  /* Ders rengi dolgu olarak (Onayla düğmesi, seçili tuş): açıkta `-koyu` ile
+     aynı; koyu temada `-koyu` yazı için açılıyor, dolgu ayrı kalıyor. */
+  --konu-matematik-dolgu: #275b91;
+  --konu-turkce-dolgu: #775b12;
+  --konu-fizik-dolgu: #684394;
+  --konu-kimya-dolgu: #a24e1c;
+  --konu-biyoloji-dolgu: #446f32;
+  --konu-tarih-dolgu: #7a4f2a;
+  --konu-cografya-dolgu: #1d7067;
+  --konu-ingilizce-dolgu: #2c746b;
+  /* Ders zeminli tam ekranda kart (oyunlar): açıkta düz kart, koyuda dersin tonu. */
+  --konu-matematik-kart: #ffffff;
+  --konu-turkce-kart: #ffffff;
+  --konu-fizik-kart: #ffffff;
+  --konu-kimya-kart: #ffffff;
+  --konu-biyoloji-kart: #ffffff;
+  --konu-tarih-kart: #ffffff;
+  --konu-cografya-kart: #ffffff;
+  --konu-ingilizce-kart: #ffffff;
 
   /* Patikanın kendi renkleri: yol, geçilmiş yol ve kilitli kitap.
 
@@ -375,6 +452,8 @@ body {
   --patika-sandik-acik: #b5793f;
   --patika-sandik-koyu: #6f4322;
   --patika-altin: #e2b23c;
+  /* Kitabın çevresindeki açık hale. */
+  --patika-hale: rgba(255, 255, 255, 0.5);
   /* Zemin simgelerinin mürekkebi: yedi derste de aynı, opaklık burada. */
   --patika-simge: rgba(94, 76, 50, 0.085);
 
@@ -405,6 +484,287 @@ body {
 
   /* Maskot artık bir görsel (`public/tavsan-yuz.png`); boyanacak bir çizim
      kalmadığı için maskot renk değişkenleri kaldırıldı. */
+}
+
+/* ---------------------------------------------------------------------------
+   Koyu tema — sıcak koyu kahve (plan: docs/koyu-tema-plani.md).
+
+   Yalnız değişkenlerin ikinci takımı; `dark:` sınıfı yok. `<html data-tema>`
+   `lib/tema.ts`ten gelir ("Telefona uy" çözülmüş hâliyle). Yeni bir renk
+   değişkeni eklerken buraya da değer yaz.
+
+   Kurallar açıktakiyle aynı: `--primary` yazı/ikon (koyu zeminde okunsun diye
+   bir kademe açık), `--primary-parlak` dolgu (aynı turuncu). Yazı tonları
+   açıldığı için dolgu olarak kullanılan her yer `-dolu`/`-dolgu`/`-derin`
+   adını çağırır; onlar beyaz yazıyı taşıyacak kadar koyu kalır. Ders renkleri
+   aynı ailede: zemin koyu ve doygunluğu düşük, `-koyu` (yazı) açık.
+   Kontrastları `lib/tema-kontrast.test.ts` ölçer.
+--------------------------------------------------------------------------- */
+:root[data-tema='koyu'] {
+  color-scheme: dark;
+  --background: #1a1612;
+  --foreground: #f2ebe4;
+  --card: #25201b;
+  --card-foreground: #f2ebe4;
+  --muted: #312a24;
+  --muted-foreground: #ab9f94;
+  --border: #3a322b;
+  --input: #3a322b;
+  --grid: #3a322b;
+
+  --primary: #f08b5c;
+  --primary-parlak: #d9622f;
+  --primary-soft: #3b2519;
+  --primary-soft-yari: rgb(59 37 25 / 0.55);
+  --primary-soft-sifir: rgb(59 37 25 / 0);
+  --primary-foreground: #ffffff;
+  --ikincil: #e2806a;
+  --ikincil-soft: #3a221c;
+  --success: #8fc07f;
+  --success-soft: #233020;
+  --warning: #dcb25e;
+  --warning-soft: #352b17;
+  --danger: #ea7a66;
+  --danger-soft: #3b201b;
+
+  --primary-derin: #bb5019;
+  --ikincil-dolu: #b8503a;
+  --success-dolu: #4f7d47;
+  --danger-dolu: #b8473a;
+  --warning-dolu: #9c7420;
+
+  /* Ters balon koyu zeminde açık: tersine çevrilmiş yüzey yine ters kalır. */
+  --ters: #f2ebe4;
+  --ters-yazi: #1a1612;
+  --perde: rgb(0 0 0 / 0.5);
+  --karartma: #000000;
+  --nokta-pasif: #5a524b;
+  --yuzey-saydam: rgb(255 245 235 / 0.08);
+  --maskot-hale: rgba(255, 238, 220, 0.1);
+  --maskot-hale-dis: rgba(255, 238, 220, 0);
+  --nokta-desen: rgba(255, 245, 235, 0.06);
+
+  --shadow-kart: 0 6px 20px rgba(0, 0, 0, 0.32);
+
+  --yzm: #35221f;
+  --yzm-kart: #3e2824;
+  --yzm-koyu: #eba08c;
+  --yzm-ok: #d4738a;
+  --isl: #33291a;
+  --isl-kart: #3c301e;
+  --isl-koyu: #e2bd6c;
+  --isl-ok: #d09b34;
+  --edb: #272336;
+  --edb-kart: #2e2940;
+  --edb-koyu: #b9acec;
+  --edb-ok: #8a7cc4;
+  --cog: #1f2b21;
+  --cog-kart: #253327;
+  --cog-koyu: #9fd0a7;
+  --cog-ok: #6ba173;
+  --trh: #1c2a2c;
+  --trh-kart: #213234;
+  --trh-koyu: #8fcad4;
+  --trh-ok: #5c9ba6;
+  --byl: #252b1b;
+  --byl-kart: #2c3320;
+  --byl-koyu: #b4d27a;
+  --byl-ok: #83a93c;
+  --fzk: #222639;
+  --fzk-kart: #282d43;
+  --fzk-koyu: #a9b6e6;
+  --fzk-ok: #6c7cb0;
+  --dil: #1b2b28;
+  --dil-kart: #20332f;
+  --dil-koyu: #8ed1c5;
+  --dil-ok: #4c9a8e;
+
+  --ayar-calisma: #3d2320;
+  --ayar-calisma-koyu: #f29a8c;
+  --ayar-hatirlatma: #362c14;
+  --ayar-hatirlatma-koyu: #f0cd6a;
+  --ayar-ses: #2a2438;
+  --ayar-ses-koyu: #c3b3f2;
+  --ayar-yasal: #1d2939;
+  --ayar-yasal-koyu: #9cc4f2;
+  --ayar-destek: #1e2e22;
+  --ayar-destek-koyu: #9ed6a9;
+  --ayar-veri: #182e2b;
+  --ayar-veri-koyu: #8bd6ca;
+  --ayar-gorunum: #3b2519;
+  --ayar-gorunum-koyu: #f2a57c;
+
+  --konu-matematik: #1c2734;
+  --konu-matematik-kenar: #2c4058;
+  --konu-matematik-koyu: #a3c8f0;
+  --konu-matematik-cubuk: #2c4058;
+  --konu-matematik-ok: #4a8ccc;
+  --konu-matematik-dolgu: #2f6aa6;
+  --konu-turkce: #2e2714;
+  --konu-turkce-kenar: #524522;
+  --konu-turkce-koyu: #ecd27e;
+  --konu-turkce-cubuk: #524522;
+  --konu-turkce-ok: #c49d34;
+  --konu-turkce-dolgu: #866719;
+  --konu-fizik: #282136;
+  --konu-fizik-kenar: #44365c;
+  --konu-fizik-koyu: #ccb2ef;
+  --konu-fizik-cubuk: #44365c;
+  --konu-fizik-ok: #9670c8;
+  --konu-fizik-dolgu: #7350a3;
+  --konu-kimya: #33231a;
+  --konu-kimya-kenar: #573b27;
+  --konu-kimya-koyu: #f3b68c;
+  --konu-kimya-cubuk: #573b27;
+  --konu-kimya-ok: #cc7840;
+  --konu-kimya-dolgu: #a5521f;
+  --konu-biyoloji: #202b1c;
+  --konu-biyoloji-kenar: #37492f;
+  --konu-biyoloji-koyu: #aed59a;
+  --konu-biyoloji-cubuk: #37492f;
+  --konu-biyoloji-ok: #6c9c54;
+  --konu-biyoloji-dolgu: #4b7a37;
+  --konu-tarih: #2d241c;
+  --konu-tarih-kenar: #4b3b2d;
+  --konu-tarih-koyu: #e0bc98;
+  --konu-tarih-cubuk: #4b3b2d;
+  --konu-tarih-ok: #a87c55;
+  --konu-tarih-dolgu: #835a35;
+  --konu-cografya: #162d29;
+  --konu-cografya-kenar: #25504a;
+  --konu-cografya-koyu: #86d7cb;
+  --konu-cografya-cubuk: #25504a;
+  --konu-cografya-ok: #2f9b8d;
+  --konu-cografya-dolgu: #1f7a6f;
+  --konu-ingilizce: #1a2c29;
+  --konu-ingilizce-kenar: #2b4843;
+  --konu-ingilizce-koyu: #93d3c7;
+  --konu-ingilizce-cubuk: #2b4843;
+  --konu-ingilizce-ok: #4c9a8e;
+  --konu-ingilizce-dolgu: #2f7a6f;
+  --konu-matematik-kart: #253549;
+  --konu-turkce-kart: #3a321b;
+  --konu-fizik-kart: #352b47;
+  --konu-kimya-kart: #432e21;
+  --konu-biyoloji-kart: #2a3825;
+  --konu-tarih-kart: #3a2f25;
+  --konu-cografya-kart: #1d3b36;
+  --konu-ingilizce-kart: #223a36;
+
+  --patika-golge: rgba(0, 0, 0, 0.25);
+  --patika-yol: #3d342b;
+  --patika-yol-ic: #2b251f;
+  --patika-yol-cizgi: #463c32;
+  --patika-gecilen: #8a7650;
+  --patika-gecilen-ic: #4a3f2b;
+  --patika-gecilen-cizgi: #6e5e40;
+  --patika-kitap-kilitli: #3a332c;
+  --patika-kitap-kilitli-arka: #302a24;
+  --patika-kitap-kilitli-golge: #241f1a;
+  --patika-kitap-kilitli-sirt: #342e27;
+  --patika-kitap-kilitli-yazi: #a69a8e;
+  --patika-serit: #6b5a2e;
+  --patika-hale: rgba(255, 238, 220, 0.12);
+  --patika-simge: rgba(240, 225, 200, 0.05);
+
+  --gorev-turuncu: #f08b5c;
+  --gorev-kirmizi: #ea7a66;
+  --gorev-gul: #e88aa4;
+  --gorev-mor: #b9acec;
+  --gorev-lacivert: #a9b6e6;
+  --gorev-mavi: #8fbbe8;
+  --gorev-deniz: #8fcad4;
+  --gorev-yesil: #8fc07f;
+  --gorev-zeytin: #b4d27a;
+  --gorev-hardal: #dcb25e;
+  --gorev-kahve: #d2a587;
+  --gorev-gri: #b0b5bd;
+}
+
+/*
+  Ders zemininin içindeki yüzeyler koyu temada o dersin tonunu alır.
+
+  Açıkta beyaz kart her ders zemininde temiz duruyor; koyuda genel kahve kart
+  mavi/yeşil zeminde çamurlaşıyordu (oyun tuşları, soru kartı, cevap kutusu).
+  Kural yalnız koyu takımda: açık temada hiçbir değer değişmiyor. Zemin
+  sınıfı oyun kabuğunun, Oyunlar'daki ders kartlarının ve haritadaki bandın
+  kendisi; içindeki her `bg-card` / `border` / `bg-muted` kendiliğinden döner.
+*/
+:root[data-tema='koyu'] .bg-konu-matematik {
+  --card: var(--konu-matematik-kart);
+  --muted: var(--konu-matematik-kenar);
+  --border: var(--konu-matematik-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-turkce {
+  --card: var(--konu-turkce-kart);
+  --muted: var(--konu-turkce-kenar);
+  --border: var(--konu-turkce-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-fizik {
+  --card: var(--konu-fizik-kart);
+  --muted: var(--konu-fizik-kenar);
+  --border: var(--konu-fizik-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-kimya {
+  --card: var(--konu-kimya-kart);
+  --muted: var(--konu-kimya-kenar);
+  --border: var(--konu-kimya-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-biyoloji {
+  --card: var(--konu-biyoloji-kart);
+  --muted: var(--konu-biyoloji-kenar);
+  --border: var(--konu-biyoloji-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-tarih {
+  --card: var(--konu-tarih-kart);
+  --muted: var(--konu-tarih-kenar);
+  --border: var(--konu-tarih-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-cografya {
+  --card: var(--konu-cografya-kart);
+  --muted: var(--konu-cografya-kenar);
+  --border: var(--konu-cografya-kenar);
+}
+:root[data-tema='koyu'] .bg-konu-ingilizce {
+  --card: var(--konu-ingilizce-kart);
+  --muted: var(--konu-ingilizce-kenar);
+  --border: var(--konu-ingilizce-kenar);
+}
+
+/* Konu Anlatımı'nın kâğıt sahneleri (yoklama `.sahne`, kapanış `.kapanis`):
+   açıkta krem kâğıt, koyuda aynı amber çizgili koyu kâğıt. */
+:root[data-tema='koyu'] .sahne {
+  --sahne-zemin: #2a2416;
+  --sahne-cizgi: rgba(220, 178, 94, 0.1);
+  --sahne-amber-yazi: #e2bd6c;
+  --sahne-cerceve-cizgi: rgba(208, 155, 52, 0.45);
+  --sahne-cerceve-dolgu: rgba(208, 155, 52, 0.3);
+  --sahne-cerceve-soluk: rgba(208, 155, 52, 0.18);
+  --sahne-kapat-cizgi: rgba(208, 155, 52, 0.5);
+  --sahne-dogru-golge: rgba(0, 0, 0, 0.4);
+  --sahne-yanlis-golge: rgba(0, 0, 0, 0.4);
+}
+:root[data-tema='koyu'] .kapanis {
+  --kapanis-zemin: #2a2416;
+  --kapanis-cizgi: rgba(220, 178, 94, 0.07);
+  --kapanis-altin: #c9a95a;
+  --kapanis-altin-koyu: #e2bd6c;
+  --kapanis-cerceve: #4a3d22;
+  --kapanis-halka-zemin: #332b1b;
+  --kapanis-kart: #25201b;
+  --kapanis-yazi: #f2ebe4;
+  --kapanis-yazi-govde: #ddd3c8;
+  --kapanis-soluk: #ab9f94;
+  --kapanis-golge: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Tema değişirken renkler kaymasın: bir iki kare bütün geçişler kapalı
+   (`lib/tema-kancasi.ts`). */
+.tema-degisiyor,
+.tema-degisiyor *,
+.tema-degisiyor *::before,
+.tema-degisiyor *::after {
+  transition: none !important;
 }
 
 @layer base {
@@ -1254,7 +1614,7 @@ body {
    bileşen atlar. Ekran bilgi taşıyor ama hareket bilgi taşımıyor.
    --------------------------------------------------------------------------- */
 .hazir-hale {
-  background: radial-gradient(closest-side, var(--primary-soft) 0%, rgb(251 238 231 / 0.55) 55%, rgb(251 238 231 / 0) 100%);
+  background: radial-gradient(closest-side, var(--primary-soft) 0%, var(--primary-soft-yari) 55%, var(--primary-soft-sifir) 100%);
   animation: hazirHale 900ms ease-out both;
 }
 .hazir-maskot {
@@ -1496,7 +1856,7 @@ body {
   kısayolunda yazılsaydı renk deseni ezerdi.
 */
 .deste-zemin {
-  background-image: radial-gradient(circle, rgba(24, 23, 22, 0.07) 1.2px, transparent 1.2px);
+  background-image: radial-gradient(circle, var(--nokta-desen) 1.2px, transparent 1.2px);
   background-size: 18px 18px;
 }
 
@@ -1600,6 +1960,8 @@ body {
   --sahne-amber-yazi: #8d691a;
   --sahne-cerceve-cizgi: rgba(208, 155, 52, 0.5);
   --sahne-cerceve-dolgu: rgba(208, 155, 52, 0.35);
+  --sahne-cerceve-soluk: rgba(208, 155, 52, 0.2);
+  --sahne-kapat-cizgi: rgba(208, 155, 52, 0.55);
   --sahne-dogru: var(--success);
   --sahne-dogru-golge: rgba(79, 122, 74, 0.4);
   --sahne-yanlis: var(--danger);
@@ -1620,11 +1982,11 @@ body {
   border: 1px solid var(--sahne-cerceve-cizgi);
 }
 .sahne-cerceve-ic {
-  border: 1px solid rgba(208, 155, 52, 0.2);
+  border: 1px solid var(--sahne-cerceve-soluk);
 }
 
 .sahne-kapat {
-  border: 1px solid rgba(208, 155, 52, 0.55);
+  border: 1px solid var(--sahne-kapat-cizgi);
   box-shadow: 0 2px 6px rgba(27, 26, 25, 0.08);
 }
 
@@ -1714,6 +2076,8 @@ body {
   --kapanis-altin-koyu: #8d691a;
   --kapanis-cerceve: #ecdfb8;
   --kapanis-halka-zemin: #fffdf6;
+  /* Kapanıştaki not ve sayı kutuları. */
+  --kapanis-kart: #ffffff;
   --kapanis-yazi: #1b1a19;
   --kapanis-yazi-govde: #33302c;
   --kapanis-soluk: #6b6764;
@@ -2394,6 +2758,24 @@ body {
   color: var(--cam-yazi-koyu);
 }
 :root[data-platform='ios'] .alt-menu[data-koyu='true'] button.text-primary {
+  color: var(--cam-vurgu-koyu);
+}
+
+/* Koyu temada cam her zaman koyu: arkasını örneklemeyi beklemeden, beyaz pus
+   koyu zeminde süt gibi duruyordu. Kenar ışıkları yerinde (cam yine cam). */
+:root[data-tema='koyu'] {
+  --cam-zemin-ust: rgba(255, 255, 255, 0.1);
+  --cam-zemin-alt: rgba(255, 255, 255, 0.04);
+  --cam-kenar: rgba(255, 255, 255, 0.16);
+  --cam-cizgi: rgba(0, 0, 0, 0.3);
+  --cam-parlama: rgba(255, 255, 255, 0.3);
+  --cam-golge: rgba(0, 0, 0, 0.5);
+  --cam-mercek: rgba(255, 255, 255, 0.1);
+}
+:root[data-tema='koyu'][data-platform='ios'] .alt-menu button {
+  color: var(--cam-yazi-koyu);
+}
+:root[data-tema='koyu'][data-platform='ios'] .alt-menu button.text-primary {
   color: var(--cam-vurgu-koyu);
 }
 

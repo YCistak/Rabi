@@ -7,7 +7,7 @@ import { dersYilininKayitlari, devamsizlikOzeti, gunOzeti, kayitHaritasi } from 
 import { bugun, cn, tariheCevir, yediGunlukSerit } from '@/lib/utils'
 import { gunlukHedefMesaji } from '@/lib/gunluk-hedef-mesaji'
 import { siraYaz } from '@/lib/siralama'
-import { AYLIK_OZET_EN_AZ_ETKIN_GUN, gunDe } from '@/lib/ozet'
+import { AYLIK_OZET_ACIK, AYLIK_OZET_EN_AZ_ETKIN_GUN, gunDe } from '@/lib/ozet'
 import { KARTLAR, type Ekran, type KartRengi } from '@/lib/gezinme'
 import { kisayollar } from '@/lib/son-kullanilan'
 import { doluDersler, oyunlarinDersleri, type DersId } from '@/lib/oyunlar/tanim'
@@ -351,7 +351,7 @@ export function AnaSayfa({
                 className={cn(
                   'grid h-7 place-items-center rounded-full text-[11.5px] font-extrabold tablet:h-10 tablet:text-[13.5px]',
                   gun.bugunMu
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-primary-derin text-primary-foreground'
                     : gun.tuttu
                       ? 'bg-primary-soft text-primary'
                       : gun.gelecekMi
@@ -419,7 +419,7 @@ export function AnaSayfa({
       </Bolum>
 
       {/* Özet beklemiyorken kart en altta ve pasif: ne zaman geleceğini söylüyor. */}
-      {!ozetHazir && <OzetBekliyor tarih={sonrakiOzet} yetersiz={ozetYetersiz} />}
+      {AYLIK_OZET_ACIK && !ozetHazir && <OzetBekliyor tarih={sonrakiOzet} yetersiz={ozetYetersiz} />}
       </div>
     </div>
   )

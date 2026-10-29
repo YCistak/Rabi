@@ -70,7 +70,7 @@ export function GeriSayim({
       aria-label={`${sayim.takvim.yil} YKS geri sayımı`}
       className={cn(
         'golge-kart overflow-hidden rounded-[26px] p-3.5',
-        doluKart ? 'bg-ikincil text-white' : 'bg-card text-card-foreground',
+        doluKart ? 'bg-ikincil-dolu text-white' : 'bg-card text-card-foreground',
         kahraman && 'tablet:flex tablet:flex-col tablet:rounded-[22px]',
         kahraman && !doluKart && 'tablet:bg-transparent tablet:p-1 tablet:shadow-none',
         className,
@@ -148,7 +148,7 @@ export function GeriSayim({
             <div
               className={cn(
                 'h-full rounded-full transition-[width] duration-500',
-                acil ? 'bg-ikincil' : 'bg-primary',
+                acil ? 'bg-ikincil-dolu' : 'bg-primary-derin',
               )}
               style={{ width: `${Math.max(2, yuzde)}%` }}
             />

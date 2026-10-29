@@ -445,7 +445,7 @@ export function HedefEkrani({
         >
           <p
             role="status"
-            className="acilir-giris max-w-md rounded-2xl bg-foreground px-4 py-3 text-center text-[13.5px] font-bold text-background shadow-kart"
+            className="acilir-giris max-w-md rounded-2xl bg-ters px-4 py-3 text-center text-[13.5px] font-bold text-ters-yazi shadow-kart"
           >
             Hedefin kaydedildi.
           </p>
