@@ -19,16 +19,15 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Küçük yerlerde (≈70 px altı tam boy leke olur) baş: oyun başlıkları (26–54) `yuz`,
   kurulum karşılaması `kafa`. Ana sayfa selamlaması tam boy pozda, 84 px
   ([ana-sayfa.md](ana-sayfa.md)).
-- `yuz`, "normal maskot"un ölçülmüş kırpımı ve **ikonun, Android engel katmanının ve
-  pomodoro bildiriminin de kaynağı**. Kırpma değişirse: `maskot-uret.mjs`in yazdığı
-  sayılarla `ikon-uret.mjs` → `MASKOT` güncellenir ve `tavsan-yuz.png` kopyaları
-  yenilenir: `android/.../drawable-nodpi/tavsan_yuz.png` ve
+- `yuz`, "normal maskot"un ölçülmüş kırpımı ve **Android engel katmanının ve
+  pomodoro bildiriminin kaynağı** (uygulama ikonunun kaynağı değil, bkz. aşağıdaki
+  "Uygulama ikonu"). Kırpma değişirse `tavsan-yuz.png` kopyaları yenilenir: `android/.../drawable-nodpi/tavsan_yuz.png` ve
   `ios/App/KalkanGorunumu/tavsan_yuz.png` (yerli taraf `public/`i okuyamıyor).
 - **Pozlar paletli PNG (256 renk, `uret`'in varsayılanı `sikistir: true`), `yuz`
   hariç**: ~60 kB yerine ~15–20 kB; `public/tavsan-*.png` toplamı ~0,93 MB. Bedeli
   yalnız üç kat büyütmede kürkte ince kumlanma.
 - **`yuz` düz PNG kalır** (`sikistir: false`) ve betik onu baytı baytına aynı üretir:
-  baytları değişirse ikon yeniden üretilmeli, Android ve iOS kopyaları yenilenmeli.
+  baytları değişirse Android ve iOS kopyaları yenilenmeli.
 - `sevinen` ve `ziplayan` ikisi de kullanılıyor (`ziplayan` aylık özette, `sevinen`
   başka yerlerde) — tek poz iki bağlamda tekrarlanırdı. "sinirli" kaynağı bilerek
   kullanılmıyor: Rabi yanlışta kullanıcıya kızmaz.
@@ -93,9 +92,23 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 ## Uygulama ikonu
 
-- Tek kaynak `scripts/ikon-uret.mjs` (`sharp`, `devDependencies`te); `public/icon-*.png`
-  ve `android/.../mipmap-*` oradan. Çıktılar depoda, **elle düzenlenmez**.
-- Maskot `public/tavsan-yuz.png`; ölçüler kenar uzunluğuna **oran** (her yoğunluk +
-  108 birimlik uyarlanabilir tuval). `icon-maskelenebilir-512.png` köşesiz, ikon
-  ortadaki %80'de. Uyarlanabilir zemin PNG (`mipmap-*/ic_launcher_background.png`).
-  `public/icon.svg` yok. iOS ikonu `AppIcon-512@2x.png` (1024) köşesiz ve **alfasız**.
+- Tek kaynak `assets/ikon/rabi-ikon-kaynak.png` (1024 kare, **yalnız tavşanın kafası**,
+  gövde yok, düz turuncu zemin; kullanıcının görselinden kırpıldı, çene altındaki gövde
+  zemin rengiyle silindi). Üretici `scripts/ikon-uret.mjs` (`sharp`, `devDependencies`te);
+  `public/icon-*.png`, `android/.../mipmap-*` ve iOS `AppIcon-512@2x.png` oradan.
+  Çıktılar depoda, **elle düzenlenmez**; ikon değişecekse kaynak PNG değişir.
+  İkon uygulama içindeki maskottan (`public/tavsan-*.png`) **bağımsız**: oradaki
+  kırpım değişirse ikon etkilenmez.
+- İkonda **gövde görünmez**: yalnız kafa. Yeni kaynakta da çene altı zemin rengi olmalı.
+- Zemin rengi kaynağın köşelerinden örneklenir (≈ rgb(177, 80, 37)). Uyarlanabilir
+  ikonda arka plan (`mipmap-*/ic_launcher_background.png`) bu düz renk, ön plan
+  kafa görselinin küçültülmüş hâli; ön planın kenarları saydama eriyor, dikiş yok.
+- Güvenli alan: kafa (kulak uçları ve çene dahil) kaynak kenarının ~%0,50'si yarıçaplı
+  bir daireye sığıyor (`KAFA` sabiti, ölçüldü). Uyarlanabilir ön planda görsel tuvalin
+  %65'i (güvenli daire %66), web `icon-maskelenebilir-512.png`te %80'i (güvenli daire %80).
+  Kaynak değişirse `KAFA` yeniden ölçülmeli.
+- `ic_launcher.png` kaynağın tamamı (kare), `ic_launcher_round.png` %88 küçültülüp daire
+  maskeli. `icon-192/512.png` squircle maskeli, köşeler saydam. iOS ikonu
+  `AppIcon-512@2x.png` (1024) köşesiz ve **alfasız**. `public/icon.svg` yok.
+- Mağaza dosyaları (Play 512 32-bit, App Store 1024 alfasız) depoya girmez; aynı
+  kaynaktan üretilir.

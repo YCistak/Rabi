@@ -31,10 +31,9 @@
  * görülüyor. Önce yalnızca ikinci takım (v2) sıkıştırılıyordu; ilk takım da
  * aynı yola alındı.
  *
- * Tek istisna `yuz`: uygulama ikonunun (`ikon-uret.mjs`) ve Android
+ * Tek istisna `yuz`: Android
  * `drawable-nodpi/tavsan_yuz.png` ile iOS `KalkanGorunumu/tavsan_yuz.png`
- * kopyalarının kaynağı. Baytları değişirse ikon yeniden üretilmeli ve iki
- * kopya yenilenmeli; o yüzden düz PNG kalıyor (`sikistir: false`).
+ * kopyalarının kaynağı. Baytları değişirse iki kopya yenilenmeli; o yüzden düz PNG kalıyor (`sikistir: false`).
  *
  * ## Pozların boyu eşitleniyor
  *
@@ -141,8 +140,8 @@ const POZLAR = [
  *
  * Ayrı bir çıktı, çünkü tam boy maskot küçük ölçülerde okunmuyor — oyun
  * başlıklarında 26, ana sayfada 58 piksel yer var ve orada gövde bir lekeye
- * dönüşüyor. Aynı dosya uygulama ikonunun (`ikon-uret.mjs`), Android'in engel
- * katmanının ve pomodoro bildiriminin de kaynağı; hepsinde görülen şey bir yüz.
+ * dönüşüyor. Aynı dosya Android'in engel
+ * katmanının ve pomodoro bildiriminin de kaynağı (uygulama ikonu artık ayrı kaynaktan); hepsinde görülen şey bir yüz.
  *
  * Kutu kaynağın kendi piksel uzayında (2048) ve kulakların ucundan **boyna**
  * kadarını alıyor. İki ölçü de ölçülerek bulundu, göz kararı değil:
@@ -233,14 +232,6 @@ for (const { ad, kaynak } of POZLAR) {
   console.log(`${ad}.png  ${hedefEn}×${hedefBoy}`)
 }
 
-// `yuz` sıkıştırılmıyor: ikonun ve yerli kopyaların kaynağı (dosya başındaki not).
+// `yuz` sıkıştırılmıyor: yerli kopyaların kaynağı (dosya başındaki not).
 const yuz = await uret('tavsan-yuz', YUZ.kaynak, YUZ, { sikistir: false })
 console.log(`tavsan-yuz.png  ${yuz.hedefEn}×${yuz.hedefBoy}`)
-
-// `ikon-uret.mjs` yüzün tuvaldeki kutusunu sabit sayılarla biliyor; kırpma
-// değişince orası da değişmeli. Sayıyı burada yazdırmak, ikinci dosyadaki
-// sayının sessizce eskimesini önlüyor.
-console.log(
-  `\nikon-uret.mjs → MASKOT: sol ${Math.round((TUVAL - yuz.hedefEn) / 2)}, ` +
-    `ust ${Math.round((TUVAL - yuz.hedefBoy) / 2)}, en ${yuz.hedefEn}, boy ${yuz.hedefBoy}`,
-)
