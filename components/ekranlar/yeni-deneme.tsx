@@ -344,7 +344,10 @@ export function YeniDenemeEkrani({
             bu, göze girmesi gerekiyor.
           */}
           <div className="mt-3 flex items-end gap-1.5">
-            <Rabi poz="laptoplu" boyut={72} className="-mb-1 shrink-0" />
+            {/* Tavşanın ayağı balonun okuyla aynı hizada: ok balonun altından
+                22 px yukarıda (`bottom-4` + yarım ok), ayak resmin altından ~5 px.
+                Fark `mb-[17px]`; ok ya da poz değişirse birlikte değişir. */}
+            <Rabi poz="laptoplu" boyut={72} className="mb-[17px] shrink-0" />
             <div className="relative min-w-0 flex-1 rounded-2xl border border-[var(--rabi-balon-kenar)] bg-[var(--rabi-balon)] px-3.5 py-3 shadow-kart">
               <span aria-hidden className="absolute bottom-4 -left-[7px] size-3 rotate-45 rounded-[2px] border-b border-l border-[var(--rabi-balon-kenar)] bg-[var(--rabi-balon)]" />
               <p className="relative text-[13px] leading-snug font-bold text-foreground">
