@@ -351,7 +351,7 @@ export function AnaSayfa({
                 className={cn(
                   'grid h-7 place-items-center rounded-full text-[11.5px] font-extrabold tablet:h-10 tablet:text-[13.5px]',
                   gun.bugunMu
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-primary-derin text-primary-foreground'
                     : gun.tuttu
                       ? 'bg-primary-soft text-primary'
                       : gun.gelecekMi

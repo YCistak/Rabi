@@ -504,7 +504,7 @@ export function KokluOyunuEkrani({
                       disabled={kilitli}
                       className={cn(
                         'grid h-12 flex-none place-items-center rounded-[17px] font-display text-[15px] font-extrabold text-white transition',
-                        kilitli ? 'bg-muted text-muted-foreground' : 'bg-konu-matematik-koyu active:brightness-95',
+                        kilitli ? 'bg-muted text-muted-foreground' : 'bg-konu-matematik-dolgu active:brightness-95',
                       )}
                     >
                       Onayla
@@ -599,8 +599,8 @@ function BonusGorunumu({
                 'golge-kart grid h-16 place-items-center rounded-[18px] border-2 transition',
                 'rakam font-display text-[26px] font-extrabold',
                 !kilitli && 'border-border bg-card active:brightness-95',
-                secilen && dogruMu && 'border-success bg-success text-white',
-                secilen && !dogruMu && 'border-ikincil bg-ikincil text-white',
+                secilen && dogruMu && 'border-success bg-success-dolu text-white',
+                secilen && !dogruMu && 'border-ikincil bg-ikincil-dolu text-white',
                 isaretli && 'border-success bg-card text-success',
                 kilitli && !secilen && !dogruMu && 'border-border bg-card opacity-45',
               )}

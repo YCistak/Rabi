@@ -248,7 +248,7 @@ function BildirimSayfasi({
                     <span
                       className={cn(
                         'grid size-9 shrink-0 place-items-center rounded-xl',
-                        secili ? 'bg-ikincil text-white' : 'bg-muted text-muted-foreground',
+                        secili ? 'bg-ikincil-dolu text-white' : 'bg-muted text-muted-foreground',
                       )}
                     >
                       <Simge size={18} strokeWidth={2.2} aria-hidden />
@@ -261,7 +261,7 @@ function BildirimSayfasi({
                       aria-hidden
                       className={cn(
                         'grid size-5 shrink-0 place-items-center rounded-full border-2',
-                        secili ? 'border-ikincil bg-ikincil' : 'border-border',
+                        secili ? 'border-ikincil bg-ikincil-dolu' : 'border-border',
                       )}
                     >
                       {secili && <span className="size-2 rounded-full bg-white" />}
@@ -339,7 +339,7 @@ function BildirimSayfasi({
               type="button"
               onClick={() => kaydet(izinSorulacak ? 'verildi' : null)}
               disabled={!gonderilebilir}
-              className="mt-1.5 h-[54px] w-full rounded-[17px] bg-ikincil text-base font-extrabold text-white transition active:scale-[0.99] disabled:opacity-40"
+              className="mt-1.5 h-[54px] w-full rounded-[17px] bg-ikincil-dolu text-base font-extrabold text-white transition active:scale-[0.99] disabled:opacity-40"
             >
               {izinSorulacak ? 'İzin ver ve gönder' : kayit ? 'Güncelle' : 'Gönder'}
             </button>

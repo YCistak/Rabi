@@ -666,7 +666,7 @@ function TurSatiri({ ad, sayi, oran }: { ad: string; sayi: number; oran: number 
       <span className={cn('w-24 shrink-0 leading-tight', bos && 'font-semibold')}>{ad}</span>
       <span className="h-[7px] flex-1 overflow-hidden rounded-full bg-muted">
         <span
-          className="block h-full rounded-full bg-ikincil"
+          className="block h-full rounded-full bg-ikincil-dolu"
           style={{ width: `${Math.round(oran * 100)}%` }}
         />
       </span>

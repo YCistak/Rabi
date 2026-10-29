@@ -111,7 +111,7 @@ export function HizliKontrolEkrani({
             aria-hidden
             className="pointer-events-none absolute top-[90px] left-1/2 size-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              background: 'radial-gradient(closest-side, rgba(255,255,255,0.9), rgba(255,255,255,0))',
+              background: 'radial-gradient(closest-side, var(--maskot-hale), var(--maskot-hale-dis))',
             }}
           />
           {!sikisik && (
@@ -168,8 +168,8 @@ export function HizliKontrolEkrani({
                 <span
                   className={cn(
                     'grid size-[34px] shrink-0 place-items-center rounded-xl text-[14px] font-extrabold',
-                    yesil && 'bg-success text-white',
-                    kirmizi && 'bg-danger text-white',
+                    yesil && 'bg-success-dolu text-white',
+                    kirmizi && 'bg-danger-dolu text-white',
                     !bu && 'bg-muted text-foreground/80',
                   )}
                 >
@@ -229,12 +229,12 @@ export function HizliKontrolEkrani({
                 boyut={80}
                 className="drop-shadow-[0_6px_9px_rgba(31,36,48,0.16)]"
               />
-              <div className="relative mb-3 min-w-0 flex-1 rounded-2xl bg-foreground px-4 py-3.5">
+              <div className="relative mb-3 min-w-0 flex-1 rounded-2xl bg-ters px-4 py-3.5">
                 <span
                   aria-hidden
-                  className="absolute bottom-4 -left-1.5 size-3 rotate-45 rounded-[2px] bg-foreground"
+                  className="absolute bottom-4 -left-1.5 size-3 rotate-45 rounded-[2px] bg-ters"
                 />
-                <p className="relative text-[14px] leading-relaxed font-semibold text-background text-pretty">
+                <p className="relative text-[14px] leading-relaxed font-semibold text-ters-yazi text-pretty">
                   {dogru ? kontrol.aciklama.dogru : kontrol.aciklama.yanlis}
                 </p>
               </div>

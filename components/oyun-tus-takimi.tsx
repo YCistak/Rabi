@@ -36,8 +36,8 @@ export function CevapAlani({
         'golge-kart flex h-[54px] flex-none items-center justify-center rounded-[18px] px-4',
         'rakam font-display text-[27px] font-extrabold tracking-[3px]',
         durum === 'yaziliyor' && 'bg-card',
-        durum === 'dogru' && 'bg-success text-white',
-        durum === 'yanlis' && 'bg-ikincil text-white',
+        durum === 'dogru' && 'bg-success-dolu text-white',
+        durum === 'yanlis' && 'bg-ikincil-dolu text-white',
         durum === 'pas' && 'bg-foreground/10 text-foreground',
       )}
     >
@@ -47,7 +47,7 @@ export function CevapAlani({
         <>
           {girilen}
           {durum === 'yaziliyor' && (
-            <span className="ml-0.5 h-6 w-[2px] animate-pulse bg-konu-matematik-koyu" />
+            <span className="ml-0.5 h-6 w-[2px] animate-pulse bg-konu-matematik-dolgu" />
           )}
         </>
       )}
@@ -121,7 +121,7 @@ function Tus({
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
         bicim === 'rakam' && 'golge-kart rakam bg-card text-[21px] font-extrabold',
         bicim === 'sil' && 'bg-ikincil/12 text-ikincil',
-        bicim === 'onay' && 'bg-konu-matematik-koyu text-sm font-extrabold text-white active:brightness-95',
+        bicim === 'onay' && 'bg-konu-matematik-dolgu text-sm font-extrabold text-white active:brightness-95',
       )}
     >
       {children}

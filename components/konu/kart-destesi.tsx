@@ -398,15 +398,15 @@ function KartEkrani({
               */}
               {kart.not && (
                 <div key={`${kart.id}-not`} className="deste-not relative mt-3.5 flex items-end gap-3 pr-1">
-                  <div className="relative mb-4 min-w-0 flex-1 rounded-[14px] bg-foreground px-4 py-3.5">
+                  <div className="relative mb-4 min-w-0 flex-1 rounded-[14px] bg-ters px-4 py-3.5">
                     <span
                       aria-hidden
-                      className="absolute -right-1.5 bottom-4 size-3 rotate-45 rounded-[2px] bg-foreground"
+                      className="absolute -right-1.5 bottom-4 size-3 rotate-45 rounded-[2px] bg-ters"
                     />
-                    <span className="relative block text-[10px] font-bold tracking-[0.16em] text-background/60 uppercase">
+                    <span className="relative block text-[10px] font-bold tracking-[0.16em] text-ters-yazi/60 uppercase">
                       Rabi&apos;nin notu
                     </span>
-                    <p className="relative mt-1.5 text-[13.5px] leading-relaxed font-semibold text-background text-pretty">
+                    <p className="relative mt-1.5 text-[13.5px] leading-relaxed font-semibold text-ters-yazi text-pretty">
                       {kart.not}
                     </p>
                   </div>

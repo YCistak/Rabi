@@ -638,9 +638,9 @@ function CevapAlani({
             className={cn(
               'golge-kart rounded-[18px] px-2 text-[14.5px] font-extrabold transition active:scale-[0.98]',
               dogru
-                ? 'bg-success text-white'
+                ? 'bg-success-dolu text-white'
                 : secilen
-                  ? 'bg-ikincil text-white'
+                  ? 'bg-ikincil-dolu text-white'
                   : 'bg-card text-foreground',
             )}
           >

@@ -544,13 +544,13 @@ function ElementHucresi({
   // yalnızca "bul" sorusunda tabloda oluyor; ötekilerde şıkta.
   const boya = acikta
     ? hedef
-      ? 'bg-success text-white'
+      ? 'bg-success-dolu text-white'
       : geriBildirim.secilen === element.ad
-        ? 'bg-ikincil text-white'
+        ? 'bg-ikincil-dolu text-white'
         : 'bg-konu-kimya text-konu-kimya-koyu'
     : // "Adını seç" ve "ailesi hangisi" sorularında hedef hücre işaretli.
       soru.tip !== 'bul' && hedef
-      ? 'bg-konu-kimya-koyu text-white isaretli-il'
+      ? 'bg-konu-kimya-dolgu text-white isaretli-il'
       : 'bg-konu-kimya text-konu-kimya-koyu'
 
   const ortak = cn(
@@ -624,9 +624,9 @@ function CevapAlani({
             className={cn(
               'golge-kart rounded-[18px] px-2 text-[13.5px] font-extrabold transition active:scale-[0.98]',
               dogruMu
-                ? 'bg-success text-white'
+                ? 'bg-success-dolu text-white'
                 : secilen
-                  ? 'bg-ikincil text-white'
+                  ? 'bg-ikincil-dolu text-white'
                   : 'bg-card text-foreground',
             )}
           >

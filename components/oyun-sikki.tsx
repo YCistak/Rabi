@@ -63,9 +63,9 @@ export function OyunSikki({
         hal === 'bos' &&
           'border-[var(--vurgu-kenar)] bg-card shadow-[0_3px_0_var(--vurgu-kenar)] active:translate-y-[3px] active:shadow-none',
         hal === 'dogru' &&
-          'border-success bg-success text-white shadow-[0_3px_0_color-mix(in_srgb,var(--success)_75%,black)]',
+          'border-success bg-success-dolu text-white shadow-[0_3px_0_color-mix(in_srgb,var(--success)_75%,black)]',
         hal === 'yanlis' &&
-          'border-ikincil bg-ikincil text-white shadow-[0_3px_0_color-mix(in_srgb,var(--ikincil)_75%,black)]',
+          'border-ikincil bg-ikincil-dolu text-white shadow-[0_3px_0_color-mix(in_srgb,var(--ikincil)_75%,black)]',
         hal === 'isaretli' && 'border-success bg-card text-success shadow-[0_3px_0_var(--success)]',
         hal === 'soluk' &&
           'border-[var(--vurgu-kenar)] bg-card opacity-45 shadow-[0_3px_0_var(--vurgu-kenar)]',

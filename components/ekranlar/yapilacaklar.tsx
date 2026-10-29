@@ -280,7 +280,7 @@ export function YapilacaklarEkrani({
           tek yer bu. Alt menünün üstünde duruyor. */}
       {mesaj !== null && (
         <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+var(--guvenli-alt))] z-40 flex justify-center px-6 tablet:right-[var(--ray)] tablet:bottom-[calc(1.5rem+var(--guvenli-alt))]">
-          <p className="acilir-giris max-w-md rounded-2xl bg-foreground px-4 py-3 text-center text-[13.5px] font-bold text-background shadow-kart">
+          <p className="acilir-giris max-w-md rounded-2xl bg-ters px-4 py-3 text-center text-[13.5px] font-bold text-ters-yazi shadow-kart">
             {mesaj}
           </p>
         </div>
@@ -387,7 +387,7 @@ function GorevSatiri({
         className={cn(
           'grid size-[26px] shrink-0 place-items-center rounded-full border-2 transition',
           gorev.bitti
-            ? 'border-success bg-success text-white'
+            ? 'border-success bg-success-dolu text-white'
             : 'border-border bg-card text-transparent',
         )}
       >

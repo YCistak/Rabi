@@ -468,7 +468,7 @@ export function SiralaOyunuEkrani({
                   disabled={kilitli}
                   className={cn(
                     'grid h-12 flex-none place-items-center rounded-[17px] font-display text-[15px] font-extrabold text-white transition',
-                    kilitli ? 'bg-muted text-muted-foreground' : 'bg-konu-tarih-koyu active:brightness-95',
+                    kilitli ? 'bg-muted text-muted-foreground' : 'bg-konu-tarih-dolgu active:brightness-95',
                   )}
                 >
                   Onayla

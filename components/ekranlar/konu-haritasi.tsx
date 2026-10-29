@@ -1035,7 +1035,7 @@ function Pusula() {
         className="absolute inset-0 rounded-full border-2 bg-card"
         style={{
           borderColor: 'var(--patika-gecilen-ic)',
-          boxShadow: '0 3px 8px var(--patika-golge), 0 0 0 5px rgba(255,255,255,.5)',
+          boxShadow: '0 3px 8px var(--patika-golge), 0 0 0 5px var(--patika-hale)',
         }}
       />
       <svg viewBox="0 0 54 54" width="54" height="54" className="absolute inset-0">
@@ -1043,7 +1043,7 @@ function Pusula() {
         <g stroke="var(--patika-gecilen)" strokeWidth="2.6" strokeLinecap="round">
           <path d="M27 7v5M27 42v5M7 27h5M42 27h5" />
         </g>
-        <polygon points="27,10 32,27 27,44 22,27" fill="var(--primary)" />
+        <polygon points="27,10 32,27 27,44 22,27" fill="var(--primary-derin)" />
         <polygon points="27,27 32,27 27,44 22,27" fill="var(--primary-parlak)" />
         <circle
           cx="27"
@@ -1188,12 +1188,12 @@ function KartKitabi({ no, gri, simdi }: { no: number; gri: boolean; simdi: boole
       style={{
         background: gri
           ? 'var(--patika-kitap-kilitli)'
-          : 'linear-gradient(color-mix(in srgb, var(--success) 82%, #9dd08a), var(--success))',
+          : 'linear-gradient(color-mix(in srgb, var(--success-dolu) 82%, #9dd08a), var(--success-dolu))',
         boxShadow: gri
           ? '0 5px 0 var(--patika-kitap-kilitli-golge)'
           : simdi
-            ? '0 6px 0 color-mix(in srgb, var(--success) 72%, #000), 0 12px 20px color-mix(in srgb, var(--success) 24%, transparent)'
-            : '0 5px 0 color-mix(in srgb, var(--success) 72%, #000), 0 9px 16px color-mix(in srgb, var(--success) 18%, transparent)',
+            ? '0 6px 0 color-mix(in srgb, var(--success-dolu) 72%, #000), 0 12px 20px color-mix(in srgb, var(--success-dolu) 24%, transparent)'
+            : '0 5px 0 color-mix(in srgb, var(--success-dolu) 72%, #000), 0 9px 16px color-mix(in srgb, var(--success-dolu) 18%, transparent)',
         paddingLeft: 9,
         paddingTop: 6,
       }}
@@ -1232,10 +1232,10 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
         style={{
           background: gri
             ? 'var(--patika-kitap-kilitli-arka)'
-            : 'color-mix(in srgb, var(--primary-parlak) 80%, var(--primary))',
+            : 'color-mix(in srgb, var(--primary-parlak) 80%, var(--primary-derin))',
           boxShadow: gri
             ? '0 3px 0 var(--patika-kitap-kilitli-golge)'
-            : '0 3px 0 color-mix(in srgb, var(--primary) 85%, #000)',
+            : '0 3px 0 color-mix(in srgb, var(--primary-derin) 85%, #000)',
           transform: 'rotate(-13deg)',
         }}
       />
@@ -1245,7 +1245,7 @@ function SoruKitabi({ gri, simdi }: { gri: boolean; simdi: boolean }) {
           background: gri
             ? 'var(--patika-kitap-kilitli)'
             : 'linear-gradient(color-mix(in srgb, var(--primary-parlak) 88%, #fff), var(--primary-parlak))',
-          boxShadow: gri ? '0 4px 0 var(--patika-kitap-kilitli-golge)' : '0 4px 0 var(--primary)',
+          boxShadow: gri ? '0 4px 0 var(--patika-kitap-kilitli-golge)' : '0 4px 0 var(--primary-derin)',
           transform: 'rotate(-3deg)',
         }}
       >
@@ -1326,9 +1326,11 @@ function KonuKarti({
   const { konu, tur } = basamak
   const soru = tur === 'soru'
   const ton = soru ? 'var(--primary)' : 'var(--success)'
+  // Zemin olarak: koyu temada yazı tonları açılıyor, dolgu ayrı ad.
+  const tonDolgu = soru ? 'var(--primary-derin)' : 'var(--success-dolu)'
   const tonKoyu = soru
-    ? 'color-mix(in srgb, var(--primary) 85%, #000)'
-    : 'color-mix(in srgb, var(--success) 72%, #000)'
+    ? 'color-mix(in srgb, var(--primary-derin) 85%, #000)'
+    : 'color-mix(in srgb, var(--success-dolu) 72%, #000)'
 
   const kartBitti = konuBitti(ilerlemeler, konu.id)
   const okunan = ilerlemeler[konu.id]?.okunan ?? 0
@@ -1414,7 +1416,7 @@ function KonuKarti({
         <span
           aria-hidden
           className="absolute -top-[3px] right-14 h-[34px] w-5"
-          style={{ background: ton, clipPath: 'polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)' }}
+          style={{ background: tonDolgu, clipPath: 'polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)' }}
         />
         <button
           type="button"
@@ -1461,7 +1463,7 @@ function KonuKarti({
                 </span>
               ) : (
                 <span className="inline-flex h-[19px] items-center gap-1 rounded-full bg-primary-soft px-2 text-[9.5px] font-black tracking-[0.04em] whitespace-nowrap text-primary">
-                  <span className="size-[5px] rounded-full bg-primary" aria-hidden />
+                  <span className="size-[5px] rounded-full bg-primary-derin" aria-hidden />
                   Tamamlanmadı
                 </span>
               )}
@@ -1501,7 +1503,7 @@ function KonuKarti({
               >
                 <span
                   className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ width: `${yuzde}%`, background: ton }}
+                  style={{ width: `${yuzde}%`, background: tonDolgu }}
                 />
               </span>
               <span className="rakam text-[10.5px] font-extrabold whitespace-nowrap text-muted-foreground">
@@ -1525,10 +1527,10 @@ function KonuKarti({
                 ? undefined
                 : kilitli
                   ? {
-                      background: 'var(--warning)',
-                      boxShadow: '0 4px 0 color-mix(in srgb, var(--warning) 75%, #000)',
+                      background: 'var(--warning-dolu)',
+                      boxShadow: '0 4px 0 color-mix(in srgb, var(--warning-dolu) 75%, #000)',
                     }
-                  : { background: ton, boxShadow: `0 4px 0 ${tonKoyu}` }
+                  : { background: tonDolgu, boxShadow: `0 4px 0 ${tonKoyu}` }
             }
           >
             {dugme}

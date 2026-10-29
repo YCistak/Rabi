@@ -430,11 +430,11 @@ function DersSatiri({
 
       <div className="mb-3 flex h-1.5 overflow-hidden rounded-full bg-muted">
         <span
-          className="h-1.5 bg-success transition-[width]"
+          className="h-1.5 bg-success-dolu transition-[width]"
           style={{ width: yuzde(satir.dogru) }}
         />
         <span
-          className="h-1.5 bg-danger transition-[width]"
+          className="h-1.5 bg-danger-dolu transition-[width]"
           style={{ width: yuzde(satir.yanlis) }}
         />
         <span

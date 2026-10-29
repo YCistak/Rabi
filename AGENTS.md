@@ -86,6 +86,11 @@ paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
     kutucuklar): `--konu-<ders>` (`bg-konu-turkce`, `text-konu-tarih-koyu`,
     `bg-konu-kimya-ok`…). Matematik mavi, Türkçe/Edebiyat sarı, Fizik mor, Kimya
     turuncu, Biyoloji yeşil, Tarih kahverengi, Coğrafya turkuaz.
+  - **Yazı tonu dolgu olmaz** (koyu tema hazırlığı): zemin/dolgu için `bg-primary-derin`,
+    `bg-success-dolu`, `bg-ikincil-dolu`, `bg-konu-<ders>-dolgu`; Rabi balonu ve kısa
+    bildirim `bg-ters text-ters-yazi`; kart `bg-card` (`bg-white` değil). Bileşende
+    onaltılık renk yok. `lib/renk-denetimi.test.ts` denetler; plan
+    `docs/koyu-tema-plani.md`.
   - Eski aileler (`yzm`, `isl`, `edb`, `cog`, `trh`, `byl`, `fzk`) ders kimliği değil,
     genel pastel: araç kutucukları, rozet kademeleri, harita göstergeleri (deniz, kara).
 - **Zemin rengi dört yerde, birlikte değişir:** `--background` (globals.css),

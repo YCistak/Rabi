@@ -39,8 +39,8 @@ const ROZET_ZEMIN: Record<Yon, string> = {
 }
 
 const CUBUK_RENGI: Record<Yon, string> = {
-  artti: 'bg-success',
-  azaldi: 'bg-danger',
+  artti: 'bg-success-dolu',
+  azaldi: 'bg-danger-dolu',
   ayni: 'bg-muted-foreground/30',
 }
 
@@ -242,7 +242,7 @@ export function IstatistikEkrani({
                 </span>
                 <span className="mt-1.5 block h-1.5 overflow-hidden rounded-[3px] bg-muted">
                   <span
-                    className="block h-1.5 rounded-[3px] bg-danger"
+                    className="block h-1.5 rounded-[3px] bg-danger-dolu"
                     style={{ width: `${Math.round((d.fark / ilerleyenler[0].fark) * 100)}%` }}
                   />
                 </span>
@@ -405,7 +405,7 @@ function AltSayfa({
   const kaydir = useAsagiKaydirKapat(onKapat)
   return (
     <div
-      className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-foreground/35"
+      className="katman-zemin fixed inset-0 z-50 flex items-end justify-center bg-perde"
       onClick={onKapat}
     >
       <div
