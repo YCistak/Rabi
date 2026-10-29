@@ -3,6 +3,10 @@
 Rabi'nin sürüm sürüm değişiklikleri; en yeni üstte. Sürüm numaraları `v0.9.x` ile
 başlar, `v1.0.0` mağaza öncesi ilk kararlı sürümdür.
 
+## Sıradaki sürüm
+
+- Koyu tema geldi: Rabi artık telefonunun temasına uyar (telefonun gece modundaysa koyu açılır). Ayarlar → Görünüm → Tema'dan Telefona uy / Açık / Koyu seçilebilir. Önceki sürümden gelenler de "Telefona uy" ile başlar.
+
 ## 1.0.5 (17 Ekim 2026)
 
 - Tanıtım sadeleşti: her adımda "Tanıtımdan çık" düğmesi; ana turdan deneme formu çıktı, Denemeler/Yapılacaklar/Oyunlar/Oyun Bankası mini turları kaldırıldı.

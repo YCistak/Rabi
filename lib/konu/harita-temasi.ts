@@ -72,6 +72,12 @@ export type HaritaTemasi = {
   /** İlerleme çubuğunun boş kısmı. */
   cubuk: string
   /**
+   * Ders zeminli tam ekranın sınıfı. Rengi satır içi `zemin` veriyor; sınıf
+   * koyu temada içindeki kartı dersin tonuna çeviren kural için
+   * (`globals.css` → `.bg-konu-<ders>`).
+   */
+  zeminSinifi: string
+  /**
    * Zemin simgeleri. Sıra rastgele değil: haritada düğüm başına bir simge
    * düşüyor ve liste başa sarıyor, yani yan yana iki düğümde aynı simgenin
    * çıkmaması için listenin bir düğüm çevriminden (8) uzun olması gerek.
@@ -88,6 +94,7 @@ function renkler(ders: KonuDersId): Omit<HaritaTemasi, 'simgeler'> {
     kenar: `var(--konu-${ders}-kenar)`,
     murekkep: `var(--konu-${ders}-koyu)`,
     cubuk: `var(--konu-${ders}-cubuk)`,
+    zeminSinifi: `bg-konu-${ders}`,
   }
 }
 
