@@ -33,6 +33,7 @@ Yol haritası ve kalan işler: [koyu-tema-plani.md](../koyu-tema-plani.md).
   `--border` o dersin tonuna döner (`--konu-<ders>-kart`, `-kenar`; yalnız koyu
   takımda). Oyun tuşları, şıklar, soru kartı bu yüzden ayrıca boyanmaz; ders zeminli
   yeni ekran da kendiliğinden uyar.
-- **Henüz koyu değeri olmayanlar** (plan PR 3–6): `.sahne`, `.kapanis`, `.deste-*`,
+- Konu Anlatımı: deste zemini `zeminSinifi` (`lib/konu/harita-temasi.ts`) ile ders kuralına girer; yoklama `.sahne` ve kapanış `.kapanis` koyuda kendi koyu kâğıt değerlerini alır.
+- **Henüz koyu değeri olmayanlar** (plan PR 5–6):
   cam menü (`--cam-*`), açılış (`acilis.tsx` → `ZEMIN`, yerli açılış), durum çubuğu,
   odak engel katmanı. Bunlara dokunan iş koyu karşılığını da yazar.

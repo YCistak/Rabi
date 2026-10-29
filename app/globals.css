@@ -725,6 +725,33 @@ body {
   --border: var(--konu-ingilizce-kenar);
 }
 
+/* Konu Anlatımı'nın kâğıt sahneleri (yoklama `.sahne`, kapanış `.kapanis`):
+   açıkta krem kâğıt, koyuda aynı amber çizgili koyu kâğıt. */
+:root[data-tema='koyu'] .sahne {
+  --sahne-zemin: #2a2416;
+  --sahne-cizgi: rgba(220, 178, 94, 0.1);
+  --sahne-amber-yazi: #e2bd6c;
+  --sahne-cerceve-cizgi: rgba(208, 155, 52, 0.45);
+  --sahne-cerceve-dolgu: rgba(208, 155, 52, 0.3);
+  --sahne-cerceve-soluk: rgba(208, 155, 52, 0.18);
+  --sahne-kapat-cizgi: rgba(208, 155, 52, 0.5);
+  --sahne-dogru-golge: rgba(0, 0, 0, 0.4);
+  --sahne-yanlis-golge: rgba(0, 0, 0, 0.4);
+}
+:root[data-tema='koyu'] .kapanis {
+  --kapanis-zemin: #2a2416;
+  --kapanis-cizgi: rgba(220, 178, 94, 0.07);
+  --kapanis-altin: #c9a95a;
+  --kapanis-altin-koyu: #e2bd6c;
+  --kapanis-cerceve: #4a3d22;
+  --kapanis-halka-zemin: #332b1b;
+  --kapanis-kart: #25201b;
+  --kapanis-yazi: #f2ebe4;
+  --kapanis-yazi-govde: #ddd3c8;
+  --kapanis-soluk: #ab9f94;
+  --kapanis-golge: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
 /* Tema değişirken renkler kaymasın: bir iki kare bütün geçişler kapalı
    (`lib/tema-kancasi.ts`). */
 .tema-degisiyor,

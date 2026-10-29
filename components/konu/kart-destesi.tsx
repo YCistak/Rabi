@@ -9,6 +9,7 @@ import { kartPozlari } from '@/lib/konu/kart-maskotu'
 import type { MaskotPozu } from '@/lib/maskot'
 import { useGeriKatmani } from '@/lib/geri'
 import { useUygulamaGorunur } from '@/lib/gorunurluk'
+import { cn } from '@/lib/utils'
 import { Buton, Onay } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { KartGorseli } from './kart-gorseli'
@@ -183,7 +184,7 @@ export function KartDestesi({
 
   return (
     <div
-      className="deste-zemin fixed inset-0 z-50 flex flex-col"
+      className={cn('deste-zemin fixed inset-0 z-50 flex flex-col', bicim.zeminSinifi)}
       style={{ backgroundColor: bicim.zemin }}
     >
       {/*
