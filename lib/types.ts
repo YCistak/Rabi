@@ -8,6 +8,7 @@ import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
 import type { AylikOzetArsivi } from './ozet'
 import type { OkumaSeansi } from './konu/okuma-suresi'
 import type { YksTakip } from './konu-takibi/kayit'
+import type { Kaynak } from './kaynak-takibi/kaynak'
 import type { TemaTercihi } from './tema'
 
 // ---------------------------------------------------------------------------
@@ -466,6 +467,11 @@ export type Yedek = {
    * yüklemede yazılmıyor, kullanıcının mevcut kaydına dokunulmuyor.
    */
   yksKonuTakibi?: YksTakip
+  /**
+   * Kaynak Takibi'nin kitapları ve tikleri. Eski yedeklerde yok — geri
+   * yüklemede yazılmıyor, kullanıcının mevcut kaydına dokunulmuyor.
+   */
+  kaynakTakibi?: Kaynak[]
   /**
    * Kapanmış ayların hesaplanmış özetleri. Eski yedeklerde yok; geri
    * yüklemede cihazdaki arşivle **birleştiriliyor**, üstüne yazılmıyor.

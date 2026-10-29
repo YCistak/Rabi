@@ -39,7 +39,7 @@ const BOLUMLER: { baslik: string; ipucu: string; renk: KartRengi; kartlar: Ekran
     baslik: 'Çalışma',
     ipucu: 'Günlük rutin',
     renk: 'pembe',
-    kartlar: ['pomodoro', 'soru', 'konu-takibi', 'yanlis-banka', 'notlar'],
+    kartlar: ['pomodoro', 'soru', 'konu-takibi', 'kaynak-takibi', 'yanlis-banka', 'notlar'],
   },
   {
     baslik: 'Denemeler',
