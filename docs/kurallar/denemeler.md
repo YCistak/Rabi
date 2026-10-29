@@ -16,3 +16,6 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   şablon yerinde değiştirilmez** (eski denemenin boşu ve neti değişirdi): `seviye.eski`
   işaretlenir, yanına yenisi gelir; kullanılmamışsa silinir. Hazırla aynı derslere
   dönmek ("Varsayılana dön") düzenlemeyi kaldırır.
+- **Dersleri düzenle soru sınırı:** ders başı en çok 40 (`DERS_EN_COK_SORU`, kullanıcı
+  istedi, 2026-10-29). Hazırda fazlası olan ders (Dil alanında Yabancı Dil 80)
+  hazırdaki sayıya kadar çıkar (`dersSoruSiniri`); yoksa o alanda kayıt yapılamazdı.

@@ -97,6 +97,14 @@ describe('Dersleri düzenle', () => {
     expect(dersleriDenetle([{ id: 'a', ad: '  ', soruSayisi: 5 }])).not.toBeNull()
     expect(dersleriDenetle([...dersler, { id: 'b', ad: 'matematik', soruSayisi: 5 }])).toContain('iki kez')
     expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 0 }])).not.toBeNull()
-    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 201 }])).not.toBeNull()
+    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 41 }])).toContain('1 ile 40')
+    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 40 }])).toBeNull()
+  })
+
+  it('hazırda 40tan fazla sorusu olan ders (Dil alanında Yabancı Dil 80) o sayıya kadar kalabiliyor', () => {
+    const hazir = hazirSeviyeSablonu(12, 'dil').dersler
+    expect(dersleriDenetle(hazir, hazir)).toBeNull()
+    expect(dersleriDenetle([{ ...hazir[0], soruSayisi: 81 }], hazir)).not.toBeNull()
+    expect(dersleriDenetle([{ id: 'a', ad: 'Fizik', soruSayisi: 41 }], hazir)).not.toBeNull()
   })
 })
