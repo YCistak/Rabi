@@ -118,6 +118,8 @@
   --color-ayar-destek-koyu: var(--ayar-destek-koyu);
   --color-ayar-veri: var(--ayar-veri);
   --color-ayar-veri-koyu: var(--ayar-veri-koyu);
+  --color-ayar-gorunum: var(--ayar-gorunum);
+  --color-ayar-gorunum-koyu: var(--ayar-gorunum-koyu);
   --color-dil: var(--dil);
   --color-dil-kart: var(--dil-kart);
   --color-dil-koyu: var(--dil-koyu);
@@ -344,6 +346,8 @@ body {
   --ayar-destek-koyu: #2d6a3a;
   --ayar-veri: #dcf1ee;
   --ayar-veri-koyu: #1b6860;
+  --ayar-gorunum: #fbe9dc;
+  --ayar-gorunum-koyu: #9a3f12;
   --dil: #e6f2ef;
   --dil-kart: var(--dil);
   --dil-koyu: #2c746b;
@@ -587,6 +591,8 @@ body {
   --ayar-destek-koyu: #9ed6a9;
   --ayar-veri: #182e2b;
   --ayar-veri-koyu: #8bd6ca;
+  --ayar-gorunum: #3b2519;
+  --ayar-gorunum-koyu: #f2a57c;
 
   --konu-matematik: #1c2734;
   --konu-matematik-kenar: #2c4058;
@@ -2752,6 +2758,24 @@ body {
   color: var(--cam-yazi-koyu);
 }
 :root[data-platform='ios'] .alt-menu[data-koyu='true'] button.text-primary {
+  color: var(--cam-vurgu-koyu);
+}
+
+/* Koyu temada cam her zaman koyu: arkasını örneklemeyi beklemeden, beyaz pus
+   koyu zeminde süt gibi duruyordu. Kenar ışıkları yerinde (cam yine cam). */
+:root[data-tema='koyu'] {
+  --cam-zemin-ust: rgba(255, 255, 255, 0.1);
+  --cam-zemin-alt: rgba(255, 255, 255, 0.04);
+  --cam-kenar: rgba(255, 255, 255, 0.16);
+  --cam-cizgi: rgba(0, 0, 0, 0.3);
+  --cam-parlama: rgba(255, 255, 255, 0.3);
+  --cam-golge: rgba(0, 0, 0, 0.5);
+  --cam-mercek: rgba(255, 255, 255, 0.1);
+}
+:root[data-tema='koyu'][data-platform='ios'] .alt-menu button {
+  color: var(--cam-yazi-koyu);
+}
+:root[data-tema='koyu'][data-platform='ios'] .alt-menu button.text-primary {
   color: var(--cam-vurgu-koyu);
 }
 

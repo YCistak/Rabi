@@ -21,12 +21,12 @@ export const VARSAYILAN_TEMA: TemaTercihi = 'sistem'
 /**
  * Koyu tema kullanıcıya açık mı.
  *
- * Kapalıyken "Telefona uy" açık çizer: koyu ekranlar bitmeden (plan PR 3–6)
- * telefonu koyu moddaki kullanıcı yarım bir koyu tema görmesin. Açıkça
- * `'koyu'` tercihi yine koyu çizer — ayar arayüzde yokken bu yalnız
- * geliştiricinin elle yazdığı kayıtta olur. PR 5'te açılır.
+ * Açık (2026-10-29, bütün ekranlar koyuda gözden geçirildi). Kapatılırsa
+ * "Telefona uy" açık çizer, açıkça `'koyu'` tercihi yine koyu çizer: koyu
+ * temada büyük bir kırık çıkarsa kullanıcıyı açığa döndürmenin tek satırlık
+ * yolu.
  */
-export const KOYU_TEMA_ACIK = false
+export const KOYU_TEMA_ACIK = true
 
 /** Tema geçerken bütün `transition-colors`ın aynı anda oynamaması için `<html>`e konan sınıf. */
 export const TEMA_DEGISIYOR = 'tema-degisiyor'

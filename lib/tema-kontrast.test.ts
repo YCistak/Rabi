@@ -41,7 +41,7 @@ function kontrast(a: string, b: string): number {
 const BEYAZ = '#ffffff'
 const DERSLER = ['matematik', 'turkce', 'fizik', 'kimya', 'biyoloji', 'tarih', 'cografya', 'ingilizce']
 const AILELER = ['yzm', 'isl', 'edb', 'cog', 'trh', 'byl', 'fzk', 'dil']
-const AYARLAR = ['calisma', 'hatirlatma', 'ses', 'yasal', 'destek', 'veri']
+const AYARLAR = ['calisma', 'hatirlatma', 'gorunum', 'ses', 'yasal', 'destek', 'veri']
 const GOREVLER = ['turuncu', 'kirmizi', 'gul', 'mor', 'lacivert', 'mavi', 'deniz', 'yesil', 'zeytin', 'hardal', 'kahve', 'gri']
 
 /** [yazı, zemin, eşik]; `#ffffff` doğrudan renk, ötekiler değişken adı. */

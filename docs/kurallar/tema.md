@@ -7,9 +7,9 @@ Yol haritası ve kalan işler: [koyu-tema-plani.md](../koyu-tema-plani.md).
   `<html data-tema>`da her zaman çözülmüş `acik`/`koyu`. Kural tek yerde: `temaCoz`
   (`lib/tema.ts`). Kurulumda **sorulmaz** (kullanıcı kararı, 2026-10-28); varsayılan ve
   alanı olmayan eski kayıt `'sistem'` — eski kullanıcı da (kullanıcı kararı).
-- **`KOYU_TEMA_ACIK`** (`lib/tema.ts`) kapalıyken "Telefona uy" açık çizer; koyu
-  ekranlar bitince açılır (plan PR 5). Kapalıyken yalnız elle yazılmış `tema: 'koyu'`
-  koyu çizer — geliştirici denemesi için.
+- Seçim yalnız **Ayarlar → Görünüm → Tema** (Telefona uy · Açık · Koyu çipleri).
+- **`KOYU_TEMA_ACIK`** (`lib/tema.ts`) açık. Kapatılırsa "Telefona uy" açık çizer,
+  açıkça `'koyu'` tercihi yine koyu: koyu temada büyük kırık çıkarsa acil geri dönüş.
 - **İlk kare:** `layout.tsx`teki satır içi betik (`ilkKareTemaBetigi`) React'ten önce
   `data-tema` ve `theme-color` yazar; `useTema` (`lib/tema-kancasi.ts`) yedeği ve
   çalışırken telefon modu değişikliğini (`matchMedia` + öne gelişte yeniden okuma)
