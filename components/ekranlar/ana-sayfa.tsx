@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { AlertTriangle, ChevronRight, Target } from 'lucide-react'
+import { AlertTriangle, ChevronRight, Shirt, Target } from 'lucide-react'
 import type { Ayarlar, Devamsizlik, GunlukKayit, Hedef } from '@/lib/types'
 import { dersYilininKayitlari, devamsizlikOzeti, gunOzeti, kayitHaritasi } from '@/lib/hesap'
 import { bugun, cn, tariheCevir, yediGunlukSerit } from '@/lib/utils'
@@ -74,6 +74,7 @@ export function AnaSayfa({
   sonOyunlar,
   onKartAc,
   onDahaGit,
+  onGiydirAc,
   onOyunlaraGit,
   pomodoro,
   konuBitti,
@@ -120,6 +121,8 @@ export function AnaSayfa({
   onKartAc: (ekran: Ekran) => void
   /** "Araçlar" bölümünün "Tümü" bağlantısı — kart menüsü sekmesini açar. */
   onDahaGit: () => void
+  /** "Rabi'yi Giydir" satırı — tavşanın eşya ekranını açar. */
+  onGiydirAc: () => void
   /**
    * Oyunlar sekmesini açar; ders verilirse doğrudan o dersin ızgarasıyla.
    *
@@ -422,6 +425,10 @@ export function AnaSayfa({
         ))}
       </Bolum>
 
+      {/* Oyunların altında, kısayol bölümlerinden sonra: günlük akışın
+          parçası değil, Araçlar ile Oyunlar'ın önüne geçmesin. */}
+      <GiydirSatiri onAc={onGiydirAc} />
+
       {/* Özet beklemiyorken kart en altta ve pasif: ne zaman geleceğini söylüyor. */}
       {AYLIK_OZET_ACIK && !ozetHazir && <OzetBekliyor tarih={sonrakiOzet} yetersiz={ozetYetersiz} />}
       </div>
@@ -528,6 +535,35 @@ function Kutucuk({
         {ad}
       </span>
     </button>
+  )
+}
+
+/**
+ * "Rabi'yi Giydir" girişi — tek satırlık kart.
+ *
+ * Biçim hedef özetinin satırıyla aynı (yumuşak daire içinde çizgi simge,
+ * başlık, sağda ok): ana sayfaya yeni bir görsel dil getirmesin. Kutucuk
+ * değil, çünkü kutucuklar son kullanılan araç/derslerden doluyor ve bu
+ * sabit bir giriş.
+ */
+function GiydirSatiri({ onAc }: { onAc: () => void }) {
+  return (
+    <Kart className="p-0 tablet:col-span-full">
+      <button
+        type="button"
+        onClick={onAc}
+        className="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-left transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      >
+        <span className="grid size-9 shrink-0 place-items-center rounded-full bg-primary-soft text-primary">
+          <Shirt size={18} strokeWidth={2.4} aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-[15px] leading-tight font-extrabold">Rabi&apos;yi Giydir</span>
+          <span className="mt-0.5 block text-xs font-semibold text-muted-foreground">Kep, gözlük, bot</span>
+        </span>
+        <ChevronRight size={20} className="shrink-0 text-muted-foreground" aria-hidden />
+      </button>
+    </Kart>
   )
 }
 

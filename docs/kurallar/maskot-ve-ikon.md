@@ -90,6 +90,21 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     çiçek tutan, silgiyle silen. Ekran bulununca kaynağı kopyalayıp
     betiğe eklemek yeter; boşta duran poz paketi şişirir.
 
+## Rabi'yi Giydir (3D katmanlar)
+
+- Ekran `components/ekranlar/rabi-giydir.tsx`, kurallar `lib/giydir.ts`, kayıt
+  `rabi-giydir`. Kaynak model Blender'da (`rabi8_iskelet.blend` + eşyalar,
+  `rabi_giydir.blend`; depoda değil, `Desktop\rabi_tavsan_model`).
+- Görseller `public/giydir/`: `rabi.png` + eşya başına tam tuval katman (900×1100,
+  **aynı kamera**) ve 256'lık `-ikon.png`. Eşya katmanı Rabi "holdout" iken render
+  alınır: Rabi görünmez ama önünde kaldığı yerde eşyayı keser, böylece katmanlar
+  üst üste konunca kulak kepin içinden, sap başın arkasından geçer. Kamerayı ya da
+  tuvali değiştirirsen **bütün** katmanlar yeniden alınır; tek katman ayrışırsa kayar.
+- Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
+  aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
+- Eşyalar ücretsiz, para birimi yok (kullanıcı denemek için istedi, 2026-10-30).
+  Jeton eklenecekse önce [basarimlar.md](basarimlar.md) → "Seviye, havuç, mağaza yok".
+
 ## Uygulama ikonu
 
 - Tek kaynak `assets/ikon/rabi-ikon-kaynak.png` (1024 kare, tavşanın kafası ve çene altındaki

@@ -42,6 +42,7 @@ import { takibiCoz } from './konu-takibi/kayit'
 import { kaynaklariCoz } from './kaynak-takibi/kaynak'
 import type { AylikOzetArsivi } from './ozet'
 import { okumaGecmisiniCoz, type OkumaSeansi } from './konu/okuma-suresi'
+import { giyilenleriCoz } from './giydir'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -84,6 +85,14 @@ export const ANAHTARLAR = {
    * giriyor.
    */
   kaynakTakibi: 'rabi-kaynak-takibi',
+  /**
+   * Rabi'yi Giydir: yuva → giyilen eşya (`lib/giydir.ts`). Okurken
+   * `giyilenleriCoz` süzüyor. Yedeğe giriyor: kullanıcının kendi seçimi.
+   *
+   * `ESKI_ANAHTARLAR`taki `rabi-magaza` ile karışmasın: o, kaldırılan
+   * havuçla alınan özelleştirmenin kaydıydı; bu kayıtta fiyat ve bakiye yok.
+   */
+  giydir: 'rabi-giydir',
   /**
    * Konu Takibi'nin hızlı başlangıç kartının ("TYT'de neredeyim?")
    * gösterildiği oturumlar, sürümlü (`{ surum: 1, gosterilen }`, okurken
@@ -579,6 +588,9 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut kaynaklarına dokunulmuyor.
       kaynakTakibi: nesne.kaynakTakibi === undefined ? undefined : kaynaklariCoz(nesne.kaynakTakibi),
+      // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
+      // Rabi'nin üstündekilere dokunulmuyor.
+      giydir: nesne.giydir === undefined ? undefined : giyilenleriCoz(nesne.giydir),
       bilinmeyenKartlar: Array.isArray(nesne.bilinmeyenKartlar)
         ? (nesne.bilinmeyenKartlar as BilinmeyenKart[])
         : undefined,
@@ -813,6 +825,8 @@ export function yedegiUygula(yedek: Yedek) {
   if (yedek.yksKonuTakibi) yaz(ANAHTARLAR.yksKonuTakibi, yedek.yksKonuTakibi)
   // Eski yedeklerde kaynak yok; boş yazmak eklenmiş kitapları silerdi.
   if (yedek.kaynakTakibi) yaz(ANAHTARLAR.kaynakTakibi, yedek.kaynakTakibi)
+  // Eski yedeklerde alan yok; boş yazmak giydirilenleri çıkarırdı.
+  if (yedek.giydir) yaz(ANAHTARLAR.giydir, yedek.giydir)
   // Eski yedeklerde tahta yok; boş dizi yazmak kullanıcının kâğıtlarını silerdi.
   if (yedek.notlar) yaz(ANAHTARLAR.notlar, yedek.notlar)
   yaz(ANAHTARLAR.pomodoroGecmis, yedek.pomodoroGecmis)
