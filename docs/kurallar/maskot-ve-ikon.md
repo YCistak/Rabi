@@ -94,12 +94,20 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 - Ekran `components/ekranlar/rabi-giydir.tsx`, kurallar `lib/giydir.ts`, kayıt
   `rabi-giydir`. Kaynak model Blender'da (`rabi8_iskelet.blend` + eşyalar,
-  `rabi_giydir.blend`; depoda değil, `Desktop\rabi_tavsan_model`).
+  `rabi_giydir2.blend`, kurulum ve render betikleri `giydir-betikleri/`; depoda
+  değil, `Desktop\rabi_tavsan_model`).
 - Görseller `public/giydir/`: `rabi.png` + eşya başına tam tuval katman (900×1100,
   **aynı kamera**) ve 256'lık `-ikon.png`. Eşya katmanı Rabi "holdout" iken render
   alınır: Rabi görünmez ama önünde kaldığı yerde eşyayı keser, böylece katmanlar
   üst üste konunca kulak kepin içinden, sap başın arkasından geçer. Kamerayı ya da
   tuvali değiştirirsen **bütün** katmanlar yeniden alınır; tek katman ayrışırsa kayar.
+- **Gölge katmanın içinde.** Eşyanın kafaya/yere düşürdüğü gölge, eşya kameraya
+  görünmezken alınan render'ın çıplak Rabi'ye oranından (`1 − B/A`) çıkar ve eşya
+  katmanının altına yarı saydam siyah olarak gömülür; gölgesiz eşya yapıştırılmış
+  gibi duruyordu. Yer gölgesi ayağın altında elipse kırpılır: anahtar ışık gölgeyi
+  sola uzun bir kama gibi atıyor, kartın köşesini karartıyordu.
+- Gözlük camı yalnız kenarda yansır: beyaz dünyayı yansıtan cam gözlerin üstünde
+  süt gibi bir tabaka bırakıyordu.
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - Eşyalar ücretsiz, para birimi yok (kullanıcı denemek için istedi, 2026-10-30).

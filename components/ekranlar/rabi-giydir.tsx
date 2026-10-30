@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Check, Footprints, Glasses, GraduationCap, type LucideIcon } from 'lucide-react'
 import { BaslikSatiri, Kart, kartGirisi } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import {
+  CIPLAK_RABI,
   ESYALAR,
   dokun,
   giyiliMi,
@@ -35,6 +36,7 @@ export function RabiGiydirEkrani({
   setGiyilenler: (guncelle: (onceki: Giyilenler) => Giyilenler) => void
 }) {
   const katmanListesi = katmanlar(giyilenler)
+  const hazir = useGorselleriOnYukle()
 
   return (
     <div>
@@ -46,7 +48,12 @@ export function RabiGiydirEkrani({
         birbirinden kaymadan otursun; hepsi aynı boyda `absolute inset-0`.
       */}
       <Kart className="mb-4 p-3">
-        <div className="relative mx-auto aspect-[9/11] w-full max-w-[19rem]">
+        <div
+          className={cn(
+            'relative mx-auto aspect-[9/11] w-full max-w-[19rem] transition-opacity duration-200 motion-reduce:transition-none',
+            hazir ? 'opacity-100' : 'opacity-0',
+          )}
+        >
           {katmanListesi.map((src, sira) => (
             <Katman key={src} src={src} ilk={sira === 0} />
           ))}
@@ -71,12 +78,41 @@ export function RabiGiydirEkrani({
 }
 
 /**
+ * Çıplak Rabi ve bütün eşya görsellerini ekran açılınca yükler; hepsi bitince
+ * (yüklenemeyen de sayılır, yığını sonsuza dek bekletmesin) `true` döner.
+ * Katmanlar ayrı ayrı belirirse büyük Rabi gelmeden kep havada asılı kalıyordu;
+ * sonradan giyilen eşya da önceden yüklendiği için hemen geliyor.
+ */
+function useGorselleriOnYukle(): boolean {
+  const [hazir, setHazir] = useState(false)
+  useEffect(() => {
+    const dosyalar = [CIPLAK_RABI, ...ESYALAR.map((e) => e.gorsel)]
+    let kalan = dosyalar.length
+    let iptal = false
+    const bitti = () => {
+      kalan -= 1
+      if (kalan === 0 && !iptal) setHazir(true)
+    }
+    for (const dosya of dosyalar) {
+      const img = new Image()
+      img.onload = bitti
+      img.onerror = bitti
+      img.src = dosya
+    }
+    return () => {
+      iptal = true
+    }
+  }, [])
+  return hazir
+}
+
+/**
  * Tek katman. Dosya yoksa görünmez olur: eşya görseli henüz konmamışken
  * önizlemenin ortasında kırık görsel simgesi durmasın.
  *
- * Eşya katmanı `acilir-giris` ile hafifçe yerine iner; `key` dosya yolu
- * olduğu için yalnız yeni giyilen katman oynar, ötekiler yerinde kalır.
- * Çıplak Rabi oynamaz — her açılışta zıplayan bir tavşan gürültü olurdu.
+ * Eşya katmanı yalnız opaklıkla gelir (`esya-solma`); `acilir-giris` gibi
+ * konum oynatsaydı kep/gözlük/bot 200 ms vücuttan ayrık dururdu. `key` dosya
+ * yolu olduğu için yalnız yeni giyilen katman oynar. Çıplak Rabi oynamaz.
  */
 function Katman({ src, ilk }: { src: string; ilk: boolean }) {
   const [yok, setYok] = useState(false)
@@ -91,7 +127,7 @@ function Katman({ src, ilk }: { src: string; ilk: boolean }) {
       loading="eager"
       decoding="async"
       onError={() => setYok(true)}
-      className={cn('pointer-events-none absolute inset-0 size-full object-contain', !ilk && 'acilir-giris')}
+      className={cn('pointer-events-none absolute inset-0 size-full object-contain', !ilk && 'esya-solma')}
     />
   )
 }
@@ -140,7 +176,7 @@ function EsyaKarti({
             aria-hidden
             draggable={false}
             onError={() => setIkonYok(true)}
-            className="size-[85%] object-contain"
+            className="esya-ikon size-[85%] object-contain"
           />
         )}
       </span>
