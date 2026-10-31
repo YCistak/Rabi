@@ -90,6 +90,98 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     çiçek tutan, silgiyle silen. Ekran bulununca kaynağı kopyalayıp
     betiğe eklemek yeter; boşta duran poz paketi şişirir.
 
+## Rabi'yi Giydir (3D katmanlar)
+
+- Ekran `components/ekranlar/rabi-giydir.tsx`, kurallar `lib/giydir.ts`, kayıt
+  `rabi-giydir`. Kaynak model Blender'da (`rabi8_iskelet.blend` + eşyalar,
+  `rabi_giydir3.blend`; kurulum `kur3.py`, katmanlar `katman3.py`; kep ve kepli
+  Rabi `secenek.py buku` ile alınır (sonucu `rabi_giydir_buku.blend`). Betikler
+  `giydir-betikleri/` içinde; depoda değil, `Desktop\rabi_tavsan_model`).
+- Görseller `public/giydir/`: `rabi.png` + eşya başına tam tuval katman (900×1100,
+  **aynı kamera**) ve 256'lık `-ikon.png`. Eşya katmanı Rabi "holdout" iken render
+  alınır: Rabi görünmez ama önünde kaldığı yerde eşyayı keser, böylece katmanlar
+  üst üste konunca kulak kepin içinden, sap başın arkasından geçer. Kamerayı ya da
+  tuvali değiştirirsen **bütün** katmanlar yeniden alınır; tek katman ayrışırsa kayar.
+- **Gölge katmanın içinde.** Eşyanın kafaya/yere düşürdüğü gölge, eşya kameraya
+  görünmezken alınan render'ın çıplak Rabi'ye oranından (`1 − B/A`) çıkar ve eşya
+  katmanının altına yarı saydam siyah olarak gömülür; gölgesiz eşya yapıştırılmış
+  gibi duruyordu. Yer gölgesi ayağın altında elipse kırpılır: anahtar ışık gölgeyi
+  sola uzun bir kama gibi atıyor, kartın köşesini karartıyordu.
+- **Kepte "Bükük Kulak"** (kullanıcı seçti, 2026-10-31): kep küçülüp (0,7) sağa
+  kayar ve o yana eğilir; sol kulak dik, kepin altındaki sağ kulak ortadan aşağı
+  katlanır. Denenip beğenilmeyenler: kulak kepin içinden dik, kulaksız, iki yana
+  sarkık, mini kep, geriye yatık, tahtada kulak yuvası. Kep giyiliyken alttaki Rabi
+  `rabi-kep.png` (`Esya.taban`); kep katmanı da o pozla alınır. Dik kulak tahtaya
+  değmeyene dek kep sağa itilir, kulak kökü tahtayı deliyorsa tahta yukarı itilir
+  (yoksa beyaz çizik kalır).
+- **Gözlük camı gözü kapağıyla birlikte içine alır:** küçük camda kapak çizgisi
+  çerçevenin dışına taşıp çift çizgi gibi duruyordu. Saplar menteşeden hemen başa
+  dalar (yanakta çubuk gibi görünüyordu), camda parıltı şeridi yok (çizik gibi
+  okunuyordu). Konum ve açı yüzey ölçülerek bulunur (`gozluk_yerlesimi`).
+- Gözlük camı yalnız kenarda yansır: beyaz dünyayı yansıtan cam gözlerin üstünde
+  süt gibi bir tabaka bırakıyordu. Gözün koyu yerinde gömülü gölge sönümlenir:
+  oran orada gürültüye boğulup camın altında hayalet leke bırakıyordu.
+- Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
+  aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
+- **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
+  gözlüğü), boyun (papyon, atkı, kolye); kulak ve ayak yuvaları boş; ayrıca hazır
+  avatar (Sigma). Kulakta kalem
+  kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
+  (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
+  `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
+  - Kulaklık: bant kulakların önünden geçer; kabuk kafanın **yüzey normaline** göre
+    oturur (sabit açıyla yastık bir kenardan havada kalıyordu).
+  - Bere: kulaklar **gizli** (kullanıcı istedi; yana sarkık ve içinden çıkan kulak
+    denendi). Gövde kafadan değil elipsoitten: kafayı şişirince tepe sivri, şapka gibi
+    duruyordu. Katlanmış fitilli ağız kafaya yapışık bant (simit kenar siper gibiydi),
+    kabarık ponpon. Bere ve kep katmanında perçem gizlenir.
+  - Taç: büyük halka kafanın tepesine oturur, kulaklar **içinden** çıkar (kullanıcı
+    istedi); kulaklar biraz içe toplanıp incelir (`TAC_KULAK`). Tepeler uzun (kısa
+    tepeli taç tasma gibiydi).
+  - Kolye: ilk Sigma paketinin altın Kuba zinciri + "R" ucu (`sigma_kur.py`); Sigma
+    avatar olunca kullanıcı **ayrı eşya** olarak kalmasını istedi (2026-10-31). Düz
+    duruşta çizilir: `kolye_kur.py` zinciri `rabi_giydir6.blend`e taşır, `katman4.py`.
+- **Sigma Rabi hazır avatar** (kullanıcı istedi, 2026-10-31): **özelleştirilemez**;
+  seçilince öbür eşyalar çıkar, eşya seçilince avatar çıkar (`hazir: true`, `giy`).
+  Tek görsel `sigma.png` (Rabi + takım + yer gölgesi, `katman_takim.py`); altında
+  çıplak Rabi yok. Eski kayıtta avatarla giyilmiş eşyalar `giyilenleriCoz`ta düşer.
+  Yuvası eski kayıtlar geçerli kalsın diye `boyun`. Eskiden eşyalar Sigma duruşuna
+  göre ayrıca çiziliyordu (`kep-sigma.png`, `rabi-sigma-kep.png`); kalktı.
+  - Kıyafet referansı: koyu takım, açık mavi gömlek, ince çizgili kırmızı kravat.
+    Ceket, klapa, gömlek, manşet ve pantolon gövde örgüsünün kopyasından kesilir
+    (`takim_kur.py` → `rabi_takim.blend`): aynı ağırlık ve Armature ile pozda kolla
+    birlikte bükülür. Kenarlar düzlemle kesilir ve düzlemdeki noktalar tutulur
+    (ağırlık eşiği ya da sınırdaki nokta atılınca kenar dişli/püsküllü çıkıyordu).
+    Ön V aşağıda geniş açılır: çene boynun önünü örtüyor, dar V'de gömlek ve kravat
+    görünmüyordu. Kumaşın altındaki tüy silinir (`tuy_yog` = 0), yoksa dışarı taşar.
+    Kenar zinciri kendi boyunca düzlenir (kesik üçgen örgüde testere dişi kalıyordu).
+    Yün dokusu ince lif gürültüsü: düz çapraz bant kıvrımlarda halka halka hare yaptı.
+  - Gözlük (kullanıcı istedi, 2026-10-31; "Degrade Film" seçildi, "Burunda Aşağı"
+    denendi): ince altın çerçeve, dar dikdörtgen cam; cam üstte açık altta koyu
+    (`dikey` niteliği), gözler üstten seçilir. Yansıma kısık (cilalı kaplama camı
+    beyaz lekeyle kaplıyordu). Baş pozda 22° yukarı olduğu için gözlük gözün
+    ortasından 0.07 aşağıda. Sap kafanın yan yüzeyini izler ve kulağa doğru yükselir
+    (kafaya dalan sap yüzün içinden geçen çubuk gibiydi); uzak sap çizilmez (yalnız
+    filmli camın arkasından çizgi olarak görünüyordu). `sigma_gozluk.py`.
+  - Gözlüklü avatarda **kaş yok** (kullanıcı kaldırttı): gözler camın arkasındayken
+    çatık kaş alında siyah leke gibi duruyordu (`sigma_kassiz.py`, doku
+    `rabi7_renk_dokusu_sigma_kassiz.png`).
+  - Yüz: gözler ve kaşlar renk dokusuna boyalı (önden düz yansıtma, `rest_pos` x/z →
+    2048'lik doku); Sigma yüzü dokunun kopyasına çizilir (`sigma_doku.py`: yarı
+    kapak, kirpik çizgisi, sol kaş çatık, sağ kalkık). Doku pikselleri **yerinde**
+    değiştirilir: tüyler de aynı dokudan renk alıyor, yalnız yüz malzemesinde
+    değiştirince kaş tüyün altında eski hâliyle kalıyordu. Ağız: `X` (kapalı) +
+    `gulumse` yalnız sağ yarıda (sırıtış).
+  - Duruş: kameraya hafif dönük (kök +18°), sağ el çene hattının altında
+    ("jawline"), baş 22° yukarı; "eller belde" eli bozuk gösterdiği için bırakıldı.
+    El bükülebilsin diye yalnız bu sahnede `bilek.R` kemiği var (`sigma_poz.py`:
+    `cene_goster`, `bilek_ekle`; sahne `sigma2_kur.py` → `rabi_sigma2.blend`).
+- **Gözlük ve bahçıvan botu yok** (kullanıcı kaldırttı, 2026-10-31: "sevmedim"); geri
+  getirme. Kimlikleri (`gozluk`, `bot`) eski kayıtta kalabilir, `giyilenleriCoz` düşürür.
+  Gözlük maddesindeki dersler güneş gözlüğü için de geçerli.
+- Eşyalar ücretsiz, para birimi yok (kullanıcı denemek için istedi, 2026-10-30).
+  Jeton eklenecekse önce [basarimlar.md](basarimlar.md) → "Seviye, havuç, mağaza yok".
+
 ## Uygulama ikonu
 
 - Tek kaynak `assets/ikon/rabi-ikon-kaynak.png` (1024 kare, tavşanın kafası ve çene altındaki

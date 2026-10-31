@@ -10,6 +10,7 @@ import type { OkumaSeansi } from './konu/okuma-suresi'
 import type { YksTakip } from './konu-takibi/kayit'
 import type { Kaynak } from './kaynak-takibi/kaynak'
 import type { TemaTercihi } from './tema'
+import type { Giyilenler } from './giydir'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -472,6 +473,11 @@ export type Yedek = {
    * yüklemede yazılmıyor, kullanıcının mevcut kaydına dokunulmuyor.
    */
   kaynakTakibi?: Kaynak[]
+  /**
+   * Rabi'yi Giydir: yuva → eşya. Eski yedeklerde yok — geri yüklemede
+   * yazılmıyor, Rabi'nin üstündekilere dokunulmuyor.
+   */
+  giydir?: Giyilenler
   /**
    * Kapanmış ayların hesaplanmış özetleri. Eski yedeklerde yok; geri
    * yüklemede cihazdaki arşivle **birleştiriliyor**, üstüne yazılmıyor.
