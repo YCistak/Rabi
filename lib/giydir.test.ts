@@ -12,10 +12,11 @@ import {
 } from './giydir'
 
 describe('katalog', () => {
-  it('üç eşya, her biri kendi yuvasında ve ücretsiz', () => {
+  it('dört eşya, her biri kendi yuvasında ve ücretsiz', () => {
     expect(ESYALAR.map((e) => [e.id, e.yuva])).toEqual([
       ['kep', 'kafa'],
       ['gozluk', 'yuz'],
+      ['gunes', 'yuz'],
       ['bot', 'ayak'],
     ])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
@@ -51,6 +52,12 @@ describe('giy / cikar / dokun', () => {
     expect(dokun(bir, 'gozluk')).toEqual({})
   })
 
+  it('güneş gözlüğü gözlüğün yerini alır (aynı yuva)', () => {
+    const g = giy(giy({}, 'gozluk'), 'gunes')
+    expect(g).toEqual({ yuz: 'gunes' })
+    expect(giyiliMi(g, 'gozluk')).toBe(false)
+  })
+
   it('bilinmeyen kimlik bir şey değiştirmez', () => {
     const g: Giyilenler = { kafa: 'kep' }
     expect(giy(g, 'pelerin' as never)).toBe(g)
@@ -66,14 +73,21 @@ describe('katmanlar', () => {
   it('sıra alttan üste: rabi → bot → gözlük → kep, giyme sırasından bağımsız', () => {
     const g = giy(giy(giy({}, 'kep'), 'gozluk'), 'bot')
     expect(katmanlar(g)).toEqual([
-      '/giydir/rabi.png',
+      '/giydir/rabi-kep.png',
       '/giydir/bot.png',
       '/giydir/gozluk.png',
       '/giydir/kep.png',
     ])
   })
 
+  it('kep takılıyken alttaki Rabi sarkık kulaklı olan, çıkınca dik kulaklıya döner', () => {
+    const g = giy(giy({}, 'kep'), 'gunes')
+    expect(katmanlar(g)).toEqual(['/giydir/rabi-kep.png', '/giydir/gunes.png', '/giydir/kep.png'])
+    expect(katmanlar(cikar(g, 'kafa'))).toEqual([CIPLAK_RABI, '/giydir/gunes.png'])
+  })
+
   it('yanlış yuvadaki eşyayı çizmez', () => {
+    // Yanlış yuvadaki kepin tabanı da gelmez: kep yoksa kulaklar dik.
     expect(katmanlar({ ayak: 'kep' } as Giyilenler)).toEqual([CIPLAK_RABI])
   })
 })

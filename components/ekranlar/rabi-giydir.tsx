@@ -55,7 +55,9 @@ export function RabiGiydirEkrani({
           )}
         >
           {katmanListesi.map((src, sira) => (
-            <Katman key={src} src={src} ilk={sira === 0} />
+            // Alttaki Rabi'nin anahtarı sabit: kep takılınca yalnız `src`i değişir,
+            // öğe yeniden kurulmaz; yeni görsel gelene dek eskisi durur, boşluk görünmez.
+            <Katman key={sira === 0 ? 'taban' : src} src={src} ilk={sira === 0} />
           ))}
         </div>
       </Kart>
@@ -86,7 +88,7 @@ export function RabiGiydirEkrani({
 function useGorselleriOnYukle(): boolean {
   const [hazir, setHazir] = useState(false)
   useEffect(() => {
-    const dosyalar = [CIPLAK_RABI, ...ESYALAR.map((e) => e.gorsel)]
+    const dosyalar = [CIPLAK_RABI, ...ESYALAR.flatMap((e) => (e.taban ? [e.gorsel, e.taban] : [e.gorsel]))]
     let kalan = dosyalar.length
     let iptal = false
     const bitti = () => {
@@ -115,8 +117,9 @@ function useGorselleriOnYukle(): boolean {
  * yolu olduğu için yalnız yeni giyilen katman oynar. Çıplak Rabi oynamaz.
  */
 function Katman({ src, ilk }: { src: string; ilk: boolean }) {
-  const [yok, setYok] = useState(false)
-  if (yok) return null
+  // Hangi dosyanın yüklenemediği tutulur: alttaki Rabi aynı öğede dosya değiştiriyor.
+  const [yokDosya, setYokDosya] = useState<string | null>(null)
+  if (yokDosya === src) return null
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -126,7 +129,7 @@ function Katman({ src, ilk }: { src: string; ilk: boolean }) {
       draggable={false}
       loading="eager"
       decoding="async"
-      onError={() => setYok(true)}
+      onError={() => setYokDosya(src)}
       className={cn('pointer-events-none absolute inset-0 size-full object-contain', !ilk && 'esya-solma')}
     />
   )

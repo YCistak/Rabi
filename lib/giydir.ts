@@ -13,7 +13,7 @@
 
 export type Yuva = 'kafa' | 'yuz' | 'ayak'
 
-export type EsyaId = 'kep' | 'gozluk' | 'bot'
+export type EsyaId = 'kep' | 'gozluk' | 'gunes' | 'bot'
 
 export type Esya = {
   id: EsyaId
@@ -25,6 +25,12 @@ export type Esya = {
   ikon: string
   /** Şimdilik hep 0 — arayüzde "Ücretsiz". */
   fiyat: number
+  /**
+   * Bu eşya giyiliyken çıplak Rabi yerine alta konan Rabi. Kep takılınca
+   * kulaklar yana sarkıyor: dik kulak kepin içinden çıkınca da, kulak hiç
+   * olmayınca da kötü duruyordu. Eşya katmanı da bu Rabi'ye göre çizildi.
+   */
+  taban?: string
 }
 
 /** Yuva → giyilen eşya. Her yuvada en çok bir eşya: aynı yere iki şapka olmaz. */
@@ -37,8 +43,17 @@ export const CIPLAK_RABI = '/giydir/rabi.png'
 
 /** Listedeki sıra: baştan ayağa, göz yukarıdan aşağı tarıyor. */
 export const ESYALAR: readonly Esya[] = [
-  { id: 'kep', ad: 'Mezuniyet Kepi', yuva: 'kafa', gorsel: '/giydir/kep.png', ikon: '/giydir/kep-ikon.png', fiyat: 0 },
+  {
+    id: 'kep',
+    ad: 'Mezuniyet Kepi',
+    yuva: 'kafa',
+    gorsel: '/giydir/kep.png',
+    ikon: '/giydir/kep-ikon.png',
+    fiyat: 0,
+    taban: '/giydir/rabi-kep.png',
+  },
   { id: 'gozluk', ad: 'Gözlük', yuva: 'yuz', gorsel: '/giydir/gozluk.png', ikon: '/giydir/gozluk-ikon.png', fiyat: 0 },
+  { id: 'gunes', ad: 'Güneş Gözlüğü', yuva: 'yuz', gorsel: '/giydir/gunes.png', ikon: '/giydir/gunes-ikon.png', fiyat: 0 },
   { id: 'bot', ad: 'Bahçıvan Botu', yuva: 'ayak', gorsel: '/giydir/bot.png', ikon: '/giydir/bot-ikon.png', fiyat: 0 },
 ]
 
@@ -87,15 +102,21 @@ export function dokun(giyilenler: Giyilenler, id: EsyaId): Giyilenler {
   return giyiliMi(giyilenler, id) ? cikar(giyilenler, esya.yuva) : giy(giyilenler, id)
 }
 
-/** Önizlemenin katman dosyaları, alttan üste: önce çıplak Rabi, sonra eşyalar. */
+/**
+ * Önizlemenin katman dosyaları, alttan üste: önce Rabi, sonra eşyalar.
+ *
+ * Alttaki Rabi giyilen bir eşyanın `taban`ı olabilir (kepte sarkık kulaklı
+ * Rabi); bugün yalnız kepte var, ikisi birden olursa üstteki yuvanınki geçer.
+ */
 export function katmanlar(giyilenler: Giyilenler): string[] {
-  const ustler = KATMAN_SIRASI.flatMap((yuva) => {
+  const giyili = KATMAN_SIRASI.flatMap((yuva) => {
     const id = giyilenler[yuva]
     const esya = id === undefined ? undefined : esyaBul(id)
     // Yuvası tutmayan kayıt (elle kurcalanmış) çizilmiyor: kep ayak katmanına düşmesin.
-    return esya && esya.yuva === yuva ? [esya.gorsel] : []
+    return esya && esya.yuva === yuva ? [esya] : []
   })
-  return [CIPLAK_RABI, ...ustler]
+  const taban = giyili.reduce<string>((t, e) => e.taban ?? t, CIPLAK_RABI)
+  return [taban, ...giyili.map((e) => e.gorsel)]
 }
 
 /**
