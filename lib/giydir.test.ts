@@ -8,11 +8,13 @@ import {
   giyiliMi,
   giyilenleriCoz,
   katmanlar,
+  tabanYolu,
+  tumTabanlar,
   type Giyilenler,
 } from './giydir'
 
 describe('katalog', () => {
-  it('sekiz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
+  it('dokuz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
     expect(ESYALAR.map((e) => [e.id, e.yuva])).toEqual([
       ['kep', 'kafa'],
       ['bere', 'kafa'],
@@ -22,6 +24,7 @@ describe('katalog', () => {
       ['gunes', 'yuz'],
       ['papyon', 'boyun'],
       ['atki', 'boyun'],
+      ['sigma', 'boyun'],
     ])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
   })
@@ -97,6 +100,23 @@ describe('katmanlar', () => {
       '/giydir/kep.png',
     ])
     expect(katmanlar({ kafa: 'tac', kulak: 'kalem' })).toEqual([CIPLAK_RABI, '/giydir/kalem.png', '/giydir/tac.png'])
+  })
+
+  it('Sigma tabanı yüzü ve duruşu değiştirir; keple birlikte iki ek birleşir', () => {
+    expect(katmanlar({ boyun: 'sigma' })).toEqual(['/giydir/rabi-sigma.png', '/giydir/sigma.png'])
+    expect(katmanlar({ boyun: 'sigma', kafa: 'kep', kulak: 'kalem' })).toEqual([
+      '/giydir/rabi-sigma-kep.png',
+      '/giydir/sigma.png',
+      '/giydir/kalem-kep.png',
+      '/giydir/kep.png',
+    ])
+  })
+
+  it('taban dosyaları: çıplak, tek ekli ve birleşik hâlleri', () => {
+    expect(tabanYolu([])).toBe(CIPLAK_RABI)
+    expect(tumTabanlar().sort()).toEqual(
+      [CIPLAK_RABI, '/giydir/rabi-kep.png', '/giydir/rabi-sigma.png', '/giydir/rabi-sigma-kep.png'].sort(),
+    )
   })
 
   it('yanlış yuvadaki eşyayı çizmez', () => {

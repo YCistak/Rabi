@@ -135,6 +135,17 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   - Kalem kulağa bağlı: kepte kulak büküldüğü için ikinci katmanı var
     (`kalem-kep.png`, `Esya.tabanaGore`); `katman4.py ... kepli` kep pozunu
     `rabi_giydir_buku.blend`'den kopyalayıp çizer.
+- **Sigma Rabi** (kullanıcı istedi, 2026-10-31): boyun yuvası; katmanı altın Kuba
+  zinciri + "R" kolye (`sigma.png`), yüz ve duruş tabanda (`taban: 'sigma'`).
+  Gözler ve kaşlar renk dokusuna boyalı (önden düz yansıtma, `rest_pos` x/z →
+  2048'lik doku); Sigma yüzü dokunun kopyasına çizilir (`sigma_doku.py`: yarı
+  kapak, kirpik çizgisi, sol kaş çatık, sağ kalkık). Doku pikselleri **yerinde**
+  değiştirilir: tüyler de aynı dokudan renk alıyor, yalnız yüz malzemesinde
+  değiştirince kaş tüyün altında eski hâliyle kalıyordu. Ağız: `X` (kapalı) +
+  `gulumse` yalnız sağ yarıda (sırıtış). Duruş: eller belde (`sigma_poz.py`).
+  Taban ekleri birleşir: kep + Sigma = `rabi-sigma-kep.png` (`tabanYolu`,
+  `tumTabanlar`); yeni taban ekli eşya gelirse bütün birleşimleri çiz. Kaynak
+  `rabi_sigma.blend`, katmanlar `katman_sigma.py`.
 - **Gözlük ve bahçıvan botu yok** (kullanıcı kaldırttı, 2026-10-31: "sevmedim"); geri
   getirme. Kimlikleri (`gozluk`, `bot`) eski kayıtta kalabilir, `giyilenleriCoz` düşürür.
   Gözlük maddesindeki dersler güneş gözlüğü için de geçerli.

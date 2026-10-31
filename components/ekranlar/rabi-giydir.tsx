@@ -5,11 +5,11 @@ import { Check, Footprints, Glasses, GraduationCap, Pencil, Ribbon, type LucideI
 import { BaslikSatiri, Kart, kartGirisi } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import {
-  CIPLAK_RABI,
   ESYALAR,
   dokun,
   giyiliMi,
   katmanlar,
+  tumTabanlar,
   type Esya,
   type Giyilenler,
   type Yuva,
@@ -90,10 +90,7 @@ export function RabiGiydirEkrani({
 function useGorselleriOnYukle(): boolean {
   const [hazir, setHazir] = useState(false)
   useEffect(() => {
-    const dosyalar = [
-      CIPLAK_RABI,
-      ...ESYALAR.flatMap((e) => [e.gorsel, ...(e.taban ? [e.taban] : []), ...Object.values(e.tabanaGore ?? {})]),
-    ]
+    const dosyalar = [...tumTabanlar(), ...ESYALAR.flatMap((e) => [e.gorsel, ...Object.values(e.tabanaGore ?? {})])]
     let kalan = dosyalar.length
     let iptal = false
     const bitti = () => {

@@ -13,7 +13,7 @@
 
 export type Yuva = 'kafa' | 'kulak' | 'yuz' | 'boyun' | 'ayak'
 
-export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'kalem' | 'gunes' | 'papyon' | 'atki'
+export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'kalem' | 'gunes' | 'papyon' | 'atki' | 'sigma'
 
 export type Esya = {
   id: EsyaId
@@ -26,15 +26,16 @@ export type Esya = {
   /** Şimdilik hep 0 — arayüzde "Ücretsiz". */
   fiyat: number
   /**
-   * Bu eşya giyiliyken çıplak Rabi yerine alta konan Rabi. Kep takılınca bir
-   * kulak dik kalır, kepin altındaki öteki ortadan bükülür (kullanıcı dört
-   * seçenek arasından seçti). Eşya katmanı da bu Rabi'ye göre çizildi.
+   * Bu eşya giyiliyken alttaki Rabi'nin değişen yanı (dosya adı eki). Kepte bir
+   * kulak dik, öteki bükük (kullanıcı dört seçenek arasından seçti); Sigma'da
+   * yüz ve duruş değişir. İkisi birden giyilince ekler birleşir:
+   * `rabi-sigma-kep.png` (`tabanYolu`). Eşya katmanı da bu Rabi'ye göre çizildi.
    */
   taban?: string
   /**
-   * Alttaki Rabi değişince (ör. kepte bükük kulak) bu eşyanın o Rabi'ye göre
-   * çizilmiş katmanı: taban yolu → katman. Kulağa bağlı kalem kepte kulakla
-   * birlikte kayıyor; yoksa kulaktan ayrık dururdu.
+   * Alttaki Rabi değişince bu eşyanın ona göre çizilmiş katmanı: taban eki →
+   * katman. Kulağa bağlı kalem kepte kulakla birlikte kayıyor; yoksa kulaktan
+   * ayrık dururdu.
    */
   tabanaGore?: Readonly<Record<string, string>>
 }
@@ -62,7 +63,7 @@ export const ESYALAR: readonly Esya[] = [
     gorsel: '/giydir/kep.png',
     ikon: '/giydir/kep-ikon.png',
     fiyat: 0,
-    taban: '/giydir/rabi-kep.png',
+    taban: 'kep',
   },
   { id: 'bere', ad: 'Bere', yuva: 'kafa', gorsel: '/giydir/bere.png', ikon: '/giydir/bere-ikon.png', fiyat: 0 },
   { id: 'tac', ad: 'Taç', yuva: 'kafa', gorsel: '/giydir/tac.png', ikon: '/giydir/tac-ikon.png', fiyat: 0 },
@@ -74,11 +75,15 @@ export const ESYALAR: readonly Esya[] = [
     gorsel: '/giydir/kalem.png',
     ikon: '/giydir/kalem-ikon.png',
     fiyat: 0,
-    tabanaGore: { '/giydir/rabi-kep.png': '/giydir/kalem-kep.png' },
+    tabanaGore: { kep: '/giydir/kalem-kep.png' },
   },
   { id: 'gunes', ad: 'Güneş Gözlüğü', yuva: 'yuz', gorsel: '/giydir/gunes.png', ikon: '/giydir/gunes-ikon.png', fiyat: 0 },
   { id: 'papyon', ad: 'Papyon', yuva: 'boyun', gorsel: '/giydir/papyon.png', ikon: '/giydir/papyon-ikon.png', fiyat: 0 },
   { id: 'atki', ad: 'Atkı', yuva: 'boyun', gorsel: '/giydir/atki.png', ikon: '/giydir/atki-ikon.png', fiyat: 0 },
+  // Sigma paketi (kullanıcı istedi, 2026-10-31): katman altın zincir + "R" kolye;
+  // yarı kapalı gözler, çatık/kalkık kaş, sırıtış ve eller belde duruş tabanda.
+  // Zincir boyunda olduğu için papyon ve atkıyla aynı yuvada.
+  { id: 'sigma', ad: 'Sigma Rabi', yuva: 'boyun', gorsel: '/giydir/sigma.png', ikon: '/giydir/sigma-ikon.png', fiyat: 0, taban: 'sigma' },
 ]
 
 /**
@@ -126,11 +131,36 @@ export function dokun(giyilenler: Giyilenler, id: EsyaId): Giyilenler {
   return giyiliMi(giyilenler, id) ? cikar(giyilenler, esya.yuva) : giy(giyilenler, id)
 }
 
+/** Taban ekleri (katman sırasıyla) → alttaki Rabi'nin dosyası. Ek yoksa çıplak Rabi. */
+export function tabanYolu(ekler: readonly string[]): string {
+  return ekler.length === 0 ? CIPLAK_RABI : `/giydir/rabi-${ekler.join('-')}.png`
+}
+
+/**
+ * Bütün alttaki Rabi dosyaları: her taban ekli eşya için tek başına ve aynı
+ * yuvada olmayanlarla birlikte (ön yükleme listesi; render bunların hepsini
+ * üretmiş olmalı).
+ */
+export function tumTabanlar(): string[] {
+  const ekli = KATMAN_SIRASI.flatMap((yuva) => ESYALAR.filter((e) => e.yuva === yuva && e.taban))
+  const sonuc = new Set<string>([CIPLAK_RABI])
+  const gez = (i: number, secilen: Esya[]) => {
+    if (i === ekli.length) {
+      sonuc.add(tabanYolu(secilen.map((e) => e.taban as string)))
+      return
+    }
+    gez(i + 1, secilen)
+    if (!secilen.some((e) => e.yuva === ekli[i].yuva)) gez(i + 1, [...secilen, ekli[i]])
+  }
+  gez(0, [])
+  return [...sonuc]
+}
+
 /**
  * Önizlemenin katman dosyaları, alttan üste: önce Rabi, sonra eşyalar.
  *
- * Alttaki Rabi giyilen bir eşyanın `taban`ı olabilir (kepte bükük kulaklı
- * Rabi); bugün yalnız kepte var, ikisi birden olursa üstteki yuvanınki geçer.
+ * Alttaki Rabi, giyilen eşyaların `taban` eklerinden kurulur (kepte bükük
+ * kulak, Sigma'da yüz ve duruş; ikisi birlikte `rabi-sigma-kep.png`).
  */
 export function katmanlar(giyilenler: Giyilenler): string[] {
   const giyili = KATMAN_SIRASI.flatMap((yuva) => {
@@ -139,8 +169,12 @@ export function katmanlar(giyilenler: Giyilenler): string[] {
     // Yuvası tutmayan kayıt (elle kurcalanmış) çizilmiyor: kep ayak katmanına düşmesin.
     return esya && esya.yuva === yuva ? [esya] : []
   })
-  const taban = giyili.reduce<string>((t, e) => e.taban ?? t, CIPLAK_RABI)
-  return [taban, ...giyili.map((e) => e.tabanaGore?.[taban] ?? e.gorsel)]
+  const ekler = giyili.flatMap((e) => (e.taban ? [e.taban] : []))
+  const gorsel = (e: Esya) => {
+    const ek = ekler.find((x) => e.tabanaGore?.[x] !== undefined)
+    return ek === undefined ? e.gorsel : (e.tabanaGore?.[ek] ?? e.gorsel)
+  }
+  return [tabanYolu(ekler), ...giyili.map(gorsel)]
 }
 
 /**
