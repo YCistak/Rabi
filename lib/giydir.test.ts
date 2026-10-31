@@ -9,13 +9,12 @@ import {
   giyilenleriCoz,
   katmanlar,
   tabanYolu,
-  tumDurusGorselleri,
   tumTabanlar,
   type Giyilenler,
 } from './giydir'
 
 describe('katalog', () => {
-  it('sekiz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
+  it('dokuz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
     expect(ESYALAR.map((e) => [e.id, e.yuva])).toEqual([
       ['kep', 'kafa'],
       ['bere', 'kafa'],
@@ -24,8 +23,11 @@ describe('katalog', () => {
       ['gunes', 'yuz'],
       ['papyon', 'boyun'],
       ['atki', 'boyun'],
+      ['kolye', 'boyun'],
       ['sigma', 'boyun'],
     ])
+    // Yalnız Sigma hazır avatar; kolye onun eski zinciri, sıradan bir eşya.
+    expect(ESYALAR.filter((e) => e.hazir).map((e) => e.id)).toEqual(['sigma'])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
   })
 
@@ -89,30 +91,22 @@ describe('katmanlar', () => {
     expect(katmanlar({ kafa: 'kulaklik' })).toEqual([CIPLAK_RABI, '/giydir/kulaklik.png'])
   })
 
-  it('Sigma tabanı yüzü ve duruşu değiştirir; öbür eşyalar Sigma duruşundaki katmanına geçer', () => {
-    expect(katmanlar({ boyun: 'sigma' })).toEqual(['/giydir/rabi-sigma.png', '/giydir/sigma.png'])
-    expect(katmanlar({ boyun: 'sigma', kafa: 'kep', yuz: 'gunes' })).toEqual([
-      '/giydir/rabi-sigma-kep.png',
-      '/giydir/sigma.png',
-      '/giydir/gunes-sigma.png',
-      '/giydir/kep-sigma.png',
-    ])
-    expect(katmanlar({ boyun: 'sigma', kafa: 'bere' })).toEqual([
-      '/giydir/rabi-sigma-bere.png',
-      '/giydir/sigma.png',
-      '/giydir/bere-sigma.png',
-    ])
-    // Sigma çıkınca katmanlar düz duruşa döner
-    expect(katmanlar({ kafa: 'bere' })).toEqual(['/giydir/rabi-bere.png', '/giydir/bere.png'])
+  it('Sigma hazır avatar: tek katman, altında çıplak Rabi yok', () => {
+    expect(katmanlar({ boyun: 'sigma' })).toEqual(['/giydir/sigma.png'])
+    expect(katmanlar({ boyun: 'kolye', yuz: 'gunes' })).toEqual([CIPLAK_RABI, '/giydir/kolye.png', '/giydir/gunes.png'])
   })
 
-  it('Sigma duruş katmanları: boyun dışındaki her eşya için bir tane', () => {
-    expect(tumDurusGorselleri().sort()).toEqual(
-      ['kep', 'bere', 'tac', 'kulaklik', 'gunes'].map((id) => `/giydir/${id}-sigma.png`).sort(),
-    )
+  it('avatar seçilince bütün eşyalar çıkar; eşya seçilince avatar çıkar', () => {
+    const g = giy(giy({}, 'kep'), 'gunes')
+    const avatar = dokun(g, 'sigma')
+    expect(avatar).toEqual({ boyun: 'sigma' })
+    expect(giy(avatar, 'kep')).toEqual({ kafa: 'kep' })
+    expect(giy(avatar, 'kolye')).toEqual({ boyun: 'kolye' })
+    // Avatara ikinci dokunuş onu çıkarır, Rabi çıplak kalır
+    expect(dokun(avatar, 'sigma')).toEqual({})
   })
 
-  it('taban dosyaları: çıplak, tek ekli ve birleşik hâlleri', () => {
+  it('taban dosyaları: çıplak ve kafa eşyalarının kulak hâlleri', () => {
     expect(tabanYolu([])).toBe(CIPLAK_RABI)
     expect(tumTabanlar().sort()).toEqual(
       [
@@ -120,10 +114,6 @@ describe('katmanlar', () => {
         '/giydir/rabi-kep.png',
         '/giydir/rabi-bere.png',
         '/giydir/rabi-tac.png',
-        '/giydir/rabi-sigma.png',
-        '/giydir/rabi-sigma-kep.png',
-        '/giydir/rabi-sigma-bere.png',
-        '/giydir/rabi-sigma-tac.png',
       ].sort(),
     )
   })
@@ -150,6 +140,10 @@ describe('giyilenleriCoz', () => {
       giyilenleriCoz({ kafa: 'pelerin', yuz: 'kep', ayak: 'gunes', kuyruk: 'kep', gunes: 1 }),
     ).toEqual({})
     expect(giyilenleriCoz({ kafa: 7, yuz: { id: 'gunes' } })).toEqual({})
+  })
+
+  it('eski kayıtta avatarla birlikte giyilmiş eşyalar düşer, avatar kalır', () => {
+    expect(giyilenleriCoz({ boyun: 'sigma', kafa: 'kep', yuz: 'gunes' })).toEqual({ boyun: 'sigma' })
   })
 
   it('kaldırılan gözlük, bot ve kalemin eski kaydı düşer, kalan seçim korunur', () => {

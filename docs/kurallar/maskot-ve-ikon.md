@@ -124,7 +124,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
-  gözlüğü), boyun (papyon, atkı, Sigma); kulak ve ayak yuvaları boş. Kulakta kalem
+  gözlüğü), boyun (papyon, atkı, kolye); kulak ve ayak yuvaları boş; ayrıca hazır
+  avatar (Sigma). Kulakta kalem
   kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
   (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
   `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
@@ -137,23 +138,32 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   - Taç: büyük halka kafanın tepesine oturur, kulaklar **içinden** çıkar (kullanıcı
     istedi); kulaklar biraz içe toplanıp incelir (`TAC_KULAK`). Tepeler uzun (kısa
     tepeli taç tasma gibiydi).
-  - Taban ekli eşya her eklendiğinde Sigma birleşimi de çizilir (`katman_sigma2.py`).
-- **Sigma Rabi** (kullanıcı istedi, 2026-10-31): boyun yuvası; katmanı altın Kuba
-  zinciri + "R" kolye (`sigma.png`), yüz ve duruş tabanda (`taban: 'sigma'`).
-  Gözler ve kaşlar renk dokusuna boyalı (önden düz yansıtma, `rest_pos` x/z →
-  2048'lik doku); Sigma yüzü dokunun kopyasına çizilir (`sigma_doku.py`: yarı
-  kapak, kirpik çizgisi, sol kaş çatık, sağ kalkık). Doku pikselleri **yerinde**
-  değiştirilir: tüyler de aynı dokudan renk alıyor, yalnız yüz malzemesinde
-  değiştirince kaş tüyün altında eski hâliyle kalıyordu. Ağız: `X` (kapalı) +
-  `gulumse` yalnız sağ yarıda (sırıtış). Duruş (kullanıcı istedi, 2026-10-31):
-  kameraya hafif dönük (kök +18°), sağ el çene hattının altında ("jawline"), baş
-  22° yukarı; "eller belde" eli bozuk gösterdiği için bırakıldı. El bükülebilsin diye
-  yalnız bu sahnede `bilek.R` kemiği var (`sigma_poz.py`: `cene_goster`, `bilek_ekle`).
-  Duruş değiştiği için Sigma `durus: true`: öbür eşyalar `<id>-sigma.png`
-  katmanını kullanır (`kep-sigma.png`…); yeni eşya eklenince onun Sigma katmanı da
-  çizilir. Taban ekleri birleşir: kep + Sigma = `rabi-sigma-kep.png` (`tabanYolu`,
-  `tumTabanlar`). Kaynak `rabi_sigma2.blend`, kurulum `sigma2_kur.py`, katmanlar
-  `katman_sigma2.py`.
+  - Kolye: ilk Sigma paketinin altın Kuba zinciri + "R" ucu (`sigma_kur.py`); Sigma
+    avatar olunca kullanıcı **ayrı eşya** olarak kalmasını istedi (2026-10-31). Düz
+    duruşta çizilir: `kolye_kur.py` zinciri `rabi_giydir6.blend`e taşır, `katman4.py`.
+- **Sigma Rabi hazır avatar** (kullanıcı istedi, 2026-10-31): **özelleştirilemez**;
+  seçilince öbür eşyalar çıkar, eşya seçilince avatar çıkar (`hazir: true`, `giy`).
+  Tek görsel `sigma.png` (Rabi + takım + yer gölgesi, `katman_takim.py`); altında
+  çıplak Rabi yok. Eski kayıtta avatarla giyilmiş eşyalar `giyilenleriCoz`ta düşer.
+  Yuvası eski kayıtlar geçerli kalsın diye `boyun`. Eskiden eşyalar Sigma duruşuna
+  göre ayrıca çiziliyordu (`kep-sigma.png`, `rabi-sigma-kep.png`); kalktı.
+  - Kıyafet referansı: koyu takım, açık mavi gömlek, ince çizgili kırmızı kravat.
+    Ceket, klapa, gömlek, manşet ve pantolon gövde örgüsünün kopyasından kesilir
+    (`takim_kur.py` → `rabi_takim.blend`): aynı ağırlık ve Armature ile pozda kolla
+    birlikte bükülür. Kenarlar düzlemle kesilir ve düzlemdeki noktalar tutulur
+    (ağırlık eşiği ya da sınırdaki nokta atılınca kenar dişli/püsküllü çıkıyordu).
+    Ön V aşağıda geniş açılır: çene boynun önünü örtüyor, dar V'de gömlek ve kravat
+    görünmüyordu. Kumaşın altındaki tüy silinir (`tuy_yog` = 0), yoksa dışarı taşar.
+  - Yüz: gözler ve kaşlar renk dokusuna boyalı (önden düz yansıtma, `rest_pos` x/z →
+    2048'lik doku); Sigma yüzü dokunun kopyasına çizilir (`sigma_doku.py`: yarı
+    kapak, kirpik çizgisi, sol kaş çatık, sağ kalkık). Doku pikselleri **yerinde**
+    değiştirilir: tüyler de aynı dokudan renk alıyor, yalnız yüz malzemesinde
+    değiştirince kaş tüyün altında eski hâliyle kalıyordu. Ağız: `X` (kapalı) +
+    `gulumse` yalnız sağ yarıda (sırıtış).
+  - Duruş: kameraya hafif dönük (kök +18°), sağ el çene hattının altında
+    ("jawline"), baş 22° yukarı; "eller belde" eli bozuk gösterdiği için bırakıldı.
+    El bükülebilsin diye yalnız bu sahnede `bilek.R` kemiği var (`sigma_poz.py`:
+    `cene_goster`, `bilek_ekle`; sahne `sigma2_kur.py` → `rabi_sigma2.blend`).
 - **Gözlük ve bahçıvan botu yok** (kullanıcı kaldırttı, 2026-10-31: "sevmedim"); geri
   getirme. Kimlikleri (`gozluk`, `bot`) eski kayıtta kalabilir, `giyilenleriCoz` düşürür.
   Gözlük maddesindeki dersler güneş gözlüğü için de geçerli.

@@ -13,7 +13,7 @@
 
 export type Yuva = 'kafa' | 'kulak' | 'yuz' | 'boyun' | 'ayak'
 
-export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'gunes' | 'papyon' | 'atki' | 'sigma'
+export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'gunes' | 'papyon' | 'atki' | 'kolye' | 'sigma'
 
 export type Esya = {
   id: EsyaId
@@ -28,17 +28,16 @@ export type Esya = {
   /**
    * Bu eşya giyiliyken alttaki Rabi'nin değişen yanı (dosya adı eki). Kepte bir
    * kulak dik, öteki bükük (kullanıcı dört seçenek arasından seçti); berede
-   * kulaklar gizli; taçta kulaklar biraz toplanıp tacın içinden çıkar; Sigma'da
-   * yüz ve duruş değişir. İkisi birden giyilince ekler birleşir:
-   * `rabi-sigma-kep.png` (`tabanYolu`). Eşya katmanı da bu Rabi'ye göre çizildi.
+   * kulaklar gizli; taçta kulaklar biraz toplanıp tacın içinden çıkar. Eşya
+   * katmanı da bu Rabi'ye göre çizildi.
    */
   taban?: string
   /**
-   * Taban duruşu da değiştiriyor (Sigma: kameraya hafif dönük, eli çenede). O zaman
-   * öbür eşyalar başka yerde durur; her birinin o duruşa göre çizilmiş katmanı
-   * `<id>-<taban>.png` kullanılır (`kep-sigma.png`).
+   * Hazır avatar: tek başına giyilir, üstüne eşya eklenmez (kullanıcı istedi,
+   * 2026-10-31). `gorsel` avatarın tamamı; altında çıplak Rabi yok. Duruşu ve
+   * kıyafeti başka olduğu için öbür eşyaların ona göre çizilmiş hâli yok.
    */
-  durus?: boolean
+  hazir?: boolean
 }
 
 /** Yuva → giyilen eşya. Her yuvada en çok bir eşya: aynı yere iki şapka olmaz. */
@@ -73,19 +72,14 @@ export const ESYALAR: readonly Esya[] = [
   { id: 'gunes', ad: 'Güneş Gözlüğü', yuva: 'yuz', gorsel: '/giydir/gunes.png', ikon: '/giydir/gunes-ikon.png', fiyat: 0 },
   { id: 'papyon', ad: 'Papyon', yuva: 'boyun', gorsel: '/giydir/papyon.png', ikon: '/giydir/papyon-ikon.png', fiyat: 0 },
   { id: 'atki', ad: 'Atkı', yuva: 'boyun', gorsel: '/giydir/atki.png', ikon: '/giydir/atki-ikon.png', fiyat: 0 },
-  // Sigma paketi (kullanıcı istedi, 2026-10-31): katman altın zincir + "R" kolye;
-  // yarı kapalı gözler, çatık/kalkık kaş, sırıtış ve eller belde duruş tabanda.
-  // Zincir boyunda olduğu için papyon ve atkıyla aynı yuvada.
-  {
-    id: 'sigma',
-    ad: 'Sigma Rabi',
-    yuva: 'boyun',
-    gorsel: '/giydir/sigma.png',
-    ikon: '/giydir/sigma-ikon.png',
-    fiyat: 0,
-    taban: 'sigma',
-    durus: true,
-  },
+  // İlk Sigma paketinin altın zinciri + "R" ucu; Sigma takım elbiseli avatar olunca
+  // kullanıcı ayrı eşya olarak kalmasını istedi (2026-10-31).
+  { id: 'kolye', ad: 'Altın Kolye', yuva: 'boyun', gorsel: '/giydir/kolye.png', ikon: '/giydir/kolye-ikon.png', fiyat: 0 },
+  // Sigma Rabi hazır avatar (kullanıcı istedi, 2026-10-31): takım elbise, kırmızı
+  // kravat, yarı kapalı gözler, eli çene hattında. Yuvası eski kayıtlar (`boyun:
+  // 'sigma'`) geçerli kalsın diye boyun; `hazir` olduğu için yuvadan bağımsız
+  // olarak her şeyin yerini alır.
+  { id: 'sigma', ad: 'Sigma Rabi', yuva: 'boyun', gorsel: '/giydir/sigma.png', ikon: '/giydir/sigma-ikon.png', fiyat: 0, hazir: true },
 ]
 
 /**
@@ -106,11 +100,20 @@ export function giyiliMi(giyilenler: Giyilenler, id: EsyaId): boolean {
   return esya !== undefined && giyilenler[esya.yuva] === id
 }
 
-/** Eşyayı yuvasına giydirir; yuvada başka eşya varsa onun yerini alır. */
+/**
+ * Eşyayı yuvasına giydirir; yuvada başka eşya varsa onun yerini alır. Hazır avatar
+ * her şeyi çıkarır; avatar giyiliyken eşya giyilince avatar çıkar.
+ */
 export function giy(giyilenler: Giyilenler, id: EsyaId): Giyilenler {
   const esya = esyaBul(id)
   if (!esya) return giyilenler
-  return { ...giyilenler, [esya.yuva]: id }
+  if (esya.hazir) return { [esya.yuva]: id }
+  const sonraki: Giyilenler = {}
+  for (const yuva of KATMAN_SIRASI) {
+    const eski = giyilenler[yuva]
+    if (eski !== undefined && !esyaBul(eski)?.hazir) sonraki[yuva] = eski
+  }
+  return { ...sonraki, [esya.yuva]: id }
 }
 
 /** Yuvayı boşaltır. */
@@ -162,7 +165,7 @@ export function tumTabanlar(): string[] {
  * Önizlemenin katman dosyaları, alttan üste: önce Rabi, sonra eşyalar.
  *
  * Alttaki Rabi, giyilen eşyaların `taban` eklerinden kurulur (kepte bükük
- * kulak, Sigma'da yüz ve duruş; ikisi birlikte `rabi-sigma-kep.png`).
+ * kulak, berede gizli kulak). Hazır avatar giyiliyse tek katman odur.
  */
 export function katmanlar(giyilenler: Giyilenler): string[] {
   const giyili = KATMAN_SIRASI.flatMap((yuva) => {
@@ -171,21 +174,10 @@ export function katmanlar(giyilenler: Giyilenler): string[] {
     // Yuvası tutmayan kayıt (elle kurcalanmış) çizilmiyor: kep ayak katmanına düşmesin.
     return esya && esya.yuva === yuva ? [esya] : []
   })
+  const hazir = giyili.find((e) => e.hazir)
+  if (hazir) return [hazir.gorsel]
   const ekler = giyili.flatMap((e) => (e.taban ? [e.taban] : []))
-  const durus = giyili.find((e) => e.durus)
-  return [tabanYolu(ekler), ...giyili.map((e) => (durus && e !== durus ? durusGorseli(e, durus) : e.gorsel))]
-}
-
-/** Duruş değiştiren eşya giyiliyken öbür eşyanın o duruşa göre çizilmiş katmanı. */
-export function durusGorseli(esya: Esya, durus: Esya): string {
-  return esya.gorsel.replace(/\.png$/, `-${durus.taban}.png`)
-}
-
-/** Duruş değiştiren eşyalarla birlikte giyilebilecek eşyaların bütün duruş katmanları (ön yükleme). */
-export function tumDurusGorselleri(): string[] {
-  return ESYALAR.filter((d) => d.durus).flatMap((d) =>
-    ESYALAR.filter((e) => e.yuva !== d.yuva).map((e) => durusGorseli(e, d)),
-  )
+  return [tabanYolu(ekler), ...giyili.map((e) => e.gorsel)]
 }
 
 /**
@@ -202,7 +194,11 @@ export function giyilenleriCoz(ham: unknown): Giyilenler {
     const id = (ham as Record<string, unknown>)[yuva]
     if (typeof id !== 'string') continue
     const esya = esyaBul(id)
-    if (esya && esya.yuva === yuva) temiz[yuva] = esya.id
+    // Avatar eskiden eşyalarla birlikte giyilebiliyordu: eski kayıtta yalnız o kalır.
+    if (esya && esya.yuva === yuva) {
+      if (esya.hazir) return { [yuva]: esya.id }
+      temiz[yuva] = esya.id
+    }
   }
   return temiz
 }

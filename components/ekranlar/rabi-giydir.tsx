@@ -9,7 +9,6 @@ import {
   dokun,
   giyiliMi,
   katmanlar,
-  tumDurusGorselleri,
   tumTabanlar,
   type Esya,
   type Giyilenler,
@@ -65,22 +64,33 @@ export function RabiGiydirEkrani({
         </div>
       </Kart>
 
-      <h2 className="mb-2 px-1 font-display text-base font-extrabold tracking-tight">Eşyalar</h2>
-      <ul className="grid grid-cols-3 gap-2.5">
-        {ESYALAR.map((esya, sira) => (
-          <li key={esya.id}>
-            <EsyaKarti
-              esya={esya}
-              secili={giyiliMi(giyilenler, esya.id)}
-              sira={sira}
-              onSec={() => setGiyilenler((onceki) => dokun(onceki, esya.id))}
-            />
-          </li>
-        ))}
-      </ul>
+      {/* Hazır avatar ayrı başlıkta: eşyalarla birlikte giyilmiyor, seçince öbürleri çıkıyor. */}
+      {BOLUMLER.map(({ baslik, esyalar, ilkSira }) => (
+        <section key={baslik} className="mb-4">
+          <h2 className="mb-2 px-1 font-display text-base font-extrabold tracking-tight">{baslik}</h2>
+          <ul className="grid grid-cols-3 gap-2.5">
+            {esyalar.map((esya, sira) => (
+              <li key={esya.id}>
+                <EsyaKarti
+                  esya={esya}
+                  secili={giyiliMi(giyilenler, esya.id)}
+                  sira={ilkSira + sira}
+                  onSec={() => setGiyilenler((onceki) => dokun(onceki, esya.id))}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
     </div>
   )
 }
+
+const ESYA_LISTESI = ESYALAR.filter((e) => !e.hazir)
+const BOLUMLER = [
+  { baslik: 'Eşyalar', esyalar: ESYA_LISTESI, ilkSira: 0 },
+  { baslik: 'Hazır Avatar', esyalar: ESYALAR.filter((e) => e.hazir), ilkSira: ESYA_LISTESI.length },
+]
 
 /**
  * Çıplak Rabi ve bütün eşya görsellerini ekran açılınca yükler; hepsi bitince
@@ -91,7 +101,7 @@ export function RabiGiydirEkrani({
 function useGorselleriOnYukle(): boolean {
   const [hazir, setHazir] = useState(false)
   useEffect(() => {
-    const dosyalar = [...tumTabanlar(), ...ESYALAR.map((e) => e.gorsel), ...tumDurusGorselleri()]
+    const dosyalar = [...tumTabanlar(), ...ESYALAR.map((e) => e.gorsel)]
     let kalan = dosyalar.length
     let iptal = false
     const bitti = () => {
