@@ -559,7 +559,7 @@ function GiydirSatiri({ onAc }: { onAc: () => void }) {
         </span>
         <span className="min-w-0 flex-1">
           <span className="block font-display text-[15px] leading-tight font-extrabold">Rabi&apos;yi Giydir</span>
-          <span className="mt-0.5 block text-xs font-semibold text-muted-foreground">Kep, güneş gözlüğü</span>
+          <span className="mt-0.5 block text-xs font-semibold text-muted-foreground">Kep, bere, taç, atkı ve dahası</span>
         </span>
         <ChevronRight size={20} className="shrink-0 text-muted-foreground" aria-hidden />
       </button>

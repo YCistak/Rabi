@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Check, Footprints, Glasses, GraduationCap, type LucideIcon } from 'lucide-react'
+import { Check, Footprints, Glasses, GraduationCap, Pencil, Ribbon, type LucideIcon } from 'lucide-react'
 import { BaslikSatiri, Kart, kartGirisi } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import {
@@ -18,7 +18,9 @@ import {
 /** İkon dosyası yüklenemezse karta düşen çizgi simge — boş kutu kırık görünürdü. */
 const YUVA_SIMGESI: Record<Yuva, LucideIcon> = {
   kafa: GraduationCap,
+  kulak: Pencil,
   yuz: Glasses,
+  boyun: Ribbon,
   ayak: Footprints,
 }
 
@@ -88,7 +90,10 @@ export function RabiGiydirEkrani({
 function useGorselleriOnYukle(): boolean {
   const [hazir, setHazir] = useState(false)
   useEffect(() => {
-    const dosyalar = [CIPLAK_RABI, ...ESYALAR.flatMap((e) => (e.taban ? [e.gorsel, e.taban] : [e.gorsel]))]
+    const dosyalar = [
+      CIPLAK_RABI,
+      ...ESYALAR.flatMap((e) => [e.gorsel, ...(e.taban ? [e.taban] : []), ...Object.values(e.tabanaGore ?? {})]),
+    ]
     let kalan = dosyalar.length
     let iptal = false
     const bitti = () => {

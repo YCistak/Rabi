@@ -123,6 +123,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   oran orada gürültüye boğulup camın altında hayalet leke bırakıyordu.
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
+- **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), kulak (kalem),
+  yüz (güneş gözlüğü), boyun (papyon, atkı), ayak (boş). Yeni dördüncü tur eşyaları
+  `kur4.py` kurar (`rabi_giydir4.blend`; ortak yardımcılar `ortak.py`), `katman4.py`
+  çizer. Kulaklar dik olduğu için kafa eşyaları kulakların **önünden** geçer: kulaklık
+  bandı alnın üstünden, taç kulakların önünde (arka kenarı kulağa değmeyene dek öne
+  itilir); kafanın tepesinde iki kulak arasında boşluk yok denecek kadar dar.
+  - Bere: kulaksız kafadan kubbe, yukarı bollaşır, kulaklar içinden çıkar, tepede
+    ponpon. Kulak kılıfı denendi, kese kâğıdı gibi durdu. Bere ve kep katmanında
+    perçem gizlenir (yoksa önünde beyaz leke kalır).
+  - Kalem kulağa bağlı: kepte kulak büküldüğü için ikinci katmanı var
+    (`kalem-kep.png`, `Esya.tabanaGore`); `katman4.py ... kepli` kep pozunu
+    `rabi_giydir_buku.blend`'den kopyalayıp çizer.
 - **Gözlük ve bahçıvan botu yok** (kullanıcı kaldırttı, 2026-10-31: "sevmedim"); geri
   getirme. Kimlikleri (`gozluk`, `bot`) eski kayıtta kalabilir, `giyilenleriCoz` düşürür.
   Gözlük maddesindeki dersler güneş gözlüğü için de geçerli.

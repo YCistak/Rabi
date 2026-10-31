@@ -11,9 +11,9 @@
  * ödül veriyi uydurmaya iter. Kullanıcı eşyaları denemek için ücretsiz istedi.
  */
 
-export type Yuva = 'kafa' | 'yuz' | 'ayak'
+export type Yuva = 'kafa' | 'kulak' | 'yuz' | 'boyun' | 'ayak'
 
-export type EsyaId = 'kep' | 'gunes'
+export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'kalem' | 'gunes' | 'papyon' | 'atki'
 
 export type Esya = {
   id: EsyaId
@@ -31,6 +31,12 @@ export type Esya = {
    * seçenek arasından seçti). Eşya katmanı da bu Rabi'ye göre çizildi.
    */
   taban?: string
+  /**
+   * Alttaki Rabi değişince (ör. kepte bükük kulak) bu eşyanın o Rabi'ye göre
+   * çizilmiş katmanı: taban yolu → katman. Kulağa bağlı kalem kepte kulakla
+   * birlikte kayıyor; yoksa kulaktan ayrık dururdu.
+   */
+  tabanaGore?: Readonly<Record<string, string>>
 }
 
 /** Yuva → giyilen eşya. Her yuvada en çok bir eşya: aynı yere iki şapka olmaz. */
@@ -58,17 +64,31 @@ export const ESYALAR: readonly Esya[] = [
     fiyat: 0,
     taban: '/giydir/rabi-kep.png',
   },
+  { id: 'bere', ad: 'Bere', yuva: 'kafa', gorsel: '/giydir/bere.png', ikon: '/giydir/bere-ikon.png', fiyat: 0 },
+  { id: 'tac', ad: 'Taç', yuva: 'kafa', gorsel: '/giydir/tac.png', ikon: '/giydir/tac-ikon.png', fiyat: 0 },
+  { id: 'kulaklik', ad: 'Kulaklık', yuva: 'kafa', gorsel: '/giydir/kulaklik.png', ikon: '/giydir/kulaklik-ikon.png', fiyat: 0 },
+  {
+    id: 'kalem',
+    ad: 'Kulakta Kalem',
+    yuva: 'kulak',
+    gorsel: '/giydir/kalem.png',
+    ikon: '/giydir/kalem-ikon.png',
+    fiyat: 0,
+    tabanaGore: { '/giydir/rabi-kep.png': '/giydir/kalem-kep.png' },
+  },
   { id: 'gunes', ad: 'Güneş Gözlüğü', yuva: 'yuz', gorsel: '/giydir/gunes.png', ikon: '/giydir/gunes-ikon.png', fiyat: 0 },
+  { id: 'papyon', ad: 'Papyon', yuva: 'boyun', gorsel: '/giydir/papyon.png', ikon: '/giydir/papyon-ikon.png', fiyat: 0 },
+  { id: 'atki', ad: 'Atkı', yuva: 'boyun', gorsel: '/giydir/atki.png', ikon: '/giydir/atki-ikon.png', fiyat: 0 },
 ]
 
 /**
  * Katmanların alttan üste sırası (çıplak Rabi'nin üstünde).
  *
- * Sıra kullanıcının verdiği: ayak → yüz → kafa. Katmanların örtüşebileceği
- * tek yer başın çevresi (gözlüğün sapı ile kepin kenarı); orada kep üstte
- * kalmalı, sap kepin içinden geçiyor gibi görünmesin.
+ * Ayak → boyun → yüz → kulak → kafa. Katmanlar başın çevresinde örtüşür:
+ * şapka en üstte (kalemin ucu berenin altına girer, gözlük sapı kepin
+ * altında kalır); boyun eşyası çenenin altında, yüzün altında.
  */
-export const KATMAN_SIRASI: readonly Yuva[] = ['ayak', 'yuz', 'kafa']
+export const KATMAN_SIRASI: readonly Yuva[] = ['ayak', 'boyun', 'yuz', 'kulak', 'kafa']
 
 export function esyaBul(id: string): Esya | undefined {
   return ESYALAR.find((e) => e.id === id)
@@ -120,7 +140,7 @@ export function katmanlar(giyilenler: Giyilenler): string[] {
     return esya && esya.yuva === yuva ? [esya] : []
   })
   const taban = giyili.reduce<string>((t, e) => e.taban ?? t, CIPLAK_RABI)
-  return [taban, ...giyili.map((e) => e.gorsel)]
+  return [taban, ...giyili.map((e) => e.tabanaGore?.[taban] ?? e.gorsel)]
 }
 
 /**

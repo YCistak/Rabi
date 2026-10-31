@@ -12,10 +12,16 @@ import {
 } from './giydir'
 
 describe('katalog', () => {
-  it('iki eşya, her biri kendi yuvasında ve ücretsiz', () => {
+  it('sekiz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
     expect(ESYALAR.map((e) => [e.id, e.yuva])).toEqual([
       ['kep', 'kafa'],
+      ['bere', 'kafa'],
+      ['tac', 'kafa'],
+      ['kulaklik', 'kafa'],
+      ['kalem', 'kulak'],
       ['gunes', 'yuz'],
+      ['papyon', 'boyun'],
+      ['atki', 'boyun'],
     ])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
   })
@@ -44,6 +50,11 @@ describe('giy / cikar / dokun', () => {
     expect(cikar(g, 'ayak')).toBe(g)
   })
 
+  it('aynı yuvadaki ikinci eşya ilkinin yerini alır', () => {
+    expect(giy(giy({}, 'kep'), 'tac')).toEqual({ kafa: 'tac' })
+    expect(giy(giy({}, 'papyon'), 'atki')).toEqual({ boyun: 'atki' })
+  })
+
   it('aynı eşyaya ikinci dokunuş çıkarır', () => {
     const bir = dokun({}, 'gunes')
     expect(bir).toEqual({ yuz: 'gunes' })
@@ -66,6 +77,26 @@ describe('katmanlar', () => {
     const g = giy(giy({}, 'gunes'), 'kep')
     expect(katmanlar(g)).toEqual(['/giydir/rabi-kep.png', '/giydir/gunes.png', '/giydir/kep.png'])
     expect(katmanlar(cikar(g, 'kafa'))).toEqual([CIPLAK_RABI, '/giydir/gunes.png'])
+  })
+
+  it('sıra alttan üste: boyun → yüz → kulak → kafa', () => {
+    const g = giy(giy(giy(giy({}, 'bere'), 'kalem'), 'gunes'), 'atki')
+    expect(katmanlar(g)).toEqual([
+      CIPLAK_RABI,
+      '/giydir/atki.png',
+      '/giydir/gunes.png',
+      '/giydir/kalem.png',
+      '/giydir/bere.png',
+    ])
+  })
+
+  it("kepteyken kalem bükük kulaklı Rabi'ye göre çizilmiş katmanına geçer", () => {
+    expect(katmanlar({ kafa: 'kep', kulak: 'kalem' })).toEqual([
+      '/giydir/rabi-kep.png',
+      '/giydir/kalem-kep.png',
+      '/giydir/kep.png',
+    ])
+    expect(katmanlar({ kafa: 'tac', kulak: 'kalem' })).toEqual([CIPLAK_RABI, '/giydir/kalem.png', '/giydir/tac.png'])
   })
 
   it('yanlış yuvadaki eşyayı çizmez', () => {
