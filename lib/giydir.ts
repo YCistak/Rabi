@@ -13,7 +13,7 @@
 
 export type Yuva = 'kafa' | 'kulak' | 'yuz' | 'boyun' | 'ayak'
 
-export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'kalem' | 'gunes' | 'papyon' | 'atki' | 'sigma'
+export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'gunes' | 'papyon' | 'atki' | 'sigma'
 
 export type Esya = {
   id: EsyaId
@@ -27,17 +27,12 @@ export type Esya = {
   fiyat: number
   /**
    * Bu eşya giyiliyken alttaki Rabi'nin değişen yanı (dosya adı eki). Kepte bir
-   * kulak dik, öteki bükük (kullanıcı dört seçenek arasından seçti); Sigma'da
+   * kulak dik, öteki bükük (kullanıcı dört seçenek arasından seçti); berede
+   * kulaklar gizli; taçta kulaklar biraz toplanıp tacın içinden çıkar; Sigma'da
    * yüz ve duruş değişir. İkisi birden giyilince ekler birleşir:
    * `rabi-sigma-kep.png` (`tabanYolu`). Eşya katmanı da bu Rabi'ye göre çizildi.
    */
   taban?: string
-  /**
-   * Alttaki Rabi değişince bu eşyanın ona göre çizilmiş katmanı: taban eki →
-   * katman. Kulağa bağlı kalem kepte kulakla birlikte kayıyor; yoksa kulaktan
-   * ayrık dururdu.
-   */
-  tabanaGore?: Readonly<Record<string, string>>
 }
 
 /** Yuva → giyilen eşya. Her yuvada en çok bir eşya: aynı yere iki şapka olmaz. */
@@ -51,9 +46,10 @@ export const CIPLAK_RABI = '/giydir/rabi.png'
 /**
  * Listedeki sıra: baştan ayağa, göz yukarıdan aşağı tarıyor.
  *
- * Gözlük (`gozluk`) ve bahçıvan botu (`bot`) kullanıcı kaldırttı (2026-10-31);
- * kayıtta kalan eski seçim `giyilenleriCoz`ta sessizce düşer. Ayak yuvası
- * boş ama tip ve sırada duruyor: ileride ayağa eşya gelirse yeri hazır.
+ * Gözlük (`gozluk`), bahçıvan botu (`bot`) ve kulakta kalem (`kalem`) kullanıcı
+ * kaldırttı (2026-10-31); kayıtta kalan eski seçim `giyilenleriCoz`ta sessizce
+ * düşer. Kulak ve ayak yuvaları boş ama tip ve sırada duruyor: ileride eşya
+ * gelirse yeri hazır.
  */
 export const ESYALAR: readonly Esya[] = [
   {
@@ -65,18 +61,9 @@ export const ESYALAR: readonly Esya[] = [
     fiyat: 0,
     taban: 'kep',
   },
-  { id: 'bere', ad: 'Bere', yuva: 'kafa', gorsel: '/giydir/bere.png', ikon: '/giydir/bere-ikon.png', fiyat: 0 },
-  { id: 'tac', ad: 'Taç', yuva: 'kafa', gorsel: '/giydir/tac.png', ikon: '/giydir/tac-ikon.png', fiyat: 0 },
+  { id: 'bere', ad: 'Bere', yuva: 'kafa', gorsel: '/giydir/bere.png', ikon: '/giydir/bere-ikon.png', fiyat: 0, taban: 'bere' },
+  { id: 'tac', ad: 'Taç', yuva: 'kafa', gorsel: '/giydir/tac.png', ikon: '/giydir/tac-ikon.png', fiyat: 0, taban: 'tac' },
   { id: 'kulaklik', ad: 'Kulaklık', yuva: 'kafa', gorsel: '/giydir/kulaklik.png', ikon: '/giydir/kulaklik-ikon.png', fiyat: 0 },
-  {
-    id: 'kalem',
-    ad: 'Kulakta Kalem',
-    yuva: 'kulak',
-    gorsel: '/giydir/kalem.png',
-    ikon: '/giydir/kalem-ikon.png',
-    fiyat: 0,
-    tabanaGore: { kep: '/giydir/kalem-kep.png' },
-  },
   { id: 'gunes', ad: 'Güneş Gözlüğü', yuva: 'yuz', gorsel: '/giydir/gunes.png', ikon: '/giydir/gunes-ikon.png', fiyat: 0 },
   { id: 'papyon', ad: 'Papyon', yuva: 'boyun', gorsel: '/giydir/papyon.png', ikon: '/giydir/papyon-ikon.png', fiyat: 0 },
   { id: 'atki', ad: 'Atkı', yuva: 'boyun', gorsel: '/giydir/atki.png', ikon: '/giydir/atki-ikon.png', fiyat: 0 },
@@ -90,8 +77,8 @@ export const ESYALAR: readonly Esya[] = [
  * Katmanların alttan üste sırası (çıplak Rabi'nin üstünde).
  *
  * Ayak → boyun → yüz → kulak → kafa. Katmanlar başın çevresinde örtüşür:
- * şapka en üstte (kalemin ucu berenin altına girer, gözlük sapı kepin
- * altında kalır); boyun eşyası çenenin altında, yüzün altında.
+ * şapka en üstte (gözlük sapı kepin altında kalır); boyun eşyası çenenin
+ * altında, yüzün altında.
  */
 export const KATMAN_SIRASI: readonly Yuva[] = ['ayak', 'boyun', 'yuz', 'kulak', 'kafa']
 
@@ -170,11 +157,7 @@ export function katmanlar(giyilenler: Giyilenler): string[] {
     return esya && esya.yuva === yuva ? [esya] : []
   })
   const ekler = giyili.flatMap((e) => (e.taban ? [e.taban] : []))
-  const gorsel = (e: Esya) => {
-    const ek = ekler.find((x) => e.tabanaGore?.[x] !== undefined)
-    return ek === undefined ? e.gorsel : (e.tabanaGore?.[ek] ?? e.gorsel)
-  }
-  return [tabanYolu(ekler), ...giyili.map(gorsel)]
+  return [tabanYolu(ekler), ...giyili.map((e) => e.gorsel)]
 }
 
 /**

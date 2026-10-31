@@ -123,18 +123,21 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   oran orada gürültüye boğulup camın altında hayalet leke bırakıyordu.
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
-- **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), kulak (kalem),
-  yüz (güneş gözlüğü), boyun (papyon, atkı), ayak (boş). Yeni dördüncü tur eşyaları
-  `kur4.py` kurar (`rabi_giydir4.blend`; ortak yardımcılar `ortak.py`), `katman4.py`
-  çizer. Kulaklar dik olduğu için kafa eşyaları kulakların **önünden** geçer: kulaklık
-  bandı alnın üstünden, taç kulakların önünde (arka kenarı kulağa değmeyene dek öne
-  itilir); kafanın tepesinde iki kulak arasında boşluk yok denecek kadar dar.
-  - Bere: kulaksız kafadan kubbe, yukarı bollaşır, kulaklar içinden çıkar, tepede
-    ponpon. Kulak kılıfı denendi, kese kâğıdı gibi durdu. Bere ve kep katmanında
-    perçem gizlenir (yoksa önünde beyaz leke kalır).
-  - Kalem kulağa bağlı: kepte kulak büküldüğü için ikinci katmanı var
-    (`kalem-kep.png`, `Esya.tabanaGore`); `katman4.py ... kepli` kep pozunu
-    `rabi_giydir_buku.blend`'den kopyalayıp çizer.
+- **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
+  gözlüğü), boyun (papyon, atkı, Sigma); kulak ve ayak yuvaları boş. Kulakta kalem
+  kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
+  (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
+  `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
+  - Kulaklık: bant kulakların önünden geçer; kabuk kafanın **yüzey normaline** göre
+    oturur (sabit açıyla yastık bir kenardan havada kalıyordu).
+  - Bere: kulaklar **gizli** (kullanıcı istedi; yana sarkık ve içinden çıkan kulak
+    denendi). Gövde kafadan değil elipsoitten: kafayı şişirince tepe sivri, şapka gibi
+    duruyordu. Katlanmış fitilli ağız kafaya yapışık bant (simit kenar siper gibiydi),
+    kabarık ponpon. Bere ve kep katmanında perçem gizlenir.
+  - Taç: büyük halka kafanın tepesine oturur, kulaklar **içinden** çıkar (kullanıcı
+    istedi); kulaklar biraz içe toplanıp incelir (`TAC_KULAK`).
+  - Taban ekli eşya her eklendiğinde Sigma birleşimi de çizilir
+    (`katman_sigma_ek.py`: `rabi-sigma-bere.png`, `rabi-sigma-tac.png`).
 - **Sigma Rabi** (kullanıcı istedi, 2026-10-31): boyun yuvası; katmanı altın Kuba
   zinciri + "R" kolye (`sigma.png`), yüz ve duruş tabanda (`taban: 'sigma'`).
   Gözler ve kaşlar renk dokusuna boyalı (önden düz yansıtma, `rest_pos` x/z →

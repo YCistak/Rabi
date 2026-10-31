@@ -90,7 +90,7 @@ export function RabiGiydirEkrani({
 function useGorselleriOnYukle(): boolean {
   const [hazir, setHazir] = useState(false)
   useEffect(() => {
-    const dosyalar = [...tumTabanlar(), ...ESYALAR.flatMap((e) => [e.gorsel, ...Object.values(e.tabanaGore ?? {})])]
+    const dosyalar = [...tumTabanlar(), ...ESYALAR.map((e) => e.gorsel)]
     let kalan = dosyalar.length
     let iptal = false
     const bitti = () => {

@@ -14,13 +14,12 @@ import {
 } from './giydir'
 
 describe('katalog', () => {
-  it('dokuz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
+  it('sekiz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
     expect(ESYALAR.map((e) => [e.id, e.yuva])).toEqual([
       ['kep', 'kafa'],
       ['bere', 'kafa'],
       ['tac', 'kafa'],
       ['kulaklik', 'kafa'],
-      ['kalem', 'kulak'],
       ['gunes', 'yuz'],
       ['papyon', 'boyun'],
       ['atki', 'boyun'],
@@ -82,40 +81,32 @@ describe('katmanlar', () => {
     expect(katmanlar(cikar(g, 'kafa'))).toEqual([CIPLAK_RABI, '/giydir/gunes.png'])
   })
 
-  it('sıra alttan üste: boyun → yüz → kulak → kafa', () => {
-    const g = giy(giy(giy(giy({}, 'bere'), 'kalem'), 'gunes'), 'atki')
-    expect(katmanlar(g)).toEqual([
-      CIPLAK_RABI,
-      '/giydir/atki.png',
-      '/giydir/gunes.png',
-      '/giydir/kalem.png',
-      '/giydir/bere.png',
-    ])
+  it('sıra alttan üste: boyun → yüz → kafa; berede kulaklar gizli taban', () => {
+    const g = giy(giy(giy({}, 'bere'), 'gunes'), 'atki')
+    expect(katmanlar(g)).toEqual(['/giydir/rabi-bere.png', '/giydir/atki.png', '/giydir/gunes.png', '/giydir/bere.png'])
+    expect(katmanlar({ kafa: 'tac' })).toEqual(['/giydir/rabi-tac.png', '/giydir/tac.png'])
+    expect(katmanlar({ kafa: 'kulaklik' })).toEqual([CIPLAK_RABI, '/giydir/kulaklik.png'])
   })
 
-  it("kepteyken kalem bükük kulaklı Rabi'ye göre çizilmiş katmanına geçer", () => {
-    expect(katmanlar({ kafa: 'kep', kulak: 'kalem' })).toEqual([
-      '/giydir/rabi-kep.png',
-      '/giydir/kalem-kep.png',
-      '/giydir/kep.png',
-    ])
-    expect(katmanlar({ kafa: 'tac', kulak: 'kalem' })).toEqual([CIPLAK_RABI, '/giydir/kalem.png', '/giydir/tac.png'])
-  })
-
-  it('Sigma tabanı yüzü ve duruşu değiştirir; keple birlikte iki ek birleşir', () => {
+  it('Sigma tabanı yüzü ve duruşu değiştirir; şapkayla birlikte iki ek birleşir', () => {
     expect(katmanlar({ boyun: 'sigma' })).toEqual(['/giydir/rabi-sigma.png', '/giydir/sigma.png'])
-    expect(katmanlar({ boyun: 'sigma', kafa: 'kep', kulak: 'kalem' })).toEqual([
-      '/giydir/rabi-sigma-kep.png',
-      '/giydir/sigma.png',
-      '/giydir/kalem-kep.png',
-      '/giydir/kep.png',
-    ])
+    expect(katmanlar({ boyun: 'sigma', kafa: 'kep' })).toEqual(['/giydir/rabi-sigma-kep.png', '/giydir/sigma.png', '/giydir/kep.png'])
+    expect(katmanlar({ boyun: 'sigma', kafa: 'bere' })[0]).toBe('/giydir/rabi-sigma-bere.png')
   })
 
   it('taban dosyaları: çıplak, tek ekli ve birleşik hâlleri', () => {
     expect(tabanYolu([])).toBe(CIPLAK_RABI)
     expect(tumTabanlar().sort()).toEqual(
-      [CIPLAK_RABI, '/giydir/rabi-kep.png', '/giydir/rabi-sigma.png', '/giydir/rabi-sigma-kep.png'].sort(),
+      [
+        CIPLAK_RABI,
+        '/giydir/rabi-kep.png',
+        '/giydir/rabi-bere.png',
+        '/giydir/rabi-tac.png',
+        '/giydir/rabi-sigma.png',
+        '/giydir/rabi-sigma-kep.png',
+        '/giydir/rabi-sigma-bere.png',
+        '/giydir/rabi-sigma-tac.png',
+      ].sort(),
     )
   })
 
@@ -143,7 +134,7 @@ describe('giyilenleriCoz', () => {
     expect(giyilenleriCoz({ kafa: 7, yuz: { id: 'gunes' } })).toEqual({})
   })
 
-  it('kaldırılan gözlük ve botun eski kaydı düşer, kalan seçim korunur', () => {
-    expect(giyilenleriCoz({ kafa: 'kep', yuz: 'gozluk', ayak: 'bot' })).toEqual({ kafa: 'kep' })
+  it('kaldırılan gözlük, bot ve kalemin eski kaydı düşer, kalan seçim korunur', () => {
+    expect(giyilenleriCoz({ kafa: 'kep', yuz: 'gozluk', ayak: 'bot', kulak: 'kalem' })).toEqual({ kafa: 'kep' })
   })
 })
