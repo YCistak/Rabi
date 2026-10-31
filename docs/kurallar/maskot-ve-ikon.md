@@ -154,6 +154,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     (ağırlık eşiği ya da sınırdaki nokta atılınca kenar dişli/püsküllü çıkıyordu).
     Ön V aşağıda geniş açılır: çene boynun önünü örtüyor, dar V'de gömlek ve kravat
     görünmüyordu. Kumaşın altındaki tüy silinir (`tuy_yog` = 0), yoksa dışarı taşar.
+    Kenar zinciri kendi boyunca düzlenir (kesik üçgen örgüde testere dişi kalıyordu).
+    Yün dokusu ince lif gürültüsü: düz çapraz bant kıvrımlarda halka halka hare yaptı.
+  - Gözlük (kullanıcı istedi, 2026-10-31; "Degrade Film" seçildi, "Burunda Aşağı"
+    denendi): ince altın çerçeve, dar dikdörtgen cam; cam üstte açık altta koyu
+    (`dikey` niteliği), gözler üstten seçilir. Yansıma kısık (cilalı kaplama camı
+    beyaz lekeyle kaplıyordu). Baş pozda 22° yukarı olduğu için gözlük gözün
+    ortasından 0.07 aşağıda. Sap kafanın yan yüzeyini izler ve kulağa doğru yükselir
+    (kafaya dalan sap yüzün içinden geçen çubuk gibiydi); uzak sap çizilmez (yalnız
+    filmli camın arkasından çizgi olarak görünüyordu). `sigma_gozluk.py`.
+  - Gözlüklü avatarda **kaş yok** (kullanıcı kaldırttı): gözler camın arkasındayken
+    çatık kaş alında siyah leke gibi duruyordu (`sigma_kassiz.py`, doku
+    `rabi7_renk_dokusu_sigma_kassiz.png`).
   - Yüz: gözler ve kaşlar renk dokusuna boyalı (önden düz yansıtma, `rest_pos` x/z →
     2048'lik doku); Sigma yüzü dokunun kopyasına çizilir (`sigma_doku.py`: yarı
     kapak, kirpik çizgisi, sol kaş çatık, sağ kalkık). Doku pikselleri **yerinde**
