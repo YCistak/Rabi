@@ -120,6 +120,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   oran orada gürültüye boğulup camın altında hayalet leke bırakıyordu.
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
+- **Gözlük ve bahçıvan botu yok** (kullanıcı kaldırttı, 2026-10-31: "sevmedim"); geri
+  getirme. Kimlikleri (`gozluk`, `bot`) eski kayıtta kalabilir, `giyilenleriCoz` düşürür.
+  Gözlük maddesindeki dersler güneş gözlüğü için de geçerli.
 - Eşyalar ücretsiz, para birimi yok (kullanıcı denemek için istedi, 2026-10-30).
   Jeton eklenecekse önce [basarimlar.md](basarimlar.md) → "Seviye, havuç, mağaza yok".
 

@@ -13,7 +13,7 @@
 
 export type Yuva = 'kafa' | 'yuz' | 'ayak'
 
-export type EsyaId = 'kep' | 'gozluk' | 'gunes' | 'bot'
+export type EsyaId = 'kep' | 'gunes'
 
 export type Esya = {
   id: EsyaId
@@ -41,7 +41,13 @@ export const BOS_GIYILENLER: Giyilenler = {}
 /** Çıplak Rabi — her zaman en alttaki katman. */
 export const CIPLAK_RABI = '/giydir/rabi.png'
 
-/** Listedeki sıra: baştan ayağa, göz yukarıdan aşağı tarıyor. */
+/**
+ * Listedeki sıra: baştan ayağa, göz yukarıdan aşağı tarıyor.
+ *
+ * Gözlük (`gozluk`) ve bahçıvan botu (`bot`) kullanıcı kaldırttı (2026-10-31);
+ * kayıtta kalan eski seçim `giyilenleriCoz`ta sessizce düşer. Ayak yuvası
+ * boş ama tip ve sırada duruyor: ileride ayağa eşya gelirse yeri hazır.
+ */
 export const ESYALAR: readonly Esya[] = [
   {
     id: 'kep',
@@ -52,15 +58,13 @@ export const ESYALAR: readonly Esya[] = [
     fiyat: 0,
     taban: '/giydir/rabi-kep.png',
   },
-  { id: 'gozluk', ad: 'Gözlük', yuva: 'yuz', gorsel: '/giydir/gozluk.png', ikon: '/giydir/gozluk-ikon.png', fiyat: 0 },
   { id: 'gunes', ad: 'Güneş Gözlüğü', yuva: 'yuz', gorsel: '/giydir/gunes.png', ikon: '/giydir/gunes-ikon.png', fiyat: 0 },
-  { id: 'bot', ad: 'Bahçıvan Botu', yuva: 'ayak', gorsel: '/giydir/bot.png', ikon: '/giydir/bot-ikon.png', fiyat: 0 },
 ]
 
 /**
  * Katmanların alttan üste sırası (çıplak Rabi'nin üstünde).
  *
- * Sıra kullanıcının verdiği: bot → gözlük → kep. Katmanların örtüşebileceği
+ * Sıra kullanıcının verdiği: ayak → yüz → kafa. Katmanların örtüşebileceği
  * tek yer başın çevresi (gözlüğün sapı ile kepin kenarı); orada kep üstte
  * kalmalı, sap kepin içinden geçiyor gibi görünmesin.
  */

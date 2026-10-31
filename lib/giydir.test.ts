@@ -12,12 +12,10 @@ import {
 } from './giydir'
 
 describe('katalog', () => {
-  it('dört eşya, her biri kendi yuvasında ve ücretsiz', () => {
+  it('iki eşya, her biri kendi yuvasında ve ücretsiz', () => {
     expect(ESYALAR.map((e) => [e.id, e.yuva])).toEqual([
       ['kep', 'kafa'],
-      ['gozluk', 'yuz'],
       ['gunes', 'yuz'],
-      ['bot', 'ayak'],
     ])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
   })
@@ -32,30 +30,24 @@ describe('katalog', () => {
 
 describe('giy / cikar / dokun', () => {
   it('giy eşyayı yuvasına koyar, farklı yuvalar birlikte giyilir', () => {
-    const g = giy(giy({}, 'kep'), 'bot')
-    expect(g).toEqual({ kafa: 'kep', ayak: 'bot' })
+    const g = giy(giy({}, 'kep'), 'gunes')
+    expect(g).toEqual({ kafa: 'kep', yuz: 'gunes' })
     expect(giyiliMi(g, 'kep')).toBe(true)
-    expect(giyiliMi(g, 'gozluk')).toBe(false)
+    expect(giyiliMi(cikar(g, 'yuz'), 'gunes')).toBe(false)
   })
 
   it('cikar yuvayı boşaltır, girdiyi değiştirmez', () => {
-    const g: Giyilenler = { kafa: 'kep', yuz: 'gozluk' }
-    expect(cikar(g, 'kafa')).toEqual({ yuz: 'gozluk' })
-    expect(g).toEqual({ kafa: 'kep', yuz: 'gozluk' })
+    const g: Giyilenler = { kafa: 'kep', yuz: 'gunes' }
+    expect(cikar(g, 'kafa')).toEqual({ yuz: 'gunes' })
+    expect(g).toEqual({ kafa: 'kep', yuz: 'gunes' })
     // Boş yuvayı çıkarmak aynı nesneyi döndürür (gereksiz yeniden çizim yok).
     expect(cikar(g, 'ayak')).toBe(g)
   })
 
   it('aynı eşyaya ikinci dokunuş çıkarır', () => {
-    const bir = dokun({}, 'gozluk')
-    expect(bir).toEqual({ yuz: 'gozluk' })
-    expect(dokun(bir, 'gozluk')).toEqual({})
-  })
-
-  it('güneş gözlüğü gözlüğün yerini alır (aynı yuva)', () => {
-    const g = giy(giy({}, 'gozluk'), 'gunes')
-    expect(g).toEqual({ yuz: 'gunes' })
-    expect(giyiliMi(g, 'gozluk')).toBe(false)
+    const bir = dokun({}, 'gunes')
+    expect(bir).toEqual({ yuz: 'gunes' })
+    expect(dokun(bir, 'gunes')).toEqual({})
   })
 
   it('bilinmeyen kimlik bir şey değiştirmez', () => {
@@ -70,18 +62,8 @@ describe('katmanlar', () => {
     expect(katmanlar({})).toEqual([CIPLAK_RABI])
   })
 
-  it('sıra alttan üste: rabi → bot → gözlük → kep, giyme sırasından bağımsız', () => {
-    const g = giy(giy(giy({}, 'kep'), 'gozluk'), 'bot')
-    expect(katmanlar(g)).toEqual([
-      '/giydir/rabi-kep.png',
-      '/giydir/bot.png',
-      '/giydir/gozluk.png',
-      '/giydir/kep.png',
-    ])
-  })
-
-  it('kep takılıyken alttaki Rabi sarkık kulaklı olan, çıkınca dik kulaklıya döner', () => {
-    const g = giy(giy({}, 'kep'), 'gunes')
+  it('sıra rabi → güneş gözlüğü → kep; kep takılıyken alttaki Rabi kepli olan, çıkınca çıplak', () => {
+    const g = giy(giy({}, 'gunes'), 'kep')
     expect(katmanlar(g)).toEqual(['/giydir/rabi-kep.png', '/giydir/gunes.png', '/giydir/kep.png'])
     expect(katmanlar(cikar(g, 'kafa'))).toEqual([CIPLAK_RABI, '/giydir/gunes.png'])
   })
@@ -94,7 +76,7 @@ describe('katmanlar', () => {
 
 describe('giyilenleriCoz', () => {
   it('geçerli kaydı olduğu gibi okur', () => {
-    expect(giyilenleriCoz({ kafa: 'kep', ayak: 'bot' })).toEqual({ kafa: 'kep', ayak: 'bot' })
+    expect(giyilenleriCoz({ kafa: 'kep', yuz: 'gunes' })).toEqual({ kafa: 'kep', yuz: 'gunes' })
   })
 
   it('bozuk kayıtta boş döner', () => {
@@ -105,8 +87,12 @@ describe('giyilenleriCoz', () => {
 
   it('bilinmeyen eşyayı, yanlış yuvayı ve bilinmeyen alanı düşürür', () => {
     expect(
-      giyilenleriCoz({ kafa: 'pelerin', yuz: 'bot', ayak: 'bot', kuyruk: 'kep', gozluk: 1 }),
-    ).toEqual({ ayak: 'bot' })
-    expect(giyilenleriCoz({ kafa: 7, yuz: { id: 'gozluk' } })).toEqual({})
+      giyilenleriCoz({ kafa: 'pelerin', yuz: 'kep', ayak: 'gunes', kuyruk: 'kep', gunes: 1 }),
+    ).toEqual({})
+    expect(giyilenleriCoz({ kafa: 7, yuz: { id: 'gunes' } })).toEqual({})
+  })
+
+  it('kaldırılan gözlük ve botun eski kaydı düşer, kalan seçim korunur', () => {
+    expect(giyilenleriCoz({ kafa: 'kep', yuz: 'gozluk', ayak: 'bot' })).toEqual({ kafa: 'kep' })
   })
 })

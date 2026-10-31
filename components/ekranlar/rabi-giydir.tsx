@@ -113,7 +113,7 @@ function useGorselleriOnYukle(): boolean {
  * önizlemenin ortasında kırık görsel simgesi durmasın.
  *
  * Eşya katmanı yalnız opaklıkla gelir (`esya-solma`); `acilir-giris` gibi
- * konum oynatsaydı kep/gözlük/bot 200 ms vücuttan ayrık dururdu. `key` dosya
+ * konum oynatsaydı kep/gözlük 200 ms vücuttan ayrık dururdu. `key` dosya
  * yolu olduğu için yalnız yeni giyilen katman oynar. Çıplak Rabi oynamaz.
  */
 function Katman({ src, ilk }: { src: string; ilk: boolean }) {
