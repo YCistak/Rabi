@@ -94,9 +94,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 - Ekran `components/ekranlar/rabi-giydir.tsx`, kurallar `lib/giydir.ts`, kayıt
   `rabi-giydir`. Kaynak model Blender'da (`rabi8_iskelet.blend` + eşyalar,
-  `rabi_giydir3.blend`; kurulum `kur3.py`, katmanlar `katman3.py`, kulak pozu
-  `sarkik.py`, hepsi `giydir-betikleri/` içinde; depoda değil,
-  `Desktop\rabi_tavsan_model`).
+  `rabi_giydir3.blend`; kurulum `kur3.py`, katmanlar `katman3.py`; kep ve kepli
+  Rabi `secenek.py buku` ile alınır (sonucu `rabi_giydir_buku.blend`). Betikler
+  `giydir-betikleri/` içinde; depoda değil, `Desktop\rabi_tavsan_model`).
 - Görseller `public/giydir/`: `rabi.png` + eşya başına tam tuval katman (900×1100,
   **aynı kamera**) ve 256'lık `-ikon.png`. Eşya katmanı Rabi "holdout" iken render
   alınır: Rabi görünmez ama önünde kaldığı yerde eşyayı keser, böylece katmanlar
@@ -107,10 +107,13 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   katmanının altına yarı saydam siyah olarak gömülür; gölgesiz eşya yapıştırılmış
   gibi duruyordu. Yer gölgesi ayağın altında elipse kırpılır: anahtar ışık gölgeyi
   sola uzun bir kama gibi atıyor, kartın köşesini karartıyordu.
-- **Kepte kulaklar yana sarkık** (kullanıcı istedi, 2026-10-31): dik kulak kepin
-  içinden çıkınca da, kulak hiç olmayınca da kötü duruyordu. Kep giyiliyken alttaki
-  Rabi `rabi-kep.png` (`Esya.taban`); kep katmanı da o pozla alınır. Tahta sarkık
-  kulak kökünün üstüne oturur, yoksa kök tahtayı delip beyaz çizik bırakıyor.
+- **Kepte "Bükük Kulak"** (kullanıcı seçti, 2026-10-31): kep küçülüp (0,7) sağa
+  kayar ve o yana eğilir; sol kulak dik, kepin altındaki sağ kulak ortadan aşağı
+  katlanır. Denenip beğenilmeyenler: kulak kepin içinden dik, kulaksız, iki yana
+  sarkık, mini kep, geriye yatık, tahtada kulak yuvası. Kep giyiliyken alttaki Rabi
+  `rabi-kep.png` (`Esya.taban`); kep katmanı da o pozla alınır. Dik kulak tahtaya
+  değmeyene dek kep sağa itilir, kulak kökü tahtayı deliyorsa tahta yukarı itilir
+  (yoksa beyaz çizik kalır).
 - **Gözlük camı gözü kapağıyla birlikte içine alır:** küçük camda kapak çizgisi
   çerçevenin dışına taşıp çift çizgi gibi duruyordu. Saplar menteşeden hemen başa
   dalar (yanakta çubuk gibi görünüyordu), camda parıltı şeridi yok (çizik gibi

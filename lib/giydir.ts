@@ -26,9 +26,9 @@ export type Esya = {
   /** Şimdilik hep 0 — arayüzde "Ücretsiz". */
   fiyat: number
   /**
-   * Bu eşya giyiliyken çıplak Rabi yerine alta konan Rabi. Kep takılınca
-   * kulaklar yana sarkıyor: dik kulak kepin içinden çıkınca da, kulak hiç
-   * olmayınca da kötü duruyordu. Eşya katmanı da bu Rabi'ye göre çizildi.
+   * Bu eşya giyiliyken çıplak Rabi yerine alta konan Rabi. Kep takılınca bir
+   * kulak dik kalır, kepin altındaki öteki ortadan bükülür (kullanıcı dört
+   * seçenek arasından seçti). Eşya katmanı da bu Rabi'ye göre çizildi.
    */
   taban?: string
 }
@@ -109,7 +109,7 @@ export function dokun(giyilenler: Giyilenler, id: EsyaId): Giyilenler {
 /**
  * Önizlemenin katman dosyaları, alttan üste: önce Rabi, sonra eşyalar.
  *
- * Alttaki Rabi giyilen bir eşyanın `taban`ı olabilir (kepte sarkık kulaklı
+ * Alttaki Rabi giyilen bir eşyanın `taban`ı olabilir (kepte bükük kulaklı
  * Rabi); bugün yalnız kepte var, ikisi birden olursa üstteki yuvanınki geçer.
  */
 export function katmanlar(giyilenler: Giyilenler): string[] {
