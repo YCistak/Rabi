@@ -33,6 +33,12 @@ export type Esya = {
    * `rabi-sigma-kep.png` (`tabanYolu`). Eşya katmanı da bu Rabi'ye göre çizildi.
    */
   taban?: string
+  /**
+   * Taban duruşu da değiştiriyor (Sigma: kameraya hafif dönük, eli çenede). O zaman
+   * öbür eşyalar başka yerde durur; her birinin o duruşa göre çizilmiş katmanı
+   * `<id>-<taban>.png` kullanılır (`kep-sigma.png`).
+   */
+  durus?: boolean
 }
 
 /** Yuva → giyilen eşya. Her yuvada en çok bir eşya: aynı yere iki şapka olmaz. */
@@ -70,7 +76,16 @@ export const ESYALAR: readonly Esya[] = [
   // Sigma paketi (kullanıcı istedi, 2026-10-31): katman altın zincir + "R" kolye;
   // yarı kapalı gözler, çatık/kalkık kaş, sırıtış ve eller belde duruş tabanda.
   // Zincir boyunda olduğu için papyon ve atkıyla aynı yuvada.
-  { id: 'sigma', ad: 'Sigma Rabi', yuva: 'boyun', gorsel: '/giydir/sigma.png', ikon: '/giydir/sigma-ikon.png', fiyat: 0, taban: 'sigma' },
+  {
+    id: 'sigma',
+    ad: 'Sigma Rabi',
+    yuva: 'boyun',
+    gorsel: '/giydir/sigma.png',
+    ikon: '/giydir/sigma-ikon.png',
+    fiyat: 0,
+    taban: 'sigma',
+    durus: true,
+  },
 ]
 
 /**
@@ -157,7 +172,20 @@ export function katmanlar(giyilenler: Giyilenler): string[] {
     return esya && esya.yuva === yuva ? [esya] : []
   })
   const ekler = giyili.flatMap((e) => (e.taban ? [e.taban] : []))
-  return [tabanYolu(ekler), ...giyili.map((e) => e.gorsel)]
+  const durus = giyili.find((e) => e.durus)
+  return [tabanYolu(ekler), ...giyili.map((e) => (durus && e !== durus ? durusGorseli(e, durus) : e.gorsel))]
+}
+
+/** Duruş değiştiren eşya giyiliyken öbür eşyanın o duruşa göre çizilmiş katmanı. */
+export function durusGorseli(esya: Esya, durus: Esya): string {
+  return esya.gorsel.replace(/\.png$/, `-${durus.taban}.png`)
+}
+
+/** Duruş değiştiren eşyalarla birlikte giyilebilecek eşyaların bütün duruş katmanları (ön yükleme). */
+export function tumDurusGorselleri(): string[] {
+  return ESYALAR.filter((d) => d.durus).flatMap((d) =>
+    ESYALAR.filter((e) => e.yuva !== d.yuva).map((e) => durusGorseli(e, d)),
+  )
 }
 
 /**

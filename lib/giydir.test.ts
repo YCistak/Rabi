@@ -9,6 +9,7 @@ import {
   giyilenleriCoz,
   katmanlar,
   tabanYolu,
+  tumDurusGorselleri,
   tumTabanlar,
   type Giyilenler,
 } from './giydir'
@@ -88,10 +89,27 @@ describe('katmanlar', () => {
     expect(katmanlar({ kafa: 'kulaklik' })).toEqual([CIPLAK_RABI, '/giydir/kulaklik.png'])
   })
 
-  it('Sigma tabanı yüzü ve duruşu değiştirir; şapkayla birlikte iki ek birleşir', () => {
+  it('Sigma tabanı yüzü ve duruşu değiştirir; öbür eşyalar Sigma duruşundaki katmanına geçer', () => {
     expect(katmanlar({ boyun: 'sigma' })).toEqual(['/giydir/rabi-sigma.png', '/giydir/sigma.png'])
-    expect(katmanlar({ boyun: 'sigma', kafa: 'kep' })).toEqual(['/giydir/rabi-sigma-kep.png', '/giydir/sigma.png', '/giydir/kep.png'])
-    expect(katmanlar({ boyun: 'sigma', kafa: 'bere' })[0]).toBe('/giydir/rabi-sigma-bere.png')
+    expect(katmanlar({ boyun: 'sigma', kafa: 'kep', yuz: 'gunes' })).toEqual([
+      '/giydir/rabi-sigma-kep.png',
+      '/giydir/sigma.png',
+      '/giydir/gunes-sigma.png',
+      '/giydir/kep-sigma.png',
+    ])
+    expect(katmanlar({ boyun: 'sigma', kafa: 'bere' })).toEqual([
+      '/giydir/rabi-sigma-bere.png',
+      '/giydir/sigma.png',
+      '/giydir/bere-sigma.png',
+    ])
+    // Sigma çıkınca katmanlar düz duruşa döner
+    expect(katmanlar({ kafa: 'bere' })).toEqual(['/giydir/rabi-bere.png', '/giydir/bere.png'])
+  })
+
+  it('Sigma duruş katmanları: boyun dışındaki her eşya için bir tane', () => {
+    expect(tumDurusGorselleri().sort()).toEqual(
+      ['kep', 'bere', 'tac', 'kulaklik', 'gunes'].map((id) => `/giydir/${id}-sigma.png`).sort(),
+    )
   })
 
   it('taban dosyaları: çıplak, tek ekli ve birleşik hâlleri', () => {

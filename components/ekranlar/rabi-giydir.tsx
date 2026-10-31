@@ -9,6 +9,7 @@ import {
   dokun,
   giyiliMi,
   katmanlar,
+  tumDurusGorselleri,
   tumTabanlar,
   type Esya,
   type Giyilenler,
@@ -90,7 +91,7 @@ export function RabiGiydirEkrani({
 function useGorselleriOnYukle(): boolean {
   const [hazir, setHazir] = useState(false)
   useEffect(() => {
-    const dosyalar = [...tumTabanlar(), ...ESYALAR.map((e) => e.gorsel)]
+    const dosyalar = [...tumTabanlar(), ...ESYALAR.map((e) => e.gorsel), ...tumDurusGorselleri()]
     let kalan = dosyalar.length
     let iptal = false
     const bitti = () => {

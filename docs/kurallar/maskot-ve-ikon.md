@@ -135,9 +135,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     duruyordu. Katlanmış fitilli ağız kafaya yapışık bant (simit kenar siper gibiydi),
     kabarık ponpon. Bere ve kep katmanında perçem gizlenir.
   - Taç: büyük halka kafanın tepesine oturur, kulaklar **içinden** çıkar (kullanıcı
-    istedi); kulaklar biraz içe toplanıp incelir (`TAC_KULAK`).
-  - Taban ekli eşya her eklendiğinde Sigma birleşimi de çizilir
-    (`katman_sigma_ek.py`: `rabi-sigma-bere.png`, `rabi-sigma-tac.png`).
+    istedi); kulaklar biraz içe toplanıp incelir (`TAC_KULAK`). Tepeler uzun (kısa
+    tepeli taç tasma gibiydi).
+  - Taban ekli eşya her eklendiğinde Sigma birleşimi de çizilir (`katman_sigma2.py`).
 - **Sigma Rabi** (kullanıcı istedi, 2026-10-31): boyun yuvası; katmanı altın Kuba
   zinciri + "R" kolye (`sigma.png`), yüz ve duruş tabanda (`taban: 'sigma'`).
   Gözler ve kaşlar renk dokusuna boyalı (önden düz yansıtma, `rest_pos` x/z →
@@ -145,10 +145,15 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   kapak, kirpik çizgisi, sol kaş çatık, sağ kalkık). Doku pikselleri **yerinde**
   değiştirilir: tüyler de aynı dokudan renk alıyor, yalnız yüz malzemesinde
   değiştirince kaş tüyün altında eski hâliyle kalıyordu. Ağız: `X` (kapalı) +
-  `gulumse` yalnız sağ yarıda (sırıtış). Duruş: eller belde (`sigma_poz.py`).
-  Taban ekleri birleşir: kep + Sigma = `rabi-sigma-kep.png` (`tabanYolu`,
-  `tumTabanlar`); yeni taban ekli eşya gelirse bütün birleşimleri çiz. Kaynak
-  `rabi_sigma.blend`, katmanlar `katman_sigma.py`.
+  `gulumse` yalnız sağ yarıda (sırıtış). Duruş (kullanıcı istedi, 2026-10-31):
+  kameraya hafif dönük (kök +18°), sağ el çene hattının altında ("jawline"), baş
+  22° yukarı; "eller belde" eli bozuk gösterdiği için bırakıldı. El bükülebilsin diye
+  yalnız bu sahnede `bilek.R` kemiği var (`sigma_poz.py`: `cene_goster`, `bilek_ekle`).
+  Duruş değiştiği için Sigma `durus: true`: öbür eşyalar `<id>-sigma.png`
+  katmanını kullanır (`kep-sigma.png`…); yeni eşya eklenince onun Sigma katmanı da
+  çizilir. Taban ekleri birleşir: kep + Sigma = `rabi-sigma-kep.png` (`tabanYolu`,
+  `tumTabanlar`). Kaynak `rabi_sigma2.blend`, kurulum `sigma2_kur.py`, katmanlar
+  `katman_sigma2.py`.
 - **Gözlük ve bahçıvan botu yok** (kullanıcı kaldırttı, 2026-10-31: "sevmedim"); geri
   getirme. Kimlikleri (`gozluk`, `bot`) eski kayıtta kalabilir, `giyilenleriCoz` düşürür.
   Gözlük maddesindeki dersler güneş gözlüğü için de geçerli.
