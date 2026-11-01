@@ -89,7 +89,7 @@ export function RabiGiydirEkrani({
 const ESYA_LISTESI = ESYALAR.filter((e) => !e.hazir)
 const BOLUMLER = [
   { baslik: 'Eşyalar', esyalar: ESYA_LISTESI, ilkSira: 0 },
-  { baslik: 'Hazır Avatar', esyalar: ESYALAR.filter((e) => e.hazir), ilkSira: ESYA_LISTESI.length },
+  { baslik: 'Hazır Avatarlar', esyalar: ESYALAR.filter((e) => e.hazir), ilkSira: ESYA_LISTESI.length },
 ]
 
 /**

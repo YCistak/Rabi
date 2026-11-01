@@ -124,8 +124,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
-  gözlüğü), boyun (papyon, atkı, kolye); kulak ve ayak yuvaları boş; ayrıca hazır
-  avatar (Sigma). Kulakta kalem
+  gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye); kulak ve ayak
+  yuvaları boş; ayrıca hazır avatarlar (Sigma, Lock In, Gece Kuşu, Sokak Stili, Oyuncu). Kulakta kalem
   kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
   (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
   `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
@@ -141,6 +141,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   - Kolye: ilk Sigma paketinin altın Kuba zinciri + "R" ucu (`sigma_kur.py`); Sigma
     avatar olunca kullanıcı **ayrı eşya** olarak kalmasını istedi (2026-10-31). Düz
     duruşta çizilir: `kolye_kur.py` zinciri `rabi_giydir6.blend`e taşır, `katman4.py`.
+  - Allah yazılı kolye (kullanıcı istedi, 2026-11-01; referans: taşlı gümüş Küba zinciri):
+    `lafza_kur.py` → `rabi_giydir7.blend`, `katman4.py`. Lafız tek glif **U+FDF2**
+    (Blender metni Arapça harfleri birleştirmiyor; hazır ligatür doğru yazılışı garanti
+    eder), Tahoma Bold (en dolgun hat). Taşlı malzeme: küçük Voronoi taşları, hafif
+    rastgele eğim + az sayıda ışıyan taş; yalnız eğimle yapınca taşlar kararıp yakından
+    çatlak boya gibi duruyordu. Uç askıya 1 cm girer (az girince havada asılı kalıyordu),
+    şedde askının tam altında (askı şeddeyi örtüyordu).
+- **Hazır avatarlar** (kullanıcı istedi, 2026-11-01): Sigma'ya ek Lock In Rabi (`odak`),
+  Gece Kuşu (`gecekusu`), Sokak Stili (`sokak`), Oyuncu Rabi (`oyuncu`); hepsi tek
+  görsel, `hazir: true`, yuva kayıt biçimi için `boyun`. Her biri kendi sahnesinde
+  (`rabi_<id>.blend`, `<id>_kur.py`, `<id>_katman.py`); ortak üretim rehberi
+  `giydir-betikleri/AVATAR_REHBER.md` (kamera, kalite dersleri).
 - **Sigma Rabi hazır avatar** (kullanıcı istedi, 2026-10-31): **özelleştirilemez**;
   seçilince öbür eşyalar çıkar, eşya seçilince avatar çıkar (`hazir: true`, `giy`).
   Tek görsel `sigma.png` (Rabi + takım + yer gölgesi, `katman_takim.py`); altında

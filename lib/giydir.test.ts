@@ -14,7 +14,7 @@ import {
 } from './giydir'
 
 describe('katalog', () => {
-  it('dokuz eşya, baştan aşağı sıralı, her biri kendi yuvasında ve ücretsiz', () => {
+  it('eşyalar baştan aşağı sıralı, hazır avatarlar sonda; her biri kendi yuvasında ve ücretsiz', () => {
     expect(ESYALAR.map((e) => [e.id, e.yuva])).toEqual([
       ['kep', 'kafa'],
       ['bere', 'kafa'],
@@ -24,10 +24,15 @@ describe('katalog', () => {
       ['papyon', 'boyun'],
       ['atki', 'boyun'],
       ['kolye', 'boyun'],
+      ['lafza', 'boyun'],
       ['sigma', 'boyun'],
+      ['odak', 'boyun'],
+      ['gecekusu', 'boyun'],
+      ['sokak', 'boyun'],
+      ['oyuncu', 'boyun'],
     ])
-    // Yalnız Sigma hazır avatar; kolye onun eski zinciri, sıradan bir eşya.
-    expect(ESYALAR.filter((e) => e.hazir).map((e) => e.id)).toEqual(['sigma'])
+    // Kolyeler sıradan eşya; hazır avatarlar tek görsel.
+    expect(ESYALAR.filter((e) => e.hazir).map((e) => e.id)).toEqual(['sigma', 'odak', 'gecekusu', 'sokak', 'oyuncu'])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
   })
 
@@ -104,6 +109,9 @@ describe('katmanlar', () => {
     expect(giy(avatar, 'kolye')).toEqual({ boyun: 'kolye' })
     // Avatara ikinci dokunuş onu çıkarır, Rabi çıplak kalır
     expect(dokun(avatar, 'sigma')).toEqual({})
+    // Bir avatardan ötekine geçiş öncekini bırakır
+    expect(dokun(avatar, 'oyuncu')).toEqual({ boyun: 'oyuncu' })
+    expect(katmanlar({ boyun: 'gecekusu' })).toEqual(['/giydir/gecekusu.png'])
   })
 
   it('taban dosyaları: çıplak ve kafa eşyalarının kulak hâlleri', () => {

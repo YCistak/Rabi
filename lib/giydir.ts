@@ -13,7 +13,21 @@
 
 export type Yuva = 'kafa' | 'kulak' | 'yuz' | 'boyun' | 'ayak'
 
-export type EsyaId = 'kep' | 'bere' | 'tac' | 'kulaklik' | 'gunes' | 'papyon' | 'atki' | 'kolye' | 'sigma'
+export type EsyaId =
+  | 'kep'
+  | 'bere'
+  | 'tac'
+  | 'kulaklik'
+  | 'gunes'
+  | 'papyon'
+  | 'atki'
+  | 'kolye'
+  | 'lafza'
+  | 'sigma'
+  | 'odak'
+  | 'gecekusu'
+  | 'sokak'
+  | 'oyuncu'
 
 export type Esya = {
   id: EsyaId
@@ -75,11 +89,19 @@ export const ESYALAR: readonly Esya[] = [
   // İlk Sigma paketinin altın zinciri + "R" ucu; Sigma takım elbiseli avatar olunca
   // kullanıcı ayrı eşya olarak kalmasını istedi (2026-10-31).
   { id: 'kolye', ad: 'Altın Kolye', yuva: 'boyun', gorsel: '/giydir/kolye.png', ikon: '/giydir/kolye-ikon.png', fiyat: 0 },
+  // Taşlı gümüş Küba zinciri + "Allah" lafzı ucu (kullanıcı istedi, 2026-11-01).
+  { id: 'lafza', ad: 'Allah Yazılı Kolye', yuva: 'boyun', gorsel: '/giydir/lafza.png', ikon: '/giydir/lafza-ikon.png', fiyat: 0 },
   // Sigma Rabi hazır avatar (kullanıcı istedi, 2026-10-31): takım elbise, kırmızı
   // kravat, yarı kapalı gözler, eli çene hattında. Yuvası eski kayıtlar (`boyun:
   // 'sigma'`) geçerli kalsın diye boyun; `hazir` olduğu için yuvadan bağımsız
   // olarak her şeyin yerini alır.
   { id: 'sigma', ad: 'Sigma Rabi', yuva: 'boyun', gorsel: '/giydir/sigma.png', ikon: '/giydir/sigma-ikon.png', fiyat: 0, hazir: true },
+  // Gençlere yönelik hazır avatarlar (kullanıcı istedi, 2026-11-01); Sigma gibi tek görsel,
+  // üstlerine eşya eklenmez. Yuva yalnız kayıt biçimi için boyun (Sigma'yla aynı gerekçe).
+  { id: 'odak', ad: 'Lock In Rabi', yuva: 'boyun', gorsel: '/giydir/odak.png', ikon: '/giydir/odak-ikon.png', fiyat: 0, hazir: true },
+  { id: 'gecekusu', ad: 'Gece Kuşu', yuva: 'boyun', gorsel: '/giydir/gecekusu.png', ikon: '/giydir/gecekusu-ikon.png', fiyat: 0, hazir: true },
+  { id: 'sokak', ad: 'Sokak Stili', yuva: 'boyun', gorsel: '/giydir/sokak.png', ikon: '/giydir/sokak-ikon.png', fiyat: 0, hazir: true },
+  { id: 'oyuncu', ad: 'Oyuncu Rabi', yuva: 'boyun', gorsel: '/giydir/oyuncu.png', ikon: '/giydir/oyuncu-ikon.png', fiyat: 0, hazir: true },
 ]
 
 /**
