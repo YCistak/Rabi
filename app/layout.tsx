@@ -114,6 +114,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   var hatalar = [];
   function kaydet(m){ if (hatalar.length < 8) hatalar.push(String(m).slice(0, 400)); }
   window.addEventListener('error', function(e){
+    // Yakalama evresi script/link/img yükleme hatalarını da getiriyor; onlarda
+    // message ve filename yok, ekranda yalnız "hata" kalıyordu. Dosyayı yaz.
+    var k = e.target && e.target !== window && (e.target.src || e.target.href);
+    if (k) return kaydet('yüklenemedi: ' + String(k).split('/').pop());
     kaydet((e.message || 'hata') + (e.filename ? ' @ ' + e.filename.split('/').pop() + ':' + e.lineno : ''));
   }, true);
   window.addEventListener('unhandledrejection', function(e){
