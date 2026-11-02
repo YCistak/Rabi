@@ -19,7 +19,7 @@ Bu depoda çalışan her ajan (Gemini, Claude, başka) için geçerlidir.
 5. Kod dahil her şey Türkçe (değişken, fonksiyon, dosya adları, yorumlar).
 6. Değişiklikten sonra `npm run typecheck`; saf mantığa (`lib/`) dokunduysan
    `npm run test`. Hata varsa düzeltmeden işi bitmiş sayma.
-7. Git: `main`e doğrudan yazma. Her iş için `gemini/<kisa-ad>` dalı aç, açıklayıcı
+7. Git: `master`a doğrudan yazma. Her iş için `gemini/<kisa-ad>` dalı aç, açıklayıcı
    Türkçe commit mesajı yaz, dalı gönder ve PR aç. `claude/...` dallarına
    dokunma (orada başka bir ajan çalışıyor olabilir).
 8. Yeni bir kural öğrenirsen bu dosyaya değil, `AGENTS.md`ye ya da ilgili
