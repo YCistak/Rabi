@@ -47,6 +47,9 @@ uyguluyorsan madde numarasını veya kaynağı yorumda belirt (`lib/hesap.ts` ö
 
 ## Alt ajanlar
 
+*Bu bölüm Claude Code'a özeldir; alt ajan aracı olmayan araçlar (ör. Antigravity)
+yok sayar. Antigravity'nin giriş kuralı: `.agents/rules/rabi.md`.*
+
 Görevlerde **alt ajanları olabildiğince kullan** (kullanıcı istedi, 2026-10):
 bağımsız parçalar (arama, ayrı dosyalar, taslak seçenekleri, gözden geçirme)
 paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
