@@ -298,6 +298,9 @@ body {
   /* Maskotun arkasındaki yumuşak ışık (Hızlı Kontrol, Kısa Mola). */
   --maskot-hale: rgba(255, 255, 255, 0.9);
   --maskot-hale-dis: rgba(255, 255, 255, 0);
+  /* Rabi'yi Giydir: eşya ikonunun kenar ışığı. Açıkta gerek yok; koyuda kahve
+     gözlük çerçevesi koyu karede kayboluyordu. */
+  --esya-hale: rgba(255, 255, 255, 0);
   /* Konu destesi zeminindeki nokta dokusu. */
   --nokta-desen: rgba(24, 23, 22, 0.07);
 
@@ -567,6 +570,7 @@ body {
   --yuzey-saydam: rgb(255 245 235 / 0.08);
   --maskot-hale: rgba(255, 238, 220, 0.1);
   --maskot-hale-dis: rgba(255, 238, 220, 0);
+  --esya-hale: rgba(255, 240, 225, 0.55);
   --nokta-desen: rgba(255, 245, 235, 0.06);
 
   --shadow-kart: 0 6px 20px rgba(0, 0, 0, 0.32);
@@ -2552,6 +2556,29 @@ body {
      dolgu animasyon bittikten sonra da yığın/kapsayıcı bağlamını koruyup
      katmanı ekran yerine bu satıra bağlardı. */
   animation: acilirGiris 200ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+/*
+  Rabi'yi Giydir: giyilen eşya katmanı yalnız opaklıkla gelir. `acilir-giris`
+  gibi kayarsa eşya 200 ms vücuttan ayrık durur; konum hiç oynamamalı.
+*/
+@keyframes esyaSolma {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.esya-solma {
+  animation: esyaSolma 180ms ease-out backwards;
+}
+
+.esya-ikon {
+  filter: drop-shadow(0 0 2px var(--esya-hale)) drop-shadow(0 0 1px var(--esya-hale));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .esya-solma {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

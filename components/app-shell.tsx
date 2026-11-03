@@ -100,6 +100,8 @@ import { BOS_TAKIP, takibiCoz, type YksTakip } from '@/lib/konu-takibi/kayit'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { KaynakTakibiEkrani } from '@/components/ekranlar/kaynak-takibi'
 import { kaynaklariCoz, type Kaynak } from '@/lib/kaynak-takibi/kaynak'
+import { BOS_GIYILENLER, giyilenleriCoz, type Giyilenler } from '@/lib/giydir'
+import { RabiGiydirEkrani } from '@/components/ekranlar/rabi-giydir'
 import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
 import { okumaSeansiEkle, type OkumaSeansi } from '@/lib/konu/okuma-suresi'
 import {
@@ -344,6 +346,13 @@ function RabiUygulamasi() {
   const setYksTakip = useCallback(
     (guncelle: (onceki: YksTakip) => YksTakip) => setYksTakipHam((onceki) => guncelle(takibiCoz(onceki))),
     [setYksTakipHam],
+  )
+  /* Rabi'yi Giydir: aynı düzen, depodan geleni `giyilenleriCoz` süzüyor. */
+  const [giyilenlerHam, setGiyilenlerHam] = useYerelDepo<Giyilenler>(ANAHTARLAR.giydir, BOS_GIYILENLER)
+  const giyilenler = useMemo(() => giyilenleriCoz(giyilenlerHam), [giyilenlerHam])
+  const setGiyilenler = useCallback(
+    (guncelle: (onceki: Giyilenler) => Giyilenler) => setGiyilenlerHam((onceki) => guncelle(giyilenleriCoz(onceki))),
+    [setGiyilenlerHam],
   )
   /* Kaynak Takibi: Konu Takibi'yle aynı düzen, depodan geleni `kaynaklariCoz` süzüyor. */
   const [kaynaklarHam, setKaynaklarHam] = useYerelDepo<Kaynak[]>(ANAHTARLAR.kaynakTakibi, [])
@@ -1375,6 +1384,9 @@ function RabiUygulamasi() {
             )}
             {ekran === 'yasal' && <YasalEkrani />}
             {ekran === 'geri-bildirim' && <GeriBildirimEkrani kol={geriBildirim} />}
+            {ekran === 'rabi-giydir' && (
+              <RabiGiydirEkrani giyilenler={giyilenler} setGiyilenler={setGiyilenler} />
+            )}
           </>
         ) : (
           <>
@@ -1404,6 +1416,9 @@ function RabiUygulamasi() {
                 konuBitti={bugunKonuBittiMi(konuIlerleme, bugunIso)}
                 gorevlerBitti={gorevlerBittiMi(gorevler, bugunIso)}
                 onDahaGit={() => setSekme('daha')}
+                // `aracAc` değil: Giydir bir araç değil, kısayol sırasına girmiyor.
+                // Tanıtım turu sürerken tur dışı bir ekran açılmıyor.
+                onGiydirAc={() => { if (!tanitim.tanitimdaMi) setEkran('rabi-giydir') }}
                 onOyunlaraGit={(ders) => {
                   // Ders kutucuğu doğrudan o dersin ızgarasını açıyor; sekmenin
                   // başına düşen kullanıcı aynı seçimi bir kez daha yapıyordu.
@@ -1488,6 +1503,7 @@ function RabiUygulamasi() {
                   bilinmeyenKartlar,
                   yksKonuTakibi: yksTakip,
                   kaynakTakibi: kaynaklar,
+                  giydir: giyilenler,
                   aylikOzetler,
                   okumaGecmisi,
                   pomodoroGecmis,

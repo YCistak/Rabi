@@ -34,6 +34,11 @@ export type Ekran =
   | 'yasal'
   /** Öneri ve hata bildir — o da yalnızca Ayarlar'dan. */
   | 'geri-bildirim'
+  /**
+   * Rabi'yi Giydir — yalnızca ana sayfadaki satırdan açılıyor. Kart menüsünde
+   * yok: bir araç değil, `KARTLAR`a girseydi kısayol sırasına da karışırdı.
+   */
+  | 'rabi-giydir'
 
 /** Kutucuk zeminleri — tasarımdaki aileler. */
 export type KartRengi = 'mavi' | 'pembe' | 'krem' | 'nane' | 'lavanta' | 'deniz'
