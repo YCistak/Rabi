@@ -169,8 +169,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     yen de büzülüp cep ağzında yıldız kırışık yapıyordu); manşet ribanası yok, hoodie dokusu
     kumaşın kendi konumundan okunur. Ayakkabılar gövdeyle aynı yükseklikte, tabanlar zemine
     paralel, iki ayak simetrik 5° dışa (`sokak_poz.py`). Sıkıştırma `sokak_sikistir.mjs`.
-  - Gece Kuşu (`gecekusu`): **fincan yok** (kullanıcı kaldırttı, 2026-11-03), patiler karnın
-    önünde birleşik; pijama düğmeleri gizli (fincansız kumaşa gömük nokta gibi duruyordu).
+  - Gece Kuşu (`gecekusu`): **baş ve gövde dümdüz, kameraya tam karşıdan** (kullanıcı istedi,
+    2026-11-03; başı öne eğme); uykululuk yalnız yüzde (yarı kapalı kapak, yorgun kaş, gevşek
+    gülümseme). **Fincan yok** (kullanıcı kaldırttı, 2026-11-03), patiler karnın önünde birleşik; pijama düğmeleri gizli (fincansız kumaşa gömük nokta gibi duruyordu).
     Kulak iç pembesinde önden görünen yüzde `on_w` 1, sheen kısık (aksi hâlde kenarda beyaz
     çizgi). Göz `gecekusu_doku.py`de çevre tenle silinip yeniden çizilir; göz/kaş örgüsü
     `gk_goz_duz` şekil anahtarıyla düzlenir (örgüdeki eski göz hattı gri yay bırakıyordu).
