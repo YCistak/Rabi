@@ -30,9 +30,17 @@ describe('katalog', () => {
       ['gecekusu', 'boyun'],
       ['sokak', 'boyun'],
       ['oyuncu', 'boyun'],
+      ['astronot', 'boyun'],
     ])
     // Kolyeler sıradan eşya; hazır avatarlar tek görsel.
-    expect(ESYALAR.filter((e) => e.hazir).map((e) => e.id)).toEqual(['sigma', 'odak', 'gecekusu', 'sokak', 'oyuncu'])
+    expect(ESYALAR.filter((e) => e.hazir).map((e) => e.id)).toEqual([
+      'sigma',
+      'odak',
+      'gecekusu',
+      'sokak',
+      'oyuncu',
+      'astronot',
+    ])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
   })
 
