@@ -153,14 +153,14 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   görsel, `hazir: true`, yuva kayıt biçimi için `boyun`. Her biri kendi sahnesinde
   (`rabi_<id>.blend`, `<id>_kur.py`, `<id>_katman.py`); ortak üretim rehberi
   `giydir-betikleri/AVATAR_REHBER.md` (kamera, kalite dersleri).
-  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): kasklı uzay giysisi
-    (`astronot_kur.py` → `rabi_astronot.blend`, yüz `astronot_doku.py`, çizim
-    `astronot_katman.py`). Kulaklar kaskın içinde gizli (`BERE_KULAK`; cam kulak kılıfı
-    denendi, üst kadrajı kesti ve torba gibi durdu). Ön vizör yansıması `visible_glossy = False`
-    ve kenar sönümlü: doğrudan lamba yansıması göz üstünde beyaz leke yapıyordu. Altın
-    güneşlik yan menteşe ekseninden geçen iki düzlemle kesilir ki kenarlar pürüzsüz yay
-    olup yan disklere otursun; turuncu kol/paça şeritleri ve eldiven geçişi üçgen dişi
-    yapmaması için düğüm ağacında `giysi_konum` ve `kol_maske` üzerinden boyanır.
+  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi, **kask yok**
+    (kullanıcı kaskı beğenmedi, 2026-11-03; geri getirme). Giysi `astronot_kur.py` →
+    `rabi_astronot.blend` (kasklı kurar); `astronot_kasksiz.py` kask parçalarını silip kulak
+    tüyünü `rabi_giydir6.blend`ten geri yazar → `rabi_astronot_kasksiz.blend`. Yüz
+    `astronot_doku.py`, çizim `astronot_katman.py` (kask yoksa kulaklar dik, bıyık tam boy),
+    sıkıştırma `astronot_sikistir.mjs`. Boyun bağlantı halkası kalır. Turuncu kol/paça
+    şeritleri ve eldiven geçişi üçgen dişi yapmaması için düğüm ağacında `giysi_konum` ve
+    `kol_maske` üzerinden boyanır.
 - **Sigma Rabi hazır avatar** (kullanıcı istedi, 2026-10-31): **özelleştirilemez**;
   seçilince öbür eşyalar çıkar, eşya seçilince avatar çıkar (`hazir: true`, `giy`).
   Tek görsel `sigma.png` (Rabi + takım + yer gölgesi, `katman_takim.py`); altında
