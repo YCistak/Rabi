@@ -154,16 +154,24 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   görsel, `hazir: true`, yuva kayıt biçimi için `boyun`. Her biri kendi sahnesinde
   (`rabi_<id>.blend`, `<id>_kur.py`, `<id>_katman.py`); ortak üretim rehberi
   `giydir-betikleri/AVATAR_REHBER.md` (kamera, kalite dersleri).
-  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi; **kask başta
-    değil, sağ elde** boyun ağzından tutulup aşağı sarkar (kullanıcı başta kaskı beğenmedi,
-    2026-11-03; başa geri takma). Kulaklar dik, sol el sallıyor. Giysi `astronot_kur.py` →
-    `rabi_astronot.blend` (kasklı kurar); `astronot_elde_kur.py` kaskı `el.R`ye bağlar, kulak
-    tüyünü `rabi_giydir6.blend`ten geri yazar → `rabi_astronot_elde.blend`; yerleşim
-    `astronot_elde.py`. Kask kafa boyunda ve kollar kısa: tam boyda yere girer, bu yüzden
-    0.47 ölçekte. Altın güneşlik inik (boş vizörün arkası gri disk gibi okunuyordu). Yüz
-    `astronot_doku.py`, çizim `astronot_katman.py` (kulak yalnız kask `bas`a bağlıyken gizli),
-    sıkıştırma `astronot_sikistir.mjs`. Turuncu kol/paça şeritleri ve eldiven geçişi üçgen
-    dişi yapmaması için düğüm ağacında `giysi_konum` ve `kol_maske` üzerinden boyanır.
+  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi; **kask başta,
+    kulaklar kaskın tepesindeki iki turuncu kulak yuvasından dışarı çıkar** (kullanıcı istedi,
+    2026-11-03). Denenip beğenilmeyenler: kulakları gizleyen, alnı altın güneşlikle örten kask
+    (ilk sürüm) ve kaskın sağ elde sarkması. Kulak yuvası düz halka değil kısa kovan + lastik
+    dudak: önden bakınca düz halka çizgi gibi okunuyordu. Tepede önden arkaya turuncu şerit,
+    yanlarda mavi halkalı diskler (bilek halkalarıyla aynı mavi), altın güneşlik yukarıda
+    (açıklığın tepesinde ince şerit). Cam yalnız Fresnel yansıması + yumuşak pencere ışığı:
+    yansıma paneli yüze denk gelince gözün yanında dikdörtgen leke bırakıyordu.
+    - Kask kasksız render'ın üstüne **bindirilir** (`astronot_kask.py` Blender'da kaskı
+      kurup katmanları çizer, `astronot_birlestir.py` birleştirir): arka kabuk → Rabi → ön
+      kabuk → yuvanın arka yayı → kulağın dışarıdaki kısmı → yuvanın ön yayı. Ön/arka
+      ayrımı kameraya dik düzlemle; perçem ön kabuğun altında kalır. Kaskın yüze ve
+      omza düşürdüğü gölge kafa/gövde vekilinden `1 − B/A` ile alınır; kulak kökü yalnız
+      dudak yayı boyunca karartılır (bindirme çokgeninin yan kenarı kulakta dikiş bırakıyordu).
+    - Giysi `astronot_kur.py` → `rabi_astronot.blend`; yüz `astronot_doku.py`, çizim
+      `astronot_katman.py`, sıkıştırma `astronot_sikistir.mjs`. Turuncu kol/paça şeritleri ve
+      eldiven geçişi üçgen dişi yapmaması için düğüm ağacında `giysi_konum` ve `kol_maske`
+      üzerinden boyanır. İkon tam görselin 640'lık kırpımı (x 130, y 70) → 256.
   - Sokak Stili (`sokak`): ters şapka **siyah** (kullanıcı istedi, 2026-11-03), kumaş
     parlaklığı ve lif dokusuyla. Eller cepte: yen bilek kemiğine bağlanmaz (bilek küçülünce
     yen de büzülüp cep ağzında yıldız kırışık yapıyordu); manşet ribanası yok, hoodie dokusu
