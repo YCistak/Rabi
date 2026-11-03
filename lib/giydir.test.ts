@@ -26,19 +26,15 @@ describe('katalog', () => {
       ['kolye', 'boyun'],
       ['lafza', 'boyun'],
       ['sigma', 'boyun'],
-      ['odak', 'boyun'],
       ['gecekusu', 'boyun'],
       ['sokak', 'boyun'],
-      ['oyuncu', 'boyun'],
       ['astronot', 'boyun'],
     ])
     // Kolyeler sıradan eşya; hazır avatarlar tek görsel.
     expect(ESYALAR.filter((e) => e.hazir).map((e) => e.id)).toEqual([
       'sigma',
-      'odak',
       'gecekusu',
       'sokak',
-      'oyuncu',
       'astronot',
     ])
     expect(ESYALAR.every((e) => e.fiyat === 0)).toBe(true)
@@ -118,7 +114,7 @@ describe('katmanlar', () => {
     // Avatara ikinci dokunuş onu çıkarır, Rabi çıplak kalır
     expect(dokun(avatar, 'sigma')).toEqual({})
     // Bir avatardan ötekine geçiş öncekini bırakır
-    expect(dokun(avatar, 'oyuncu')).toEqual({ boyun: 'oyuncu' })
+    expect(dokun(avatar, 'sokak')).toEqual({ boyun: 'sokak' })
     expect(katmanlar({ boyun: 'gecekusu' })).toEqual(['/giydir/gecekusu.png'])
   })
 
@@ -164,5 +160,10 @@ describe('giyilenleriCoz', () => {
 
   it('kaldırılan gözlük, bot ve kalemin eski kaydı düşer, kalan seçim korunur', () => {
     expect(giyilenleriCoz({ kafa: 'kep', yuz: 'gozluk', ayak: 'bot', kulak: 'kalem' })).toEqual({ kafa: 'kep' })
+  })
+
+  it('kaldırılan Lock In ve Oyuncu avatarının eski kaydı düşer', () => {
+    expect(giyilenleriCoz({ boyun: 'odak' })).toEqual({})
+    expect(giyilenleriCoz({ boyun: 'oyuncu', kafa: 'kep' })).toEqual({ kafa: 'kep' })
   })
 })

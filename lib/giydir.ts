@@ -24,10 +24,8 @@ export type EsyaId =
   | 'kolye'
   | 'lafza'
   | 'sigma'
-  | 'odak'
   | 'gecekusu'
   | 'sokak'
-  | 'oyuncu'
   | 'astronot'
 
 export type Esya = {
@@ -99,10 +97,10 @@ export const ESYALAR: readonly Esya[] = [
   { id: 'sigma', ad: 'Sigma Rabi', yuva: 'boyun', gorsel: '/giydir/sigma.png', ikon: '/giydir/sigma-ikon.png', fiyat: 0, hazir: true },
   // Gençlere yönelik hazır avatarlar (kullanıcı istedi, 2026-11-01); Sigma gibi tek görsel,
   // üstlerine eşya eklenmez. Yuva yalnız kayıt biçimi için boyun (Sigma'yla aynı gerekçe).
-  { id: 'odak', ad: 'Lock In Rabi', yuva: 'boyun', gorsel: '/giydir/odak.png', ikon: '/giydir/odak-ikon.png', fiyat: 0, hazir: true },
+  // Lock In (`odak`) ve Oyuncu (`oyuncu`) kullanıcı kaldırttı (2026-11-03); kayıtta kalan
+  // eski seçim `giyilenleriCoz`ta sessizce düşer.
   { id: 'gecekusu', ad: 'Gece Kuşu', yuva: 'boyun', gorsel: '/giydir/gecekusu.png', ikon: '/giydir/gecekusu-ikon.png', fiyat: 0, hazir: true },
   { id: 'sokak', ad: 'Sokak Stili', yuva: 'boyun', gorsel: '/giydir/sokak.png', ikon: '/giydir/sokak-ikon.png', fiyat: 0, hazir: true },
-  { id: 'oyuncu', ad: 'Oyuncu Rabi', yuva: 'boyun', gorsel: '/giydir/oyuncu.png', ikon: '/giydir/oyuncu-ikon.png', fiyat: 0, hazir: true },
   { id: 'astronot', ad: 'Astronot Rabi', yuva: 'boyun', gorsel: '/giydir/astronot.png', ikon: '/giydir/astronot-ikon.png', fiyat: 0, hazir: true },
 ]
 
