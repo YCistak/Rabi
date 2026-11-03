@@ -28,6 +28,7 @@ export type EsyaId =
   | 'gecekusu'
   | 'sokak'
   | 'oyuncu'
+  | 'astronot'
 
 export type Esya = {
   id: EsyaId
@@ -102,6 +103,7 @@ export const ESYALAR: readonly Esya[] = [
   { id: 'gecekusu', ad: 'Gece Kuşu', yuva: 'boyun', gorsel: '/giydir/gecekusu.png', ikon: '/giydir/gecekusu-ikon.png', fiyat: 0, hazir: true },
   { id: 'sokak', ad: 'Sokak Stili', yuva: 'boyun', gorsel: '/giydir/sokak.png', ikon: '/giydir/sokak-ikon.png', fiyat: 0, hazir: true },
   { id: 'oyuncu', ad: 'Oyuncu Rabi', yuva: 'boyun', gorsel: '/giydir/oyuncu.png', ikon: '/giydir/oyuncu-ikon.png', fiyat: 0, hazir: true },
+  { id: 'astronot', ad: 'Astronot Rabi', yuva: 'boyun', gorsel: '/giydir/astronot.png', ikon: '/giydir/astronot-ikon.png', fiyat: 0, hazir: true },
 ]
 
 /**

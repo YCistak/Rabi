@@ -125,7 +125,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
   gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye); kulak ve ayak
-  yuvaları boş; ayrıca hazır avatarlar (Sigma, Lock In, Gece Kuşu, Sokak Stili, Oyuncu). Kulakta kalem
+  yuvaları boş; ayrıca hazır avatarlar (Sigma, Lock In, Gece Kuşu, Sokak Stili, Oyuncu, Astronot). Kulakta kalem
   kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
   (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
   `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
@@ -149,10 +149,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     çatlak boya gibi duruyordu. Uç askıya 1 cm girer (az girince havada asılı kalıyordu),
     şedde askının tam altında (askı şeddeyi örtüyordu).
 - **Hazır avatarlar** (kullanıcı istedi, 2026-11-01): Sigma'ya ek Lock In Rabi (`odak`),
-  Gece Kuşu (`gecekusu`), Sokak Stili (`sokak`), Oyuncu Rabi (`oyuncu`); hepsi tek
+  Gece Kuşu (`gecekusu`), Sokak Stili (`sokak`), Oyuncu Rabi (`oyuncu`), Astronot Rabi (`astronot`); hepsi tek
   görsel, `hazir: true`, yuva kayıt biçimi için `boyun`. Her biri kendi sahnesinde
   (`rabi_<id>.blend`, `<id>_kur.py`, `<id>_katman.py`); ortak üretim rehberi
   `giydir-betikleri/AVATAR_REHBER.md` (kamera, kalite dersleri).
+  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi, **kask yok**
+    (kullanıcı kaskı beğenmedi, 2026-11-03; geri getirme). Giysi `astronot_kur.py` →
+    `rabi_astronot.blend` (kasklı kurar); `astronot_kasksiz.py` kask parçalarını silip kulak
+    tüyünü `rabi_giydir6.blend`ten geri yazar → `rabi_astronot_kasksiz.blend`. Yüz
+    `astronot_doku.py`, çizim `astronot_katman.py` (kask yoksa kulaklar dik, bıyık tam boy),
+    sıkıştırma `astronot_sikistir.mjs`. Boyun bağlantı halkası kalır. Turuncu kol/paça
+    şeritleri ve eldiven geçişi üçgen dişi yapmaması için düğüm ağacında `giysi_konum` ve
+    `kol_maske` üzerinden boyanır.
 - **Sigma Rabi hazır avatar** (kullanıcı istedi, 2026-10-31): **özelleştirilemez**;
   seçilince öbür eşyalar çıkar, eşya seçilince avatar çıkar (`hazir: true`, `giy`).
   Tek görsel `sigma.png` (Rabi + takım + yer gölgesi, `katman_takim.py`); altında
