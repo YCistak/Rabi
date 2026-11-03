@@ -162,6 +162,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     yanlarda mavi halkalı diskler (bilek halkalarıyla aynı mavi), altın güneşlik yukarıda
     (açıklığın tepesinde ince şerit). Cam yalnız Fresnel yansıması + yumuşak pencere ışığı:
     yansıma paneli yüze denk gelince gözün yanında dikdörtgen leke bırakıyordu.
+    **Renkler giysiden ölçülür** (kullanıcı uyumsuz buldu, 2026-11-03): kabuk giysinin sıcak
+    krem beyazı (sRGB 236,230,220), turuncu 214,84,30, mavi 18,68,148; pozlama −0,75. Saf
+    beyaz kabuk ve parlak turuncu giysinin yanında patlamış, ayrı parça gibi duruyordu.
     - Kask kasksız render'ın üstüne **bindirilir** (`astronot_kask.py` Blender'da kaskı
       kurup katmanları çizer, `astronot_birlestir.py` birleştirir): arka kabuk → Rabi → ön
       kabuk → yuvanın arka yayı → kulağın dışarıdaki kısmı → yuvanın ön yayı. Ön/arka
