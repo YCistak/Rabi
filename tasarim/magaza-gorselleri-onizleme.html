@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rabi — App Store & Google Play Mağaza Görselleri Tasarım Önizlemesi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Rubik:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #B3491F;
+      --primary-parlak: #D9622F;
+      --primary-hafif: #FFF3EB;
+      --ikincil: #A8432B;
+      --background: #F8F8F7;
+      --kart: #FFFFFF;
+      --yazi: #232220;
+      --soluk: #716C64;
+      --cizgi: #E6E2DC;
+
+      --matematik: #2563EB;
+      --turkce: #D97706;
+      --fizik: #7C3AED;
+      --kimya: #EA580C;
+      --biyoloji: #059669;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #18191D;
+      color: #E6E8EE;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ÜST KONTROL ÇUBUĞU */
+    header.panel {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(24, 25, 29, 0.95);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid #2B2E38;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .marka {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .marka-ikon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(217, 98, 47, 0.35);
+    }
+
+    .marka-metin h1 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: -0.2px;
+    }
+
+    .marka-metin p {
+      font-size: 12px;
+      color: #9299AB;
+      font-weight: 600;
+    }
+
+    .kontroller {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filtre-grubu {
+      background: #252833;
+      padding: 3px;
+      border-radius: 9px;
+      display: flex;
+      border: 1px solid #333847;
+    }
+
+    .filtre-btn {
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #9EA5B8;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filtre-btn.aktif {
+      background: #D9622F;
+      color: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(217, 98, 47, 0.4);
+    }
+
+    .olcek-secici {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #252833;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #9EA5B8;
+      border: 1px solid #333847;
+    }
+
+    .olcek-secici select {
+      background: transparent;
+      border: none;
+      color: #FFFFFF;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .eylem-btn {
+      background: #2E8540;
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+    }
+    .eylem-btn:hover {
+      background: #236832;
+    }
+
+    /* ANA İÇERİK */
+    main {
+      flex: 1;
+      padding: 36px 24px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .bilgi-banner {
+      max-width: 980px;
+      width: 100%;
+      background: linear-gradient(135deg, rgba(217, 98, 47, 0.12), rgba(217, 98, 47, 0.03));
+      border: 1px solid rgba(217, 98, 47, 0.3);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .bilgi-banner-sol {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .bilgi-banner-sol img {
+      width: 48px;
+      height: 48px;
+    }
+
+    .bilgi-banner h2 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #FFA475;
+      margin-bottom: 2px;
+    }
+
+    .bilgi-banner p {
+      font-size: 13px;
+      color: #D3D8E5;
+      line-height: 1.4;
+    }
+
+    /* VITRİN ALANI */
+    .vitrin {
+      display: flex;
+      gap: 36px;
+      overflow-x: auto;
+      max-width: 100%;
+      padding: 20px 10px 40px;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+      scrollbar-color: #383D4F #18191D;
+    }
+
+    .vitrin::-webkit-scrollbar {
+      height: 8px;
+    }
+    .vitrin::-webkit-scrollbar-thumb {
+      background: #383D4F;
+      border-radius: 4px;
+    }
+
+    /* TEK BİR MAĞAZA GÖRSELİ (SLAYT KARTI) */
+    .magaza-karti {
+      flex: 0 0 430px;
+      height: 932px;
+      border-radius: 36px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      scroll-snap-align: center;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s;
+    }
+
+    .magaza-karti:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 35px 75px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(217, 98, 47, 0.3);
+    }
+
+    /* TEMALAR & GRADYANLAR */
+    .tema-krem {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FDF9F5 45%, #F7EDE4 100%);
+      color: #232220;
+    }
+    .tema-turuncu {
+      background: linear-gradient(180deg, #FFF7F2 0%, #FFE9DC 50%, #FFD6C2 100%);
+      color: #232220;
+    }
+    .tema-mavi {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F2F7FF 50%, #DCE8FF 100%);
+      color: #232220;
+    }
+    .tema-mor {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FAF5FF 50%, #EFE5FD 100%);
+      color: #232220;
+    }
+    .tema-yesil {
+      background: linear-gradient(180deg, #FFFFFF 0%, #F0FDF4 50%, #DCFCE7 100%);
+      color: #232220;
+    }
+    .tema-amber {
+      background: linear-gradient(180deg, #FFFFFF 0%, #FFFBEB 50%, #FEF3C7 100%);
+      color: #232220;
+    }
+
+    /* KART BAŞLIK BÖLÜMÜ */
+    .kart-ust {
+      padding: 42px 32px 18px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 5;
+    }
+
+    .rozet {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 13px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+
+    .rozet-turuncu { background: #FFEADF; color: #B3491F; border: 1px solid #FFCBB5; }
+    .rozet-mavi    { background: #E0EDFF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+    .rozet-yesil   { background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0; }
+    .rozet-mor     { background: #F3E8FF; color: #6B21A8; border: 1px solid #E9D5FF; }
+    .rozet-amber   { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+
+    .kart-baslik {
+      font-size: 27px;
+      font-weight: 900;
+      line-height: 1.18;
+      color: #1F1E1D;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .kart-baslik span.vurgu { color: #D9622F; }
+    .kart-baslik span.vurgu-mavi { color: #2563EB; }
+    .kart-baslik span.vurgu-yesil { color: #059669; }
+    .kart-baslik span.vurgu-mor { color: #7C3AED; }
+    .kart-baslik span.vurgu-turuncu { color: #D97706; }
+
+    .kart-aciklama {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #635F59;
+      line-height: 1.45;
+      max-width: 330px;
+    }
+
+    /* TELEFON MOCKUP'I */
+    .cihaz-kapsayici {
+      position: absolute;
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 326px;
+      height: 670px;
+      z-index: 2;
+    }
+
+    .cihaz-govde {
+      width: 100%;
+      height: 100%;
+      background: #0F0F11;
+      border-radius: 46px;
+      padding: 10px;
+      box-shadow: 
+        0 0 0 2px #3A393E,
+        0 0 0 5px #1E1D22,
+        0 24px 50px -10px rgba(0, 0, 0, 0.45),
+        0 40px 80px -15px rgba(179, 73, 31, 0.15);
+      position: relative;
+    }
+
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 17px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 25px;
+      background: #000000;
+      border-radius: 18px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+    .kamera-lens {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1A1F36 30%, #080B12 100%);
+      box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.25);
+    }
+
+    .ekran-cam {
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      background: #F8F8F7;
+      position: relative;
+    }
+
+    .ekran-cam img.ekran-resmi {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+
+    .cam-isiltisi {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 50%);
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* MASKOT EKLEME & ETKİLEŞİM */
+    .maskot-katmani {
+      position: absolute;
+      z-index: 8;
+      pointer-events: none;
+      filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.25));
+      animation: hafifSalinim 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes hafifSalinim {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-5px); }
+    }
+
+    .kart-1 .maskot-katmani { right: -10px; bottom: 70px; width: 155px; }
+    .kart-2 .maskot-katmani { left: 10px; bottom: 110px; width: 145px; }
+    .kart-3 .maskot-katmani { right: 6px; bottom: 120px; width: 140px; }
+    .kart-4 .maskot-katmani { right: -8px; bottom: 95px; width: 150px; }
+    .kart-5 .maskot-katmani { left: 8px; bottom: 100px; width: 140px; }
+    .kart-6 .maskot-katmani { right: 4px; bottom: 110px; width: 145px; }
+
+    /* UÇAN ROZETLER / ÇIKARTMALAR */
+    .ucan-rozet {
+      position: absolute;
+      z-index: 9;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      padding: 8px 14px;
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #1F1E1D;
+    }
+
+    .ucan-rozet-ikon {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .kart-1 .ucan-rozet-1 { top: 245px; left: 20px; }
+    .kart-2 .ucan-rozet-1 { top: 245px; right: 20px; }
+    .kart-3 .ucan-rozet-1 { top: 240px; left: 20px; }
+    .kart-4 .ucan-rozet-1 { top: 250px; left: 20px; }
+    .kart-5 .ucan-rozet-1 { top: 245px; right: 20px; }
+    .kart-6 .ucan-rozet-1 { top: 245px; left: 20px; }
+
+    /* GOOGLE PLAY ÖNE ÇIKAN GÖRSEL (FEATURE GRAPHIC - 1024 x 500) */
+    .banner-kapsayici {
+      max-width: 1024px;
+      width: 100%;
+      height: 500px;
+      border-radius: 28px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(135deg, #A23E15 0%, #D9622F 45%, #E27344 100%);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 60px;
+    }
+
+    .banner-sol {
+      max-width: 480px;
+      z-index: 5;
+    }
+
+    .banner-logo-satir {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .banner-logo-satir img {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .banner-logo-satir h2 {
+      font-family: 'Rubik', sans-serif;
+      font-size: 38px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+    }
+
+    .banner-baslik {
+      font-size: 36px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .banner-baslik span { color: #FFE6D6; }
+
+    .banner-aciklama {
+      font-size: 16px;
+      color: #FFDEC9;
+      font-weight: 600;
+      line-height: 1.45;
+      margin-bottom: 24px;
+    }
+
+    .banner-haplar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .banner-hap {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(6px);
+      padding: 7px 14px;
+      border-radius: 30px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .banner-sag {
+      position: relative;
+      height: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .banner-telefon-1 {
+      position: absolute;
+      right: 90px;
+      bottom: -60px;
+      width: 250px;
+      height: 510px;
+      transform: rotate(6deg);
+      z-index: 2;
+    }
+
+    .banner-telefon-2 {
+      position: absolute;
+      right: 230px;
+      bottom: -90px;
+      width: 230px;
+      height: 480px;
+      transform: rotate(-6deg);
+      z-index: 1;
+      opacity: 0.9;
+    }
+
+    .banner-maskot {
+      position: absolute;
+      right: 20px;
+      bottom: 10px;
+      width: 200px;
+      z-index: 4;
+      filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.35));
+      animation: hafifSalinim 3.5s ease-in-out infinite alternate;
+    }
+
+    .banner-halka {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+    }
+
+    /* CANLI METİN DÜZENLEME PANELİ */
+    .duzenleme-cekmece {
+      max-width: 980px;
+      width: 100%;
+      background: #20232C;
+      border: 1px solid #2F3443;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .duzenleme-baslik {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slayt-tablari {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      padding-bottom: 6px;
+    }
+
+    .slayt-tab {
+      background: #282C37;
+      border: 1px solid #363C4C;
+      padding: 7px 14px;
+      border-radius: 8px;
+      color: #A0A7BC;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .slayt-tab.aktif {
+      background: #D9622F;
+      color: #FFFFFF;
+      border-color: #D9622F;
+    }
+
+    .alan-grubu {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .alan {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .alan label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #9299AB;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .alan input, .alan textarea {
+      background: #171920;
+      border: 1px solid #333847;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .alan input:focus, .alan textarea:focus {
+      border-color: #D9622F;
+    }
+
+    .oneri-haplari {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .oneri-hap {
+      background: #282C37;
+      color: #D3D8E5;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid #363C4C;
+      transition: background 0.15s;
+    }
+    .oneri-hap:hover {
+      background: #363C4C;
+      color: #FFFFFF;
+    }
+
+    /* TEKNİK DETAY TABLOSU */
+    .teknik-kutu {
+      max-width: 980px;
+      width: 100%;
+      background: #1C1E26;
+      border: 1px solid #2B2F3D;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .teknik-kutu h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 14px;
+    }
+
+    .teknik-tablo {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .teknik-tablo th {
+      text-align: left;
+      padding: 10px 14px;
+      background: #242733;
+      color: #9DA5B8;
+      font-weight: 700;
+      border-bottom: 1px solid #333847;
+    }
+
+    .teknik-tablo td {
+      padding: 10px 14px;
+      color: #D5DAE6;
+      border-bottom: 1px solid #262936;
+    }
+
+    .onay-alani {
+      max-width: 980px;
+      width: 100%;
+      background: linear-gradient(135deg, #1C2E22, #16241A);
+      border: 1px solid #2E8540;
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .onay-sol h4 {
+      font-size: 16px;
+      font-weight: 800;
+      color: #6EE7B7;
+      margin-bottom: 4px;
+    }
+
+    .onay-sol p {
+      font-size: 13px;
+      color: #A7F3D0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- KONTROL ÇUBUĞU -->
+  <header class="panel">
+    <div class="marka">
+      <img src="../public/icon-512.png" alt="Rabi" class="marka-ikon">
+      <div class="marka-metin">
+        <h1>Rabi Store Stüdyosu</h1>
+        <p>App Store & Google Play Görsel Tasarım Önizlemesi</p>
+      </div>
+    </div>
+
+    <div class="kontroller">
+      <div class="filtre-grubu">
+        <button class="filtre-btn aktif" id="btn-mockup" onclick="modDegistir('mockup')">🎨 İnteraktif Mockup</button>
+        <button class="filtre-btn" id="btn-png" onclick="modDegistir('png')">🖼️ Üretilen PNG Dilimleri</button>
+        <button class="filtre-btn" onclick="gorunumDegistir('banner')">⭐ Öne Çıkan Banner</button>
+      </div>
+
+      <div class="olcek-secici">
+        <span>Ölçek:</span>
+        <select id="olcekSec" onchange="olcekAyarla(this.value)">
+          <option value="0.75">Küçük (%75)</option>
+          <option value="0.9" selected>Normal (%90)</option>
+          <option value="1.0">Gerçek (%100)</option>
+        </select>
+      </div>
+
+      <button class="eylem-btn" onclick="onayVeKaydetMesaji()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Tasarımı Onayla
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- BİLGİ VE STRATEJİ BANNERI -->
+    <div class="bilgi-banner">
+      <div class="bilgi-banner-sol">
+        <img src="../public/tavsan-kucak-acan.png" alt="Rabi">
+        <div>
+          <h2>Yeni Mağaza Vitrini: Dönüşüm ve Samimiyet Odaklı Tasarım</h2>
+          <p>YKS hazırlık öğrencisinin ihtiyaçlarını sırayla çözen 6 adımlı hikaye akışı. Sade ekran fotoğrafları yerine derinlikli cihaz çerçevesi, canlı maskot etkileşimi ve yüksek kontrastlı Türkçe başlıklar.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 ADIMLI SLAYT GALERİSİ (CANLI MOCKUP) -->
+    <div class="vitrin" id="anaVitrin">
+
+      <!-- SLAYT 1: HERO / HEDEF & GERİ SAYIM -->
+      <div class="magaza-karti tema-turuncu kart-1" id="slayt-1">
+        <div class="kart-ust">
+          <div class="rozet rozet-turuncu" id="slayt-1-rozet">✨ YKS 2027 • TYT - AYT - YDT</div>
+          <h2 class="kart-baslik" id="slayt-1-baslik">Sınava Değil, <br><span class="vurgu">Hedefine</span> Odaklan</h2>
+          <p class="kart-aciklama" id="slayt-1-aciklama">Geri sayım, günlük soru hedefi ve tahmini sıralaman hep elinin altında.</p>
+        </div>
+
+        <div class="ucan-rozet ucan-rozet-1">
+          <div class="ucan-rozet-ikon" style="background:#FFF0E6; color:#B3491F;">🎯</div>
+          <div>Geri Sayım & Hedefim</div>
+        </div>
+
+        <img src="../public/tavsan-kucak-acan.png" alt="Rabi" class="maskot-katmani">
+
+        <div class="cihaz-kapsayici">
+          <div class="cihaz-govde">
+            <div class="dynamic-island"><div class="kamera-lens"></div></div>
+            <div class="ekran-cam">
+              <div class="cam-isiltisi"></div>
+              <img src="../docs/ekranlar/ana-sayfa.webp" alt="Rabi Ana Sayfa" class="ekran-resmi">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLAYT 2: MAARİF MÜFREDATI & KONU HARİTASI -->
+      <div class="magaza-karti tema-mavi kart-2" id="slayt-2">
+        <div class="kart-ust">
+          <div class="rozet rozet-mavi" id="slayt-2-rozet">🗺️ MEB MAARİF MÜFREDATI</div>
+          <h2 class="kart-baslik" id="slayt-2-baslik">Adım Adım <br><span class="vurgu-mavi">Zirveye</span> İlerle</h2>
+          <p class="kart-aciklama" id="slayt-2-aciklama">Bölüm bölüm açılan konu kartları, yoklama biletleri ve eğlenceli patika.</p>
+        </div>
+
+        <div class="ucan-rozet ucan-rozet-1">
+          <div class="ucan-rozet-ikon" style="background:#EFF6FF; color:#1D4ED8;">📖</div>
+          <div>Özet Konu Kartları</div>
+        </div>
+
+        <img src="../public/tavsan-kitapli.png" alt="Rabi Kitaplı" class="maskot-katmani">
+
+        <div class="cihaz-kapsayici">
+          <div class="cihaz-govde">
+            <div class="dynamic-island"><div class="kamera-lens"></div></div>
+            <div class="ekran-cam">
+              <div class="cam-isiltisi"></div>
+              <img src="../docs/ekranlar/konu-haritasi.webp" alt="Rabi Konu Haritası" class="ekran-resmi">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLAYT 3: DENEME ANALİZİ & OPTİK OKUMA -->
+      <div class="magaza-karti tema-yesil kart-3" id="slayt-3">
+        <div class="kart-ust">
+          <div class="rozet rozet-yesil" id="slayt-3-rozet">📊 AKILLI DENEME RAPORU</div>
+          <h2 class="kart-baslik" id="slayt-3-baslik">Netlerini Gör, <br><span class="vurgu-yesil">Farkı</span> Yakala</h2>
+          <p class="kart-aciklama" id="slayt-3-aciklama">TYT ve AYT denemelerini kaydet, güçlü ve zayıf konularını anında keşfet.</p>
+        </div>
+
+        <div class="ucan-rozet ucan-rozet-1">
+          <div class="ucan-rozet-ikon" style="background:#ECFDF5; color:#059669;">📸</div>
+          <div>Fotoğrafla Optik Okut</div>
+        </div>
+
+        <img src="../public/tavsan-fotografci.png" alt="Rabi Fotoğrafçı" class="maskot-katmani">
+
+        <div class="cihaz-kapsayici">
+          <div class="cihaz-govde">
+            <div class="dynamic-island"><div class="kamera-lens"></div></div>
+            <div class="ekran-cam">
+              <div class="cam-isiltisi"></div>
+              <img src="../docs/ekran/istatistik.png" alt="Rabi Deneme İstatistikleri" class="ekran-resmi">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLAYT 4: ODAK KORUYUCULU POMODORO -->
+      <div class="magaza-karti tema-mor kart-4" id="slayt-4">
+        <div class="kart-ust">
+          <div class="rozet rozet-mor" id="slayt-4-rozet">⏱️ DİKKAT DAĞILMASINA SON</div>
+          <h2 class="kart-baslik" id="slayt-4-baslik">Masada Kal, <br><span class="vurgu-mor">Zamanı</span> Yönet</h2>
+          <p class="kart-aciklama" id="slayt-4-aciklama">Uygulama engelleyici odak kilidi ve canlı kilit ekranı ile kesintisiz çalışma.</p>
+        </div>
+
+        <div class="ucan-rozet ucan-rozet-1">
+          <div class="ucan-rozet-ikon" style="background:#F5F3FF; color:#7C3AED;">🔒</div>
+          <div>Odak Kilidi Koruması</div>
+        </div>
+
+        <img src="../public/tavsan-saatli.png" alt="Rabi Saatli" class="maskot-katmani">
+
+        <div class="cihaz-kapsayici">
+          <div class="cihaz-govde">
+            <div class="dynamic-island"><div class="kamera-lens"></div></div>
+            <div class="ekran-cam">
+              <div class="cam-isiltisi"></div>
+              <img src="../docs/ekranlar/pomodoro.webp" alt="Rabi Pomodoro" class="ekran-resmi">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLAYT 5: SORU VE KAYNAK ÇETELESİ -->
+      <div class="magaza-karti tema-amber kart-5" id="slayt-5">
+        <div class="kart-ust">
+          <div class="rozet rozet-amber" id="slayt-5-rozet">📚 GÜNLÜK HEDEF & KAYNAK</div>
+          <h2 class="kart-baslik" id="slayt-5-baslik">Kitaplarını <br><span class="vurgu-turuncu">Eksiksiz</span> Bitir</h2>
+          <p class="kart-aciklama" id="slayt-5-aciklama">Test kitaplarını ekle, günlük hedefini doldur, konu bazlı bitirme oranını gör.</p>
+        </div>
+
+        <div class="ucan-rozet ucan-rozet-1">
+          <div class="ucan-rozet-ikon" style="background:#FFFBEB; color:#B45309;">👍</div>
+          <div>Kaynak Takibi & Çetele</div>
+        </div>
+
+        <img src="../public/tavsan-basparmak.png" alt="Rabi Başparmak" class="maskot-katmani">
+
+        <div class="cihaz-kapsayici">
+          <div class="cihaz-govde">
+            <div class="dynamic-island"><div class="kamera-lens"></div></div>
+            <div class="ekran-cam">
+              <div class="cam-isiltisi"></div>
+              <img src="../docs/ekranlar/soru-takibi.webp" alt="Rabi Soru Takibi" class="ekran-resmi">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLAYT 6: MİNİ OYUNLAR & YANLIŞ BANKASI -->
+      <div class="magaza-karti tema-krem kart-6" id="slayt-6">
+        <div class="kart-ust">
+          <div class="rozet rozet-turuncu" id="slayt-6-rozet">🧠 HIZLI BEYİN EGZERSİZİ</div>
+          <h2 class="kart-baslik" id="slayt-6-baslik">Öğrenmeyi <br><span class="vurgu">Oyuna</span> Çevir</h2>
+          <p class="kart-aciklama" id="slayt-6-aciklama">Hızlı işlem ve eşleştirme oyunları. Yanlış sorularından özel testler üret.</p>
+        </div>
+
+        <div class="ucan-rozet ucan-rozet-1">
+          <div class="ucan-rozet-ikon" style="background:#FFEADF; color:#B3491F;">🧩</div>
+          <div>Oyun & Yanlış Bankası</div>
+        </div>
+
+        <img src="../public/tavsan-yapboz.png" alt="Rabi Yapboz" class="maskot-katmani">
+
+        <div class="cihaz-kapsayici">
+          <div class="cihaz-govde">
+            <div class="dynamic-island"><div class="kamera-lens"></div></div>
+            <div class="ekran-cam">
+              <div class="cam-isiltisi"></div>
+              <img src="../docs/ekranlar/oyunlar.webp" alt="Rabi Oyunlar" class="ekran-resmi">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ÜRETİLEN PNG DİLİMLERİ VİTRİNİ -->
+    <div class="vitrin" id="pngVitrin" style="display: none;">
+      <div class="magaza-karti" style="background:#000;">
+        <img src="../magaza-cikti/app-store/1-hedef-ve-sayac.png" alt="Slayt 1" style="width:100%; height:100%; object-fit:contain;">
+      </div>
+      <div class="magaza-karti" style="background:#000;">
+        <img src="../magaza-cikti/app-store/2-konu-haritasi.png" alt="Slayt 2" style="width:100%; height:100%; object-fit:contain;">
+      </div>
+      <div class="magaza-karti" style="background:#000;">
+        <img src="../magaza-cikti/app-store/3-deneme-analizi.png" alt="Slayt 3" style="width:100%; height:100%; object-fit:contain;">
+      </div>
+      <div class="magaza-karti" style="background:#000;">
+        <img src="../magaza-cikti/app-store/4-pomodoro-odak.png" alt="Slayt 4" style="width:100%; height:100%; object-fit:contain;">
+      </div>
+      <div class="magaza-karti" style="background:#000;">
+        <img src="../magaza-cikti/app-store/5-soru-takibi.png" alt="Slayt 5" style="width:100%; height:100%; object-fit:contain;">
+      </div>
+      <div class="magaza-karti" style="background:#000;">
+        <img src="../magaza-cikti/app-store/6-mini-oyunlar.png" alt="Slayt 6" style="width:100%; height:100%; object-fit:contain;">
+      </div>
+    </div>
+
+    <!-- GOOGLE PLAY ÖNE ÇIKAN GÖRSELİ (1024 x 500 PX BANNER) -->
+    <div style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px;" id="bannerBolumu">
+      <div style="font-size: 15px; font-weight: 800; color: #FFA475; text-transform: uppercase; letter-spacing: 0.8px;">
+        Google Play Store — Öne Çıkan Görsel (1024 × 500 px)
+      </div>
+      
+      <div class="banner-kapsayici" id="playBanner">
+        <div class="banner-halka" style="width: 500px; height: 500px; top: -150px; right: -50px;"></div>
+        <div class="banner-halka" style="width: 750px; height: 750px; top: -250px; right: -180px;"></div>
+
+        <div class="banner-sol">
+          <div class="banner-logo-satir">
+            <img src="../public/icon-512.png" alt="Rabi İkon">
+            <h2>Rabi</h2>
+          </div>
+          <h1 class="banner-baslik">YKS Hazırlığında <br><span>Tek Yol Arkadaşın</span></h1>
+          <p class="banner-aciklama">Konu haritası, deneme analizi, odak koruyucu Pomodoro ve mini oyunlarla hedefine emin adımlarla ilerle.</p>
+          <div class="banner-haplar">
+            <span class="banner-hap">🗺️ Maarif Müfredatı</span>
+            <span class="banner-hap">⏱️ Odak Kilidi</span>
+            <span class="banner-hap">📊 Deneme Analizi</span>
+            <span class="banner-hap">✨ Reklamsız & Ücretsiz</span>
+          </div>
+        </div>
+
+        <div class="banner-sag">
+          <div class="cihaz-kapsayici banner-telefon-2">
+            <div class="cihaz-govde">
+              <div class="ekran-cam">
+                <img src="../docs/ekranlar/konu-haritasi.webp" alt="Konu Haritası" class="ekran-resmi">
+              </div>
+            </div>
+          </div>
+
+          <div class="cihaz-kapsayici banner-telefon-1">
+            <div class="cihaz-govde">
+              <div class="ekran-cam">
+                <img src="../docs/ekranlar/ana-sayfa.webp" alt="Ana Sayfa" class="ekran-resmi">
+              </div>
+            </div>
+          </div>
+
+          <img src="../public/tavsan-kucak-acan.png" alt="Rabi Maskot" class="banner-maskot">
+        </div>
+      </div>
+    </div>
+
+    <!-- CANLI METİN EDİTÖRÜ -->
+    <div class="duzenleme-cekmece">
+      <div class="duzenleme-baslik">
+        <span>✏️ Canlı Metin Düzenleyici & Slogan Önerileri</span>
+        <span style="font-size: 12px; color: #9299AB; font-weight: normal;">Yazdığınız anda yukarıdaki vitrinde güncellenir</span>
+      </div>
+
+      <div class="slayt-tablari">
+        <button class="slayt-tab aktif" onclick="tabSec(1)">1. Hero / Hedef</button>
+        <button class="slayt-tab" onclick="tabSec(2)">2. Konu Haritası</button>
+        <button class="slayt-tab" onclick="tabSec(3)">3. Deneme Analizi</button>
+        <button class="slayt-tab" onclick="tabSec(4)">4. Pomodoro & Odak</button>
+        <button class="slayt-tab" onclick="tabSec(5)">5. Soru & Kaynak</button>
+        <button class="slayt-tab" onclick="tabSec(6)">6. Oyunlar & Yanlışlar</button>
+      </div>
+
+      <div class="alan-grubu">
+        <div class="alan">
+          <label>Üst Rozet Metni</label>
+          <input type="text" id="girdi-rozet" value="✨ YKS 2027 • TYT - AYT - YDT" oninput="canliGuncelle()">
+        </div>
+        <div class="alan">
+          <label>Ana Başlık (HTML Kullanılabilir)</label>
+          <input type="text" id="girdi-baslik" value='Sınava Değil, <br><span class="vurgu">Hedefine</span> Odaklan' oninput="canliGuncelle()">
+        </div>
+      </div>
+
+      <div class="alan">
+        <label>Açıklama Metni</label>
+        <textarea id="girdi-aciklama" rows="2" oninput="canliGuncelle()">Geri sayım, günlük soru hedefi ve tahmini sıralaman hep elinin altında.</textarea>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <label style="font-size: 12px; font-weight: 700; color: #9299AB; text-transform: uppercase;">Alternatif Slogan Önerileri:</label>
+        <div class="oneri-haplari" id="oneriKutusu">
+          <span class="oneri-hap" onclick="oneriUygula('YKS Yolculuğunda <br><span class=\'vurgu\'>Tek Yol Arkadaşın</span>', 'Hedefin üniversiteyse, masadaki en sadık yardımcın burada.')">Alternatif: Yol Arkadaşın</span>
+          <span class="oneri-hap" onclick="oneriUygula('Hedefine Ulaşmak <br><span class=\'vurgu\'>Artık Çok Kolay</span>', 'Zaman yönetimi, konu haritası ve deneme takibi bir arada.')">Alternatif: Kolay & Pratik</span>
+          <span class="oneri-hap" onclick="oneriUygula('Sınav Stresini Değil, <br><span class=\'vurgu\'>Odağını</span> Yönet', 'Sadece dersine çalış, geri kalan tüm çeteyi Rabi tutsun.')">Alternatif: Odak & Rahatlık</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ONAY & DIŞA AKTARMA KUTUSU -->
+    <div class="onay-alani">
+      <div class="onay-sol">
+        <h4>Tasarım onayına hazır mısınız?</h4>
+        <p>Görselleri ve metinleri beğendiyseniz onay verin; üretilen tüm parçalar (1290×2796 ve 1080×2400) hemen teslim edilmeye hazır.</p>
+      </div>
+      <button class="eylem-btn" onclick="onayVeKaydetMesaji()" style="padding: 12px 24px; font-size: 15px;">
+        Onaylıyorum, Parçaları Al
+      </button>
+    </div>
+
+    <!-- TEKNİK MAĞAZA ÖZELLİKLERİ VE KILAVUZU -->
+    <div class="teknik-kutu">
+      <h3>📐 Mağaza Standartları & Teknik Çıktı Tablosu</h3>
+      <table class="teknik-tablo">
+        <thead>
+          <tr>
+            <th>Mağaza / Platform</th>
+            <th>Görsel Türü</th>
+            <th>Hedef Çözünürlük</th>
+            <th>En/Boy Oranı</th>
+            <th>Durum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Apple App Store</strong></td>
+            <td>iPhone 6.7" Ekran Görselleri (1-6)</td>
+            <td>1290 × 2796 piksel</td>
+            <td>1 : 2.167 (19.5:9)</td>
+            <td><span style="color:#6EE7B7; font-weight:700;">✓ Hazır (6 Adet PNG)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Google Play Store</strong></td>
+            <td>Telefon Ekran Görselleri (1-6)</td>
+            <td>1080 × 2400 piksel</td>
+            <td>1 : 2.222 (20:9)</td>
+            <td><span style="color:#6EE7B7; font-weight:700;">✓ Hazır (6 Adet PNG)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Google Play Store</strong></td>
+            <td>Öne Çıkan Görsel (Feature Graphic)</td>
+            <td>1024 × 500 piksel</td>
+            <td>2.048 : 1</td>
+            <td><span style="color:#6EE7B7; font-weight:700;">✓ Hazır (1 Adet Banner)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script>
+    let aktifSlayt = 1;
+
+    const slaytVerileri = {
+      1: {
+        rozet: "✨ YKS 2027 • TYT - AYT - YDT",
+        baslik: "Sınava Değil, <br><span class=\"vurgu\">Hedefine</span> Odaklan",
+        aciklama: "Geri sayım, günlük soru hedefi ve tahmini sıralaman hep elinin altında.",
+        oneriler: [
+          { baslik: "YKS Yolculuğunda <br><span class=\"vurgu\">Tek Yol Arkadaşın</span>", aciklama: "Hedefin üniversiteyse, masadaki en sadık yardımcın burada." },
+          { baslik: "Sınav Stresini Değil, <br><span class=\"vurgu\">Odağını</span> Yönet", aciklama: "Sadece dersine çalış, geri kalan tüm çeteyi Rabi tutsun." }
+        ]
+      },
+      2: {
+        rozet: "🗺️ MEB MAARİF MÜFREDATI",
+        baslik: "Adım Adım <br><span class=\"vurgu-mavi\">Zirveye</span> İlerle",
+        aciklama: "Bölüm bölüm açılan konu kartları, yoklama biletleri ve eğlenceli patika.",
+        oneriler: [
+          { baslik: "Tüm Müfredat <br><span class=\"vurgu-mavi\">Tek Patikada</span>", aciklama: "Eksik konu bırakmadan, MEB Maarif modeline uygun adım adım ilerle." },
+          { baslik: "Konu Anlatımı <br><span class=\"vurgu-mavi\">Cebinde</span>", aciklama: "Kısa, net ve akılda kalıcı kartlarla konu tekrarı yap." }
+        ]
+      },
+      3: {
+        rozet: "📊 AKILLI DENEME RAPORU",
+        baslik: "Netlerini Gör, <br><span class=\"vurgu-yesil\">Farkı</span> Yakala",
+        aciklama: "TYT ve AYT denemelerini kaydet, güçlü ve zayıf konularını anında keşfet.",
+        oneriler: [
+          { baslik: "Fotoğrafla Oku, <br><span class=\"vurgu-yesil\">Anında</span> Analiz Et", aciklama: "Karneni kameraya tut, netlerin ve sıralaman saniyeler içinde hesaplansın." },
+          { baslik: "Zayıf Noktalarını <br><span class=\"vurgu-yesil\">Güce</span> Çevir", aciklama: "Hangi derste net kaybettiğini gör, stratejini ona göre kur." }
+        ]
+      },
+      4: {
+        rozet: "⏱️ DİKKAT DAĞILMASINA SON",
+        baslik: "Masada Kal, <br><span class=\"vurgu-mor\">Zamanı</span> Yönet",
+        aciklama: "Uygulama engelleyici odak kilidi ve canlı kilit ekranı ile kesintisiz çalışma.",
+        oneriler: [
+          { baslik: "Bildirimleri Unut, <br><span class=\"vurgu-mor\">Masaya</span> Kilitlen", aciklama: "Odak kilidi açıkken telefonun dikkatini dağıtmasına izin verme." },
+          { baslik: "Canlı Sayaçla <br><span class=\"vurgu-mor\">Süreklilik</span> Kazan", aciklama: "Çalışma ve mola periyotlarıyla yorulmadan yüksek verim yakala." }
+        ]
+      },
+      5: {
+        rozet: "📚 GÜNLÜK HEDEF & KAYNAK",
+        baslik: "Kitaplarını <br><span class=\"vurgu-turuncu\">Eksiksiz</span> Bitir",
+        aciklama: "Test kitaplarını ekle, günlük hedefini doldur, konu bazlı bitirme oranını gör.",
+        oneriler: [
+          { baslik: "Hangi Kitapta <br><span class=\"vurgu-turuncu\">Neredesin?</span>", aciklama: "Tüm soru bankalarının çetelesini konu konu tek yerde topla." },
+          { baslik: "Günlük Hedefini <br><span class=\"vurgu-turuncu\">Tuttur</span>", aciklama: "Günde kaç soru çözdüğünü adım adım izle, zinciri kırma." }
+        ]
+      },
+      6: {
+        rozet: "🧠 HIZLI BEYİN EGZERSİZİ",
+        baslik: "Öğrenmeyi <br><span class=\"vurgu\">Oyuna</span> Çevir",
+        aciklama: "Hızlı işlem ve eşleştirme oyunları. Yanlış sorularından özel testler üret.",
+        oneriler: [
+          { baslik: "Dört İşlem & <br><span class=\"vurgu\">Zihin Jimnastiği</span>", aciklama: "Mola verirken bile pratik yap, sınavda işlem hızını ikiye katla." },
+          { baslik: "Yanlışlarını <br><span class=\"vurgu\">Fırsata</span> Çevir", aciklama: "Oyun Bankası ile yapamadığın soruları pekiştir, tam öğren." }
+        ]
+      }
+    };
+
+    function tabSec(no) {
+      aktifSlayt = no;
+      document.querySelectorAll('.slayt-tab').forEach((tab, index) => {
+        tab.classList.toggle('aktif', index + 1 === no);
+      });
+
+      const veri = slaytVerileri[no];
+      document.getElementById('girdi-rozet').value = veri.rozet;
+      document.getElementById('girdi-baslik').value = veri.baslik;
+      document.getElementById('girdi-aciklama').value = veri.aciklama;
+
+      const oneriKutusu = document.getElementById('oneriKutusu');
+      oneriKutusu.innerHTML = '';
+      veri.oneriler.forEach((o, i) => {
+        const span = document.createElement('span');
+        span.className = 'oneri-hap';
+        span.innerText = `Öneri ${i + 1}`;
+        span.onclick = () => oneriUygula(o.baslik, o.aciklama);
+        oneriKutusu.appendChild(span);
+      });
+
+      const kart = document.getElementById('slayt-' + no);
+      if (kart) {
+        kart.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+
+    function canliGuncelle() {
+      const rozet = document.getElementById('girdi-rozet').value;
+      const baslik = document.getElementById('girdi-baslik').value;
+      const aciklama = document.getElementById('girdi-aciklama').value;
+
+      slaytVerileri[aktifSlayt].rozet = rozet;
+      slaytVerileri[aktifSlayt].baslik = baslik;
+      slaytVerileri[aktifSlayt].aciklama = aciklama;
+
+      const rozetEl = document.getElementById('slayt-' + aktifSlayt + '-rozet');
+      const baslikEl = document.getElementById('slayt-' + aktifSlayt + '-baslik');
+      const aciklamaEl = document.getElementById('slayt-' + aktifSlayt + '-aciklama');
+
+      if (rozetEl) rozetEl.innerHTML = rozet;
+      if (baslikEl) baslikEl.innerHTML = baslik;
+      if (aciklamaEl) aciklamaEl.innerHTML = aciklama;
+    }
+
+    function oneriUygula(baslik, aciklama) {
+      document.getElementById('girdi-baslik').value = baslik;
+      document.getElementById('girdi-aciklama').value = aciklama;
+      canliGuncelle();
+    }
+
+    function olcekAyarla(val) {
+      const vitrin = document.getElementById('anaVitrin');
+      vitrin.style.zoom = val;
+      const pngVitrin = document.getElementById('pngVitrin');
+      pngVitrin.style.zoom = val;
+    }
+
+    function modDegistir(mod) {
+      const btnMockup = document.getElementById('btn-mockup');
+      const btnPng = document.getElementById('btn-png');
+      const anaVitrin = document.getElementById('anaVitrin');
+      const pngVitrin = document.getElementById('pngVitrin');
+
+      if (mod === 'mockup') {
+        btnMockup.classList.add('aktif');
+        btnPng.classList.remove('aktif');
+        anaVitrin.style.display = 'flex';
+        pngVitrin.style.display = 'none';
+      } else {
+        btnMockup.classList.remove('aktif');
+        btnPng.classList.add('aktif');
+        anaVitrin.style.display = 'none';
+        pngVitrin.style.display = 'flex';
+      }
+    }
+
+    function gorunumDegistir(tur) {
+      const banner = document.getElementById('bannerBolumu');
+      if (banner) banner.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function onayVeKaydetMesaji() {
+      alert("Harika! Önizlemeyi onayladınız. Gemini şimdi tüm görselleri App Store ve Google Play standartlarında teslim edebilir.");
+    }
+  </script>
+</body>
+</html>
