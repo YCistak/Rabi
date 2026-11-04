@@ -158,11 +158,12 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     kol yanda aşağıda** (kullanıcı istedi, 2026-11-04: "kaskı kaldır, eli havada olmasın").
     Kask başa, ele ve kulak yuvalı olarak denendi, hiçbiri giysiyle uyumlu bulunmadı; geri
     getirmeden sor. Kulaklar dik, kulak tüyü temel sahneden geri yazılı.
-    - İnik sağ kol, kasksız render'daki (sallayan) görselde aşağıdaki sol kolun x=450
-      eksenine göre aynası (`astronot_ayna.py`): sallayan kol x≥545, y 640–905 ve x≥588,
-      y 560–640 bölgesinde yumuşak kenarla değiştirilir; parlaklık iki bacağın oranıyla
-      eşlenir (anahtar ışık sağ yarıyı ~%20 aydınlık tutuyor). Göğüs paneli ve rozet
-      aynalanmaz (x<545). Blender sahnesinde poz değişirse bu adım kalkar.
+    - İnik sağ kol, kasksız render'daki (sallayan) görselde sol yarının x=450 eksenine göre
+      aynası (`astronot_ayna.py`). Dikiş göğüste x=550 (rozetin aynası sağ göğse ikinci
+      rozet koyuyordu), belin altında x=505; ışık eşlenmez (tek kol oranla açılınca düz
+      beyaz, gövdeden kopuk duruyordu). Sallayan elin halka üstündeki kısmı x≥628'den
+      silinir (daha içeriden alınınca çenenin gölgesi sağa taşınıyordu). Blender sahnesinde
+      poz değişirse bu adım kalkar.
     - Giysi `astronot_kur.py` → `rabi_astronot.blend`; yüz `astronot_doku.py`, çizim
       `astronot_katman.py`, sıkıştırma `astronot_sikistir.mjs`. Turuncu kol/paça şeritleri ve
       eldiven geçişi üçgen dişi yapmaması için düğüm ağacında `giysi_konum` ve `kol_maske`
