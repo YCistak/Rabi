@@ -154,24 +154,15 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   görsel, `hazir: true`, yuva kayıt biçimi için `boyun`. Her biri kendi sahnesinde
   (`rabi_<id>.blend`, `<id>_kur.py`, `<id>_katman.py`); ortak üretim rehberi
   `giydir-betikleri/AVATAR_REHBER.md` (kamera, kalite dersleri).
-  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi; **kask başta,
-    kulaklar kaskın tepesindeki iki turuncu kulak yuvasından dışarı çıkar** (kullanıcı istedi,
-    2026-11-03). Denenip beğenilmeyenler: kulakları gizleyen, alnı altın güneşlikle örten kask
-    (ilk sürüm) ve kaskın sağ elde sarkması. Kulak yuvası düz halka değil kısa kovan + lastik
-    dudak: önden bakınca düz halka çizgi gibi okunuyordu. Tepede önden arkaya turuncu şerit,
-    yanlarda turuncu halkalı açık gri diskler, altın güneşlik yukarıda (açıklığın tepesinde
-    ince şerit). Cam yalnız Fresnel yansıması + yumuşak pencere ışığı: yansıma paneli yüze
-    denk gelince gözün yanında dikdörtgen leke bırakıyordu.
-    **Renkler ilk (Gemini) kaskınınki** (kullanıcı istedi, 2026-11-04): nötr gümüş kabuk
-    (sRGB 208,208,212, yarı metalik), vizör çevresinde koyu arduvaz çerçeve (62,66,76),
-    turuncu 214,84,30 (giysi şeritleri); pozlama −0,6. Denenip uyumsuz bulunanlar: saf beyaz
-    kabuk + mavi diskler (patlamış), giysinin krem beyazı + açık gümüş çerçeve.
-    - Kask kasksız render'ın üstüne **bindirilir** (`astronot_kask.py` Blender'da kaskı
-      kurup katmanları çizer, `astronot_birlestir.py` birleştirir): arka kabuk → Rabi → ön
-      kabuk → yuvanın arka yayı → kulağın dışarıdaki kısmı → yuvanın ön yayı. Ön/arka
-      ayrımı kameraya dik düzlemle; perçem ön kabuğun altında kalır. Kaskın yüze ve
-      omza düşürdüğü gölge kafa/gövde vekilinden `1 − B/A` ile alınır; kulak kökü yalnız
-      dudak yayı boyunca karartılır (bindirme çokgeninin yan kenarı kulakta dikiş bırakıyordu).
+  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi, **kask yok, iki
+    kol yanda aşağıda** (kullanıcı istedi, 2026-11-04: "kaskı kaldır, eli havada olmasın").
+    Kask başa, ele ve kulak yuvalı olarak denendi, hiçbiri giysiyle uyumlu bulunmadı; geri
+    getirmeden sor. Kulaklar dik, kulak tüyü temel sahneden geri yazılı.
+    - İnik sağ kol, kasksız render'daki (sallayan) görselde aşağıdaki sol kolun x=450
+      eksenine göre aynası (`astronot_ayna.py`): sallayan kol x≥545, y 640–905 ve x≥588,
+      y 560–640 bölgesinde yumuşak kenarla değiştirilir; parlaklık iki bacağın oranıyla
+      eşlenir (anahtar ışık sağ yarıyı ~%20 aydınlık tutuyor). Göğüs paneli ve rozet
+      aynalanmaz (x<545). Blender sahnesinde poz değişirse bu adım kalkar.
     - Giysi `astronot_kur.py` → `rabi_astronot.blend`; yüz `astronot_doku.py`, çizim
       `astronot_katman.py`, sıkıştırma `astronot_sikistir.mjs`. Turuncu kol/paça şeritleri ve
       eldiven geçişi üçgen dişi yapmaması için düğüm ağacında `giysi_konum` ve `kol_maske`
