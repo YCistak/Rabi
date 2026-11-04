@@ -154,16 +154,20 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   görsel, `hazir: true`, yuva kayıt biçimi için `boyun`. Her biri kendi sahnesinde
   (`rabi_<id>.blend`, `<id>_kur.py`, `<id>_katman.py`); ortak üretim rehberi
   `giydir-betikleri/AVATAR_REHBER.md` (kamera, kalite dersleri).
-  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi; **kask başta
-    değil, sağ elde** boyun ağzından tutulup aşağı sarkar (kullanıcı başta kaskı beğenmedi,
-    2026-11-03; başa geri takma). Kulaklar dik, sol el sallıyor. Giysi `astronot_kur.py` →
-    `rabi_astronot.blend` (kasklı kurar); `astronot_elde_kur.py` kaskı `el.R`ye bağlar, kulak
-    tüyünü `rabi_giydir6.blend`ten geri yazar → `rabi_astronot_elde.blend`; yerleşim
-    `astronot_elde.py`. Kask kafa boyunda ve kollar kısa: tam boyda yere girer, bu yüzden
-    0.47 ölçekte. Altın güneşlik inik (boş vizörün arkası gri disk gibi okunuyordu). Yüz
-    `astronot_doku.py`, çizim `astronot_katman.py` (kulak yalnız kask `bas`a bağlıyken gizli),
-    sıkıştırma `astronot_sikistir.mjs`. Turuncu kol/paça şeritleri ve eldiven geçişi üçgen
-    dişi yapmaması için düğüm ağacında `giysi_konum` ve `kol_maske` üzerinden boyanır.
+  - Astronot Rabi (`astronot`, kullanıcı istedi, 2026-11-02): uzay giysisi, **kask yok, iki
+    kol yanda aşağıda** (kullanıcı istedi, 2026-11-04: "kaskı kaldır, eli havada olmasın").
+    Kask başa, ele ve kulak yuvalı olarak denendi, hiçbiri giysiyle uyumlu bulunmadı; geri
+    getirmeden sor. Kulaklar dik, kulak tüyü temel sahneden geri yazılı.
+    - İnik sağ kol, kasksız render'daki (sallayan) görselde sol yarının x=450 eksenine göre
+      aynası (`astronot_ayna.py`). Dikiş göğüste x=550 (rozetin aynası sağ göğse ikinci
+      rozet koyuyordu), belin altında x=505; ışık eşlenmez (tek kol oranla açılınca düz
+      beyaz, gövdeden kopuk duruyordu). Sallayan elin halka üstündeki kısmı x≥628'den
+      silinir (daha içeriden alınınca çenenin gölgesi sağa taşınıyordu). Blender sahnesinde
+      poz değişirse bu adım kalkar.
+    - Giysi `astronot_kur.py` → `rabi_astronot.blend`; yüz `astronot_doku.py`, çizim
+      `astronot_katman.py`, sıkıştırma `astronot_sikistir.mjs`. Turuncu kol/paça şeritleri ve
+      eldiven geçişi üçgen dişi yapmaması için düğüm ağacında `giysi_konum` ve `kol_maske`
+      üzerinden boyanır. İkon tam görselin 640'lık kırpımı (x 130, y 70) → 256.
   - Sokak Stili (`sokak`): ters şapka **siyah** (kullanıcı istedi, 2026-11-03), kumaş
     parlaklığı ve lif dokusuyla. Eller cepte: yen bilek kemiğine bağlanmaz (bilek küçülünce
     yen de büzülüp cep ağzında yıldız kırışık yapıyordu); manşet ribanası yok, hoodie dokusu
