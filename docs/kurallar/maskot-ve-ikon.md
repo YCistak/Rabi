@@ -159,12 +159,13 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     2026-11-03). Denenip beğenilmeyenler: kulakları gizleyen, alnı altın güneşlikle örten kask
     (ilk sürüm) ve kaskın sağ elde sarkması. Kulak yuvası düz halka değil kısa kovan + lastik
     dudak: önden bakınca düz halka çizgi gibi okunuyordu. Tepede önden arkaya turuncu şerit,
-    yanlarda mavi halkalı diskler (bilek halkalarıyla aynı mavi), altın güneşlik yukarıda
-    (açıklığın tepesinde ince şerit). Cam yalnız Fresnel yansıması + yumuşak pencere ışığı:
-    yansıma paneli yüze denk gelince gözün yanında dikdörtgen leke bırakıyordu.
-    **Renkler giysiden ölçülür** (kullanıcı uyumsuz buldu, 2026-11-03): kabuk giysinin sıcak
-    krem beyazı (sRGB 236,230,220), turuncu 214,84,30, mavi 18,68,148; pozlama −0,75. Saf
-    beyaz kabuk ve parlak turuncu giysinin yanında patlamış, ayrı parça gibi duruyordu.
+    yanlarda turuncu halkalı açık gri diskler, altın güneşlik yukarıda (açıklığın tepesinde
+    ince şerit). Cam yalnız Fresnel yansıması + yumuşak pencere ışığı: yansıma paneli yüze
+    denk gelince gözün yanında dikdörtgen leke bırakıyordu.
+    **Renkler ilk (Gemini) kaskınınki** (kullanıcı istedi, 2026-11-04): nötr gümüş kabuk
+    (sRGB 208,208,212, yarı metalik), vizör çevresinde koyu arduvaz çerçeve (62,66,76),
+    turuncu 214,84,30 (giysi şeritleri); pozlama −0,6. Denenip uyumsuz bulunanlar: saf beyaz
+    kabuk + mavi diskler (patlamış), giysinin krem beyazı + açık gümüş çerçeve.
     - Kask kasksız render'ın üstüne **bindirilir** (`astronot_kask.py` Blender'da kaskı
       kurup katmanları çizer, `astronot_birlestir.py` birleştirir): arka kabuk → Rabi → ön
       kabuk → yuvanın arka yayı → kulağın dışarıdaki kısmı → yuvanın ön yayı. Ön/arka
