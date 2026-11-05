@@ -27,6 +27,11 @@ export type EsyaId =
   | 'gecekusu'
   | 'sokak'
   | 'astronot'
+  | 'doktor'
+  | 'hukukcu'
+  | 'sef'
+  | 'gitarist'
+  | 'ninja'
 
 export type Esya = {
   id: EsyaId
@@ -102,6 +107,12 @@ export const ESYALAR: readonly Esya[] = [
   { id: 'gecekusu', ad: 'Gece Kuşu', yuva: 'boyun', gorsel: '/giydir/gecekusu.png', ikon: '/giydir/gecekusu-ikon.png', fiyat: 0, hazir: true },
   { id: 'sokak', ad: 'Sokak Stili', yuva: 'boyun', gorsel: '/giydir/sokak.png', ikon: '/giydir/sokak-ikon.png', fiyat: 0, hazir: true },
   { id: 'astronot', ad: 'Astronot Rabi', yuva: 'boyun', gorsel: '/giydir/astronot.png', ikon: '/giydir/astronot-ikon.png', fiyat: 0, hazir: true },
+  // Meslek ve hobi avatarları (kullanıcı istedi, 2026-11-04); Sigma'yla aynı kayıt biçimi.
+  { id: 'doktor', ad: 'Doktor Rabi', yuva: 'boyun', gorsel: '/giydir/doktor.png', ikon: '/giydir/doktor-ikon.png', fiyat: 0, hazir: true },
+  { id: 'hukukcu', ad: 'Hukukçu Rabi', yuva: 'boyun', gorsel: '/giydir/hukukcu.png', ikon: '/giydir/hukukcu-ikon.png', fiyat: 0, hazir: true },
+  { id: 'sef', ad: 'Şef Rabi', yuva: 'boyun', gorsel: '/giydir/sef.png', ikon: '/giydir/sef-ikon.png', fiyat: 0, hazir: true },
+  { id: 'gitarist', ad: 'Gitarist Rabi', yuva: 'boyun', gorsel: '/giydir/gitarist.png', ikon: '/giydir/gitarist-ikon.png', fiyat: 0, hazir: true },
+  { id: 'ninja', ad: 'Ninja Rabi', yuva: 'boyun', gorsel: '/giydir/ninja.png', ikon: '/giydir/ninja-ikon.png', fiyat: 0, hazir: true },
 ]
 
 /**
