@@ -199,6 +199,12 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     dalgalanıyordu); kot üst sınırı 0.385 (0.44 tişörtü delip mavi şerit gösteriyordu).
   - Ninja: silah yok (öğrenci uygulaması); kol kameraya uzatılmaz, yana açılır (yen ağzı boş boru gibi
     görünüyordu); sargı patinin şişkinliğinden önce biter.
+  - **Doktor'da dosya panosu, Hukukçu'da kitap yok** (kullanıcı kaldırttı, 2026-11-05; geri getirme).
+  - **Pati ayrı örgüdür** (Doktor, Hukukçu, Ninja): gövde patisi bükülünce yırtılıyor ya da küt, tek
+    kıvrımlı, uygunsuz bir şekil gibi okunuyordu. Kısa geniş avuç + dört yumuşak boğum, gövde patisi
+    gizli (`doktor_temizle.py` → `pati_kur`, `ninja_kur.py` → `Ninja_Pati`).
+  - Gitar kemeri düz iner, boynun arkasına geçer, gitara düğmeyle bağlanır (kullanıcı "yakada bozuk"
+    dedi: ortada S kırığı vardı, üst ucu çene altında kesik bitiyordu).
 - **Sigma Rabi hazır avatar** (kullanıcı istedi, 2026-10-31): **özelleştirilemez**;
   seçilince öbür eşyalar çıkar, eşya seçilince avatar çıkar (`hazir: true`, `giy`).
   Tek görsel `sigma.png` (Rabi + takım + yer gölgesi, `katman_takim.py`); altında
