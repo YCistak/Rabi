@@ -121,7 +121,10 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Gözlük camı yalnız kenarda yansır: beyaz dünyayı yansıtan cam gözlerin üstünde
   süt gibi bir tabaka bırakıyordu. Gözün koyu yerinde gömülü gölge sönümlenir:
   oran orada gürültüye boğulup camın altında hayalet leke bırakıyordu.
-- Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
+- Paletli PNG (maskot pozlarıyla aynı). **İstisna:** Doktor, Hukukçu, Şef, Gitarist, Ninja tam renk
+  (görsel başına ≈650 KB; kullanıcı doku hatalarını geri çevirdi, 2026-11-05): palet titreşimle bordo
+  şeritte labirent deseni, titreşimsiz tencerede bant bırakıyordu. Sharp'ta `effort` verme, paleti açar.
+  Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
   gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye); kulak ve ayak
@@ -182,7 +185,11 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     (toplam 0.39) ve kalın. Nesne önce konur, pati ona IK ile uzanır; yakın hedefte kol katlanıp yen
     patiyi deliyor. Dirsek 90° bükülmez, burgu tek eklemde verilmez: ikisi de yen ağzını yırtıyor.
   - **Kumaş altındaki gövde** kol kalkınca kumaşı delip krem leke yapıyor; `tuy_yog` = 0 çözmez,
-    gövde şekil anahtarıyla içeri alınır (`dr_ic`, `ninja_ic`; katman betiği açar).
+    gövde şekil anahtarıyla içeri alınır ya da maskeyle gizlenir.
+  - **Kumaş son pozda kurulur** (kullanıcı ilk hâli doku hatası diye geri çevirdi, 2026-11-05):
+    gövdeden kesilen örgü bükülünce çamur gibi buruşuyor, kenarı yırtılıyordu; temiz yüzey ve
+    ızgara bant kullanılır, ince doku bump değil renk ve pürüzde. Render ≥256 örnek, albedo +
+    normal geçişli OIDN. Teslimden önce 2 kat büyütülmüş kırpımla bakılır: tam boyda görünmüyor.
   - **Beyaz ve siyah kumaş:** kıvrım yalnız geometriyle okunmuyor. Siyah cüppede kıvrım yüksekliği
     renge de işlenir (`hukukcu_kur.py`, `kat_f`), pürüz 0.72 (0.5 plastik gibi parlıyordu). Beyaz
     ceket sheen 0.12 (zeminde kaybolmasın diye biye ve fular kontrast verir).
