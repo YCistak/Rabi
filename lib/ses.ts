@@ -235,27 +235,26 @@ export class SesCalar {
   }
 
   /**
-   * Aşamanın son 3 saniyesinde saniyede bir çalan akustik geri sayım tiki.
+   * Aşamanın son 3 saniyesinde saniyede bir çalan sıcak ahşap kalimba tiki.
    *
    * Masada derse dalmış ya da molada ekrana bakmayan öğrencinin sürenin
    * bitmek üzere olduğunu fark etmesi için `public/ses/tik.mp3` dosyasını
    * çalar.
    */
   geriSayimTiki() {
-    if (this.tamponCal('tik', 0.48)) return
+    if (this.tamponCal('tik', 0.55)) return
     void this.tamponYukle('tik').then(() => {
-      this.tamponCal('tik', 0.48)
+      this.tamponCal('tik', 0.55)
     })
   }
 
   /**
-   * Aşama bitiş zili: zengin harmonikli ve oda yankılı akustik çan/vibrafon
-   * kaydı (`seans-bitti.mp3` / `mola-bitti.mp3`).
+   * Aşama bitiş zili: sıcak ahşap marimba kaydı (`seans-bitti.mp3` /
+   * `mola-bitti.mp3`).
    *
-   * Yalnızca **bir kez** çalar (iki kez arka arkaya çalması kaldırıldı).
-   * Çalışma bittiğinde (`molaBasliyor = true`) sıcak ve dinlendirici bir
-   * Do majör akor yürüyüşü, mola bittiğinde ise derse dönüşü haber veren
-   * ferah bir Re majör çan dizisi duyulur.
+   * Yalnızca **bir kez** çalar. Çalışma bittiğinde (`molaBasliyor = true`)
+   * organik ve dinlendirici bir Sol majör marimba ezgisi, mola bittiğinde ise
+   * derse dönüşü haber veren ritmik bir Do majör marimba yürüyüşü duyulur.
    */
   zilCal(molaBasliyor = true) {
     const tur: PomodoroSesi = molaBasliyor ? 'seansBitti' : 'molaBitti'
