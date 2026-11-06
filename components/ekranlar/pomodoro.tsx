@@ -302,7 +302,9 @@ export function PomodoroEkrani({
     // turun ilk başlatıldığı an kalmalı, "Devam et"e basılan an değil.
     if (baslangicRef.current === null) baslangicRef.current = new Date().toISOString()
 
-    calarAl().sesSeviyesi(ayar.sesSeviyesi)
+    const calar = calarAl()
+    calar.sesSeviyesi(ayar.sesSeviyesi)
+    calar.hazirla()
 
     /*
       İzin turu başlatırken isteniyor, ayarlarda değil.
@@ -493,7 +495,9 @@ export function PomodoroEkrani({
     if (veri.komut === 'devam') {
       setBitisZamani(veri.bitisZamani)
       setDokunulmadi(false)
-      calarAl().sesSeviyesi(ayar.sesSeviyesi)
+      const calar = calarAl()
+    calar.sesSeviyesi(ayar.sesSeviyesi)
+    calar.hazirla()
       void pomodoroPlanla(veri.bitisZamani, asama !== 'calisma')
       if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
         void KeepAwake.keepAwake().catch(() => {})

@@ -21,12 +21,21 @@ const ONIZLEME_SANIYE = 20
 const KISILMA_MS = 500
 const KISILMA_ADIMI_MS = 50
 
+const POMODORO_SESLERI = {
+  tik: './ses/tik.mp3',
+  seansBitti: './ses/seans-bitti.mp3',
+  molaBitti: './ses/mola-bitti.mp3',
+} as const
+
+type PomodoroSesi = keyof typeof POMODORO_SESLERI
+
 /**
- * Tek bir ses kaynağını yöneten çalar. Hem üretilen sesleri hem `public/ses/`
- * altındaki mp3 döngülerini çalar.
+ * Tek bir ses kaynağını yöneten çalar. Hem `public/ses/` altındaki ses
+ * dosyalarını (`decodeAudioData` ile bellekte çözerek) hem mp3/ogg döngülerini
+ * çalar.
  *
  * AudioContext kullanıcı etkileşimi olmadan başlatılamaz (tarayıcı kuralı), bu
- * yüzden ilk `cal()` çağrısına kadar hiçbir şey kurulmaz.
+ * yüzden ilk çağrıya kadar hiçbir şey kurulmaz.
  */
 export class SesCalar {
   private ctx: AudioContext | null = null
@@ -36,6 +45,8 @@ export class SesCalar {
   private seviye = 0.5
   /** Önizlemeyi kendiliğinden bitiren sayaç; `durdur` onu da siliyor. */
   private onizlemeSayaci: number | null = null
+  private tamponlar = new Map<PomodoroSesi, AudioBuffer>()
+  private yuklemeler = new Map<PomodoroSesi, Promise<void>>()
 
   private baglamAl(): AudioContext {
     if (!this.ctx) {
@@ -48,6 +59,51 @@ export class SesCalar {
       this.kazanc.connect(this.ctx.destination)
     }
     return this.ctx
+  }
+
+  /**
+   * Tur başlarken ses dosyalarını belleğe çözer; böylece son 3 saniyedeki
+   * tikler ve aşama bitiş zili sıfır gecikmeyle çalar.
+   */
+  hazirla() {
+    for (const tur of Object.keys(POMODORO_SESLERI) as PomodoroSesi[]) {
+      void this.tamponYukle(tur)
+    }
+  }
+
+  private tamponYukle(tur: PomodoroSesi): Promise<void> {
+    const mevcut = this.yuklemeler.get(tur)
+    if (mevcut) return mevcut
+
+    const is = (async () => {
+      const ctx = this.baglamAl()
+      try {
+        const cevap = await fetch(POMODORO_SESLERI[tur])
+        const veri = await cevap.arrayBuffer()
+        this.tamponlar.set(tur, await ctx.decodeAudioData(veri))
+      } catch {
+        this.yuklemeler.delete(tur)
+      }
+    })()
+
+    this.yuklemeler.set(tur, is)
+    return is
+  }
+
+  private tamponCal(tur: PomodoroSesi, kazancSeviyesi: number): boolean {
+    const ctx = this.baglamAl()
+    const tampon = this.tamponlar.get(tur)
+    if (!tampon) return false
+
+    void ctx.resume().catch(() => {})
+    const kaynak = ctx.createBufferSource()
+    const kazanc = ctx.createGain()
+    kaynak.buffer = tampon
+    kazanc.gain.value = kazancSeviyesi
+    kaynak.connect(kazanc)
+    kazanc.connect(ctx.destination)
+    kaynak.start()
+    return true
   }
 
   sesSeviyesi(deger: number) {
@@ -179,101 +235,34 @@ export class SesCalar {
   }
 
   /**
-   * Aşamanın son 3 saniyesinde saniyede bir çalan yumuşak geri sayım tiki.
+   * Aşamanın son 3 saniyesinde saniyede bir çalan akustik geri sayım tiki.
    *
    * Masada derse dalmış ya da molada ekrana bakmayan öğrencinin sürenin
-   * bitmek üzere olduğunu fark etmesi için: bitiş zilinden önce üç küçük
-   * akustik dokunuş dikkati nazikçe topluyor. `triangle` dalga telefon
-   * hoparlöründe cılız kalmıyor ama köşeli bir bip gibi de tırmalamıyor.
+   * bitmek üzere olduğunu fark etmesi için `public/ses/tik.mp3` dosyasını
+   * çalar.
    */
   geriSayimTiki() {
-    const ctx = this.baglamAl()
-    void ctx.resume()
-
-    const osilator = ctx.createOscillator()
-    const zarf = ctx.createGain()
-    const baslangic = ctx.currentTime
-    const bitis = baslangic + 0.12
-
-    osilator.type = 'triangle'
-    osilator.frequency.setValueAtTime(659.25, baslangic) // Mi5 — sıcak, tok orta perde
-    zarf.gain.setValueAtTime(0.0001, baslangic)
-    zarf.gain.linearRampToValueAtTime(0.32, baslangic + 0.01)
-    zarf.gain.exponentialRampToValueAtTime(0.0001, bitis)
-
-    osilator.connect(zarf)
-    zarf.connect(ctx.destination)
-    osilator.start(baslangic)
-    osilator.stop(bitis + 0.02)
+    if (this.tamponCal('tik', 0.48)) return
+    void this.tamponYukle('tik').then(() => {
+      this.tamponCal('tik', 0.48)
+    })
   }
 
   /**
-   * Aşama bitiş zili: masada çalışan öğrencinin telefonuna bakmasa da net
-   * duyacağı, sıcak ve berrak bir marimba/ksilofon akoru.
+   * Aşama bitiş zili: zengin harmonikli ve oda yankılı akustik çan/vibrafon
+   * kaydı (`seans-bitti.mp3` / `mola-bitti.mp3`).
    *
-   * Eskiden yalnızca 0.35 kazançlı iki cılız sinüs tonu vardı ve telefon
-   * hoparlöründe neredeyse hiç duyulmuyordu. Şimdi her nota gövdeli bir
-   * `triangle` dalga ve onu parlatan hafif bir üst oktav `sine` harmonikten
-   * oluşuyor; ayrıca iki kez çalarak tek seferlik kısa bir sesi kaçırma
-   * ihtimalini ortadan kaldırıyor.
-   *
-   * Çalışma bittiğinde (`molaBasliyor = true`) ferahlatıcı, dinlenmeye davet
-   * eden yükselen bir Do majör arpej (Do5–Mi5–Sol5–Do6); mola bittiğinde ise
-   * derse dönüşü haber veren canlı bir Sol–Re–Sol–Si dizisi çalar.
+   * Yalnızca **bir kez** çalar (iki kez arka arkaya çalması kaldırıldı).
+   * Çalışma bittiğinde (`molaBasliyor = true`) sıcak ve dinlendirici bir
+   * Do majör akor yürüyüşü, mola bittiğinde ise derse dönüşü haber veren
+   * ferah bir Re majör çan dizisi duyulur.
    */
   zilCal(molaBasliyor = true) {
-    const ctx = this.baglamAl()
-    void ctx.resume()
-
-    const dizi = molaBasliyor
-      ? [
-          // Çalışma bitti, mola başlıyor: sıcak yükselen Do majör (C5 - E5 - G5 - C6)
-          { frekans: 523.25, gecikme: 0, sure: 0.45, seviye: 0.55 },
-          { frekans: 659.25, gecikme: 0.13, sure: 0.45, seviye: 0.55 },
-          { frekans: 783.99, gecikme: 0.26, sure: 0.5, seviye: 0.6 },
-          { frekans: 1046.5, gecikme: 0.4, sure: 0.95, seviye: 0.68 },
-        ]
-      : [
-          // Mola bitti, derse dönüş: canlandırıcı çağrı (G5 - D5 - G5 - B5)
-          { frekans: 783.99, gecikme: 0, sure: 0.36, seviye: 0.55 },
-          { frekans: 587.33, gecikme: 0.13, sure: 0.36, seviye: 0.52 },
-          { frekans: 783.99, gecikme: 0.26, sure: 0.42, seviye: 0.6 },
-          { frekans: 987.77, gecikme: 0.4, sure: 0.9, seviye: 0.68 },
-        ]
-
-    // Dalgınken ilk çalış kaçmasın diye kısa bir es ile iki kez çalıyor.
-    for (const tekrarGecikmesi of [0, 1.45]) {
-      for (const nota of dizi) {
-        const baslangic = ctx.currentTime + tekrarGecikmesi + nota.gecikme
-        const bitis = baslangic + nota.sure
-
-        // Ana gövde: triangle dalga küçük telefon hoparlöründe dolgun duyulur.
-        const govde = ctx.createOscillator()
-        const govdeZarf = ctx.createGain()
-        govde.type = 'triangle'
-        govde.frequency.setValueAtTime(nota.frekans, baslangic)
-        govdeZarf.gain.setValueAtTime(0.0001, baslangic)
-        govdeZarf.gain.linearRampToValueAtTime(nota.seviye, baslangic + 0.014)
-        govdeZarf.gain.exponentialRampToValueAtTime(0.0001, bitis)
-        govde.connect(govdeZarf)
-        govdeZarf.connect(ctx.destination)
-        govde.start(baslangic)
-        govde.stop(bitis + 0.02)
-
-        // Üst oktav harmonik: akustik çan/marimba berraklığı katar.
-        const parlaklik = ctx.createOscillator()
-        const parlakZarf = ctx.createGain()
-        parlaklik.type = 'sine'
-        parlaklik.frequency.setValueAtTime(nota.frekans * 2, baslangic)
-        parlakZarf.gain.setValueAtTime(0.0001, baslangic)
-        parlakZarf.gain.linearRampToValueAtTime(nota.seviye * 0.22, baslangic + 0.01)
-        parlakZarf.gain.exponentialRampToValueAtTime(0.0001, baslangic + nota.sure * 0.65)
-        parlaklik.connect(parlakZarf)
-        parlakZarf.connect(ctx.destination)
-        parlaklik.start(baslangic)
-        parlaklik.stop(bitis + 0.02)
-      }
-    }
+    const tur: PomodoroSesi = molaBasliyor ? 'seansBitti' : 'molaBitti'
+    if (this.tamponCal(tur, 0.85)) return
+    void this.tamponYukle(tur).then(() => {
+      this.tamponCal(tur, 0.85)
+    })
   }
 
   /** Sekme kapanırken / bileşen sökülürken çağrılır. */
