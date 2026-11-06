@@ -179,34 +179,100 @@ export class SesCalar {
   }
 
   /**
-   * Seans bitiş zili: iki notalık kısa bir çıngırak. Bildirimden bağımsız çalar
-   * çünkü uygulama öndeyken bildirim gösterilmiyor.
+   * Aşamanın son 3 saniyesinde saniyede bir çalan yumuşak geri sayım tiki.
+   *
+   * Masada derse dalmış ya da molada ekrana bakmayan öğrencinin sürenin
+   * bitmek üzere olduğunu fark etmesi için: bitiş zilinden önce üç küçük
+   * akustik dokunuş dikkati nazikçe topluyor. `triangle` dalga telefon
+   * hoparlöründe cılız kalmıyor ama köşeli bir bip gibi de tırmalamıyor.
    */
-  zilCal() {
+  geriSayimTiki() {
     const ctx = this.baglamAl()
     void ctx.resume()
 
-    // Do–Sol beşlisi: dikkat çeker ama tiz ve rahatsız değil.
-    const notalar = [
-      { frekans: 784, gecikme: 0 },
-      { frekans: 1046, gecikme: 0.16 },
-    ]
+    const osilator = ctx.createOscillator()
+    const zarf = ctx.createGain()
+    const baslangic = ctx.currentTime
+    const bitis = baslangic + 0.12
 
-    for (const nota of notalar) {
-      const osilator = ctx.createOscillator()
-      const zarf = ctx.createGain()
-      const baslangic = ctx.currentTime + nota.gecikme
+    osilator.type = 'triangle'
+    osilator.frequency.setValueAtTime(659.25, baslangic) // Mi5 — sıcak, tok orta perde
+    zarf.gain.setValueAtTime(0.0001, baslangic)
+    zarf.gain.linearRampToValueAtTime(0.32, baslangic + 0.01)
+    zarf.gain.exponentialRampToValueAtTime(0.0001, bitis)
 
-      osilator.type = 'sine'
-      osilator.frequency.value = nota.frekans
-      zarf.gain.setValueAtTime(0, baslangic)
-      zarf.gain.linearRampToValueAtTime(0.35, baslangic + 0.01)
-      zarf.gain.exponentialRampToValueAtTime(0.0001, baslangic + 1.1)
+    osilator.connect(zarf)
+    zarf.connect(ctx.destination)
+    osilator.start(baslangic)
+    osilator.stop(bitis + 0.02)
+  }
 
-      osilator.connect(zarf)
-      zarf.connect(ctx.destination)
-      osilator.start(baslangic)
-      osilator.stop(baslangic + 1.2)
+  /**
+   * Aşama bitiş zili: masada çalışan öğrencinin telefonuna bakmasa da net
+   * duyacağı, sıcak ve berrak bir marimba/ksilofon akoru.
+   *
+   * Eskiden yalnızca 0.35 kazançlı iki cılız sinüs tonu vardı ve telefon
+   * hoparlöründe neredeyse hiç duyulmuyordu. Şimdi her nota gövdeli bir
+   * `triangle` dalga ve onu parlatan hafif bir üst oktav `sine` harmonikten
+   * oluşuyor; ayrıca iki kez çalarak tek seferlik kısa bir sesi kaçırma
+   * ihtimalini ortadan kaldırıyor.
+   *
+   * Çalışma bittiğinde (`molaBasliyor = true`) ferahlatıcı, dinlenmeye davet
+   * eden yükselen bir Do majör arpej (Do5–Mi5–Sol5–Do6); mola bittiğinde ise
+   * derse dönüşü haber veren canlı bir Sol–Re–Sol–Si dizisi çalar.
+   */
+  zilCal(molaBasliyor = true) {
+    const ctx = this.baglamAl()
+    void ctx.resume()
+
+    const dizi = molaBasliyor
+      ? [
+          // Çalışma bitti, mola başlıyor: sıcak yükselen Do majör (C5 - E5 - G5 - C6)
+          { frekans: 523.25, gecikme: 0, sure: 0.45, seviye: 0.55 },
+          { frekans: 659.25, gecikme: 0.13, sure: 0.45, seviye: 0.55 },
+          { frekans: 783.99, gecikme: 0.26, sure: 0.5, seviye: 0.6 },
+          { frekans: 1046.5, gecikme: 0.4, sure: 0.95, seviye: 0.68 },
+        ]
+      : [
+          // Mola bitti, derse dönüş: canlandırıcı çağrı (G5 - D5 - G5 - B5)
+          { frekans: 783.99, gecikme: 0, sure: 0.36, seviye: 0.55 },
+          { frekans: 587.33, gecikme: 0.13, sure: 0.36, seviye: 0.52 },
+          { frekans: 783.99, gecikme: 0.26, sure: 0.42, seviye: 0.6 },
+          { frekans: 987.77, gecikme: 0.4, sure: 0.9, seviye: 0.68 },
+        ]
+
+    // Dalgınken ilk çalış kaçmasın diye kısa bir es ile iki kez çalıyor.
+    for (const tekrarGecikmesi of [0, 1.45]) {
+      for (const nota of dizi) {
+        const baslangic = ctx.currentTime + tekrarGecikmesi + nota.gecikme
+        const bitis = baslangic + nota.sure
+
+        // Ana gövde: triangle dalga küçük telefon hoparlöründe dolgun duyulur.
+        const govde = ctx.createOscillator()
+        const govdeZarf = ctx.createGain()
+        govde.type = 'triangle'
+        govde.frequency.setValueAtTime(nota.frekans, baslangic)
+        govdeZarf.gain.setValueAtTime(0.0001, baslangic)
+        govdeZarf.gain.linearRampToValueAtTime(nota.seviye, baslangic + 0.014)
+        govdeZarf.gain.exponentialRampToValueAtTime(0.0001, bitis)
+        govde.connect(govdeZarf)
+        govdeZarf.connect(ctx.destination)
+        govde.start(baslangic)
+        govde.stop(bitis + 0.02)
+
+        // Üst oktav harmonik: akustik çan/marimba berraklığı katar.
+        const parlaklik = ctx.createOscillator()
+        const parlakZarf = ctx.createGain()
+        parlaklik.type = 'sine'
+        parlaklik.frequency.setValueAtTime(nota.frekans * 2, baslangic)
+        parlakZarf.gain.setValueAtTime(0.0001, baslangic)
+        parlakZarf.gain.linearRampToValueAtTime(nota.seviye * 0.22, baslangic + 0.01)
+        parlakZarf.gain.exponentialRampToValueAtTime(0.0001, baslangic + nota.sure * 0.65)
+        parlaklik.connect(parlakZarf)
+        parlakZarf.connect(ctx.destination)
+        parlaklik.start(baslangic)
+        parlaklik.stop(bitis + 0.02)
+      }
     }
   }
 

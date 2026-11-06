@@ -96,7 +96,13 @@ export async function pomodoroPlanla(bitisZamani: number, mola: boolean) {
             ? 'Hazırsan bir tur daha? 🐰'
             : 'Biraz ara ver. 🐰',
           ...GORUNUS,
-          schedule: { at: new Date(bitisZamani) },
+          schedule: {
+            at: new Date(bitisZamani),
+            // Ekran kapalı ve telefon uykudayken (Doze) sayaç dolduğunda
+            // bildirim gecikmesin; öğrenci masada çalışırken sürenin
+            // bittiğini tam zamanında duymalı.
+            allowWhileIdle: true,
+          },
         },
       ],
     })

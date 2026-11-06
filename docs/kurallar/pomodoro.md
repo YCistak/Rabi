@@ -60,8 +60,9 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 - Oyun müziği ve Pomodoro lo-fi'ı kaldırıldı (kullanıcı). `Ayarlar.oyunMuzigi`,
   `oyunMuzikTuru`, `ses`, `sesSeviyesi` kayıtta duruyor, okunmuyor. `lib/ses.ts` ve
-  `lib/lofi.ts` dosyada. Aşama sonu **zili** ve oyun efektleri (`oyun-sesi.ts`, "Mini
-  oyun sesleri" anahtarı; aylık özet de ona bakar) duruyor. Geri getirilirse tarihçe:
+  `lib/lofi.ts` dosyada. Aşama sonu **zili** (`SesCalar.zilCal`, son 3 saniyede
+  `geriSayimTiki`) ve oyun efektleri (`oyun-sesi.ts`, "Mini oyun sesleri" anahtarı;
+  aylık özet de ona bakar) duruyor. Geri getirilirse tarihçe:
   `git log -- components/ekranlar/pomodoro.tsx`, `lib/oyunlar/mod-muzigi.ts`.
 
 ## Kilit ekranı bildirimi (Android)
