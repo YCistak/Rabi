@@ -44,6 +44,20 @@ const BASLATMA_SECENEKLERI = {
  */
 let oncekiOturumKapanisi: Promise<void> = Promise.resolve()
 
+/**
+ * Bu hata kodları alındığında servis/donanım kullanılamaz durumdadır;
+ * sessizlik döngüsü oturumu tekrar başlatmamalıdır.
+ */
+const YENIDEN_BASLATILMAYACAK_HATALAR = new Set([
+  'network',
+  'not-allowed',
+  'service-not-allowed',
+  'audio-capture',
+])
+
+/** Tarayıcıda çakışan iki tanıma oturumunu önlemek için etkin tanıma nesnesi. */
+let aktifTarayiciTanima: TarayiciSpeechRecognition | null = null
+
 /* -------------------------------------------------------------------------- */
 /* Tarayıcı Web Speech API Tip Tanımları (any kullanılmaz)                    */
 /* -------------------------------------------------------------------------- */
@@ -283,14 +297,22 @@ function cihazdaDinle(secenek: { onKismi: (metin: string) => void }): {
         })
         dinleyiciler.push(partialDinleyici)
 
+        let sonHataKodu: string | null = null
+
         // Oturum durumu dinleyicisi
         const durumDinleyici = await SpeechRecognition.addListener('listeningState', async (olay) => {
           if (durdurulduMu) return
           if (olay.state === 'stopped' || olay.status === 'stopped') {
             const gecenSure = Date.now() - baslangicZamani
 
-            // Kullanıcı durdurduysa veya 60 sn tavanı aşıldıysa oturumu bitir
-            if (kullaniciDurdurdu || gecenSure >= EN_UZUN_SURE_MS) {
+            const hataVar =
+              sonHataKodu !== null &&
+              (YENIDEN_BASLATILMAYACAK_HATALAR.has(sonHataKodu) ||
+                sonHataKodu.includes('network') ||
+                sonHataKodu.includes('permission'))
+
+            // Kullanıcı durdurduysa, kurtarılamaz hata oluştuysa veya 60 sn tavanı aşıldıysa oturumu bitir
+            if (kullaniciDurdurdu || hataVar || gecenSure >= EN_UZUN_SURE_MS) {
               await oturumuKapat()
               return
             }
@@ -317,19 +339,20 @@ function cihazdaDinle(secenek: { onKismi: (metin: string) => void }): {
         // Hata dinleyicisi
         const hataDinleyici = await SpeechRecognition.addListener('error', async (olay) => {
           if (durdurulduMu) return
+          sonHataKodu = olay.code?.toLowerCase() || ''
           if (kullaniciDurdurdu) {
             await oturumuKapat()
             return
           }
 
-          const hataKodu = olay.code?.toLowerCase() || ''
+          const hataKodu = sonHataKodu
           let mesaj = 'Ses anlaşılamadı, tekrar dene.'
           if (hataKodu.includes('permission')) {
             mesaj = 'Mikrofon izni verilmedi.'
           } else if (hataKodu.includes('busy')) {
             mesaj = 'Ses servisi meşgul, lütfen tekrar dene.'
           } else if (hataKodu.includes('network')) {
-            mesaj = 'Ses tanıma için internet bağlantısı kurulamadı.'
+            mesaj = 'Ses tanıma için internet gerekiyor. Yazarak anlatabilirsin.'
           }
 
           const sonMetin = metinBirlestir(birikmisMetin, gecerliAraMetin)
@@ -390,6 +413,7 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
 } {
   let kullaniciDurdurdu = false
   let durdurulduMu = false
+  let sonHataKodu: string | null = null
   let durdurmaZamanlayici: ReturnType<typeof setTimeout> | null = null
   let tavanZamanlayici: ReturnType<typeof setTimeout> | null = null
   let tanima: TarayiciSpeechRecognition | null = null
@@ -407,7 +431,14 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
     }
 
     try {
+      if (aktifTarayiciTanima) {
+        try {
+          aktifTarayiciTanima.abort()
+        } catch {}
+        aktifTarayiciTanima = null
+      }
       tanima = new TarayiciSinif()
+      aktifTarayiciTanima = tanima
     } catch {
       reddet(new Error('Ses tanıma başlatılamadı.'))
       return
@@ -426,12 +457,16 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
       if (durdurmaZamanlayici) clearTimeout(durdurmaZamanlayici)
       if (tavanZamanlayici) clearTimeout(tavanZamanlayici)
 
+      if (aktifTarayiciTanima === tanima) {
+        aktifTarayiciTanima = null
+      }
+
       if (tanima) {
         tanima.onresult = null
         tanima.onerror = null
         tanima.onend = null
         try {
-          tanima.stop()
+          tanima.abort()
         } catch {}
       }
 
@@ -464,6 +499,7 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
     }
 
     tanima.onerror = (olay: TarayiciKonusmaHataOlayi) => {
+      sonHataKodu = olay.error?.toLowerCase() || ''
       if (durdurulduMu) return
       if (kullaniciDurdurdu) {
         oturumuKapat()
@@ -471,10 +507,12 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
       }
 
       let mesaj = 'Ses anlaşılamadı, tekrar dene.'
-      if (olay.error === 'not-allowed') {
+      if (olay.error === 'not-allowed' || olay.error === 'service-not-allowed') {
         mesaj = 'Mikrofon izni verilmedi.'
       } else if (olay.error === 'network') {
-        mesaj = 'Ses tanıma için internet bağlantısı kurulamadı.'
+        mesaj = 'Bu tarayıcıda ses tanıma çalışmıyor. Yazarak anlatabilirsin.'
+      } else if (olay.error === 'audio-capture') {
+        mesaj = 'Mikrofon bulunamadı ya da başlatılamadı.'
       } else if (olay.error === 'no-speech') {
         const sonMetin = metinBirlestir(birikmisMetin, gecerliAraMetin)
         if (sonMetin) {
@@ -489,7 +527,9 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
     tanima.onend = () => {
       if (durdurulduMu) return
       const gecenSure = Date.now() - baslangicZamani
-      if (kullaniciDurdurdu || gecenSure >= EN_UZUN_SURE_MS) {
+      const baslatilamaz =
+        sonHataKodu !== null && YENIDEN_BASLATILMAYACAK_HATALAR.has(sonHataKodu)
+      if (kullaniciDurdurdu || baslatilamaz || gecenSure >= EN_UZUN_SURE_MS) {
         oturumuKapat()
         return
       }

@@ -226,13 +226,38 @@ export function SesliGirisSayfasi({
   }, [])
 
   const rabiSoylesin = useCallback((metinler: string[]) => {
-    setDurum((onceki) => ({
-      ...onceki,
-      mesajlar: [
-        ...onceki.mesajlar,
-        ...metinler.map((metin) => ({ id: mesajKimligiRef.current++, kim: 'rabi' as const, metin })),
-      ],
-    }))
+    setDurum((onceki) => {
+      // Rabi'nin sohbetteki son mesajını bul
+      let sonRabiMetni: string | null = null
+      for (let i = onceki.mesajlar.length - 1; i >= 0; i--) {
+        if (onceki.mesajlar[i].kim === 'rabi') {
+          sonRabiMetni = onceki.mesajlar[i].metin.trim()
+          break
+        }
+      }
+
+      const eklenecekler: Mesaj[] = []
+      let sonEklenen = sonRabiMetni
+
+      for (const ham of metinler) {
+        const metin = ham.trim()
+        // Rabi'nin son balonu aynı metinse mükerrer hata/bilgi balonunu tekrar ekleme
+        if (!metin || metin === sonEklenen) continue
+        eklenecekler.push({
+          id: mesajKimligiRef.current++,
+          kim: 'rabi' as const,
+          metin,
+        })
+        sonEklenen = metin
+      }
+
+      if (eklenecekler.length === 0) return onceki
+
+      return {
+        ...onceki,
+        mesajlar: [...onceki.mesajlar, ...eklenecekler],
+      }
+    })
   }, [])
 
   /** Kullanıcı mesajını sohbete ekler, birikime işler ve kısa bir beklemeyle Rabi'yi cevaplatır. */
@@ -303,6 +328,7 @@ export function SesliGirisSayfasi({
         setSesDurumu('yok')
         bosaDon()
         rabiSoylesin(['Mikrofon izni yok. Yazarak anlatabilirsin.'])
+        window.requestAnimationFrame(() => yaziKutusuRef.current?.focus())
         return
       }
     }
@@ -335,6 +361,17 @@ export function SesliGirisSayfasi({
       if (kucuk.includes('izin')) {
         setSesDurumu('yok')
         rabiSoylesin(['Mikrofon izni yok. Yazarak anlatabilirsin.'])
+        window.requestAnimationFrame(() => yaziKutusuRef.current?.focus())
+        return
+      }
+      if (
+        kucuk.includes('internet') ||
+        kucuk.includes('çalışmıyor') ||
+        kucuk.includes('calismiyor')
+      ) {
+        setSesDurumu('yok')
+        rabiSoylesin([mesaj])
+        window.requestAnimationFrame(() => yaziKutusuRef.current?.focus())
         return
       }
       if (mesaj === '' || kucuk.includes('anlaşılamadı')) {
