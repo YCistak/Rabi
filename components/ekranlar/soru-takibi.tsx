@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { CalendarDays, Mic, Plus, X } from 'lucide-react'
+import { CalendarDays, MessageCircle, Mic, Plus, X } from 'lucide-react'
 import type { Ayarlar, GunlukKayit, Sablon, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { calismaSirasi, sadelestir } from '@/lib/dersler'
@@ -113,8 +113,8 @@ export function SoruTakibiEkrani({
   }, [yerlesim])
   const [sayfaAcik, setSayfaAcik] = useState(false)
   const [sesliAcik, setSesliAcik] = useState(false)
-  // Statik derlemede ilk karede kapalı başlar; cihazda konuşma tanıma servisi
-  // varsa etkide bir kez açılır.
+  // Düğme her zaman var (Rabi'ye yazarak da anlatılır); yalnız simgesi ve
+  // etiketi buna göre değişir. İlk karede kapalı, etkide bir kez sorulur.
   const [sesDestekli, setSesDestekli] = useState(false)
   const [mesaj, setMesaj] = useState<string | null>(null)
 
@@ -360,14 +360,18 @@ export function SoruTakibiEkrani({
               <Plus size={19} strokeWidth={2.8} aria-hidden />
               Soru ekle
             </Buton>
-            {sesDestekli && !tanitim && (
+            {!tanitim && (
               <Buton
                 bicim="ikincil"
                 onClick={() => setSesliAcik(true)}
                 className="h-[54px] shrink-0 rounded-[18px] px-4 text-[15px]"
               >
-                <Mic size={18} strokeWidth={2.3} aria-hidden />
-                Sesle anlat
+                {sesDestekli ? (
+                  <Mic size={18} strokeWidth={2.3} aria-hidden />
+                ) : (
+                  <MessageCircle size={18} strokeWidth={2.3} aria-hidden />
+                )}
+                {sesDestekli ? 'Sesle anlat' : "Rabi'ye anlat"}
               </Buton>
             )}
           </div>
@@ -443,6 +447,7 @@ export function SoruTakibiEkrani({
           sablonlar={sablonlar}
           ayarlar={ayarlar}
           gunEtiketi={bugunMu ? 'Bugün' : 'Dün'}
+          hedefeKalan={hedef > 0 ? Math.max(0, hedef - ozet.toplam) : null}
           onKapat={() => setSesliAcik(false)}
           onSorulariKaydet={sesliSorulariKaydet}
           onDenemeAc={onDenemeAc}

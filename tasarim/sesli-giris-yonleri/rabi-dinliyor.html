@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Rabi Dinliyor — Sesli Giriş Tasarım Yönü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* -------------------------------------------------------------------------
+       Rabi açık tema değişkenleri (globals.css ile birebir eş)
+       ------------------------------------------------------------------------- */
+    :root {
+      --background: #f8f8f7;
+      --foreground: #1b1a19;
+      --card: #ffffff;
+      --card-foreground: #1b1a19;
+      --muted: #efeeeb;
+      --muted-foreground: #6b6764;
+      --border: #eae9e6;
+      --primary: #b3491f;
+      --primary-parlak: #d9622f;
+      --primary-soft: #fbeee7;
+      --primary-soft-yari: rgb(251 238 231 / 0.55);
+      --primary-soft-sifir: rgb(251 238 231 / 0);
+      --primary-foreground: #ffffff;
+      --tuval-zemin: #eceae6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 880px;
+      height: 960px;
+      margin: 0;
+      overflow: hidden;
+      background: var(--tuval-zemin);
+      font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+      color: var(--foreground);
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* -------------------------------------------------------------------------
+       Sayfa başlığı ve tanıtım
+       ------------------------------------------------------------------------- */
+    .baslik-alani {
+      padding: 16px 34px 10px 34px;
+    }
+
+    .yon-baslik {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--foreground);
+      line-height: 1.15;
+    }
+
+    .yon-ozet {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+
+    /* -------------------------------------------------------------------------
+       Telefon vitrini (2 telefon yan yana)
+       ------------------------------------------------------------------------- */
+    .sahne {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 0 34px;
+    }
+
+    .telefon-kolonu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .telefon {
+      width: 390px;
+      height: 844px;
+      background: var(--background);
+      border: 3.5px solid #232220;
+      border-radius: 44px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), 0 3px 8px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .telefon-etiket {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--muted-foreground);
+    }
+
+    .telefon-etiket.aktif {
+      color: var(--primary);
+    }
+
+    /* -------------------------------------------------------------------------
+       Telefon içi: Durum çubuğu (iOS status bar)
+       ------------------------------------------------------------------------- */
+    .durum-cubugu {
+      height: 44px;
+      padding: 12px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .durum-saat {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--foreground);
+    }
+
+    .dinamik-ada {
+      width: 108px;
+      height: 25px;
+      background: #000000;
+      border-radius: 20px;
+    }
+
+    .durum-simgeler {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--foreground);
+    }
+
+    /* -------------------------------------------------------------------------
+       Telefon içi: Üst çubuk (Sesle anlat başlığı + ✕ Kapat)
+       ------------------------------------------------------------------------- */
+    .ust-cubuk {
+      padding: 10px 20px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .ekran-basligi {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--foreground);
+    }
+
+    .kapat-dugmesi {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: var(--muted);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted-foreground);
+      cursor: pointer;
+    }
+
+    /* -------------------------------------------------------------------------
+       Telefon içi: Orta alan (Dinleme göstergesi olarak Rabi)
+       ------------------------------------------------------------------------- */
+    .orta-govde {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 24px;
+      position: relative;
+    }
+
+    .rabi-sahnesi {
+      width: 240px;
+      height: 240px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .rabi-gorsel {
+      width: 160px;
+      height: 160px;
+      object-fit: contain;
+      position: relative;
+      z-index: 3;
+      filter: drop-shadow(0 10px 20px rgba(179, 73, 31, 0.08));
+    }
+
+    /* Sakin başlangıç halesi */
+    .sakin-hale {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(217, 98, 47, 0.16) 0%, rgba(217, 98, 47, 0.04) 65%, transparent 80%);
+      border: 1.5px solid rgba(217, 98, 47, 0.25);
+      z-index: 1;
+      animation: sakinNefes 3s ease-in-out infinite;
+    }
+
+    @keyframes sakinNefes {
+      0%, 100% {
+        transform: scale(1.02);
+        opacity: 0.55;
+      }
+      50% {
+        transform: scale(1.15);
+        opacity: 0.9;
+      }
+    }
+
+    /* Konuşurken sesle büyüyen yumuşak turuncu halkalar */
+    .ses-halka {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      border: 2px solid rgba(217, 98, 47, 0.38);
+      background: radial-gradient(circle, rgba(217, 98, 47, 0.22) 0%, rgba(217, 98, 47, 0.06) 60%, transparent 85%);
+    }
+
+    .ses-halka-1 {
+      width: 170px;
+      height: 170px;
+      animation: sesDalgasi 2.4s cubic-bezier(0.18, 0.8, 0.25, 1) infinite;
+    }
+
+    .ses-halka-2 {
+      width: 170px;
+      height: 170px;
+      animation: sesDalgasi 2.4s cubic-bezier(0.18, 0.8, 0.25, 1) infinite 0.8s;
+    }
+
+    .ses-halka-3 {
+      width: 170px;
+      height: 170px;
+      animation: sesDalgasi 2.4s cubic-bezier(0.18, 0.8, 0.25, 1) infinite 1.6s;
+    }
+
+    @keyframes sesDalgasi {
+      0% {
+        transform: scale(0.96);
+        opacity: 0.85;
+      }
+      50% {
+        opacity: 0.45;
+      }
+      100% {
+        transform: scale(2.15);
+        opacity: 0;
+      }
+    }
+
+    /* Canlı metin alanı */
+    .metin-kapsayici {
+      width: 100%;
+      max-width: 330px;
+      min-height: 84px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    /* Başlangıçta yalnızca "Seni dinliyorum" */
+    .baslangic-yazi {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--foreground);
+      line-height: 1.3;
+    }
+
+    /* Konuşurken canlı konuşma metni */
+    .canli-yazi {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: var(--foreground);
+      line-height: 1.32;
+    }
+
+    .yanip-sonen-imlec {
+      display: inline-block;
+      width: 2.5px;
+      height: 19px;
+      background: var(--primary-parlak);
+      margin-left: 3px;
+      vertical-align: -2px;
+      border-radius: 1px;
+      animation: imlecYanipSon 0.9s ease-in-out infinite;
+    }
+
+    @keyframes imlecYanipSon {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* -------------------------------------------------------------------------
+       Telefon içi: Alt alan (Tek geniş Bitir düğmesi)
+       ------------------------------------------------------------------------- */
+    .alt-alan {
+      padding: 0 20px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .bitir-butonu {
+      width: 100%;
+      height: 52px;
+      border-radius: 17px;
+      border: none;
+      font-family: inherit;
+      font-size: 16.5px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(217, 98, 47, 0.24);
+      background: var(--primary-parlak);
+      color: var(--primary-foreground);
+      transition: transform 0.15s ease;
+    }
+
+    .bitir-butonu.hazir {
+      background: var(--primary-parlak);
+      color: var(--primary-foreground);
+      box-shadow: 0 6px 18px rgba(217, 98, 47, 0.22);
+    }
+
+    .home-cizgisi {
+      width: 134px;
+      height: 5px;
+      background: #1b1a19;
+      border-radius: 3px;
+      margin-top: 10px;
+      opacity: 0.22;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Başlık Alanı -->
+  <header class="baslik-alani">
+    <h1 class="yon-baslik">Rabi Dinliyor</h1>
+    <p class="yon-ozet">Mikrofon yerine Rabi'nin kendisi dinliyor; arkasında sesle büyüyen yumuşak turuncu halkalar.</p>
+  </header>
+
+  <!-- Telefon Vitrini -->
+  <main class="sahne">
+
+    <!-- 1. Telefon: Başlangıç -->
+    <div class="telefon-kolonu">
+      <div class="telefon">
+        <!-- iOS Durum Çubuğu -->
+        <div class="durum-cubugu">
+          <span class="durum-saat">09:41</span>
+          <div class="dinamik-ada"></div>
+          <div class="durum-simgeler">
+            <!-- Sinyal -->
+            <svg width="16" height="12" viewBox="0 0 17 12" fill="currentColor">
+              <rect x="0" y="9" width="3" height="3" rx="0.6"/>
+              <rect x="4.5" y="6" width="3" height="6" rx="0.6"/>
+              <rect x="9" y="3" width="3" height="9" rx="0.6"/>
+              <rect x="13.5" y="0" width="3" height="12" rx="0.6"/>
+            </svg>
+            <!-- Wi-Fi -->
+            <svg width="15" height="12" viewBox="0 0 16 12" fill="currentColor">
+              <path d="M8 9.6a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8zm5.6-4.6A9.4 9.4 0 002.4 5l1 1.2a7.8 7.8 0 019.2 0l1-1.2zm2.4-2.6a12.6 12.6 0 00-16 0l1 1.2a11 11 0 0114 0l1-1.2z"/>
+            </svg>
+            <!-- Pil -->
+            <svg width="22" height="11" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="1" y="1" width="19" height="10" rx="3"/>
+              <rect x="2.5" y="2.5" width="12" height="7" rx="1.5" fill="currentColor"/>
+              <path d="M22 4.5v3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Üst Çubuk -->
+        <div class="ust-cubuk">
+          <span class="ekran-basligi">Sesle anlat</span>
+          <button type="button" class="kapat-dugmesi" aria-label="Kapat">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Orta Gövde: Dinleme Göstergesi Olarak Rabi -->
+        <div class="orta-govde">
+          <div class="rabi-sahnesi">
+            <div class="sakin-hale"></div>
+            <img src="../../public/tavsan-kafa.png" alt="Rabi dinliyor" class="rabi-gorsel">
+          </div>
+
+          <!-- Başlangıçta Yalnız: "Seni dinliyorum" -->
+          <div class="metin-kapsayici">
+            <p class="baslangic-yazi">Seni dinliyorum</p>
+          </div>
+        </div>
+
+        <!-- Alt Alan: Tek Geniş Bitir Düğmesi -->
+        <div class="alt-alan">
+          <button type="button" class="bitir-butonu hazir">Bitir</button>
+          <div class="home-cizgisi"></div>
+        </div>
+      </div>
+      <span class="telefon-etiket">Başlangıç</span>
+    </div>
+
+    <!-- 2. Telefon: Konuşuyor -->
+    <div class="telefon-kolonu">
+      <div class="telefon">
+        <!-- iOS Durum Çubuğu -->
+        <div class="durum-cubugu">
+          <span class="durum-saat">09:41</span>
+          <div class="dinamik-ada"></div>
+          <div class="durum-simgeler">
+            <!-- Sinyal -->
+            <svg width="16" height="12" viewBox="0 0 17 12" fill="currentColor">
+              <rect x="0" y="9" width="3" height="3" rx="0.6"/>
+              <rect x="4.5" y="6" width="3" height="6" rx="0.6"/>
+              <rect x="9" y="3" width="3" height="9" rx="0.6"/>
+              <rect x="13.5" y="0" width="3" height="12" rx="0.6"/>
+            </svg>
+            <!-- Wi-Fi -->
+            <svg width="15" height="12" viewBox="0 0 16 12" fill="currentColor">
+              <path d="M8 9.6a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8zm5.6-4.6A9.4 9.4 0 002.4 5l1 1.2a7.8 7.8 0 019.2 0l1-1.2zm2.4-2.6a12.6 12.6 0 00-16 0l1 1.2a11 11 0 0114 0l1-1.2z"/>
+            </svg>
+            <!-- Pil -->
+            <svg width="22" height="11" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="1" y="1" width="19" height="10" rx="3"/>
+              <rect x="2.5" y="2.5" width="15" height="7" rx="1.5" fill="currentColor"/>
+              <path d="M22 4.5v3" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Üst Çubuk -->
+        <div class="ust-cubuk">
+          <span class="ekran-basligi">Sesle anlat</span>
+          <button type="button" class="kapat-dugmesi" aria-label="Kapat">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Orta Gövde: Dinleme Göstergesi Olarak Rabi (Sesle Büyüyen Halkalar) -->
+        <div class="orta-govde">
+          <div class="rabi-sahnesi">
+            <div class="ses-halka ses-halka-1"></div>
+            <div class="ses-halka ses-halka-2"></div>
+            <div class="ses-halka ses-halka-3"></div>
+            <img src="../../public/tavsan-kafa.png" alt="Rabi dinliyor" class="rabi-gorsel">
+          </div>
+
+          <!-- Canlı Metin: Büyük, Kalın, Ortalanmış -->
+          <div class="metin-kapsayici">
+            <p class="canli-yazi">
+              Bugün TYT denemesi çözdüm Türkçe 33 doğru 4 yanlış bir de 80 matematik çözdüm<span class="yanip-sonen-imlec"></span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Alt Alan: Tek Geniş Bitir Düğmesi -->
+        <div class="alt-alan">
+          <button type="button" class="bitir-butonu">Bitir</button>
+          <div class="home-cizgisi"></div>
+        </div>
+      </div>
+      <span class="telefon-etiket aktif">Konuşuyor</span>
+    </div>
+
+  </main>
+
+</body>
+</html>

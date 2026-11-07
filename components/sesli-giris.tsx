@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FileSpreadsheet, Mic, RotateCcw, X } from 'lucide-react'
+import { ArrowUp, Check, FileSpreadsheet, Mic, X } from 'lucide-react'
 import type { Ayarlar, Sablon, SoruKaydi } from '@/lib/types'
 import { dersRengi } from '@/lib/banka'
 import { sadelestir } from '@/lib/dersler'
@@ -9,11 +9,18 @@ import type { KonuDersId } from '@/lib/konu/tip'
 import { secilebilirSablonlar } from '@/lib/sablonlar'
 import { seviyeSablonu, varsayilanSeviyeSinifi } from '@/lib/seviye-tespit'
 import { dinle, sesIzniIste, sesTanimaDurumu } from '@/lib/ses-tanima'
-import { sesliMetniCoz, type SesliDeneme, type SesliSoru } from '@/lib/sesli-giris'
+import { sesliMetniCoz, type SesliDeneme } from '@/lib/sesli-giris'
+import {
+  ACILIS_SORUSU,
+  BOS_BIRIKIM,
+  birikimeEkle,
+  rabiCevabi,
+  type SohbetBirikimi,
+} from '@/lib/sesli-sohbet'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { cn } from '@/lib/utils'
-import { Buton, Not, useKapatmaOnayi } from '@/components/ui'
+import { Buton, useKapatmaOnayi } from '@/components/ui'
 import { BosKutusu, HataNotu, SayiKutusu, sayiya } from '@/components/ekranlar/soru-takibi'
 
 export type DenemeBaslangici = {
@@ -21,20 +28,34 @@ export type DenemeBaslangici = {
   girisler: Record<string, { dogru: string; yanlis: string }>
 }
 
-type Durum =
-  | { ad: 'hazirlaniyor' }
-  | { ad: 'izin-yok' }
-  | { ad: 'dinliyor'; araMetin: string; bitiriliyor: boolean }
-  | { ad: 'hata'; mesaj: string }
-  | {
-      ad: 'onay'
-      sorular: SesliSoru[]
-      deneme: SesliDeneme | null
-      anlasilmayan: string[]
-      duyulan: string
-      /** Çözümleyiciden ilk çıktığında da boş muydu, yoksa kullanıcı satırları ✕ ile mi sildi. */
-      baslangictaBos: boolean
-    }
+type Mesaj = { id: number; kim: 'rabi' | 'kullanici'; metin: string }
+
+type DinlemeDurumu = 'bos' | 'hazirlaniyor' | 'dinliyor' | 'bitiriliyor'
+
+type Durum = {
+  mesajlar: Mesaj[]
+  /** Sohbet boyunca anlatılanların toplamı; özet kartı bunu çizer, "Kaydet" bunu yazar. */
+  birikim: SohbetBirikimi
+  dinleme: DinlemeDurumu
+  /** Dinlerken akan ara metin; sağda canlı kullanıcı balonu olarak görünür. */
+  araMetin: string
+  /** Henüz düşmemiş Rabi cevabı sayısı; sıfırdan büyükken "yazıyor" noktaları görünür. */
+  bekleyenCevap: number
+}
+
+/** Mikrofon düğmesi yalnız `var` iken görünür; ses yoksa ya da izin reddedildiyse sohbet yazıyla sürer. */
+type SesDurumu = 'bilinmiyor' | 'var' | 'yok'
+
+/** Rabi'nin cevabından önceki kısa "yazıyor" beklemesi: cevap anında düşünce mesaj gözden kaçıyordu. */
+const YAZIYOR_SURESI_MS = 450
+
+/** Listenin sonuna bu kadar yakınsa yeni mesajda aşağı kaydırılır; daha yukarıdaysa kullanıcı okuyordur. */
+const SONA_YAKIN_PX = 96
+
+/** Yazı kutusu 1–4 satır büyür: 4 × 22px satır + 16px iç boşluk. */
+const YAZI_KUTUSU_EN_YUKSEK_PX = 104
+
+const DALGA_BOYLARI = [8, 16, 24, 14, 28, 19, 26, 12, 22, 17, 25, 15, 20, 11, 18, 9]
 
 function soruDersAilesi(ders: string): KonuDersId | null {
   const bankaAilesi = dersRengi(ders)
@@ -65,6 +86,12 @@ function netMetniYaz(deger: number): string {
   return String(deger).replace('.', ',')
 }
 
+function sureMetni(saniye: number): string {
+  const dk = Math.floor(saniye / 60)
+  const sn = saniye % 60
+  return `${dk}:${String(sn).padStart(2, '0')}`
+}
+
 function denemedenBaslangic(deneme: SesliDeneme): DenemeBaslangici {
   const girisler: Record<string, { dogru: string; yanlis: string }> = {}
   for (const d of deneme.dersler) {
@@ -73,16 +100,47 @@ function denemedenBaslangic(deneme: SesliDeneme): DenemeBaslangici {
   return { sablonId: deneme.sablonId, girisler }
 }
 
+function hareketAzaltilmisMi(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true
+  )
+}
+
+function RabiAvatari({ gizli = false }: { gizli?: boolean }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'inline-flex size-[34px] shrink-0 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-primary-soft',
+        gizli && 'invisible',
+      )}
+    >
+      <img
+        src="/tavsan-yuz.png"
+        alt=""
+        width={28}
+        height={28}
+        draggable={false}
+        className="size-7 translate-y-0.5 object-contain"
+      />
+    </span>
+  )
+}
+
 /**
- * Soru Takibi'nin "Sesle anlat" alt sayfası.
+ * Soru Takibi'nin "Sesle anlat" alt sayfası: Rabi ile kısa bir sohbet.
  *
- * Mikrofon açılıp konuşma metne çevrilir, `sesliMetniCoz` ile ayrıştırılır ve
- * kullanıcı onaylamadan yerel depoya hiçbir kayıt yazılmaz (`docs/kurallar/sesli-giris.md`).
+ * Kullanıcı yazarak ya da dikte ederek anlatır; her mesaj `sesliMetniCoz` ile
+ * çözülüp birikime eklenir, Rabi kurallı kısa cevaplar verir (`lib/sesli-sohbet.ts`,
+ * yapay zekâ ve ağ yok). Kullanıcı özet kartından "Kaydet" demeden yerel depoya
+ * hiçbir şey yazılmaz (`docs/kurallar/sesli-giris.md`).
  */
 export function SesliGirisSayfasi({
   sablonlar,
   ayarlar,
   gunEtiketi,
+  hedefeKalan = null,
   onKapat,
   onSorulariKaydet,
   onDenemeAc,
@@ -90,20 +148,38 @@ export function SesliGirisSayfasi({
   sablonlar: Sablon[]
   ayarlar: Ayarlar
   gunEtiketi: string
+  /** Soru Takibi'nde seçili günün hedefine pencere açılırken kalan soru; hedef yoksa `null`. */
+  hedefeKalan?: number | null
   onKapat: () => void
   onSorulariKaydet: (sorular: SoruKaydi[]) => void
   onDenemeAc?: (baslangic: DenemeBaslangici) => void
 }) {
-  const [durum, setDurum] = useState<Durum>({ ad: 'hazirlaniyor' })
-  /** Onay ekranında sayılarını düzeltmek için açılmış ders satırı. */
+  const [durum, setDurum] = useState<Durum>(() => ({
+    mesajlar: [{ id: 0, kim: 'rabi', metin: ACILIS_SORUSU }],
+    birikim: BOS_BIRIKIM,
+    dinleme: 'bos',
+    araMetin: '',
+    bekleyenCevap: 0,
+  }))
+  const [sesDurumu, setSesDurumu] = useState<SesDurumu>('bilinmiyor')
+  const [yazi, setYazi] = useState('')
+  const [saniye, setSaniye] = useState(0)
+  /** Özet kartında sayılarını düzeltmek için açılmış ders satırı. */
   const [acikDers, setAcikDers] = useState<string | null>(null)
-  /** Onay ekranındaki uzun "Duyduğum" satırının tamamının açık olup olmadığı. */
-  const [duyulanAcik, setDuyulanAcik] = useState(false)
 
   const etkinRef = useRef(true)
   const oturumSurumuRef = useRef(0)
   const oturumRef = useRef<{ durdur: () => void } | null>(null)
   const sonAraMetinRef = useRef('')
+  const mesajKimligiRef = useRef(1)
+  /** Kullanıcının kaçıncı mesajı (0'dan); `rabiCevabi` cevabı buna göre çeşitlendirir. */
+  const kullaniciSirasiRef = useRef(0)
+  /** Birikimin anlık kopyası: cevap hesabı aynı tıklamada güncel birikimi okumalı. */
+  const birikimRef = useRef<SohbetBirikimi>(BOS_BIRIKIM)
+  const zamanlayicilarRef = useRef<number[]>([])
+  const listeRef = useRef<HTMLDivElement | null>(null)
+  const sonaYakinRef = useRef(true)
+  const yaziKutusuRef = useRef<HTMLTextAreaElement | null>(null)
 
   /*
     Seviye tespit tür satırında tek kimlik (`okul`) taşıyor ama Yeni Deneme
@@ -127,6 +203,8 @@ export function SesliGirisSayfasi({
     sablonlar: cozucuSablonlari,
     varsayilanSablonId: ayarlar.varsayilanSablonId,
   }
+  const hedefeKalanRef = useRef(hedefeKalan)
+  hedefeKalanRef.current = hedefeKalan
 
   const oturumuTemizle = useCallback(() => {
     oturumSurumuRef.current += 1
@@ -142,102 +220,194 @@ export function SesliGirisSayfasi({
   useGeriKatmani(true, kapat)
   const kaydir = useAsagiKaydirKapat(kapat)
 
+  const birikimiYaz = useCallback((yeni: SohbetBirikimi) => {
+    birikimRef.current = yeni
+    setDurum((onceki) => ({ ...onceki, birikim: yeni }))
+  }, [])
+
+  const rabiSoylesin = useCallback((metinler: string[]) => {
+    setDurum((onceki) => ({
+      ...onceki,
+      mesajlar: [
+        ...onceki.mesajlar,
+        ...metinler.map((metin) => ({ id: mesajKimligiRef.current++, kim: 'rabi' as const, metin })),
+      ],
+    }))
+  }, [])
+
+  /** Kullanıcı mesajını sohbete ekler, birikime işler ve kısa bir beklemeyle Rabi'yi cevaplatır. */
+  const mesajGonder = useCallback((ham: string) => {
+    const metin = ham.trim()
+    if (!metin) return
+    const sira = kullaniciSirasiRef.current++
+    const cozum = sesliMetniCoz(metin, cozucuRef.current)
+
+    // Kalan, bu mesajdan önceki birikim düşülerek verilir; bu mesajın payını `rabiCevabi` bilir.
+    const oncekiToplam = birikimRef.current.sorular.reduce((t, s) => t + s.toplam, 0)
+    const kalan =
+      hedefeKalanRef.current == null ? null : Math.max(0, hedefeKalanRef.current - oncekiToplam)
+    const cevap = rabiCevabi(cozum, {
+      sablonlar: cozucuRef.current.sablonlar,
+      mesajSirasi: sira,
+      hedefeKalan: kalan,
+    })
+
+    const yeniBirikim = birikimeEkle(birikimRef.current, cozum)
+    birikimRef.current = yeniBirikim
+    sonaYakinRef.current = true
+    setDurum((onceki) => ({
+      ...onceki,
+      mesajlar: [...onceki.mesajlar, { id: mesajKimligiRef.current++, kim: 'kullanici', metin }],
+      birikim: yeniBirikim,
+      bekleyenCevap: onceki.bekleyenCevap + 1,
+    }))
+
+    const zamanlayici = window.setTimeout(() => {
+      zamanlayicilarRef.current = zamanlayicilarRef.current.filter((z) => z !== zamanlayici)
+      if (!etkinRef.current) return
+      setDurum((onceki) => ({
+        ...onceki,
+        mesajlar: [
+          ...onceki.mesajlar,
+          ...cevap.map((m) => ({ id: mesajKimligiRef.current++, kim: 'rabi' as const, metin: m })),
+        ],
+        bekleyenCevap: Math.max(0, onceki.bekleyenCevap - 1),
+      }))
+    }, YAZIYOR_SURESI_MS)
+    zamanlayicilarRef.current.push(zamanlayici)
+  }, [])
+
   const dinlemeyiBaslat = useCallback(async () => {
     oturumuTemizle()
     const buSurum = oturumSurumuRef.current
+    const gecerli = () => etkinRef.current && oturumSurumuRef.current === buSurum
+    const bosaDon = () => setDurum((o) => ({ ...o, dinleme: 'bos', araMetin: '' }))
     sonAraMetinRef.current = ''
-    setAcikDers(null)
-    setDuyulanAcik(false)
-    setDurum({ ad: 'hazirlaniyor' })
+    setDurum((o) => ({ ...o, dinleme: 'hazirlaniyor', araMetin: '' }))
 
     const uygunluk = await sesTanimaDurumu()
-    if (!etkinRef.current || oturumSurumuRef.current !== buSurum) return
+    if (!gecerli()) return
 
     if (uygunluk === 'yok') {
-      setDurum({ ad: 'hata', mesaj: 'Cihazda ses tanıma hizmeti bulunamadı.' })
+      // Ses tanıma yoksa sohbet yalnız yazıyla sürer; klavye açılsın.
+      setSesDurumu('yok')
+      bosaDon()
+      yaziKutusuRef.current?.focus()
       return
     }
 
     if (uygunluk === 'izin-yok') {
       const verildi = await sesIzniIste()
-      if (!etkinRef.current || oturumSurumuRef.current !== buSurum) return
+      if (!gecerli()) return
       if (!verildi) {
-        setDurum({ ad: 'izin-yok' })
+        setSesDurumu('yok')
+        bosaDon()
+        rabiSoylesin(['Mikrofon izni yok. Yazarak anlatabilirsin.'])
         return
       }
     }
 
-    setDurum({ ad: 'dinliyor', araMetin: '', bitiriliyor: false })
+    setSesDurumu('var')
+    setDurum((o) => ({ ...o, dinleme: 'dinliyor', araMetin: '' }))
 
     const oturum = dinle({
       onKismi: (metin) => {
-        if (!etkinRef.current || oturumSurumuRef.current !== buSurum) return
+        if (!gecerli()) return
         sonAraMetinRef.current = metin
-        setDurum((onceki) =>
-          onceki.ad === 'dinliyor' ? { ...onceki, araMetin: metin } : onceki,
-        )
+        setDurum((o) => (o.dinleme === 'bos' ? o : { ...o, araMetin: metin }))
       },
     })
     oturumRef.current = oturum
 
     try {
       const bitenMetin = await oturum.bitti
-      if (!etkinRef.current || oturumSurumuRef.current !== buSurum) return
+      if (!gecerli()) return
       oturumRef.current = null
       const birlesik = bitenMetin.trim() || sonAraMetinRef.current.trim()
-      const cozum = sesliMetniCoz(birlesik, cozucuRef.current)
-      setDurum({
-        ad: 'onay',
-        sorular: cozum.sorular,
-        deneme: cozum.deneme,
-        anlasilmayan: cozum.anlasilmayan,
-        duyulan: birlesik,
-        baslangictaBos: cozum.sorular.length === 0 && cozum.deneme === null,
-      })
+      bosaDon()
+      mesajGonder(birlesik)
     } catch (yakalanan) {
-      if (!etkinRef.current || oturumSurumuRef.current !== buSurum) return
+      if (!gecerli()) return
       oturumRef.current = null
-      const mesaj = yakalanan instanceof Error ? yakalanan.message : 'Ses anlaşılamadı, tekrar dene.'
-      if (mesaj.toLocaleLowerCase('tr-TR').includes('izin')) {
-        setDurum({ ad: 'izin-yok' })
+      bosaDon()
+      const mesaj = yakalanan instanceof Error ? yakalanan.message : ''
+      const kucuk = mesaj.toLocaleLowerCase('tr-TR')
+      if (kucuk.includes('izin')) {
+        setSesDurumu('yok')
+        rabiSoylesin(['Mikrofon izni yok. Yazarak anlatabilirsin.'])
         return
       }
-      if (mesaj.toLocaleLowerCase('tr-TR').includes('anlaşılamadı')) {
-        setDurum({
-          ad: 'onay',
-          sorular: [],
-          deneme: null,
-          anlasilmayan: [],
-          duyulan: sonAraMetinRef.current.trim(),
-          baslangictaBos: true,
-        })
+      if (mesaj === '' || kucuk.includes('anlaşılamadı')) {
+        rabiSoylesin(['Duyamadım. Tekrar söyle ya da yaz.'])
         return
       }
-      setDurum({ ad: 'hata', mesaj })
+      rabiSoylesin([mesaj])
     }
-  }, [oturumuTemizle])
+  }, [oturumuTemizle, mesajGonder, rabiSoylesin])
 
+  // Pencere "Sesle anlat"tan açılıyor: dinleme kendiliğinden başlar.
   useEffect(() => {
     etkinRef.current = true
     void dinlemeyiBaslat()
     return () => {
       etkinRef.current = false
       oturumuTemizle()
+      for (const z of zamanlayicilarRef.current) window.clearTimeout(z)
+      zamanlayicilarRef.current = []
     }
   }, [dinlemeyiBaslat, oturumuTemizle])
 
+  // Dinleme süresi sayacı.
+  useEffect(() => {
+    if (durum.dinleme !== 'dinliyor') {
+      if (durum.dinleme === 'hazirlaniyor') setSaniye(0)
+      return
+    }
+    const baslangic = Date.now()
+    setSaniye(0)
+    const aralik = window.setInterval(() => {
+      setSaniye(Math.floor((Date.now() - baslangic) / 1000))
+    }, 500)
+    return () => window.clearInterval(aralik)
+  }, [durum.dinleme])
+
+  // Yeni mesajda listenin sonuna kay; kullanıcı yukarıda okuyorsa zorla çekme.
+  useEffect(() => {
+    const liste = listeRef.current
+    if (!liste || !sonaYakinRef.current) return
+    liste.scrollTo({ top: liste.scrollHeight, behavior: hareketAzaltilmisMi() ? 'auto' : 'smooth' })
+  }, [durum.mesajlar.length, durum.araMetin, durum.bekleyenCevap, durum.birikim])
+
+  const listeKaydirildi = () => {
+    const liste = listeRef.current
+    if (!liste) return
+    sonaYakinRef.current =
+      liste.scrollHeight - liste.scrollTop - liste.clientHeight < SONA_YAKIN_PX
+  }
+
+  // Yazı kutusu içeriğe göre 1–4 satır büyür, sonra kendi içinde kayar.
+  useEffect(() => {
+    const kutu = yaziKutusuRef.current
+    if (!kutu) return
+    kutu.style.height = 'auto'
+    kutu.style.height = `${Math.min(kutu.scrollHeight, YAZI_KUTUSU_EN_YUKSEK_PX)}px`
+  }, [yazi, durum.dinleme])
+
+  const yaziyiGonder = () => {
+    if (!yazi.trim()) return
+    mesajGonder(yazi)
+    setYazi('')
+  }
+
   const dinlemeyiBitir = () => {
-    if (durum.ad !== 'dinliyor' || durum.bitiriliyor) return
-    setDurum({ ...durum, bitiriliyor: true })
+    if (durum.dinleme !== 'dinliyor') return
+    setDurum((o) => ({ ...o, dinleme: 'bitiriliyor' }))
     oturumRef.current?.durdur()
   }
 
   const soruKaldir = (ders: string) => {
-    setDurum((onceki) =>
-      onceki.ad === 'onay'
-        ? { ...onceki, sorular: onceki.sorular.filter((s) => s.ders !== ders) }
-        : onceki,
-    )
+    const b = birikimRef.current
+    birikimiYaz({ ...b, sorular: b.sorular.filter((s) => s.ders !== ders) })
     if (acikDers === ders) setAcikDers(null)
   }
 
@@ -247,36 +417,29 @@ export function SesliGirisSayfasi({
     ham: string,
   ) => {
     const deger = Number(sayiya(ham)) || 0
-    setDurum((onceki) =>
-      onceki.ad === 'onay'
-        ? {
-            ...onceki,
-            sorular: onceki.sorular.map((s) => (s.ders === ders ? { ...s, [alan]: deger } : s)),
-          }
-        : onceki,
-    )
+    const b = birikimRef.current
+    birikimiYaz({
+      ...b,
+      sorular: b.sorular.map((s) => (s.ders === ders ? { ...s, [alan]: deger } : s)),
+    })
   }
 
   const denemeKaldir = () => {
-    setDurum((onceki) => (onceki.ad === 'onay' ? { ...onceki, deneme: null } : onceki))
+    birikimiYaz({ ...birikimRef.current, deneme: null })
   }
 
-  // Onay ekranında okunan satır varken ✕ ile çıkmak emeği sileceği için sorar.
+  const { sorular, deneme } = durum.birikim
+
+  // Birikimde okunan satır varken ✕ ile çıkmak emeği sileceği için sorar.
   const kapatmaOnayi = useKapatmaOnayi({
     aciklama: 'Anlatılan sorular ve deneme bilgileri kaydedilmeden pencere kapanır.',
   })
-  const kaydedilecekVar =
-    durum.ad === 'onay' && (durum.sorular.length > 0 || durum.deneme !== null)
+  const kaydedilecekVar = sorular.length > 0 || deneme !== null
 
-  const soruHatasiVar =
-    durum.ad === 'onay' &&
-    durum.sorular.some((s) => s.toplam <= 0 || s.dogru + s.yanlis > s.toplam)
+  const soruHatasiVar = sorular.some((s) => s.toplam <= 0 || s.dogru + s.yanlis > s.toplam)
 
   const onaylaVeIlerle = () => {
-    if (durum.ad !== 'onay' || soruHatasiVar) return
-    const { sorular, deneme } = durum
-    if (sorular.length === 0 && deneme === null) return
-
+    if (!kaydedilecekVar || soruHatasiVar) return
     if (sorular.length > 0) {
       onSorulariKaydet(sorular)
     }
@@ -286,21 +449,23 @@ export function SesliGirisSayfasi({
     }
   }
 
-  const denemeSablonu =
-    durum.ad === 'onay' && durum.deneme
-      ? (cozucuSablonlari.find((s) => s.id === durum.deneme!.sablonId) ??
-        sablonlar.find((s) => s.id === durum.deneme!.sablonId) ??
-        null)
-      : null
+  const denemeSablonu = deneme
+    ? (cozucuSablonlari.find((s) => s.id === deneme.sablonId) ??
+      sablonlar.find((s) => s.id === deneme.sablonId) ??
+      null)
+    : null
 
   const anaButonMetni =
-    durum.ad === 'onay'
-      ? durum.sorular.length > 0 && durum.deneme !== null
-        ? 'Kaydet ve denemeye geç'
-        : durum.sorular.length > 0
-          ? 'Kaydet'
-          : 'Denemeye geç'
-      : ''
+    sorular.length > 0 && deneme !== null
+      ? 'Kaydet ve denemeye geç'
+      : sorular.length > 0
+        ? 'Kaydet'
+        : 'Denemeye geç'
+
+  const dinleniyor = durum.dinleme !== 'bos'
+  const canliBalon = dinleniyor && durum.araMetin.trim() !== ''
+  const yaziyor = durum.bekleyenCevap > 0
+  const yaziVar = yazi.trim() !== ''
 
   return (
     <div
@@ -312,163 +477,93 @@ export function SesliGirisSayfasi({
         ref={kaydir}
         role="dialog"
         aria-modal="true"
-        aria-label={durum.ad === 'onay' ? 'Bugün yaptıkların' : 'Sesle anlat'}
-        className="alt-pencere-girisi tablet-orta-pencere max-h-[82%] w-full max-w-md overflow-y-auto rounded-t-[26px] bg-card px-4 pt-3 pb-[calc(1.5rem+var(--guvenli-alt))] tablet:px-6 tablet:pt-5"
+        aria-label="Rabi ile sohbet"
+        className="alt-pencere-girisi tablet-orta-pencere flex h-[88%] w-full max-w-md flex-col overflow-hidden rounded-t-[26px] bg-card pb-[calc(0.75rem+var(--guvenli-alt))] tablet:pb-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="tablet-orta-tutamac mx-auto mb-3 h-1 w-[42px] rounded-full bg-border" />
-        <div className="mb-3.5 flex items-center gap-2.5">
-          <p className="font-display text-lg font-extrabold tracking-tight">
-            {durum.ad === 'onay' ? 'Bugün yaptıkların' : 'Sesle anlat'}
-          </p>
-          <p className="ml-auto text-[12.5px] font-bold text-muted-foreground/70">{gunEtiketi}</p>
-          <button
-            type="button"
-            onClick={() => (kaydedilecekVar ? kapatmaOnayi.sor(kapat) : kapat())}
-            aria-label="Kapat"
-            className="inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
-          >
-            <X size={16} strokeWidth={2.4} aria-hidden />
-          </button>
+        {/* Başlık: aşağı çekerek kapatma yalnız buradan (liste ve alt çubuk `data-surukleme-yok`). */}
+        <div className="shrink-0 px-4 pt-3 tablet:px-6 tablet:pt-5">
+          <div className="tablet-orta-tutamac mx-auto mb-3 h-1 w-[42px] rounded-full bg-border" />
+          <div className="flex items-center gap-2.5 pb-3">
+            <RabiAvatari />
+            <p className="font-display text-lg font-extrabold tracking-tight">Rabi</p>
+            <p className="text-[12.5px] font-bold text-muted-foreground/70">{gunEtiketi}</p>
+            <button
+              type="button"
+              onClick={() => (kaydedilecekVar ? kapatmaOnayi.sor(kapat) : kapat())}
+              aria-label="Kapat"
+              className="ml-auto inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
+            >
+              <X size={16} strokeWidth={2.4} aria-hidden />
+            </button>
+          </div>
         </div>
 
-        {(durum.ad === 'hazirlaniyor' || durum.ad === 'dinliyor') && (
-          <div>
-            <p className="text-[13.5px] leading-relaxed text-muted-foreground">
-              <strong className="font-bold text-foreground">Bugün ne çözdün?</strong> Ör: 80
-              matematik, 65 kimya sorusu çözdüm, TYT denemesinde Türkçe 32 doğru 6 yanlış
-            </p>
-
-            <div className="my-6 flex flex-col items-center justify-center">
-              <div className="relative flex size-24 items-center justify-center">
-                {durum.ad === 'dinliyor' && !durum.bitiriliyor && (
-                  <span
-                    aria-hidden
-                    className="ses-nabiz pointer-events-none absolute inset-1 rounded-full bg-primary-parlak"
-                  />
-                )}
-                <button
-                  type="button"
-                  onClick={dinlemeyiBitir}
-                  disabled={durum.ad !== 'dinliyor' || durum.bitiriliyor}
-                  aria-label="Dinlemeyi bitir"
-                  className="relative inline-flex size-20 items-center justify-center rounded-full bg-primary-parlak text-white shadow-[0_8px_20px_rgba(217,98,47,0.3)] transition active:scale-95 disabled:opacity-75"
-                >
-                  <Mic size={32} strokeWidth={2.3} aria-hidden />
-                </button>
-              </div>
-
-              <div
-                aria-live="polite"
-                className="mt-4 flex min-h-[52px] w-full items-center justify-center rounded-2xl bg-muted/60 px-3.5 py-2.5 text-center"
-              >
-                {durum.ad === 'dinliyor' && durum.araMetin.trim() !== '' ? (
-                  <p className="text-sm font-semibold leading-relaxed text-foreground">
-                    {durum.araMetin}
+        <div
+          ref={listeRef}
+          data-surukleme-yok
+          onScroll={listeKaydirildi}
+          aria-live="polite"
+          className="min-h-0 flex-1 overflow-y-auto overscroll-contain border-t border-border px-4 pt-4 pb-3 tablet:px-6"
+        >
+          <div className="flex flex-col gap-2">
+            {durum.mesajlar.map((mesaj, i) => {
+              if (mesaj.kim === 'kullanici') {
+                return (
+                  <div key={mesaj.id} className="flex justify-end pt-1">
+                    <p className="max-w-[82%] whitespace-pre-wrap break-words rounded-[18px] rounded-br-[4px] bg-primary-parlak px-3.5 py-2.5 text-[14.5px] font-semibold leading-snug text-white shadow-[0_4px_14px_rgba(217,98,47,0.28)]">
+                      {mesaj.metin}
+                    </p>
+                  </div>
+                )
+              }
+              const sonraki = durum.mesajlar[i + 1]
+              // Avatar ardışık Rabi balonlarının yalnız sonuncusunun yanında.
+              const avatarGizli = sonraki?.kim === 'rabi' || (sonraki === undefined && yaziyor)
+              return (
+                <div key={mesaj.id} className="flex items-end gap-2.5">
+                  <RabiAvatari gizli={avatarGizli} />
+                  <p className="max-w-[78%] rounded-[18px] rounded-bl-[4px] border border-border bg-muted px-3.5 py-2.5 text-[15px] font-extrabold leading-snug text-foreground">
+                    {mesaj.metin}
                   </p>
-                ) : (
-                  <p className="text-[13px] font-medium text-muted-foreground">
-                    {durum.ad === 'hazirlaniyor'
-                      ? 'Mikrofon hazırlanıyor…'
-                      : durum.bitiriliyor
-                        ? 'Söylediklerin çözümleniyor…'
-                        : 'Dinleniyor, konuşmaya başlayabilirsin…'}
-                  </p>
-                )}
+                </div>
+              )
+            })}
+
+            {canliBalon && (
+              <div className="flex justify-end pt-1">
+                <p className="max-w-[82%] whitespace-pre-wrap break-words rounded-[18px] rounded-br-[4px] bg-primary-parlak px-3.5 py-2.5 text-[14.5px] font-semibold leading-snug text-white shadow-[0_4px_14px_rgba(217,98,47,0.28)]">
+                  {durum.araMetin}
+                  {durum.dinleme === 'dinliyor' && <span aria-hidden className="sohbet-imlec" />}
+                </p>
               </div>
-            </div>
-
-            <Buton
-              onClick={dinlemeyiBitir}
-              disabled={durum.ad !== 'dinliyor' || durum.bitiriliyor}
-              className="h-[52px] w-full rounded-[17px] text-base"
-            >
-              Bitir
-            </Buton>
-          </div>
-        )}
-
-        {durum.ad === 'izin-yok' && (
-          <div>
-            <Not tur="uyari">
-              Mikrofon izni verilmedi. Telefonun ayarlarından Rabi&apos;ye mikrofon izni
-              verebilirsin.
-            </Not>
-            <Buton
-              bicim="ikincil"
-              onClick={() => void dinlemeyiBaslat()}
-              className="mt-4 h-[50px] w-full rounded-[16px]"
-            >
-              <RotateCcw size={17} aria-hidden />
-              Tekrar dene
-            </Buton>
-          </div>
-        )}
-
-        {durum.ad === 'hata' && (
-          <div>
-            <Not tur="tehlike">{durum.mesaj}</Not>
-            <Buton
-              bicim="ikincil"
-              onClick={() => void dinlemeyiBaslat()}
-              className="mt-4 h-[50px] w-full rounded-[16px]"
-            >
-              <RotateCcw size={17} aria-hidden />
-              Tekrar konuş
-            </Buton>
-          </div>
-        )}
-
-        {durum.ad === 'onay' && (
-          <div>
-            {durum.duyulan !== '' && (
-              <button
-                type="button"
-                aria-expanded={duyulanAcik}
-                onClick={() => setDuyulanAcik((onceki) => !onceki)}
-                className="mb-3 block w-full px-0.5 text-left text-xs leading-relaxed text-muted-foreground active:text-foreground"
-              >
-                <span className={cn(duyulanAcik ? 'block' : 'line-clamp-3')}>
-                  Duyduğum: “{durum.duyulan}”
-                </span>
-              </button>
             )}
 
-            {durum.sorular.length === 0 && durum.deneme === null ? (
-              <div>
-                <Not>
-                  {durum.baslangictaBos
-                    ? 'Bir şey anlayamadım. Ders adıyla ve sayıyla tekrar dene.'
-                    : 'Kaydedilecek satır kalmadı. Yeniden anlatabilirsin.'}
-                </Not>
-                {durum.anlasilmayan.length > 0 && (
-                  <p className="mt-2.5 px-0.5 text-xs leading-relaxed text-muted-foreground/80">
-                    Şunları anlayamadım: {durum.anlasilmayan.join(', ')}
-                  </p>
-                )}
-                <Buton
-                  bicim="ikincil"
-                  onClick={() => void dinlemeyiBaslat()}
-                  className="mt-4 h-[50px] w-full rounded-[16px]"
-                >
-                  <RotateCcw size={17} aria-hidden />
-                  Tekrar konuş
-                </Buton>
+            {yaziyor && (
+              <div className="flex items-end gap-2.5" aria-label="Rabi yazıyor">
+                <RabiAvatari />
+                <span className="inline-flex items-center gap-1 rounded-[18px] rounded-bl-[4px] border border-border bg-muted px-3.5 py-3.5">
+                  {[0, 1, 2].map((n) => (
+                    <span
+                      key={n}
+                      aria-hidden
+                      className="sohbet-nokta size-1.5 rounded-full bg-muted-foreground"
+                      style={{ animationDelay: `${n * 0.15}s` }}
+                    />
+                  ))}
+                </span>
               </div>
-            ) : (
-              <div>
-                {durum.sorular.length > 0 && (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center justify-between px-0.5">
-                      <span className="text-[11.5px] font-extrabold uppercase tracking-wider text-muted-foreground">
-                        Sorular
-                      </span>
-                      <span className="text-[11.5px] font-semibold text-muted-foreground/75">
-                        Düzeltmek için satıra dokun
-                      </span>
-                    </div>
+            )}
 
-                    {durum.sorular.map((satir) => {
+            {kaydedilecekVar && (
+              <div className="mt-2 rounded-[22px] border border-border p-3">
+                {sorular.length > 0 && (
+                  <div className="flex flex-col gap-2">
+                    <span className="px-0.5 text-[11.5px] font-extrabold uppercase tracking-wider text-muted-foreground">
+                      Sorular
+                    </span>
+
+                    {sorular.map((satir) => {
                       const ton = dersTonlari(satir.ders)
                       const acik = acikDers === satir.ders
                       const asim = satir.dogru + satir.yanlis > satir.toplam
@@ -573,8 +668,8 @@ export function SesliGirisSayfasi({
                   </div>
                 )}
 
-                {durum.deneme !== null && (
-                  <div className={cn(durum.sorular.length > 0 && 'mt-3.5')}>
+                {deneme !== null && (
+                  <div className={cn(sorular.length > 0 && 'mt-3.5')}>
                     <span className="mb-1.5 block px-0.5 text-[11.5px] font-extrabold uppercase tracking-wider text-muted-foreground">
                       Deneme
                     </span>
@@ -594,9 +689,9 @@ export function SesliGirisSayfasi({
                         </button>
                       </div>
 
-                      {durum.deneme.dersler.length > 0 ? (
+                      {deneme.dersler.length > 0 ? (
                         <div className="mt-2 flex flex-wrap gap-1.5">
-                          {durum.deneme.dersler.map((okunan) => {
+                          {deneme.dersler.map((okunan) => {
                             const dersAdi =
                               denemeSablonu?.dersler.find((d) => d.id === okunan.dersId)?.ad ??
                               okunan.dersId
@@ -612,9 +707,9 @@ export function SesliGirisSayfasi({
                             )
                           })}
                         </div>
-                      ) : durum.deneme.toplamNet !== null ? (
+                      ) : deneme.toplamNet !== null ? (
                         <p className="rakam mt-1.5 text-[13px] font-semibold text-muted-foreground">
-                          {netMetniYaz(durum.deneme.toplamNet)} net — ders ders girmen gerek
+                          {netMetniYaz(deneme.toplamNet)} net — ders ders girmen gerek
                         </p>
                       ) : (
                         <p className="mt-1.5 text-[13px] font-semibold text-muted-foreground">
@@ -625,33 +720,117 @@ export function SesliGirisSayfasi({
                   </div>
                 )}
 
-                {durum.anlasilmayan.length > 0 && (
-                  <p className="mt-3 px-0.5 text-xs leading-relaxed text-muted-foreground/80">
-                    Şunları anlayamadım: {durum.anlasilmayan.join(', ')}
-                  </p>
-                )}
-
-                <div className="mt-4 flex gap-2">
-                  <Buton
-                    bicim="ikincil"
-                    onClick={() => void dinlemeyiBaslat()}
-                    className="h-[52px] shrink-0 rounded-[16px] px-3.5 text-sm"
-                  >
-                    <RotateCcw size={16} aria-hidden />
-                    Tekrar konuş
-                  </Buton>
-                  <Buton
-                    onClick={onaylaVeIlerle}
-                    disabled={soruHatasiVar}
-                    className="h-[52px] min-w-0 flex-1 rounded-[16px] px-3 text-[14.5px] leading-tight"
-                  >
-                    {anaButonMetni}
-                  </Buton>
-                </div>
+                <Buton
+                  onClick={onaylaVeIlerle}
+                  disabled={soruHatasiVar}
+                  className="mt-3.5 h-[50px] w-full rounded-[16px] px-3 text-[14.5px] leading-tight"
+                >
+                  {anaButonMetni}
+                </Buton>
               </div>
             )}
           </div>
-        )}
+        </div>
+
+        {/* Alt çubuk: dinlerken ses dalgası + süre + Bitir; değilken yazı kutusu + mikrofon/gönder. */}
+        <div data-surukleme-yok className="shrink-0 px-3 pt-2 tablet:px-5">
+          {dinleniyor ? (
+            <div className="flex items-center gap-2.5 rounded-3xl border border-border bg-background py-1.5 pr-1.5 pl-2.5">
+              <span
+                aria-hidden
+                className={cn(
+                  'relative inline-flex size-8 shrink-0 items-center justify-center rounded-full border',
+                  durum.dinleme === 'dinliyor'
+                    ? 'border-primary/30 bg-primary-soft text-primary'
+                    : 'border-border bg-card text-muted-foreground',
+                )}
+              >
+                {durum.dinleme === 'dinliyor' && (
+                  <span className="ses-nabiz pointer-events-none absolute inset-0 rounded-full bg-primary-parlak" />
+                )}
+                <Mic size={16} strokeWidth={2.3} className="relative" />
+              </span>
+              <div aria-hidden className="flex h-[30px] min-w-0 flex-1 items-center gap-[2.5px] overflow-hidden">
+                {DALGA_BOYLARI.map((boy, n) => (
+                  <span
+                    key={n}
+                    className={cn(
+                      'w-[3px] shrink-0 rounded-full',
+                      durum.dinleme === 'dinliyor'
+                        ? 'ses-dalga bg-primary-parlak'
+                        : 'bg-muted-foreground/30',
+                    )}
+                    style={{
+                      height: durum.dinleme === 'dinliyor' ? boy : 6 + (n % 3) * 3,
+                      animationDelay: `${(n % 5) * 0.08}s`,
+                    }}
+                  />
+                ))}
+              </div>
+              <span
+                className={cn(
+                  'rakam shrink-0 text-xs font-extrabold',
+                  durum.dinleme === 'dinliyor' ? 'text-primary' : 'text-muted-foreground',
+                )}
+              >
+                {sureMetni(saniye)}
+              </span>
+              <button
+                type="button"
+                onClick={dinlemeyiBitir}
+                disabled={durum.dinleme !== 'dinliyor'}
+                className={cn(
+                  'inline-flex h-[42px] shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-extrabold transition-colors disabled:opacity-60',
+                  durum.araMetin.trim() !== ''
+                    ? 'bg-primary-parlak text-white shadow-[0_4px_14px_rgba(217,98,47,0.38)]'
+                    : 'bg-primary-soft text-primary',
+                )}
+              >
+                <Check size={16} strokeWidth={2.6} aria-hidden />
+                Bitir
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-end gap-2 rounded-3xl border border-border bg-background py-1.5 pr-1.5 pl-4">
+              <textarea
+                ref={yaziKutusuRef}
+                value={yazi}
+                onChange={(e) => setYazi(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+                    e.preventDefault()
+                    yaziyiGonder()
+                  }
+                }}
+                rows={1}
+                enterKeyHint="send"
+                placeholder="Yaz ya da konuş"
+                aria-label="Mesaj"
+                className="min-w-0 flex-1 resize-none bg-transparent py-2 text-[15px] leading-[22px] text-foreground outline-none placeholder:text-muted-foreground/80"
+              />
+              {yaziVar || sesDurumu !== 'var' ? (
+                <button
+                  type="button"
+                  onClick={yaziyiGonder}
+                  disabled={!yaziVar}
+                  aria-label="Gönder"
+                  className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-parlak text-white transition active:scale-95 disabled:opacity-40"
+                >
+                  <ArrowUp size={19} strokeWidth={2.6} aria-hidden />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => void dinlemeyiBaslat()}
+                  aria-label="Konuşarak anlat"
+                  className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-parlak text-white transition active:scale-95"
+                >
+                  <Mic size={18} strokeWidth={2.3} aria-hidden />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
