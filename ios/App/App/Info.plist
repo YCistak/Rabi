@@ -29,10 +29,14 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>Yanlış sorunun fotoğrafını çekmek ve deneme sonuç kâğıdını okutmak için. Fotoğraf telefonunda kalır, hiçbir yere gönderilmez.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Gününü sesle anlatınca çözdüğün soruları ve deneme sonucunu doldurmak için mikrofonu kullanır.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Galeriden bir soru fotoğrafı ya da deneme sonuç kâğıdı seçmek için. Fotoğraf telefonunda kalır, hiçbir yere gönderilmez.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Paylaşım penceresinden aylık özet afişini galerine kaydedebilmen için.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Konuşmanı yazıya çevirmek için Apple'ın ses tanımasını kullanır; ses Apple'a gönderilebilir, Rabi kaydetmez.</string>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDarkContent</string>
 	<key>LSRequiresIPhoneOS</key>

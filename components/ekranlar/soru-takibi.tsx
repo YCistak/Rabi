@@ -1,18 +1,23 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { CalendarDays, Plus, X } from 'lucide-react'
-import type { Ayarlar, GunlukKayit, SoruKaydi } from '@/lib/types'
+import { CalendarDays, MessageCircle, Mic, Plus, X } from 'lucide-react'
+import type { Ayarlar, GunlukKayit, Sablon, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { calismaSirasi, sadelestir } from '@/lib/dersler'
+import { HAZIR_SABLONLAR } from '@/lib/sablonlar'
+import { sesTanimaDurumu } from '@/lib/ses-tanima'
 import { useGeriKatmani } from '@/lib/geri'
 import { bosSifir, herhangiDolu } from '@/lib/bos-sifir'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { bugun, cn, gunKaydir, tariheCevir, tariheYaz, yediGunlukSerit } from '@/lib/utils'
 import { Alan, BaslikSatiri, Buton, Halka, Kart, Not, useKapatmaOnayi } from '@/components/ui'
 import { DersSeridi } from '@/components/ders-seridi'
+import { SesliGirisSayfasi, type DenemeBaslangici } from '@/components/sesli-giris'
 import { AY_ADLARI, HaftaSeridi, Takvim, type GunIsareti } from '@/components/takvim'
 import { useYerlesim } from '@/lib/yerlesim'
+
+const MESAJ_SURESI = 2400
 
 /**
  * "12 Eylül" — `tarihYaziKisa` gün adını da ekliyor ve "12 Eylül Cumartesi"
@@ -25,9 +30,42 @@ function gunBasligi(iso: string): string {
 }
 
 /** Yazılan metni 0–9999 arası sayıya indirger; boş kalırsa boş döner. */
-function sayiya(ham: string): string {
+export function sayiya(ham: string): string {
   const temiz = ham.replace(/[^0-9]/g, '').slice(0, 4)
   return temiz === '' ? '' : String(Number(temiz))
+}
+
+/**
+ * Yeni soru girişlerini günün mevcut satırlarına ekler; aynı ders varsa
+ * sayıları üstüne toplar. Hem "Soru ekle" hem "Sesle anlat" kaydı aynı
+ * birleştirme kuralını kullanır.
+ */
+export function soruGirisleriniBirlestir(
+  mevcut: SoruKaydi[],
+  eklenenler: readonly SoruKaydi[],
+): SoruKaydi[] {
+  let sonuc = mevcut
+  for (const giris of eklenenler) {
+    const i = sonuc.findIndex((s) => sadelestir(s.ders) === sadelestir(giris.ders))
+    if (i === -1) {
+      sonuc = [
+        ...sonuc,
+        { ders: giris.ders, toplam: giris.toplam, dogru: giris.dogru, yanlis: giris.yanlis },
+      ]
+    } else {
+      sonuc = sonuc.map((s, j) =>
+        j === i
+          ? {
+              ...s,
+              toplam: s.toplam + giris.toplam,
+              dogru: s.dogru + giris.dogru,
+              yanlis: s.yanlis + giris.yanlis,
+            }
+          : s,
+      )
+    }
+  }
+  return sonuc
 }
 
 /**
@@ -43,11 +81,15 @@ export function SoruTakibiEkrani({
   kayitlar,
   setKayitlar,
   ayarlar,
+  sablonlar = HAZIR_SABLONLAR,
+  onDenemeAc,
   tanitim,
 }: {
   kayitlar: GunlukKayit[]
   setKayitlar: (guncelleyici: GunlukKayit[] | ((onceki: GunlukKayit[]) => GunlukKayit[])) => void
   ayarlar: Ayarlar
+  sablonlar?: Sablon[]
+  onDenemeAc?: (baslangic: DenemeBaslangici) => void
   /**
    * Başlangıç turunda ekleme sayfasının açık olup olmadığını tur belirliyor:
    * sayfa ancak tur o adımdayken açık. Kendi state'inde kalsaydı turda geri
@@ -70,6 +112,21 @@ export function SoruTakibiEkrani({
     if (yerlesim !== 'telefon') setTakvimAcik(true)
   }, [yerlesim])
   const [sayfaAcik, setSayfaAcik] = useState(false)
+  const [sesliAcik, setSesliAcik] = useState(false)
+  // Düğme her zaman var (Rabi'ye yazarak da anlatılır); yalnız simgesi ve
+  // etiketi buna göre değişir. İlk karede kapalı, etkide bir kez sorulur.
+  const [sesDestekli, setSesDestekli] = useState(false)
+  const [mesaj, setMesaj] = useState<string | null>(null)
+
+  useEffect(() => {
+    let iptal = false
+    sesTanimaDurumu().then((durum) => {
+      if (!iptal) setSesDestekli(durum !== 'yok')
+    })
+    return () => {
+      iptal = true
+    }
+  }, [])
 
   /**
    * "Bugün" ekran açılırken bir kez hesaplanıyordu; uygulama gece yarısını açık
@@ -136,6 +193,11 @@ export function SoruTakibiEkrani({
     })
   }
 
+  const soyle = (metin: string) => {
+    setMesaj(metin)
+    window.setTimeout(() => setMesaj((o) => (o === metin ? null : o)), MESAJ_SURESI)
+  }
+
   /**
    * Alt sayfadan gelen giriş aynı derse **ekleniyor**, üstüne yazılmıyor:
    * öğle bir 20 soru, akşam bir 20 soru giren öğrenci ikinci girişte ilkini
@@ -143,21 +205,14 @@ export function SoruTakibiEkrani({
    * görünen sayı zaten günün toplamı.
    */
   const girisKaydet = (ders: string, toplam: number, dogru: number, yanlis: number) => {
-    gunuGuncelle((satirlar) => {
-      const i = satirlar.findIndex((s) => sadelestir(s.ders) === sadelestir(ders))
-      if (i === -1) return [...satirlar, { ders, toplam, dogru, yanlis }]
-      return satirlar.map((s, j) =>
-        j === i
-          ? {
-              ...s,
-              toplam: s.toplam + toplam,
-              dogru: s.dogru + dogru,
-              yanlis: s.yanlis + yanlis,
-            }
-          : s,
-      )
-    })
+    gunuGuncelle((satirlar) => soruGirisleriniBirlestir(satirlar, [{ ders, toplam, dogru, yanlis }]))
     setSayfaAcik(false)
+  }
+
+  const sesliSorulariKaydet = (eklenenler: SoruKaydi[]) => {
+    if (eklenenler.length === 0) return
+    gunuGuncelle((satirlar) => soruGirisleriniBirlestir(satirlar, eklenenler))
+    soyle(`${eklenenler.length} ders eklendi`)
   }
 
   const satirGuncelle = (indeks: number, alan: keyof Omit<SoruKaydi, 'ders'>, ham: string) => {
@@ -296,14 +351,30 @@ export function SoruTakibiEkrani({
         </HaftaSeridi>
 
         {duzenlenebilir ? (
-          <Buton
-            data-tanitim="soru-ekle"
-            onClick={() => (tanitim ? tanitim.formuAc() : setSayfaAcik(true))}
-            className="h-[54px] w-full rounded-[18px] text-base shadow-[0_8px_18px_rgba(217,98,47,0.24)] tablet:@min-[42rem]:col-start-1"
-          >
-            <Plus size={19} strokeWidth={2.8} aria-hidden />
-            Soru ekle
-          </Buton>
+          <div className="flex gap-2.5 tablet:@min-[42rem]:col-start-1">
+            <Buton
+              data-tanitim="soru-ekle"
+              onClick={() => (tanitim ? tanitim.formuAc() : setSayfaAcik(true))}
+              className="h-[54px] flex-1 rounded-[18px] text-base shadow-[0_8px_18px_rgba(217,98,47,0.24)]"
+            >
+              <Plus size={19} strokeWidth={2.8} aria-hidden />
+              Soru ekle
+            </Buton>
+            {!tanitim && (
+              <Buton
+                bicim="ikincil"
+                onClick={() => setSesliAcik(true)}
+                className="h-[54px] shrink-0 rounded-[18px] px-4 text-[15px]"
+              >
+                {sesDestekli ? (
+                  <Mic size={18} strokeWidth={2.3} aria-hidden />
+                ) : (
+                  <MessageCircle size={18} strokeWidth={2.3} aria-hidden />
+                )}
+                {sesDestekli ? 'Sesle anlat' : "Rabi'ye anlat"}
+              </Buton>
+            )}
+          </div>
         ) : (
           // Tek satırlık sarı şerit: eskiden gerekçeyi anlatan üç cümlelik bir
           // not ve "Bugüne dön" bağlantısı vardı; kullanıcı yalnızca kuralı
@@ -355,11 +426,31 @@ export function SoruTakibiEkrani({
       </div>
       </div>
 
+      {mesaj !== null && (
+        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(5.5rem+var(--guvenli-alt))] z-40 flex justify-center px-6 tablet:right-[var(--ray)] tablet:bottom-[calc(1.5rem+var(--guvenli-alt))]">
+          <p className="acilir-giris max-w-md rounded-2xl bg-ters px-4 py-3 text-center text-[13.5px] font-bold text-ters-yazi shadow-kart">
+            {mesaj}
+          </p>
+        </div>
+      )}
+
       {(tanitim ? tanitim.formAcik : sayfaAcik) && (
         <SoruEkleSayfasi
           gecmisSoru={kayitlar.flatMap((k) => k.kayitlar)}
           onKapat={() => (tanitim ? tanitim.formuKapat() : setSayfaAcik(false))}
           onKaydet={girisKaydet}
+        />
+      )}
+
+      {sesliAcik && !tanitim && (
+        <SesliGirisSayfasi
+          sablonlar={sablonlar}
+          ayarlar={ayarlar}
+          gunEtiketi={bugunMu ? 'Bugün' : 'Dün'}
+          hedefeKalan={hedef > 0 ? Math.max(0, hedef - ozet.toplam) : null}
+          onKapat={() => setSesliAcik(false)}
+          onSorulariKaydet={sesliSorulariKaydet}
+          onDenemeAc={onDenemeAc}
         />
       )}
     </div>
@@ -490,7 +581,7 @@ const KUTU_TONLARI = {
   },
 } as const
 
-function SayiKutusu({
+export function SayiKutusu({
   etiket,
   ton = 'toplam',
   deger,
@@ -539,7 +630,7 @@ function SayiKutusu({
 }
 
 /** Boş girilmez, hesaplanır — istenen davranış bu. */
-function BosKutusu({ deger, hata, buyuk }: { deger: number; hata: boolean; buyuk?: boolean }) {
+export function BosKutusu({ deger, hata, buyuk }: { deger: number; hata: boolean; buyuk?: boolean }) {
   return (
     <div>
       <span className="mb-1 block text-center text-[11px] font-bold text-muted-foreground">
@@ -558,7 +649,7 @@ function BosKutusu({ deger, hata, buyuk }: { deger: number; hata: boolean; buyuk
   )
 }
 
-function HataNotu() {
+export function HataNotu() {
   return (
     <p className="mt-2 text-xs font-bold leading-snug text-danger">
       Doğru + yanlış toplamı çözdüğün soru sayısını aşıyor.
