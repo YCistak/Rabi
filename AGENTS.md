@@ -28,6 +28,7 @@ kuralı oraya yazılır, buraya değil; yeni dosya açarsan aşağıdaki dizine 
 | [denemeler.md](docs/kurallar/denemeler.md) | deneme ekleme, deneme şablonları, seviye tespit sınıfı ve ders düzenleme |
 | [yanlis-soru.md](docs/kurallar/yanlis-soru.md) | yanlış soru ekleme, ders listesi, fotoğrafa çizim |
 | [yapilacaklar-ve-soru-takibi.md](docs/kurallar/yapilacaklar-ve-soru-takibi.md) | Yapılacaklar, Soru Takibi, ortak takvim bileşeni |
+| [sesli-giris.md](docs/kurallar/sesli-giris.md) | Soru Takibi sesle anlatım, konuşma tanıma, sesli giriş çözücüsü |
 | [konu-takibi.md](docs/kurallar/konu-takibi.md) | YKS Konu Takibi (sınıf → okul dersi işaretleme, haritayla eşleme) |
 | [kaynak-takibi.md](docs/kurallar/kaynak-takibi.md) | Kaynak Takibi (test kitapları, sınıf/ders konu listeleri) |
 | [aylik-ozet.md](docs/kurallar/aylik-ozet.md) | aylık özet, arşiv, paylaşım afişi |
@@ -63,11 +64,12 @@ paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
 ## Mimari
 
 - **Sunucu yok.** Statik export; her şey istemcide çalışır. Dış servise çıkma, veri
-  toplamaya çalışma. Yalnızca üç istisna var, genişletme (ayrıntı:
+  toplamaya çalışma. Yalnızca dört istisna var, genişletme (ayrıntı:
   [ag-ve-gizlilik.md](docs/kurallar/ag-ve-gizlilik.md)):
   1. hatalı soru + öneri/hata bildirimi → Firestore (`lib/hata-gonder.ts`),
   2. çökme raporu → Crashlytics (`lib/cokme.ts`, `CokmeRaporu.kt`), her seferinde sorulur,
-  3. Play güncelleme denetimi (`lib/guncelleme.ts`).
+  3. Play güncelleme denetimi (`lib/guncelleme.ts`),
+  4. sesli giriş → işletim sistemi konuşma tanıma servisi (Google / Apple; Rabi sunucusu yok, onay ekranı zorunlu).
 - **Durum kütüphanesi yok.** `AppShell` üst düzey state'in sahibi, props ile aşağı
   geçer. Yeni global state gerekirse önce prop ile çözmeyi dene.
 - **Saf mantık `lib/` altında.** React'e bağlı olmayan her hesap `lib/`'e; bileşenler

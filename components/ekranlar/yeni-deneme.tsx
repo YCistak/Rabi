@@ -22,6 +22,7 @@ import {
 import { bugun, cn, yeniId } from '@/lib/utils'
 import type { Deneme, PuanTuru, Sablon, SablonDers, YanlisSoru } from '@/lib/types'
 import { DenemeOkut } from '@/components/deneme-okut'
+import type { DenemeBaslangici } from '@/components/sesli-giris'
 import { bosSifir } from '@/lib/bos-sifir'
 import { TarihSecici } from '@/components/tarih-secici'
 import { SeviyeDersleri } from '@/components/seviye-dersleri'
@@ -56,6 +57,7 @@ export function YeniDenemeEkrani({
   sinif,
   puanTuru,
   duzenlenen,
+  baslangic,
   denemeSayisi,
   setYanlisSorular,
   onKaydet,
@@ -67,6 +69,7 @@ export function YeniDenemeEkrani({
   sinif: number
   puanTuru: PuanTuru | null
   duzenlenen: Deneme | null
+  baslangic?: DenemeBaslangici
   denemeSayisi: number
   setYanlisSorular: (guncelleyici: (onceki: YanlisSoru[]) => YanlisSoru[]) => void
   /** "Dersleri düzenle": seçili sınıfın (11-12'de alanın) seviye tespit dersleri. */
@@ -82,9 +85,14 @@ export function YeniDenemeEkrani({
   const secenekler = secilebilirSablonlar(sablonlar, sinif, puanTuru)
 
   // Tür satırında seçili düğme; seviye tespit tek düğme (`okul`).
-  const [sablonId, setSablonId] = useState(
-    () => (secenekler.find((s) => s.id === varsayilanSablonId) ?? secenekler[0]).id,
-  )
+  const [sablonId, setSablonId] = useState(() => {
+    const aranan = !duzenlenen && baslangic ? baslangic.sablonId : varsayilanSablonId
+    return (
+      secenekler.find((s) => s.id === aranan) ??
+      secenekler.find((s) => s.id === varsayilanSablonId) ??
+      secenekler[0]
+    ).id
+  })
   /*
     Seviye tespit sınıfa göre (kullanıcı istedi, 2026-10): 9 eski biçim, 10'da
     Felsefe ekleniyor, 11 ve 12 alanın AYT'si gibi. Varsayılan öğrencinin kendi
@@ -127,7 +135,15 @@ export function YeniDenemeEkrani({
   const [tarih, setTarih] = useState(duzenlenen?.tarih ?? bugun())
   const [ad, setAd] = useState(duzenlenen?.ad ?? '')
   const [girisler, setGirisler] = useState<Record<string, Giris>>(() => {
-    if (!duzenlenen) return bosGirisler(sablon)
+    if (!duzenlenen) {
+      const taban = bosGirisler(sablon)
+      if (!baslangic) return taban
+      for (const d of sablon.dersler) {
+        const g = baslangic.girisler[d.id]
+        if (g) taban[d.id] = { dogru: g.dogru, yanlis: g.yanlis }
+      }
+      return taban
+    }
     return Object.fromEntries(
       sablon.dersler.map((d) => {
         const sonuc = duzenlenen.sonuclar.find((s) => s.dersId === d.id)
@@ -168,7 +184,10 @@ export function YeniDenemeEkrani({
     if (duzenlenen) return
     const onceki = oncekiSablon.current
     oncekiSablon.current = sablon
-    if (onceki !== sablon && onceki.seviye && sablon.seviye) {
+    // İlk çizimde şablon değişmedi; sıfırlanırsa sesli girişten aktarılan
+    // başlangıç sayıları silinir.
+    if (onceki === sablon) return
+    if (onceki.seviye && sablon.seviye) {
       setGirisler((g) => ({
         ...bosGirisler(sablon),
         ...Object.fromEntries(sablon.dersler.flatMap((d) => (g[d.id] ? [[d.id, g[d.id]]] : []))),

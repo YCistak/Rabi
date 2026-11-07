@@ -84,6 +84,7 @@ import { GeriBildirimEkrani } from '@/components/ekranlar/geri-bildirim'
 import { OkulEkrani } from '@/components/ekranlar/okul'
 import { AyarlarEkrani } from '@/components/ekranlar/ayarlar'
 import { SoruTakibiEkrani } from '@/components/ekranlar/soru-takibi'
+import type { DenemeBaslangici } from '@/components/sesli-giris'
 import { DevamsizlikEkrani } from '@/components/ekranlar/devamsizlik'
 import { PomodoroEkrani, type PomodoroDurumu } from '@/components/ekranlar/pomodoro'
 import { PomodoroSaati } from '@/components/pomodoro-saati'
@@ -192,7 +193,10 @@ function RabiUygulamasi() {
     }
   }, [pomodoroYuvasi, pomodoroKalici])
   /** Deneme ekleme/düzenleme, sekmenin üstünde açılan bir alt ekran. */
-  const [denemeFormu, setDenemeFormu] = useState<{ duzenlenen: Deneme | null } | null>(null)
+  const [denemeFormu, setDenemeFormu] = useState<{
+    duzenlenen: Deneme | null
+    baslangic?: DenemeBaslangici
+  } | null>(null)
 
   // Ana sayfadaki kısayolların sırası. Kaydı bu katman tutuyor: açılışı ekranlar
   // kendileri bildirseydi aynı olay birkaç yerden düşer, hangi yolun sayıldığı
@@ -1138,6 +1142,7 @@ function RabiUygulamasi() {
         sinif={ayarlar.buYilSinif}
         puanTuru={ayarlar.puanTuru}
         duzenlenen={denemeFormu.duzenlenen}
+        baslangic={denemeFormu.baslangic}
         denemeSayisi={gorunenDenemeler.length}
         setYanlisSorular={setYanlisSorular}
         onKaydet={denemeKaydet}
@@ -1316,6 +1321,10 @@ function RabiUygulamasi() {
                 kayitlar={anaTurda ? tanitim.demo.soruKayitlari : gunlukKayitlar}
                 setKayitlar={anaTurda ? (g) => tanitim.demoGuncelle('soruKayitlari', g, 'soru') : setGunlukKayitlar}
                 ayarlar={ayarlar}
+                sablonlar={sablonlar}
+                onDenemeAc={(baslangic) => {
+                  if (!anaTurda) setDenemeFormu({ duzenlenen: null, baslangic })
+                }}
                 tanitim={anaTurda ? turFormu('soru-form', 'soru-ekle') : undefined}
               />
             )}

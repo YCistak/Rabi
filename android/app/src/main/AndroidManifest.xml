@@ -99,6 +99,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Yoklama biletinin damgası kısa titreşiyor (`lib/titresim.ts`). -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Sesli soru ve deneme girişi için mikrofon izni (`lib/ses-tanima.ts`). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!--
       Odak kilidi izinleri.
@@ -150,6 +152,15 @@
          olmayan uygulama eklenemez.
     -->
     <queries>
+        <!--
+          Android 11+ (API 30+) paket görünürlüğü kısıtlaması nedeniyle ses tanıma
+          servisinin sorgulanabilmesi şart; bu intent olmadan SpeechRecognizer
+          servisi sistemde bulunamaz ve available() her zaman false döner.
+        -->
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

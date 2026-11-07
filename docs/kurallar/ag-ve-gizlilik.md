@@ -2,7 +2,7 @@
 
 Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md](../../AGENTS.md).
 
-## Ağa çıkan üç istisna
+## Ağa çıkan dört istisna
 
 **1. Hatalı soru bildirimi ve öneri/hata bildirimi.** Soru havuzları elle yazıldı;
 hataları öğrenmenin başka yolu yok.
@@ -53,6 +53,29 @@ Play Store / Apple; giden yalnız paket adı (Android'de sürüm de).
   CORS'ta düşer), sürümü `surumYeniMi` (`lib/surum-karsilastir.ts`) karşılaştırır;
   "Güncelle" App Store sayfasını açar, indirme hâlleri yok. Uygulama mağazada
   değilse (yalnız TestFlight) şerit çıkmaz.
+
+**4. Sesli giriş (konuşmayı yazıya çevirme).** Soru Takibi'nde öğrencinin gününü
+konuşarak anlatması ("80 matematik, 65 kimya sorusu çözdüm, TYT denemesinde 87 net yaptım").
+- Paket `@capgo/capacitor-speech-recognition` (MPL-2.0). Köprü `lib/ses-tanima.ts`, saf
+  çözücü `lib/sesli-giris.ts`, onay arayüzü `components/sesli-giris.tsx`.
+- Konuşmayı yazıya **telefonun kendi işletim sistemi servisi** çevirir: Android'de
+  Google'ın ses tanıma hizmeti, iOS'ta Apple'ın Konuşma Tanıma'sı (Speech framework). Bu
+  servisler sesi çözümlemek için Google'a veya Apple'a gönderebilir.
+- **Rabi sesi veya metni hiçbir yere kendisi göndermez:** Rabi'nin bir sunucusu yoktur;
+  ses verisi ya da üretilen metin Rabi tarafından kaydedilmez, saklanmaz, hiçbir sunucuya
+  veya üçüncü tarafa aktarılmaz. Ses yalnız işletim sisteminin servisine gider.
+- **Onay ekranı zorunludur:** Yazıya dönüştürülen metin telefonda saf mantıkla
+  sayılara ayrılır (`lib/sesli-giris.ts`). Çıkarılan sonuçlar onay ekranında kullanıcıya
+  gösterilmeden doğrudan kaydedilemez. Kullanıcı "Kaydet" demeden hiçbir şey saklanmaz.
+  Kaydedilen veri de yalnızca ders, soru sayısı ve doğru/yanlış değerleridir (normal elle
+  girişle aynı yerel kayıt).
+- Mikrofon izni yalnız kullanıcı düğmeye ilk bastığında istenir. Google ses tanıması
+  olmayan Android cihazlarda düğme görünmez (`AndroidManifest.xml` içinde `<queries>`
+  RecognitionService girdisi bu yüzden silinmez).
+- **Birlikte değişenler:** `ios/App/App/Info.plist` izin metinleri
+  (`NSMicrophoneUsageDescription`, `NSSpeechRecognitionUsageDescription`), gizlilik
+  sayfaları (`public/gizlilik/index.html`, `public/gizlilik/veri-ozeti.html`), Play
+  Console Data Safety, App Store Connect App Privacy.
 
 ## Yasal metinler
 

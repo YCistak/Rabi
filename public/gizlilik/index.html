@@ -113,7 +113,7 @@
 <p class="ust">
   Uygulama: <b>Rabi</b> (<code>com.fluxifyinteractive.rabi</code>) &middot;
   Geliştirici: <b>Fluxify Interactive</b><br>
-  Yürürlük tarihi: <b>12 Eylül 2026</b> &middot; Son güncelleme: 10 Ekim 2026
+  Yürürlük tarihi: <b>12 Eylül 2026</b> &middot; Son güncelleme: 7 Kasım 2026
 </p>
 
 <p>
@@ -124,13 +124,14 @@
 
 <div class="kutu">
   <p><b>Kısaca:</b> Rabi'nin sunucusu yok. Denemelerin, notların, fotoğrafların, puanların ve
-  adın <b>telefonundan hiç çıkmaz</b>. Rabi'nin ağa çıktığı yalnızca üç durum vardır ve
-  üçü de sen izin verene kadar gerçekleşmez: <b>(1)</b> hatalı bir soruyu bildirmen,
+  adın <b>telefonundan hiç çıkmaz</b>. Rabi'nin ağa çıktığı yalnızca dört durum vardır ve
+  hiçbiri sen izin verene kadar gerçekleşmez: <b>(1)</b> hatalı bir soruyu bildirmen,
   <b>(2)</b> Android'de uygulama çöktükten sonra çökme kaydını göndermeyi seçmen, <b>(3)</b> Ayarlar'daki
-  &ldquo;Öneri ve hata bildir&rdquo; ekranından bize bir mesaj yazıp göndermen. Bunların
-  dışında Android'de uygulama açılırken telefonundaki Google Play, Rabi'nin yeni bir sürümü olup
-  olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi taşımaz
-  (bkz. §4b). Reklam yok, analiz (analytics) yok, hesap yok, giriş yok.</p>
+  &ldquo;Öneri ve hata bildir&rdquo; ekranından bize bir mesaj yazıp göndermen, <b>(4)</b> Soru Takibi'nde
+  gününü sesle anlattığında konuşmanın telefonunun konuşma tanıma servisi (Google / Apple) tarafından
+  yazıya çevrilmesi (bkz. §4c). Bunların dışında Android'de uygulama açılırken telefonundaki Google Play,
+  Rabi'nin yeni bir sürümü olup olmadığına bakar; bu sorguyu Rabi değil Play yapar ve sana ait hiçbir bilgi
+  taşımaz (bkz. §4b). Reklam yok, analiz (analytics) yok, hesap yok, giriş yok.</p>
 </div>
 
 <h2>1. Telefonunda kalan veriler</h2>
@@ -372,12 +373,42 @@
   App Store yapar.
 </p>
 
+<h2>4c. Telefonundan çıkan dördüncü şey — sesli giriş (konuşmayı yazıya çevirme)</h2>
+
+<p>
+  Soru Takibi ekranındaki <b>&ldquo;Sesle anlat&rdquo;</b> düğmesiyle gününü konuşarak
+  anlatabilirsin (&ldquo;80 matematik, 65 kimya sorusu çözdüm, TYT denemesinde 87 net yaptım&rdquo;).
+</p>
+
+<h3>Ses nasıl işlenir?</h3>
+<ul>
+  <li>Konuşmayı yazıya <b>telefonunun kendi işletim sistemi servisi</b> çevirir: Android'de
+      Google'ın ses tanıma hizmeti, iPhone'da Apple'ın Konuşma Tanıma (Speech) servisi.
+      Bu servisler konuşmayı yazıya dönüştürebilmek için sesi kendi sunucularına (Google veya Apple)
+      gönderebilir; bu işlem ilgili işletim sisteminin kendi gizlilik kurallarına tabidir.</li>
+  <li><b>Rabi'nin sunucusu yoktur:</b> Sesi veya yazıya dökülen metni Rabi hiçbir zaman
+      kendi sunucularına ya da üçüncü bir tarafa göndermez, saklamaz ya da kaydetmez. Ses
+      yalnızca işletim sisteminin servisine gider.</li>
+  <li>Mikrofon ve konuşma tanıma izinleri yalnızca sen düğmeye ilk bastığında istenir; önceden
+      izin istenmez. Google ses tanıma servisi bulunmayan Android telefonlarda bu özellik hiç görünmez.</li>
+</ul>
+
+<h3>Kayıt ve onay</h3>
+<p>
+  Yazıya dönüştürülen metin <b>yalnızca telefonunun içinde</b>, uygulamanın kurallarıyla
+  derslere ve sayılara ayrılır. Çıkarılan sonuçlar sana bir <b>onay ekranında</b> gösterilir.
+  Sen inceleyip <b>&ldquo;Kaydet&rdquo;</b> demeden hiçbir veri depoya yazılmaz; &ldquo;Vazgeç&rdquo;
+  dersen silinir. Kaydedilen veriler de yalnızca seçtiğin ders ve soru/net sayılarıdır
+  (normal elle girişle tamamen aynı yerel kayıt, bkz. §1).
+</p>
+
 <h2>5. İzinler ve neden isteniyor</h2>
 
 <div class="sar">
 <table>
   <tr><th>İzin</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
-  <tr><td>İnternet</td><td>§3, §4 ve §4a'daki üç gönderim ile güncelleme denetimi (§4b)</td><td>Yalnızca izin verirsen</td></tr>
+  <tr><td>İnternet</td><td>§3, §4, §4a ve §4c'deki işlemler ile güncelleme denetimi (§4b)</td><td>Yalnızca izin verirsen</td></tr>
+  <tr><td>Mikrofon (<code>RECORD_AUDIO</code>, isteğe bağlı)</td><td>Soru Takibi'nde gününü sesle anlatırken konuşmanı dinlemek</td><td>Evet, yalnız konuştuğunda — ses telefonunun ses tanıma servisine (Google / Apple) gider; Rabi sesi ya da metni kaydetmez, kendine göndermez (bkz. §4c)</td></tr>
   <tr><td>Bildirim gönderme</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
   <tr><td>Kamera / galeri (sistem seçicisi üzerinden; iPhone'da kamera izni)</td><td>Yanlış soru fotoğrafı ve deneme sonuç kâğıdını okutma</td><td>Hayır</td></tr>
   <tr><td>Kullanım verisi erişimi (<code>PACKAGE_USAGE_STATS</code>)</td><td>Odak kilidi sırasında hangi uygulamanın ön planda olduğunu anlamak</td><td>Hayır — okunan bilgi telefondan çıkmaz</td></tr>
@@ -396,6 +427,7 @@
 <div class="sar">
 <table>
   <tr><th>İzin (iPhone)</th><th>Ne için</th><th>Veri dışarı çıkıyor mu</th></tr>
+  <tr><td>Mikrofon ve Konuşma Tanıma (isteğe bağlı)</td><td>Soru Takibi'nde gününü sesle anlatırken konuşmanı dinlemek ve yazıya çevirmek</td><td>Evet, yalnız konuştuğunda — ses telefonunun ses tanıma servisine (Google / Apple) gider; Rabi sesi ya da metni kaydetmez, kendine göndermez (bkz. §4c)</td></tr>
   <tr><td>Ekran Süresi (Screen Time / Family Controls)</td><td>Odak kilidi: seçtiğin uygulamaları çalışma turu boyunca engellemek</td><td>Hayır</td></tr>
   <tr><td>Bildirimler</td><td>Çalışma hatırlatması ve pomodoro sayacı</td><td>Hayır — bildirimler telefonunda üretilir</td></tr>
   <tr><td>Kamera</td><td>Yanlış soru fotoğrafı ve deneme sonuç kâğıdını okutma</td><td>Hayır</td></tr>
@@ -431,21 +463,28 @@
 
 <h2>6. Üçüncü taraflar</h2>
 
-<p>Rabi'nin veri gönderdiği tek şirket Google'dır ve yalnızca yukarıdaki üç durumda:</p>
+<p>Rabi'nin veritabanı ve hata kaydı amacıyla veri gönderdiği tek şirket Google'dır (Firebase projesi altında):</p>
 <ul>
   <li><b>Firebase Cloud Firestore</b> — hatalı soru bildirimlerinin ve öneri/hata
-      mesajlarının kaydedildiği yer.</li>
-  <li><b>Firebase Crashlytics</b> — gönderdiğin çökme raporlarının toplandığı yer.</li>
+      mesajlarının kaydedildiği yer (§3 ve §4a).</li>
+  <li><b>Firebase Crashlytics</b> — gönderdiğin çökme raporlarının toplandığı yer (§4).</li>
 </ul>
-<p>İkisi de aynı Firebase projesinin parçasıdır.</p>
+<p>
+  Sesli giriş özelliğinde (§4c) konuşmanın yazıya çevrilmesi için telefonundaki işletim
+  sisteminin kendi ses tanıma hizmeti (Android'de Google LLC, iPhone'da Apple Inc.) kullanılır.
+  Rabi bu sesi veya metni kendi sunucularına almaz; işletim sisteminin bu hizmetleri kendi
+  gizlilik politikalarına tabidir.
+</p>
 
 <h3>Yurt dışına aktarım</h3>
 <p>
-  Bu kayıtlar Google LLC'nin Türkiye dışındaki sunucularında saklanır; yani gönderdiğin
+  Firebase kayıtları Google LLC'nin Türkiye dışındaki sunucularında saklanır; yani gönderdiğin
   bildirim, mesaj ya da çökme raporu yurt dışına aktarılmış olur. Bu aktarım, her gönderimden
   önce ekranda ne gideceği gösterilerek senden alınan <b>açık onaya</b>
   (&ldquo;Gönder&rdquo; düğmesine basman) dayanır (6698 sayılı KVKK md. 9).
-  &ldquo;Gönder&rdquo; demezsen hiçbir şey yurt dışına aktarılmaz.
+  Sesli girişte konuşmanın yazıya çevrilmesi de işletim sisteminin (Google / Apple) bulut
+  altyapısına aktarılabilir; bu da yalnızca mikrofona basıp konuştuğunda gerçekleşir.
+  Onay vermezsen hiçbir şey yurt dışına aktarılmaz.
 </p>
 <p>
   Google bu verileri bizim adımıza ve talimatımızla işler. Güncelleme denetimi (§4b)
@@ -463,7 +502,7 @@
 <ul>
   <li>Telefondaki veriler işletim sisteminin uygulamalara ayırdığı özel alanda tutulur;
       başka uygulamalar buraya erişemez.</li>
-  <li>Dışarı çıkan üç gönderim de <b>HTTPS/TLS</b> ile şifrelenerek iletilir; şifresiz
+  <li>Dışarı çıkan internet bağlantıları <b>HTTPS/TLS</b> ile şifrelenerek iletilir; şifresiz
       (<code>http://</code>) bağlantı kullanılmaz.</li>
   <li>Bize ulaşan verilere yalnızca uygulamayı geliştiren kişi erişir ve bunlar yalnızca
       soruları düzeltmek, hataları gidermek ve önerileri değerlendirmek için kullanılır.</li>
@@ -527,11 +566,12 @@
   <a href="mailto:fluxifyinteractive@gmail.com">fluxifyinteractive@gmail.com</a>
 </p>
 <p>
-  <b>Hukuki sebep:</b> Telefonundan çıkan üç kayıt (§3, §4, §4a) yalnızca sen
-  &ldquo;Gönder&rdquo; dediğinde, yani <b>açık rızana</b> dayanarak işlenir (KVKK md. 5/1);
-  yurt dışına aktarım da aynı açık rızaya dayanır (KVKK md. 9, bkz. §6). Rızanı her zaman
-  geri alabilirsin: bundan sonra &ldquo;Gönder&rdquo; demediğinde hiçbir şey gitmez, daha
-  önce gönderdiklerinin silinmesini de §8'deki adresten isteyebilirsin.
+  <b>Hukuki sebep:</b> Telefonundan çıkan kayıtlar (§3, §4, §4a) ile sesli giriş özelliği (§4c) yalnızca
+  sen &ldquo;Gönder&rdquo; dediğinde ya da mikrofon düğmesine basıp konuştuğunda, yani <b>açık rızana</b>
+  dayanarak işlenir (KVKK md. 5/1); yurt dışına aktarım da aynı açık rızaya dayanır (KVKK md. 9, bkz. §6).
+  Rızanı her zaman geri alabilirsin: onay vermediğinde hiçbir şey gitmez, daha önce gönderdiklerinin
+  silinmesini de §8'deki adresten isteyebilirsin (sesli girişte ise Rabi sunucularında hiçbir ses veya metin
+  tutulmaz).
 </p>
 <p>
   6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) md. 11 kapsamında şu haklara
