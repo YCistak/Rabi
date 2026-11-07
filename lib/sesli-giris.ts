@@ -18,6 +18,225 @@ export type SesliCozum = { sorular: SesliSoru[]; deneme: SesliDeneme | null; anl
 
 const EN_COK_SORU = 500
 
+/** Yerli konuşma tanıyıcıya bağlam ipucu olarak verilen sözcükler. */
+export const TANIMA_IPUCLARI: string[] = [
+  'TYT',
+  'AYT',
+  'YDT',
+  'Rabi',
+  'net',
+  'doğru',
+  'yanlış',
+  'boş',
+  'deneme',
+  ...CALISMA_DERSLERI,
+  'Geometri',
+  'Paragraf',
+  'Edebiyat',
+]
+
+// --- Telefonun yanlış duyduğu özel sözcükleri düzeltme ---
+
+const TURKCE_HARF_RAKAM = /[a-zA-ZçğıöşüÇĞİÖŞÜâÂ0-9\u0307]/
+const RABI_ADLARI = new Set(['rabi', 'rabbi', 'arabi', 'rabia', 'ravi', 'rabiye'])
+const SINAV_BITISIK_EKLERI = new Set([
+  'de', 'da', 'te', 'ta', 'den', 'dan', 'ten', 'tan',
+  'ye', 'ya', 'yi', 'yı', 'nin', 'nın', 'nde', 'nda', 'nden', 'ndan', 'yle', 'yla',
+])
+const SINAV_COKLU_BITISIK_EKLERI = new Set(['de', 'da', 'den', 'dan'])
+
+type SinavDuzeltmeKurali = {
+  parcalar: readonly string[]
+  hedef: 'TYT' | 'AYT' | 'YDT'
+  buyukHarfZorunlu?: boolean
+  ardindanDenemeZorunlu?: boolean
+}
+
+const SINAV_DUZELTME_KURALLARI: readonly SinavDuzeltmeKurali[] = [
+  { parcalar: ['te', 'ye', 'te'], hedef: 'TYT' },
+  { parcalar: ['t', 'y', 't'], hedef: 'TYT' },
+  { parcalar: ['te', 'te'], hedef: 'TYT' },
+  { parcalar: ['ti', 'ti'], hedef: 'TYT' },
+  { parcalar: ['t', 't'], hedef: 'TYT' },
+  { parcalar: ['teyete'], hedef: 'TYT' },
+  { parcalar: ['teyte'], hedef: 'TYT' },
+  { parcalar: ['tiyti'], hedef: 'TYT' },
+  { parcalar: ['tete'], hedef: 'TYT' },
+  { parcalar: ['titi'], hedef: 'TYT' },
+  { parcalar: ['ttt'], hedef: 'TYT' },
+  { parcalar: ['tyt'], hedef: 'TYT' },
+  { parcalar: ['tt'], hedef: 'TYT' },
+  { parcalar: ['tit'], hedef: 'TYT', ardindanDenemeZorunlu: true },
+  { parcalar: ['a', 'ye', 'te'], hedef: 'AYT' },
+  { parcalar: ['a', 'y', 't'], hedef: 'AYT' },
+  { parcalar: ['ay', 'te'], hedef: 'AYT' },
+  { parcalar: ['a', 'te'], hedef: 'AYT' },
+  { parcalar: ['ayyte'], hedef: 'AYT' },
+  { parcalar: ['ayte'], hedef: 'AYT' },
+  { parcalar: ['eyte'], hedef: 'AYT' },
+  { parcalar: ['ayt'], hedef: 'AYT' },
+  { parcalar: ['AT'], hedef: 'AYT', buyukHarfZorunlu: true },
+  { parcalar: ['ye', 'de', 'te'], hedef: 'YDT' },
+  { parcalar: ['yde', 'te'], hedef: 'YDT' },
+  { parcalar: ['y', 'd', 't'], hedef: 'YDT' },
+  { parcalar: ['yedete'], hedef: 'YDT' },
+  { parcalar: ['ydt'], hedef: 'YDT' },
+]
+
+/** `sozSiniriMi`nin Türkçe büyük/küçük harfleri de kapsayan karşılığı. */
+function turkceSozSiniriMi(metin: string, bas: number, uzunluk: number): boolean {
+  const onceki = metin[bas - 1]
+  const sonraki = metin[bas + uzunluk]
+  if (onceki !== undefined && TURKCE_HARF_RAKAM.test(onceki)) return false
+  if (sonraki !== undefined && TURKCE_HARF_RAKAM.test(sonraki)) return false
+  return true
+}
+
+/** Cümle başındaki ya da virgül/ünlemle ayrılmış "Rabi" hitaplarını siler. */
+function rabiHitabiniSil(metin: string): string {
+  const silinecekler: { bas: number; son: number }[] = []
+  for (const es of metin.matchAll(/[a-zA-ZçğıöşüÇĞİÖŞÜâÂ0-9\u0307]+/g)) {
+    const bas = es.index ?? 0
+    const ham = es[0]
+    const son = bas + ham.length
+    if (!turkceSozSiniriMi(metin, bas, ham.length)) continue
+    const kucuk = ham.toLocaleLowerCase('tr-TR').replace(/\u0307/g, '')
+    if (!RABI_ADLARI.has(kucuk)) continue
+    if (bas >= 2 && /['’`]/.test(metin[bas - 1]!) && TURKCE_HARF_RAKAM.test(metin[bas - 2]!)) continue
+    if (/^['’`]/.test(metin.slice(son))) continue
+
+    const sol = metin.slice(0, bas)
+    const sag = metin.slice(son)
+    const metinBasiMi = /^[\s,!]*$/.test(sol)
+    const cumleBasiMi = metinBasiMi || /[.!?\n]\s*$/.test(sol)
+    const soldaVirgulUnlem = /[,!]+\s*$/.exec(sol)
+    const sagdaVirgulUnlem = /^\s*[,!]+/.exec(sag)
+    if (!cumleBasiMi && !soldaVirgulUnlem && !sagdaVirgulUnlem) continue
+
+    let silBas = bas
+    let silSon = son
+    if (metinBasiMi) {
+      silBas = 0
+      const sagEk = /^\s*[,!]*\s*/.exec(sag)
+      if (sagEk) silSon = son + sagEk[0].length
+    } else if (cumleBasiMi) {
+      const sagEk = /^\s*[,!]*\s*/.exec(sag)
+      if (sagEk) silSon = son + sagEk[0].length
+    } else if (soldaVirgulUnlem && sagdaVirgulUnlem) {
+      const sagKalan = sag.slice(sagdaVirgulUnlem[0].length)
+      if (/^\s*$/.test(sagKalan) || /^\s*[.!?\n]/.test(sagKalan)) {
+        const solTam = /\s*[,!]+\s*$/.exec(sol)!
+        silBas = bas - solTam[0].length
+        silSon = son + sagdaVirgulUnlem[0].length
+      } else {
+        const solBosluk = /[ \t]*$/.exec(sol)!
+        silBas = bas - solBosluk[0].length
+        silSon = son + sagdaVirgulUnlem[0].length
+      }
+    } else if (soldaVirgulUnlem) {
+      const solTam = /\s*[,!]+\s*$/.exec(sol)!
+      silBas = bas - solTam[0].length
+    } else if (sagdaVirgulUnlem) {
+      const solBosluk = /[ \t]*$/.exec(sol)!
+      silBas = bas - solBosluk[0].length
+      silSon = son + sagdaVirgulUnlem[0].length
+    }
+    silinecekler.push({ bas: silBas, son: silSon })
+  }
+  if (silinecekler.length === 0) return metin
+
+  let sonuc = ''
+  let imlec = 0
+  for (const a of silinecekler) {
+    const b = Math.max(imlec, a.bas)
+    if (b > imlec) sonuc += metin.slice(imlec, b)
+    imlec = Math.max(imlec, a.son)
+  }
+  if (imlec < metin.length) sonuc += metin.slice(imlec)
+  return sonuc.replace(/[ \t]{2,}/g, ' ').trim()
+}
+
+/**
+ * Konuşma tanımanın TYT/AYT/YDT ve Rabi için sık ürettiği yanlış duyma
+ * biçimlerini çekim eklerini koruyarak düzeltir.
+ */
+export function duyulaniDuzelt(metin: string): string {
+  const temiz = rabiHitabiniSil(metin.normalize('NFC'))
+  if (!temiz) return ''
+
+  const kelimeler = [...temiz.matchAll(/[a-zA-ZçğıöşüÇĞİÖŞÜâÂ0-9]+/g)].map((es) => {
+    const bas = es.index ?? 0
+    const ham = es[0]
+    return { ham, kucuk: ham.toLocaleLowerCase('tr-TR'), bas, son: bas + ham.length }
+  })
+  if (kelimeler.length === 0) return temiz
+
+  const aradakiBoslukMu = (solSon: number, sagBas: number) => /^[ \t]+$/.test(temiz.slice(solSon, sagBas))
+  const degisimler: { bas: number; son: number; yeni: string }[] = []
+
+  for (let i = 0; i < kelimeler.length; i++) {
+    const ilk = kelimeler[i]!
+    if (!turkceSozSiniriMi(temiz, ilk.bas, ilk.ham.length)) continue
+    if (ilk.bas >= 2 && /['’`]/.test(temiz[ilk.bas - 1]!) && TURKCE_HARF_RAKAM.test(temiz[ilk.bas - 2]!)) continue
+
+    for (const kural of SINAV_DUZELTME_KURALLARI) {
+      const n = kural.parcalar.length
+      if (i + n > kelimeler.length) continue
+
+      let uydu = true
+      for (let j = 0; j < n - 1; j++) {
+        const k = kelimeler[i + j]!
+        const s = kelimeler[i + j + 1]!
+        if (k.kucuk !== kural.parcalar[j] || !aradakiBoslukMu(k.son, s.bas)) {
+          uydu = false
+          break
+        }
+      }
+      if (!uydu) continue
+
+      const sonKelime = kelimeler[i + n - 1]!
+      if (!turkceSozSiniriMi(temiz, sonKelime.bas, sonKelime.ham.length)) continue
+      const sonBeklenen = kural.parcalar[n - 1]!
+
+      let yeniMetin: string | null = null
+      if (kural.buyukHarfZorunlu) {
+        if (sonKelime.ham === sonBeklenen) yeniMetin = kural.hedef
+      } else if (sonKelime.kucuk === sonBeklenen) {
+        if (kural.ardindanDenemeZorunlu) {
+          const sonraki = kelimeler[i + n]
+          if (sonraki && aradakiBoslukMu(sonKelime.son, sonraki.bas) && /^deneme/.test(sadelestir(sonraki.ham))) {
+            yeniMetin = kural.hedef
+          }
+        } else {
+          yeniMetin = kural.hedef
+        }
+      } else if (!kural.ardindanDenemeZorunlu && sonKelime.kucuk.startsWith(sonBeklenen)) {
+        const ekKucuk = sonKelime.kucuk.slice(sonBeklenen.length)
+        const ekIzni = n === 1 ? SINAV_BITISIK_EKLERI : SINAV_COKLU_BITISIK_EKLERI
+        if (ekIzni.has(ekKucuk)) {
+          const ekHam = sonKelime.ham.slice(sonBeklenen.length)
+          yeniMetin = `${kural.hedef}'${ekHam}`
+        }
+      }
+
+      if (yeniMetin !== null) {
+        degisimler.push({ bas: ilk.bas, son: sonKelime.son, yeni: yeniMetin })
+        i += n - 1
+        break
+      }
+    }
+  }
+
+  if (degisimler.length === 0) return temiz
+  let sonuc = ''
+  let imlec = 0
+  for (const d of degisimler) {
+    sonuc += temiz.slice(imlec, d.bas) + d.yeni
+    imlec = d.son
+  }
+  return sonuc + temiz.slice(imlec)
+}
+
 // --- Yazıyla söylenen sayıları rakama çevirme ---
 
 /** "ön hazırlık"taki "ön" sadeleşince "on" (10) sanılmasın diye Türkçe ünlüleri korur. */
@@ -46,6 +265,13 @@ const SON_EKLI_SAYILAR: Record<string, readonly [number, string]> = {
   yirmisi: [20, "'si"], otuzu: [30, "'u"], kırkı: [40, "'ı"], kirki: [40, "'ı"],
   ellisi: [50, "'si"], altmışı: [60, "'ı"], altmisi: [60, "'ı"], yetmişi: [70, "'i"], yetmisi: [70, "'i"],
   sekseni: [80, "'i"], doksanı: [90, "'ı"], doksani: [90, "'ı"], yüzü: [100, "'ü"], yuzu: [100, "'ü"],
+  birini: [1, "'ini"], ikisini: [2, "'sini"], üçünü: [3, "'ünü"], ucunu: [3, "'ünü"],
+  dördünü: [4, "'ünü"], dordunu: [4, "'ünü"], beşini: [5, "'ini"], besini: [5, "'ini"],
+  altısını: [6, "'sını"], altisini: [6, "'sını"], yedisini: [7, "'sini"], sekizini: [8, "'ini"],
+  dokuzunu: [9, "'unu"], onunu: [10, "'unu"], yirmisini: [20, "'sini"], otuzunu: [30, "'unu"],
+  kırkını: [40, "'ını"], kirkini: [40, "'ını"], ellisini: [50, "'sini"],
+  altmışını: [60, "'ını"], altmisini: [60, "'ını"], yetmişini: [70, "'ini"], yetmisini: [70, "'ini"],
+  seksenini: [80, "'ini"], doksanını: [90, "'ını"], doksanini: [90, "'ını"], yüzünü: [100, "'ünü"], yuzunu: [100, "'ünü"],
 }
 const BELIRSIZ_BIR_SONRASI = new Set([
   'de', 'da', 'daha', 'çok', 'cok', 'az', 'kaç', 'kac', 'şey', 'sey', 'sürü', 'suru', 'kısım', 'kisim',
@@ -67,10 +293,23 @@ function yaziliSayiOku(kelimeler: Kelime[], basIndeks: number, metin: string): {
   const yuzMu = (s: string) => s === 'yüz' || s === 'yuz'
   const yanYana = (a: Kelime, b?: Kelime): b is Kelime => b !== undefined && /^[ \t]+$/.test(metin.slice(a.son, b.bas))
   const acik = () => sonEk === '' && imlec < kelimeler.length && (imlec === basIndeks || yanYana(kelimeler[imlec - 1]!, kelimeler[imlec]))
+  const ardindanSonucEtiketiVarMi = (indeks: number): boolean => {
+    const s1 = kelimeler[indeks + 1]
+    if (!s1 || !yanYana(kelimeler[indeks]!, s1)) return false
+    const hedef = (s1.kucuk === 'de' || s1.kucuk === 'da') && yanYana(s1, kelimeler[indeks + 2]) ? kelimeler[indeks + 2]! : s1
+    return /^(?:dogru|yanlis|bos)/.test(sadelestir(hedef.ham))
+  }
   const ekliOku = (alt: number, ust: number) => {
     const k = kelimeler[imlec]!.kucuk
     const ekli = SON_EKLI_SAYILAR[k]
-    if (!ekli || ekli[0] < alt || ekli[0] > ust || ((k === 'biri' || k === 'ikisi') && imlec === basIndeks)) return
+    if (
+      !ekli ||
+      ekli[0] < alt ||
+      ekli[0] > ust ||
+      ((k === 'biri' || k === 'birini' || k === 'ikisi') && imlec === basIndeks && !ardindanSonucEtiketiVarMi(imlec))
+    ) {
+      return
+    }
     toplam += ekli[0]
     sonEk = ekli[1]
     imlec += 1
@@ -274,14 +513,21 @@ const GRUP_KUMELERI: readonly (readonly string[])[] = [
 const GRUP_ANAHTARLARI: AnahtarTanimi[] = anahtarlariGenislet(GRUP_KUMELERI.flat())
 
 /** Uzun eşleşmenin kısayı ezdiği, çakışan veya şablon/liste dışı dersleri `hedef: null` bırakan ortak tarayıcı. */
-function dersleriTara<T>(metin: string, hedefler: readonly DersHedefi<T>[], yedekAnahtarlar: readonly AnahtarTanimi[] = []): DersBulgu<T>[] {
+function dersleriTara<T>(
+  metin: string,
+  hedefler: readonly DersHedefi<T>[],
+  yedekAnahtarlar: readonly AnahtarTanimi[] = [],
+  denemeOnuHaric = true,
+): DersBulgu<T>[] {
   type Aday = DersBulgu<T> & { kimlik: string | null; oncelik: number; uzunluk: number }
   const adaylar: Aday[] = []
   const ekle = (hedef: T | null, kimlik: string | null, oncelik: number, liste: readonly AnahtarTanimi[]) => {
     for (const anahtar of liste) {
       for (let yer = metin.indexOf(anahtar.metin); yer !== -1; yer = metin.indexOf(anahtar.metin, yer + 1)) {
         const son = dersEslesmeSonu(metin, yer, anahtar)
-        if (son !== -1 && !denemeAdiOnuMu(metin, son)) adaylar.push({ hedef, kimlik, oncelik, bas: yer, son, uzunluk: son - yer })
+        if (son !== -1 && (!denemeOnuHaric || !denemeAdiOnuMu(metin, son))) {
+          adaylar.push({ hedef, kimlik, oncelik, bas: yer, son, uzunluk: son - yer })
+        }
       }
     }
   }
@@ -343,11 +589,14 @@ function soruDisiSayilariMaskele(kesit: string): string {
 
 type SayiOgesi = { tur: 'toplam' | 'ulestirme' | 'dogru' | 'yanlis' | 'bos' | 'hepsi-dogru'; deger: number; bas: number; son: number; toplamEtiketli: boolean }
 
+const IYELIK_EK_DESENI = "(?:\\s*'?\\s*(?:sini|sunu|sinda|sinde|sunda|sunde|ini|unu|inda|inde|unda|unde|si|su|i|u))"
+const TANE_EK_DESENI = '(?:\\s+tane(?:si(?:ni|nde|nden)?|de|den)?)'
+const SAYI_ARA_EK_DESENI = `(?:${IYELIK_EK_DESENI}|${TANE_EK_DESENI})`
 const SAYI_SON_ETIKETLERI: readonly { tur: SayiOgesi['tur']; desen: RegExp }[] = [
   { tur: 'ulestirme', desen: /^\s*'?\s*(?:ser|sar|er|ar)(?![a-z0-9])/ },
-  { tur: 'dogru', desen: /^(?:\s*'?\s*(?:si|su|i|u))?(?:\s+d[ea])?\s*dogru\w*|^(?:\s*'?\s*(?:si|su|i|u))?\s*d(?![a-z0-9])/ },
-  { tur: 'yanlis', desen: /^(?:\s*'?\s*(?:si|su|i|u))?\s*(?:yanlis\w*|y(?![a-z0-9]))/ },
-  { tur: 'bos', desen: /^(?:\s*'?\s*(?:si|su|i|u))?\s*(?:bos\w*|b(?![a-z0-9]))/ },
+  { tur: 'dogru', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?\\s*dogru\\w*|^${IYELIK_EK_DESENI}?\\s*d(?![a-z0-9])`) },
+  { tur: 'yanlis', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?\\s*yanlis\\w*|^${IYELIK_EK_DESENI}?\\s*y(?![a-z0-9])`) },
+  { tur: 'bos', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?\\s*bos\\w*|^${IYELIK_EK_DESENI}?\\s*b(?![a-z0-9])`) },
 ]
 
 /** Verilen aralıktaki sayıları, doğru/yanlış/boş etiketlerini ve "hepsi doğru" ifadelerini çıkarır. */
@@ -406,7 +655,8 @@ const DENEME_KELIMESI_DESENI =
 const ACIK_SORU_GECISI_DESENI =
   /(?<![a-z0-9])(?:(?:onun|bunun|deneme|denemenin)\s+(?:disinda|haricinde)|disinda|haricinde|ayrica|bir\s+de|(?:buna\s+)?ek\s+olarak|ustune)(?![a-z0-9])/
 const SORU_BELIRTECI_DESENI =
-  /(?<![a-z0-9])(?:tane(?![a-z0-9])(?!\s+(?:dogru|yanlis|bos|net))|soru(?:su|da|dan|lar|lari)?(?![a-z0-9]))/
+  /(?<![a-z0-9])(?:tane(?![a-z0-9])(?!\s+(?:d[ea]\s+)?(?:dogru|yanlis|bos|net))|soru(?:su|da|dan|lar|lari)?(?![a-z0-9]))/
+const SINAV_KISA_ADLARI_DESENI = /(?<![a-z0-9])(?:tyt|ayt|ydt)(?:'?([a-z]+))?(?![a-z0-9])/g
 
 /** Arada sayı veya yüklem olmadan "ve / ile / veya" ile bağlanan dersleri tek grup yapar. */
 function dersGruplariniKur(bulgular: DersBulgu<string>[], kesit: string): DersGrubu[] {
@@ -486,12 +736,76 @@ function denemeKuyrugundaSoruGecisi(kuyruk: string): { denemeUzunluk: number; so
   return { denemeUzunluk: ilk, soruBaslangic: acikGecis && acikYer === ilk ? ilk + acikGecis[0].length : ilk }
 }
 
+/**
+ * "deneme" sözcüğü geçmese bile TYT/AYT/YDT adından sonra ders + doğru/yanlış
+ * geliyorsa ("TYT Türkçe 32 doğru 6 yanlış") bunun deneme başlangıcı olduğunu
+ * saptar; "50 TYT matematik sorusu çözdüm" gibi soru çözümlerini dışarıda tutar.
+ */
+function sinavDenemeCapasiMi(norm: string, sBas: number, sSon: number, ustSinir: number): boolean {
+  const sol = norm.slice(0, sBas)
+  const onSayi = /(?:^|\s)(\d+(?:\s*'?\s*(?:ser|sar|er|ar)|\s+tane)?)\s*$/.exec(sol)
+  if (onSayi) {
+    const sayiOncesi = sol.slice(0, onSayi.index)
+    const oncekiDersVar = dersleriTara(sayiOncesi, SORU_HEDEFLERI, GRUP_ANAHTARLARI).some((d) => /^\s*$/.test(sayiOncesi.slice(d.son)))
+    const oncekiEtiketVar = /(?:\d|dogru\w*|yanlis\w*|bos\w*|net\w*|[dyb])\s*$/.test(sayiOncesi)
+    if (!oncekiDersVar && !oncekiEtiketVar) return false
+  }
+
+  const sag = norm.slice(sSon, ustSinir)
+  const gecis = denemeKuyrugundaSoruGecisi(sag)
+  const adayDilim = sag.slice(0, gecis.denemeUzunluk)
+  if (!adayDilim.trim()) return false
+
+  const temizDilim = soruDisiSayilariMaskele(adayDilim)
+  const dersler = dersleriTara(temizDilim, SORU_HEDEFLERI, GRUP_ANAHTARLARI, false)
+  const ilkDers = dersler[0]
+  if (!ilkDers) return false
+
+  const ara = temizDilim.slice(0, ilkDers.bas)
+  if (/\d/.test(ara) || SORU_BELIRTECI_DESENI.test(ara) || ACIK_SORU_GECISI_DESENI.test(ara)) return false
+  const araKelimeler = ara.match(/[a-z0-9]+/g) ?? []
+  if (
+    !araKelimeler.every((k) =>
+      /^(?:sayisal\w*|esit|agirlik\w*|sozel\w*|yabanci|dil\w*|coz\w*|yap\w*|gir\w*|ol\w*|toplam\w*|bugun|dun|sabah|aksam|gece|okulda|dershanede|kurs\w*|d[ea])$/.test(k),
+    )
+  ) {
+    return false
+  }
+
+  const ilkParca = temizDilim.slice(ilkDers.son, dersler[1]?.bas ?? temizDilim.length)
+  if (SORU_BELIRTECI_DESENI.test(ilkParca)) return false
+  const ayrilan = etiketleriAyir(araliktakiSayilar(ilkParca, 0, ilkParca.length))
+  if (!ayrilan || ayrilan.toplamlar.length > 0) return false
+  return ayrilan.d !== null || ayrilan.y !== null || ayrilan.hepsiDogru
+}
+
 /** Metni deneme ve soru takibi bölgelerine ayırır; ardışık aynı tür bölgeleri birleştirir. */
 function bolumlereAyir(norm: string): Bolum[] {
-  const denemeKelimeleri = [...norm.matchAll(DENEME_KELIMESI_DESENI)].map((es) => {
+  const acikCapalar = [...norm.matchAll(DENEME_KELIMESI_DESENI)].map((es) => {
     const kBas = es.index ?? 0
     return { bas: denemeBaslangici(norm, kBas), kelimeSon: kBas + es[0].length }
   })
+
+  const ekCapalar: { bas: number; kelimeSon: number }[] = []
+  for (const es of norm.matchAll(SINAV_KISA_ADLARI_DESENI)) {
+    const sBas = es.index ?? 0
+    const sSon = sBas + es[0].length
+    const ek = es[1]
+    if (ek !== undefined && !CEKIM_EKLERI.has(ek) && !SINAV_BITISIK_EKLERI.has(ek)) continue
+    if (acikCapalar.some((a) => sBas >= a.bas && sSon <= a.kelimeSon)) continue
+    const sonrakiAcikBas = acikCapalar.find((a) => a.bas >= sSon)?.bas ?? norm.length
+    if (sinavDenemeCapasiMi(norm, sBas, sSon, sonrakiAcikBas)) {
+      ekCapalar.push({ bas: denemeBaslangici(norm, sBas), kelimeSon: sSon })
+    }
+  }
+
+  const siraliCapalar = [...acikCapalar, ...ekCapalar].sort((a, b) => a.bas - b.bas || b.kelimeSon - a.kelimeSon)
+  const denemeKelimeleri: { bas: number; kelimeSon: number }[] = []
+  for (const c of siraliCapalar) {
+    const onceki = denemeKelimeleri[denemeKelimeleri.length - 1]
+    if (onceki && c.kelimeSon <= onceki.kelimeSon) continue
+    denemeKelimeleri.push(c)
+  }
   if (denemeKelimeleri.length === 0) return norm ? [{ tur: 'soru', bas: 0, son: norm.length }] : []
 
   const ham: Bolum[] = []
@@ -583,7 +897,10 @@ function denemeSayilariCoz(parca: string, soruSayisi: number): { dogru: number; 
 
 /** `anlasilmayan` dilimine ders sonrasındaki alakasız yüklemleri katmamak için anlamlı sonu bulur. */
 function parcaAnlamliSonu(parca: string): number {
-  const desen = /\d+(?:\s*'?\s*(?:si|su|i|u))?(?:\s+(?:dogru|yanlis|bos)\w*)?|(?:hepsi(?:ni)?|tamami(?:ni)?|tumu(?:nu)?|full|ful)(?:\s+d[ea])?(?:\s+(?:dogru|yanlis|bos)\w*)?|fulle\w*|yanlis\w*\s+yok|yanlissiz/g
+  const desen = new RegExp(
+    `\\d+${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?(?:\\s+(?:dogru|yanlis|bos)\\w*)?|(?:hepsi(?:ni)?|tamami(?:ni)?|tumu(?:nu)?|full|ful)(?:\\s+d[ea])?(?:\\s+(?:dogru|yanlis|bos)\\w*)?|fulle\\w*|yanlis\\w*\\s+yok|yanlissiz`,
+    'g',
+  )
   const son = [...parca.matchAll(desen)].pop()
   return son?.index !== undefined ? son.index + son[0].length : parca.length
 }
@@ -633,7 +950,9 @@ function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { s
     }
     for (let sira = 0; sira < bulgular.length; sira++) {
       const bulgu = bulgular[sira]!
-      const parca = temizMetin.slice(bulgu.son, bulgular[sira + 1]?.bas ?? temizMetin.length)
+      const sonraki = bulgular[sira + 1]
+      const parca = temizMetin.slice(bulgu.son, sonraki?.bas ?? temizMetin.length)
+      if (bulgu.hedef && sonraki?.hedef?.id === bulgu.hedef.id && /^[\s,;-]*$/.test(parca)) continue
       const hamParca = hazir.hamKesit(bolum.bas + bulgu.bas, bolum.bas + bulgu.son + parcaAnlamliSonu(parca))
       kayitEkle(bulgu.hedef, bulgu.hedef ? denemeSayilariCoz(parca, bulgu.hedef.soruSayisi) : null, hamParca)
     }
@@ -707,7 +1026,11 @@ function soruGrubuDegerlendir(grup: DersGrubu, sayilar: SayiOgesi[]): SesliSoru[
       ? { toplam: toplamlar[0]!.deger, dogru: toplamlar[0]!.deger, yanlis: 0 }
       : null
     : toplamlar.length === 1
-      ? { toplam: toplamlar[0]!.deger, dogru: d ?? 0, yanlis: y ?? 0 }
+      ? {
+          toplam: toplamlar[0]!.deger,
+          dogru: d ?? (y !== null ? toplamlar[0]!.deger - y - bos : 0),
+          yanlis: y ?? (d !== null && b !== null ? toplamlar[0]!.deger - d - bos : 0),
+        }
       : d !== null && y !== null
         ? { toplam: d + y + bos, dogru: d, yanlis: y }
         : null
@@ -772,9 +1095,89 @@ function sorulariBirlestir(hamSorular: SesliSoru[]): SesliSoru[] {
   return CALISMA_DERSLERI.map((d) => harita.get(d)).filter((k): k is SesliSoru => k !== undefined)
 }
 
+const TANIDIK_YARDIMCI_KOKLER = new Set(
+  TANIMA_IPUCLARI.map((s) => sadelestir(s)).filter(
+    (s) => s !== 'tyt' && s !== 'ayt' && s !== 'ydt' && !SORU_HEDEFLERI.some((h) => h.anahtarlar.some((a) => a.metin === s)),
+  ),
+)
+
+/** Bir adayın tanıdık sözcük (ders adı, TYT/AYT/YDT, sayı; eşitlikte diğer tanıma ipuçları) puanını hesaplar. */
+function adayTanidikPuani(aday: string): number {
+  if (!aday.trim()) return 0
+  const cevrilmis = sayilariRakamaCevir(aday)
+  const sade = sadelestir(cevrilmis).replace(/[’`]/g, "'")
+  if (!sade) return 0
+
+  const kapaliAraliklar: { bas: number; son: number }[] = []
+  const cakisiyorMu = (bas: number, son: number) => kapaliAraliklar.some((a) => bas < a.son && a.bas < son)
+
+  let anaPuan = 0
+  for (const es of sade.matchAll(/(?<![a-z0-9])(tyt|ayt|ydt)(?:'?([a-z]+))?(?![a-z0-9])/g)) {
+    const bas = es.index ?? 0
+    const tam = es[0]
+    const ek = es[2]
+    if (ek !== undefined && !CEKIM_EKLERI.has(ek) && !SINAV_BITISIK_EKLERI.has(ek)) continue
+    kapaliAraliklar.push({ bas, son: bas + tam.length })
+    anaPuan += 1
+  }
+
+  for (const ders of dersleriTara(sade, SORU_HEDEFLERI, [], false)) {
+    if (ders.hedef !== null && !cakisiyorMu(ders.bas, ders.son)) {
+      kapaliAraliklar.push({ bas: ders.bas, son: ders.son })
+      anaPuan += 1
+    }
+  }
+
+  for (const es of sade.matchAll(/(?<![a-z0-9])\d+(?:[.,]\d+)?/g)) {
+    const bas = es.index ?? 0
+    const son = bas + es[0].length
+    if (!cakisiyorMu(bas, son)) {
+      kapaliAraliklar.push({ bas, son })
+      anaPuan += 1
+    }
+  }
+
+  let yardimciPuan = 0
+  for (const es of sade.matchAll(/[a-z0-9]+/g)) {
+    const bas = es.index ?? 0
+    const kelime = es[0]
+    const son = bas + kelime.length
+    if (cakisiyorMu(bas, son)) continue
+    if (/^(?:rabi|net(?:im|imiz|le|ten|te|e|i)?|dogru\w*|yanlis\w*|bos(?:luk)?|deneme\w*)$/.test(kelime)) {
+      for (const kok of TANIDIK_YARDIMCI_KOKLER) {
+        if (kelime.startsWith(kok)) {
+          yardimciPuan += 0.01
+          break
+        }
+      }
+    }
+  }
+
+  return anaPuan + yardimciPuan
+}
+
+/**
+ * Konuşma tanımanın döndürdüğü alternatiflerden en çok tanıdık sözcük
+ * (ders adı, TYT/AYT/YDT, sayı) içereni seçer; eşitlikte ilk adayı korur.
+ */
+export function enIyiAdayiSec(adaylar: string[]): string {
+  if (adaylar.length === 0) return ''
+  let enIyi = adaylar[0]!
+  let enIyiPuan = adayTanidikPuani(enIyi)
+  for (let i = 1; i < adaylar.length; i++) {
+    const aday = adaylar[i]!
+    const puan = adayTanidikPuani(aday)
+    if (puan > enIyiPuan) {
+      enIyi = aday
+      enIyiPuan = puan
+    }
+  }
+  return enIyi
+}
+
 /** Konuşma tanıma metnini Soru Takibi ve Deneme kayıtlarına dönüştürür. */
 export function sesliMetniCoz(metin: string, secenek: { sablonlar: Sablon[]; varsayilanSablonId: string }): SesliCozum {
-  const hazir = metniHazirla(metin)
+  const hazir = metniHazirla(duyulaniDuzelt(metin))
   if (!hazir.norm) return { sorular: [], deneme: null, anlasilmayan: [] }
 
   const bolumler = bolumlereAyir(hazir.norm)

@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { HAZIR_SABLONLAR, secilebilirSablonlar } from './sablonlar'
-import { sayilariRakamaCevir, type SesliCozum, sesliMetniCoz } from './sesli-giris'
+import {
+  duyulaniDuzelt,
+  enIyiAdayiSec,
+  sayilariRakamaCevir,
+  type SesliCozum,
+  sesliMetniCoz,
+  TANIMA_IPUCLARI,
+} from './sesli-giris'
 import type { Sablon } from './types'
 
 const SECENEK_SABLONLAR: Sablon[] = secilebilirSablonlar(HAZIR_SABLONLAR, 12, null)
@@ -418,5 +425,247 @@ describe('çözücü düzeltmeleri', () => {
     })
     expect(sonuc.sorular).toEqual([{ ders: 'Kimya', toplam: 25, dogru: 25, yanlis: 0 }])
     expect(sonuc.anlasilmayan).toEqual(['sosyal 15 doğru'])
+  })
+})
+
+describe('duyulaniDuzelt — telefonun yanlış duyduğu sözcükler', () => {
+  it('TYT için bilinen tüm yanlış duyma biçimlerini ekleri koruyarak düzeltir', () => {
+    expect(duyulaniDuzelt("TT'de 85 net")).toBe("TYT'de 85 net")
+    expect(duyulaniDuzelt('t t denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('tete denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('tetede 80 net')).toBe("TYT'de 80 net")
+    expect(duyulaniDuzelt('te te denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('titi denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('ti ti denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt("tyt'de")).toBe("TYT'de")
+    expect(duyulaniDuzelt('t y t denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt("te ye te'den")).toBe("TYT'den")
+    expect(duyulaniDuzelt('teyete denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('teyte denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('tiyti denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('ttt denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('tit denemesi')).toBe('TYT denemesi')
+    expect(duyulaniDuzelt('TİT denemesinde')).toBe('TYT denemesinde')
+    expect(duyulaniDuzelt('tit ses çıkardı')).toBe('tit ses çıkardı')
+  })
+
+  it('AYT biçimlerini düzeltir ve AT büyük/küçük harf ayrımını korur', () => {
+    expect(duyulaniDuzelt("AYT'den 65 net")).toBe("AYT'den 65 net")
+    expect(duyulaniDuzelt('ayt denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt('a y t denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt("a ye te'de")).toBe("AYT'de")
+    expect(duyulaniDuzelt('ayte denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt('ayteden 60 net')).toBe("AYT'den 60 net")
+    expect(duyulaniDuzelt('ayyte denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt('eyte denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt('ay te denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt('a te denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt('AT denemesi')).toBe('AYT denemesi')
+    expect(duyulaniDuzelt("AT'de matematik 30 doğru")).toBe("AYT'de matematik 30 doğru")
+    expect(duyulaniDuzelt('at koşturdu')).toBe('at koşturdu')
+    expect(duyulaniDuzelt('at denemesi')).toBe('at denemesi')
+    expect(duyulaniDuzelt('At üstünde')).toBe('At üstünde')
+    expect(duyulaniDuzelt('ATA')).toBe('ATA')
+  })
+
+  it('YDT biçimlerini ekleri koruyarak düzeltir', () => {
+    expect(duyulaniDuzelt("ydt'de 70 doğru")).toBe("YDT'de 70 doğru")
+    expect(duyulaniDuzelt('y d t denemesi')).toBe('YDT denemesi')
+    expect(duyulaniDuzelt('ye de te denemesi')).toBe('YDT denemesi')
+    expect(duyulaniDuzelt("yedete'den")).toBe("YDT'den")
+    expect(duyulaniDuzelt('yde te denemesi')).toBe('YDT denemesi')
+  })
+
+  it('cümle başındaki ve virgül/ünlem yanındaki Rabi hitaplarını siler, "araba"ya dokunmaz', () => {
+    expect(duyulaniDuzelt('Rabi, bugün 50 matematik çözdüm')).toBe('bugün 50 matematik çözdüm')
+    expect(duyulaniDuzelt('Rabbi! 30 fizik çözdüm')).toBe('30 fizik çözdüm')
+    expect(duyulaniDuzelt('Arabi bugün 50 matematik çözdüm')).toBe('bugün 50 matematik çözdüm')
+    expect(duyulaniDuzelt('Rabia, 40 kimya çözdüm')).toBe('40 kimya çözdüm')
+    expect(duyulaniDuzelt('Ravi bugün 20 biyoloji çözdüm')).toBe('bugün 20 biyoloji çözdüm')
+    expect(duyulaniDuzelt('50 matematik çözdüm, Rabiye!')).toBe('50 matematik çözdüm')
+    expect(duyulaniDuzelt('bugün araba yıkadım 30 matematik çözdüm')).toBe(
+      'bugün araba yıkadım 30 matematik çözdüm',
+    )
+    expect(coz('bugün araba yıkadım 30 matematik çözdüm')).toEqual({
+      sorular: [{ ders: 'Matematik', toplam: 30, dogru: 0, yanlis: 0 }],
+      deneme: null,
+      anlasilmayan: [],
+    })
+  })
+})
+
+describe('çekim ekli dersler, sık konuşma kalıpları ve aday seçimi', () => {
+  it('gerçek konuşmada sık geçen çekim ekli tüm ders adlarını doğru derse eşler', () => {
+    expect(coz('matematikten 10 soru').sorular).toEqual([{ ders: 'Matematik', toplam: 10, dogru: 0, yanlis: 0 }])
+    expect(coz('30 soru matematiği bitirdim').sorular).toEqual([{ ders: 'Matematik', toplam: 30, dogru: 0, yanlis: 0 }])
+    expect(coz('fizikten 20 soru').sorular).toEqual([{ ders: 'Fizik', toplam: 20, dogru: 0, yanlis: 0 }])
+    expect(coz('25 soru fiziği çözdüm').sorular).toEqual([{ ders: 'Fizik', toplam: 25, dogru: 0, yanlis: 0 }])
+    expect(coz('kimyadan 30 soru').sorular).toEqual([{ ders: 'Kimya', toplam: 30, dogru: 0, yanlis: 0 }])
+    expect(coz('biyolojiden 35 soru').sorular).toEqual([{ ders: 'Biyoloji', toplam: 35, dogru: 0, yanlis: 0 }])
+    expect(coz('türkçeden 40 soru').sorular).toEqual([{ ders: 'Türkçe', toplam: 40, dogru: 0, yanlis: 0 }])
+    expect(coz('tarihten 20 soru').sorular).toEqual([{ ders: 'Tarih', toplam: 20, dogru: 0, yanlis: 0 }])
+    expect(coz('coğrafyadan 15 soru').sorular).toEqual([{ ders: 'Coğrafya', toplam: 15, dogru: 0, yanlis: 0 }])
+    expect(coz('geometriden 25 soru').sorular).toEqual([{ ders: 'Matematik', toplam: 25, dogru: 0, yanlis: 0 }])
+    expect(coz('paragraftan 30 soru').sorular).toEqual([{ ders: 'Türkçe', toplam: 30, dogru: 0, yanlis: 0 }])
+  })
+
+  it('dört sık konuşma kalıbını eksiksiz çözer', () => {
+    expect(coz("matematikten 30 soru çözdüm 5'ini yanlış yaptım")).toEqual({
+      sorular: [{ ders: 'Matematik', toplam: 30, dogru: 25, yanlis: 5 }],
+      deneme: null,
+      anlasilmayan: [],
+    })
+
+    expect(coz('kimyadan 40 soru çözdüm 32 doğru')).toEqual({
+      sorular: [{ ders: 'Kimya', toplam: 40, dogru: 32, yanlis: 0 }],
+      deneme: null,
+      anlasilmayan: [],
+    })
+
+    expect(coz('TT denemesinde türkçe 33 doğru 4 yanlış')).toEqual({
+      sorular: [],
+      deneme: {
+        sablonId: 'tyt',
+        dersler: [{ dersId: 'turkce', dogru: 33, yanlis: 4 }],
+        toplamNet: null,
+      },
+      anlasilmayan: [],
+    })
+
+    expect(coz('Arabi bugün 50 matematik çözdüm')).toEqual({
+      sorular: [{ ders: 'Matematik', toplam: 50, dogru: 0, yanlis: 0 }],
+      deneme: null,
+      anlasilmayan: [],
+    })
+  })
+
+  it('enIyiAdayiSec en çok tanıdık sözcük içereni seçer, eşitlikte ilk adayı korur', () => {
+    expect(
+      enIyiAdayiSec([
+        'bugün TT denemesinde 85 net yaptım',
+        'bugün TYT denemesinde 85 net yaptım',
+      ]),
+    ).toBe('bugün TYT denemesinde 85 net yaptım')
+
+    expect(
+      enIyiAdayiSec([
+        'bugün soru çözdüm',
+        'bugün 40 soru çözdüm',
+        'bugün kimyadan 40 soru çözdüm',
+      ]),
+    ).toBe('bugün kimyadan 40 soru çözdüm')
+
+    expect(
+      enIyiAdayiSec([
+        'fizikten 20 soru çözdüm',
+        'fizikten 20 tane çözdüm',
+      ]),
+    ).toBe('fizikten 20 soru çözdüm')
+
+    expect(enIyiAdayiSec([])).toBe('')
+    expect(TANIMA_IPUCLARI).toEqual(
+      expect.arrayContaining(['TYT', 'AYT', 'YDT', 'Rabi', 'Matematik', 'Geometri', 'Paragraf', 'Edebiyat']),
+    )
+  })
+})
+
+describe('tanesi/iyelik ekli yanlış sayıları ve denemesiz TYT/AYT/YDT', () => {
+  it('"N tanesini yanlış yaptım" ve ardından "de/da" ile gelen dersi eksiksiz çözer', () => {
+    expect(
+      coz('bugün matematikten 40 soru çözdüm 8 tanesini yanlış yaptım fizikten de 20 soru çözdüm hepsi doğru'),
+    ).toEqual({
+      sorular: [
+        { ders: 'Matematik', toplam: 40, dogru: 32, yanlis: 8 },
+        { ders: 'Fizik', toplam: 20, dogru: 20, yanlis: 0 },
+      ],
+      deneme: null,
+      anlasilmayan: [],
+    })
+  })
+
+  it('tanesi/tanesini/tanesinde, iyelik ekleri (8\'ini, sekizini, \'sı/\'si/\'unu) ve "hepsini doğru yaptım" ailesini çözer', () => {
+    expect(
+      coz('matematikten 40 soru çözdüm sekizini yanlış yaptım kimyadan da 25 soru çözdüm hepsini doğru yaptım'),
+    ).toEqual({
+      sorular: [
+        { ders: 'Matematik', toplam: 40, dogru: 32, yanlis: 8 },
+        { ders: 'Kimya', toplam: 25, dogru: 25, yanlis: 0 },
+      ],
+      deneme: null,
+      anlasilmayan: [],
+    })
+
+    expect(
+      coz("türkçeden 40 soru çözdüm 8'ini yanlış yaptım biyolojiden de 30 soru çözdüm 6'sı yanlış"),
+    ).toEqual({
+      sorular: [
+        { ders: 'Türkçe', toplam: 40, dogru: 32, yanlis: 8 },
+        { ders: 'Biyoloji', toplam: 30, dogru: 24, yanlis: 6 },
+      ],
+      deneme: null,
+      anlasilmayan: [],
+    })
+
+    expect(
+      coz("tarihten 20 soru çözdüm 3 tanesi yanlış coğrafyadan da 25 soru çözdüm 4 tanesinde yanlış yaptım fizikten 30 soru çözdüm 20'si doğru kimyadan 20 soru çözdüm 9'unu yanlış yaptım"),
+    ).toEqual({
+      sorular: [
+        { ders: 'Fizik', toplam: 30, dogru: 20, yanlis: 0 },
+        { ders: 'Kimya', toplam: 20, dogru: 11, yanlis: 9 },
+        { ders: 'Tarih', toplam: 20, dogru: 17, yanlis: 3 },
+        { ders: 'Coğrafya', toplam: 25, dogru: 21, yanlis: 4 },
+      ],
+      deneme: null,
+      anlasilmayan: [],
+    })
+  })
+
+  it('"deneme" sözcüğü olmadan TYT/AYT/YDT + ders + doğru/yanlış ifadesini deneme olarak çözer', () => {
+    expect(coz('TT Türkçe otuz iki doğru altı yanlış')).toEqual({
+      sorular: [],
+      deneme: {
+        sablonId: 'tyt',
+        dersler: [{ dersId: 'turkce', dogru: 32, yanlis: 6 }],
+        toplamNet: null,
+      },
+      anlasilmayan: [],
+    })
+
+    expect(coz('AYT matematik 30 doğru 5 yanlış fizik 12 doğru 2 yanlış')).toEqual({
+      sorular: [],
+      deneme: {
+        sablonId: 'ayt-say',
+        dersler: [
+          { dersId: 'matematik', dogru: 30, yanlis: 5 },
+          { dersId: 'fizik', dogru: 12, yanlis: 2 },
+        ],
+        toplamNet: null,
+      },
+      anlasilmayan: [],
+    })
+
+    expect(coz('YDT İngilizce 70 doğru 5 yanlış')).toEqual({
+      sorular: [],
+      deneme: {
+        sablonId: 'ydt',
+        dersler: [{ dersId: 'ydt', dogru: 70, yanlis: 5 }],
+        toplamNet: null,
+      },
+      anlasilmayan: [],
+    })
+  })
+
+  it('"Bugün 50 TYT matematik sorusu çözdüm" gibi soru çözümü ifadelerini Soru Takibi\'nde tutar', () => {
+    expect(coz('Bugün 50 TYT matematik sorusu çözdüm')).toEqual({
+      sorular: [{ ders: 'Matematik', toplam: 50, dogru: 0, yanlis: 0 }],
+      deneme: null,
+      anlasilmayan: [],
+    })
+
+    expect(coz('Bugün TYT matematikten 40 soru çözdüm 8 tanesini yanlış yaptım')).toEqual({
+      sorular: [{ ders: 'Matematik', toplam: 40, dogru: 32, yanlis: 8 }],
+      deneme: null,
+      anlasilmayan: [],
+    })
   })
 })

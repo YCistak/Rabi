@@ -31,6 +31,7 @@ type Durum =
       sorular: SesliSoru[]
       deneme: SesliDeneme | null
       anlasilmayan: string[]
+      duyulan: string
       /** Çözümleyiciden ilk çıktığında da boş muydu, yoksa kullanıcı satırları ✕ ile mi sildi. */
       baslangictaBos: boolean
     }
@@ -96,6 +97,8 @@ export function SesliGirisSayfasi({
   const [durum, setDurum] = useState<Durum>({ ad: 'hazirlaniyor' })
   /** Onay ekranında sayılarını düzeltmek için açılmış ders satırı. */
   const [acikDers, setAcikDers] = useState<string | null>(null)
+  /** Onay ekranındaki uzun "Duyduğum" satırının tamamının açık olup olmadığı. */
+  const [duyulanAcik, setDuyulanAcik] = useState(false)
 
   const etkinRef = useRef(true)
   const oturumSurumuRef = useRef(0)
@@ -144,6 +147,7 @@ export function SesliGirisSayfasi({
     const buSurum = oturumSurumuRef.current
     sonAraMetinRef.current = ''
     setAcikDers(null)
+    setDuyulanAcik(false)
     setDurum({ ad: 'hazirlaniyor' })
 
     const uygunluk = await sesTanimaDurumu()
@@ -187,6 +191,7 @@ export function SesliGirisSayfasi({
         sorular: cozum.sorular,
         deneme: cozum.deneme,
         anlasilmayan: cozum.anlasilmayan,
+        duyulan: birlesik,
         baslangictaBos: cozum.sorular.length === 0 && cozum.deneme === null,
       })
     } catch (yakalanan) {
@@ -203,6 +208,7 @@ export function SesliGirisSayfasi({
           sorular: [],
           deneme: null,
           anlasilmayan: [],
+          duyulan: sonAraMetinRef.current.trim(),
           baslangictaBos: true,
         })
         return
@@ -415,6 +421,19 @@ export function SesliGirisSayfasi({
 
         {durum.ad === 'onay' && (
           <div>
+            {durum.duyulan !== '' && (
+              <button
+                type="button"
+                aria-expanded={duyulanAcik}
+                onClick={() => setDuyulanAcik((onceki) => !onceki)}
+                className="mb-3 block w-full px-0.5 text-left text-xs leading-relaxed text-muted-foreground active:text-foreground"
+              >
+                <span className={cn(duyulanAcik ? 'block' : 'line-clamp-3')}>
+                  Duyduğum: “{durum.duyulan}”
+                </span>
+              </button>
+            )}
+
             {durum.sorular.length === 0 && durum.deneme === null ? (
               <div>
                 <Not>

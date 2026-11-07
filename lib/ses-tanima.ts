@@ -1,6 +1,7 @@
 import { SpeechRecognition } from '@capgo/capacitor-speech-recognition'
 import type { PluginListenerHandle } from '@capacitor/core'
 import { cihazdaMi } from './kamera'
+import { enIyiAdayiSec, TANIMA_IPUCLARI } from './sesli-giris'
 
 /**
  * Ses tanıma köprüsü (cihaz ve tarayıcı).
@@ -27,6 +28,15 @@ const EN_UZUN_SURE_MS = 60_000
  * Arayüzün asılı kalmaması için en çok 1,5 saniye beklenir.
  */
 const DURDURMA_ZAMAN_ASIMI_MS = 1_500
+
+/** Yerli konuşma tanıyıcı başlatma seçenekleri (iOS `contextualStrings`i, Android `maxResults`ı kullanır). */
+const BASLATMA_SECENEKLERI = {
+  language: 'tr-TR',
+  partialResults: true,
+  popup: false,
+  maxResults: 5,
+  contextualStrings: TANIMA_IPUCLARI,
+}
 
 /**
  * Peş peşe başlatmalarda yerli ses servisinin "busy" (meşgul) hatası vermesini
@@ -212,8 +222,6 @@ function cihazdaDinle(secenek: { onKismi: (metin: string) => void }): {
   let birikmisMetin = ''
   let gecerliAraMetin = ''
 
-  let disariCoz: (metin: string) => void = () => {}
-  let disariReddet: (hata: Error) => void = () => {}
   let oturumuKapat: (hataMesaji?: string) => Promise<void> = async () => {}
 
   // Önceki oturumun kapanışını bekleyen kilit
@@ -224,9 +232,6 @@ function cihazdaDinle(secenek: { onKismi: (metin: string) => void }): {
   })
 
   const bitti = new Promise<string>((coz, reddet) => {
-    disariCoz = coz
-    disariReddet = reddet
-
     void (async () => {
       // Önceki oturum henüz tamamen sonlanmadıysa bekle
       await baslamaKilidi
@@ -271,7 +276,7 @@ function cihazdaDinle(secenek: { onKismi: (metin: string) => void }): {
         const partialDinleyici = await SpeechRecognition.addListener('partialResults', (olay) => {
           if (durdurulduMu) return
           if (olay.matches && olay.matches.length > 0) {
-            gecerliAraMetin = olay.matches[0] || ''
+            gecerliAraMetin = enIyiAdayiSec(olay.matches)
             const toplam = metinBirlestir(birikmisMetin, gecerliAraMetin)
             secenek.onKismi(toplam)
           }
@@ -300,11 +305,7 @@ function cihazdaDinle(secenek: { onKismi: (metin: string) => void }): {
               await new Promise((r) => setTimeout(r, 120))
               if (durdurulduMu || kullaniciDurdurdu) return
 
-              await SpeechRecognition.start({
-                language: 'tr-TR',
-                partialResults: true,
-                popup: false,
-              })
+              await SpeechRecognition.start(BASLATMA_SECENEKLERI)
             } catch {
               // Yeniden başlatılamazsa mevcut metinle oturumu bitir
               await oturumuKapat()
@@ -353,11 +354,7 @@ function cihazdaDinle(secenek: { onKismi: (metin: string) => void }): {
           return
         }
 
-        await SpeechRecognition.start({
-          language: 'tr-TR',
-          partialResults: true,
-          popup: false,
-        })
+        await SpeechRecognition.start(BASLATMA_SECENEKLERI)
       } catch {
         await oturumuKapat('Mikrofon başlatılamadı. İzinleri kontrol edip tekrar dene.')
       }
@@ -400,14 +397,9 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
   let birikmisMetin = ''
   let gecerliAraMetin = ''
 
-  let disariCoz: (metin: string) => void = () => {}
-  let disariReddet: (hata: Error) => void = () => {}
   let oturumuKapat: (hataMesaji?: string) => void = () => {}
 
   const bitti = new Promise<string>((coz, reddet) => {
-    disariCoz = coz
-    disariReddet = reddet
-
     const TarayiciSinif = tarayiciSesSinifi()
     if (!TarayiciSinif) {
       reddet(new Error('Tarayıcıda ses tanıma özelliği desteklenmiyor.'))
