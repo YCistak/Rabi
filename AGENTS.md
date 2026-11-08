@@ -63,11 +63,12 @@ paralel ajanlara dağıtılır. Kullanıcı başka bir şey söylemedikçe:
 ## Mimari
 
 - **Sunucu yok.** Statik export; her şey istemcide çalışır. Dış servise çıkma, veri
-  toplamaya çalışma. Yalnızca üç istisna var, genişletme (ayrıntı:
+  toplamaya çalışma. Yalnızca dört istisna var, genişletme (ayrıntı:
   [ag-ve-gizlilik.md](docs/kurallar/ag-ve-gizlilik.md)):
   1. hatalı soru + öneri/hata bildirimi → Firestore (`lib/hata-gonder.ts`),
   2. çökme raporu → Crashlytics (`lib/cokme.ts`, `CokmeRaporu.kt`), her seferinde sorulur,
-  3. Play güncelleme denetimi (`lib/guncelleme.ts`).
+  3. Play güncelleme denetimi (`lib/guncelleme.ts`),
+  4. mağaza içi değerlendirme isteği (`lib/degerlendirme-istegi.ts`).
 - **Durum kütüphanesi yok.** `AppShell` üst düzey state'in sahibi, props ile aşağı
   geçer. Yeni global state gerekirse önce prop ile çözmeyi dene.
 - **Saf mantık `lib/` altında.** React'e bağlı olmayan her hesap `lib/`'e; bileşenler

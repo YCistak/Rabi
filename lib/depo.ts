@@ -186,6 +186,13 @@ export const ANAHTARLAR = {
    */
   bildirimIzni: 'rabi-bildirim-izni',
   /**
+   * Mağaza değerlendirme isteğinin bu cihazdaki açılış sayacı.
+   *
+   * Yedeğe **girmiyor**: değerlendirme isteği cihaz ve mağaza hesabına
+   * özgü; başka telefona taşınırsa doğru açılış sayısını söylemez.
+   */
+  degerlendirme: 'rabi-degerlendirme',
+  /**
    * Yapılacaklar tahtasındaki not kâğıtları — metin, renk ve konum.
    *
    * Konum da veri: kullanıcının kâğıdı nereye yapıştırdığı onun verdiği bilgi.

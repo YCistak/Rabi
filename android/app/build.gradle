@@ -204,6 +204,10 @@ dependencies {
     // (`guncelleme/GuncellemeEklentisi.kt`). Play Store'un kendi kütüphanesi;
     // ağa çıkan kod bu değil, telefondaki Play uygulaması.
     implementation 'com.google.android.play:app-update:2.1.0'
+    // Play In-App Review: uygulama içinden mağazanın kendi yıldız penceresi
+    // (`degerlendirme/DegerlendirmeEklentisi.kt`). Pencere ve ağ trafiği
+    // uygulamaya değil, telefondaki Play uygulamasına ait.
+    implementation 'com.google.android.play:review:2.0.2'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"

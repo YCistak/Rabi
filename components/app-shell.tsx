@@ -62,6 +62,7 @@ import { CokmeSorusu } from '@/components/cokme-sorusu'
 import { cokmeTanitimKarari } from '@/lib/cokme-tanitim'
 import { useGuncelleme } from '@/lib/guncelleme-kolu'
 import { GuncellemeSeridi } from '@/components/guncelleme-seridi'
+import { acilistaDegerlendirmeyiYokla } from '@/lib/degerlendirme-istegi'
 import { bugun, cn, gunKaydir, yeniId } from '@/lib/utils'
 import type { Ekran, Sekme } from '@/lib/gezinme'
 import { haritaSinifiBul, programBul, type HaritaSinifi, type KonuDersId } from '@/lib/konu'
@@ -682,6 +683,13 @@ function RabiUygulamasi() {
   // Yeni kullanıcıya ana turdan önce "Tanıtım ister misin?" (`lib/tanitim-tercih.ts`).
   // Tur ile aynı anda çıkabileceği koşullarda: kurulum ve açılış bitti, çökme sorusu yok.
   const tanitimSorusuAcik = ayarlarHazir && ayarlar.kurulumTamamlandi && acilisBitti && gecis === 'yok' && turBaslayabilir && tanitim.baslangic === 'sor' && !tanitim.tanitimdaMi
+
+  /* Kurulum sürerken açılış sayılmıyor; ilk iş iki pencereyle karşılamamak için
+     mağaza isteği ana ekrana dönüldükten sonra yapılır. */
+  useEffect(() => {
+    if (!ayarlarHazir || !ayarlar.kurulumTamamlandi || !acilisBitti || gecis !== 'yok' || sekme !== 'ana' || ekran !== null) return
+    void acilistaDegerlendirmeyiYokla()
+  }, [ayarlarHazir, ayarlar.kurulumTamamlandi, acilisBitti, gecis, sekme, ekran])
 
   /*
     Mini turlar: ekran ilk kez açıldığında bir kez (`miniTurSec`). Ana tur

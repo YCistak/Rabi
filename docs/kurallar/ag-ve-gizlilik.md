@@ -2,7 +2,7 @@
 
 Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md](../../AGENTS.md).
 
-## Ağa çıkan üç istisna
+## Ağa çıkan dört istisna
 
 **1. Hatalı soru bildirimi ve öneri/hata bildirimi.** Soru havuzları elle yazıldı;
 hataları öğrenmenin başka yolu yok.
@@ -53,6 +53,19 @@ Play Store / Apple; giden yalnız paket adı (Android'de sürüm de).
   CORS'ta düşer), sürümü `surumYeniMi` (`lib/surum-karsilastir.ts`) karşılaştırır;
   "Güncelle" App Store sayfasını açar, indirme hâlleri yok. Uygulama mağazada
   değilse (yalnız TestFlight) şerit çıkmaz.
+
+**4. Mağaza içi değerlendirme isteği.** `lib/degerlendirme-istegi.ts` yalnız yerli
+mağaza penceresini çağırır; ağa çıkan bizim kodumuz değildir ve bizden veri gitmez.
+- Kullanıcının verdiği puan veya yorum mağazaya gider; Rabi bunları görmez, saklamaz
+  ve analiz etmez. Mağaza pencereyi kotasına göre hiç göstermeyebilir.
+- Sayaç `lib/degerlendirme.ts` (saf, testli), anahtar `rabi-degerlendirme` (yedeğe girmez);
+  3. açılışta, kurulum ve açılış bitip ana ekrandayken bir kez istenir, `istendi` çağrıdan
+  önce yazılır. Önce kendi "beğendin mi?" ekranımız yok (Emre istedi).
+- Yerli: `degerlendirme/DegerlendirmeEklentisi.kt` (Play In-App Review),
+  iOS `AnaDenetleyici.swift` içinde `DegerlendirmeEklentisi` (`AppStore.requestReview`).
+- Deneme: Play'de pencere yalnız mağazadan (iç test kanalı dahil) kurulmuş uygulamada
+  çıkar; iOS'ta TestFlight'ta hiç çıkmaz, geliştirme derlemesinde çıkar ama gönderilmez.
+  Bayrağı sıfırlamak için `rabi-degerlendirme` silinir.
 
 ## Yasal metinler
 
