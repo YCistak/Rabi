@@ -136,7 +136,13 @@ public class DegerlendirmeEklentisi: CAPPlugin, CAPBridgedPlugin {
                     .first { $0.activationState == .foregroundActive }
 
             if let sahne = etkinSahne {
-                AppStore.requestReview(in: sahne)
+                // Uygulamanın hedefi iOS 15; yeni API 16'da geldi, eskisi 18'de
+                // kullanımdan kalktı ama 15'te tek yol o.
+                if #available(iOS 16.0, *) {
+                    AppStore.requestReview(in: sahne)
+                } else {
+                    SKStoreReviewController.requestReview(in: sahne)
+                }
             }
             call.resolve()
         }
