@@ -242,7 +242,7 @@ export function IstatistikEkrani({
                   {d.ad}
                   {d.toplu && (
                     <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
-                      toplu
+                      Toplu
                     </span>
                   )}
                 </span>
@@ -495,7 +495,7 @@ function DersSayfasi({
                   {d.ad}
                   {d.toplu && (
                     <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
-                      toplu
+                      Toplu
                     </span>
                   )}
                 </span>
@@ -709,7 +709,7 @@ function KarsilastirmaKatmani({
                     {s.ad}
                     {s.toplu && (
                       <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
-                        toplu
+                        Toplu
                       </span>
                     )}
                   </span>
@@ -795,7 +795,7 @@ function DegisimKutusu({
               {s.ad}
               {s.toplu && (
                 <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
-                  toplu
+                  Toplu
                 </span>
               )}
             </span>

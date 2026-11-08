@@ -1143,7 +1143,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
                                 key={`toplu-${topluSonuc.grup}`}
                                 className="rakam inline-flex items-center gap-1 rounded-[10px] border border-border bg-card px-2.5 py-1 text-xs font-bold text-foreground"
                               >
-                                <span>{grupAdi} (toplu)</span>
+                                <span>{grupAdi} (Toplu)</span>
                                 <span className="text-success">{topluSonuc.dogru}D</span>
                                 <span className="text-danger">{topluSonuc.yanlis}Y</span>
                               </span>

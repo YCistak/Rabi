@@ -268,7 +268,7 @@ export function DenemelerEkrani({
                             return (
                               <div key={ders.id} role="row" className="contents">
                                 <div role="cell" className={cn(hucre, 'truncate pl-2.5 font-bold')}>
-                                  {grup && topluSonuc ? `${TOPLU_GRUP_ADI[grup.grup]} (toplu)` : ders.ad}
+                                  {grup && topluSonuc ? `${TOPLU_GRUP_ADI[grup.grup]} (Toplu)` : ders.ad}
                                 </div>
                                 <div role="cell" className={cn(hucre, 'text-right font-extrabold text-success')}>
                                   {dogru}
