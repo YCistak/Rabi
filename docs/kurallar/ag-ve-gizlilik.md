@@ -62,7 +62,7 @@ mağaza penceresini çağırır; ağa çıkan bizim kodumuz değildir ve bizden 
   3. açılışta, kurulum ve açılış bitip ana ekrandayken bir kez istenir, `istendi` çağrıdan
   önce yazılır. Önce kendi "beğendin mi?" ekranımız yok (Emre istedi).
 - Yerli: `degerlendirme/DegerlendirmeEklentisi.kt` (Play In-App Review),
-  iOS `AnaDenetleyici.swift` içinde `DegerlendirmeEklentisi` (`AppStore.requestReview`).
+  iOS `AnaDenetleyici.swift` içinde `DegerlendirmeEklentisi` (`AppStore.requestReview`, iOS 15te `SKStoreReviewController`).
 - Deneme: Play'de pencere yalnız mağazadan (iç test kanalı dahil) kurulmuş uygulamada
   çıkar; iOS'ta TestFlight'ta hiç çıkmaz, geliştirme derlemesinde çıkar ama gönderilmez.
   Bayrağı sıfırlamak için `rabi-degerlendirme` silinir.
