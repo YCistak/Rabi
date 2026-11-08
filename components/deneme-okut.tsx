@@ -89,7 +89,7 @@ export function DenemeOkut({ sablon, onAktar }: {
   }
 
   return <>
-    <Buton bicim="ikincil" className="mb-3 w-full" onClick={() => setAcik(true)}>
+    <Buton bicim="ikincil" className="mb-3 w-full rounded-[13px]" onClick={() => setAcik(true)}>
       <ScanLine size={19} aria-hidden />
       Okut
       <span className="rounded-full bg-primary-soft px-2 py-0.5 text-[11px] font-extrabold text-primary">Beta</span>

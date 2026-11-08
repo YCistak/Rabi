@@ -808,6 +808,7 @@ export function YeniDenemeEkrani({
           <Etiket htmlFor="deneme-ad">Deneme adı</Etiket>
           <Alan
             id="deneme-ad"
+            className="rounded-[13px]"
             value={ad}
             onChange={(e) => setAd(e.target.value)}
             placeholder={`${sablon.ad} ${denemeSayisi + 1}`}
@@ -815,7 +816,7 @@ export function YeniDenemeEkrani({
         </div>
         <div className="min-w-0">
           <Etiket htmlFor="deneme-tarih">Tarih</Etiket>
-          <TarihSecici id="deneme-tarih" deger={tarih} onDegis={setTarih} />
+          <TarihSecici id="deneme-tarih" className="rounded-[13px]" deger={tarih} onDegis={setTarih} />
         </div>
       </div>
 
