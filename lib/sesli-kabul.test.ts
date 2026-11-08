@@ -161,6 +161,83 @@ describe('kabul — deneme kipi (Denemeler, tür önceden seçili)', () => {
     expect(c.deneme?.toplu).toEqual([{ grup: 'fen', dogru: 15, yanlis: 3 }])
   })
 
+  it('resmî grup adları: "fen bilimleri", "sosyal bilimler" (Emre, 2026-11-08)', () => {
+    const c = coz('fen bilimleri 10 doğru 10 yanlış', 'deneme', 'tyt')
+    expect(c.deneme?.toplu).toEqual([{ grup: 'fen', dogru: 10, yanlis: 10 }])
+    expect(c.anlasilmayan).toEqual([])
+    const s = coz('sosyal bilimler 12 doğru 3 yanlış fen bilimlerinden 8 doğru 2 yanlış', 'deneme', 'tyt')
+    expect(s.deneme?.toplu).toEqual([
+      { grup: 'sosyal', dogru: 12, yanlis: 3 },
+      { grup: 'fen', dogru: 8, yanlis: 2 },
+    ])
+    expect(s.anlasilmayan).toEqual([])
+  })
+
+  it('resmî ders adları: "temel matematik", "türkçe testi", "din kültürü ve ahlak bilgisi"', () => {
+    const c = coz(
+      'türkçe testinde 30 doğru 5 yanlış temel matematik 25 doğru 5 yanlış din kültürü ve ahlak bilgisi 4 doğru 1 yanlış',
+      'deneme',
+      'tyt',
+    )
+    // TYT şablon sırası: Türkçe, (sosyal dersleri) Din, Temel Matematik
+    expect(c.deneme?.dersler).toEqual([
+      { dersId: 'turkce', dogru: 30, yanlis: 5 },
+      { dersId: 'din', dogru: 4, yanlis: 1 },
+      { dersId: 'matematik', dogru: 25, yanlis: 5 },
+    ])
+    expect(c.anlasilmayan).toEqual([])
+  })
+
+  it('seçili denemede olmayan ders: kaydedilmez, "bu denemede yok" denir (Emre, 2026-11-08)', () => {
+    const metin = 'türkçe 30 doğru 5 yanlış matematik 20 doğru 5 yanlış sosyal 10 doğru 2 yanlış'
+    const c = coz(metin, 'deneme', 'ayt-say')
+    expect(c.deneme?.dersler).toEqual([{ dersId: 'matematik', dogru: 20, yanlis: 5 }])
+    expect(c.deneme?.toplu ?? []).toEqual([])
+    expect(c.denemedeYok).toEqual(['Türkçe', 'Sosyal'])
+    expect(c.anlasilmayan).toEqual([])
+    const r = cevap(metin, 'deneme', 'ayt-say')
+    expect(r).toMatch(/Türkçe/)
+    expect(r).toMatch(/yok/)
+    expect(r).not.toMatch(/anlayamadım/)
+  })
+
+  it('TYT\'de olmayan AYT dersi (edebiyat) de "bu denemede yok"', () => {
+    const c = coz('edebiyat 20 doğru 3 yanlış türkçe 30 doğru 5 yanlış', 'deneme', 'tyt')
+    expect(c.deneme?.dersler).toEqual([{ dersId: 'turkce', dogru: 30, yanlis: 5 }])
+    expect(c.denemedeYok).toEqual(['Edebiyat'])
+  })
+
+  it('TYT/AYT\'de dersin soru sayısını aşan sonuç: kaydedilmez, soru sayısıyla uyarılır (Emre, 2026-11-08)', () => {
+    const metin = 'Türkçe 100 doğru 50 yanlış'
+    const c = coz(metin, 'deneme', 'tyt')
+    expect(c.deneme?.dersler ?? []).toEqual([])
+    expect(c.fazlaSoru).toEqual([{ ad: 'Türkçe', soruSayisi: 40 }])
+    expect(c.anlasilmayan).toEqual([])
+    const r = cevap(metin, 'deneme', 'tyt')
+    expect(r).toMatch(/Türkçe/)
+    expect(r).toMatch(/40/)
+    expect(r).not.toMatch(/anlayamadım/)
+    expect(r).not.toMatch(/turkce|dogru|yanlis/) // normalize edilmiş metin kullanıcıya gösterilmez
+  })
+
+  it('AYT\'de de aşım uyarısı; geçerli dersler kaydedilir', () => {
+    const c = coz('matematik 50 doğru 5 yanlış fizik 10 doğru 2 yanlış', 'deneme', 'ayt-say')
+    expect(c.deneme?.dersler).toEqual([{ dersId: 'fizik', dogru: 10, yanlis: 2 }])
+    expect(c.fazlaSoru).toEqual([{ ad: 'Matematik', soruSayisi: 40 }])
+  })
+
+  it('seviye tespitte aşım uyarısı YOK (soru sayısı denemeden denemeye değişir)', () => {
+    const c = coz('türkçe 45 doğru 5 yanlış', 'deneme', 'okul')
+    expect(c.fazlaSoru ?? []).toEqual([])
+    // 9. sınıf seviye tespitte Türkçe dersinin kimliği 'edebiyat'
+    expect(c.deneme?.dersler).toEqual([{ dersId: 'edebiyat', dogru: 45, yanlis: 5 }])
+  })
+
+  it('anlaşılmayan parça kullanıcının yazdığı biçimde gösterilir (Türkçe karakterli)', () => {
+    const c = coz('Türkçe şöyle böyle iyiydi', 'deneme', 'tyt')
+    for (const p of c.anlasilmayan) expect(p).not.toMatch(/turkce|soyle|boyle/)
+  })
+
   it('"sosyalden 12 net" toplam net değildir', () => {
     const c = coz('sosyalden 12 net yaptım', 'deneme', 'tyt')
     expect(c.deneme?.toplamNet ?? null).toBeNull()

@@ -45,6 +45,8 @@ yumuşaması kökle birlikte tanınır. `matematik dersi`, `matematik dersinden`
 `matematik sorusu`, `matematik sorularının` ve bunların çoğulları da aynı köke bağlanır. Kısa adların
 ekli biçimleri ancak yerleşik ve ayırt ediciyse kullanılır (`geodan`,
 `coğdan`); belirsiz grup adları `fen` ve `sosyal` ders diye uydurulmaz.
+Çok sözcüklü adlarda ek son sözcüktedir (`fen bilimlerinden`, `temel
+matematikten`) ve çözücü aynı yerden başlayan en uzun adı önce seçer.
 
 ### SAYI
 

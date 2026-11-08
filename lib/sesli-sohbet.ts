@@ -290,8 +290,11 @@ export function rabiCevabi(
   const anlasilanVar = soruOzeti.length > 0 || denemeOzeti.length > 0
   const niyet = secenek.metin ? sohbetNiyeti(secenek.metin) : null
   const yonlendirme = yanlisYerYonu(cozum.yanlisYer)
+  const denemedeYokUyarisi = cozum.denemedeYok?.length ? `${cozum.denemedeYok.join(', ')} bu denemede yok.` : ''
+  const fazlaSoruUyarisi = cozum.fazlaSoru?.length ? `${cozum.fazlaSoru.map((ders) => `${ders.ad} en fazla ${ders.soruSayisi} soru`).join(', ')}.` : ''
 
   if (!anlasilanVar) {
+    if (denemedeYokUyarisi || fazlaSoruUyarisi) return [[denemedeYokUyarisi, fazlaSoruUyarisi].filter(Boolean).join(' ')]
     if (niyet && yonlendirme) return [`${niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin)} ${yonlendirme}`]
     if (niyet) return [niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin)]
     if (yonlendirme) return [yonlendirme]
@@ -314,6 +317,8 @@ export function rabiCevabi(
   }
 
   let ilkBalon = [niyet ? niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin) : '', soruOzeti, denemeOzeti].filter(Boolean).join(' ')
+  if (denemedeYokUyarisi) ilkBalon += ` ${denemedeYokUyarisi}`
+  if (fazlaSoruUyarisi) ilkBalon += ` ${fazlaSoruUyarisi}`
 
   const buMesajdakiToplamSoru = cozum.sorular.reduce((toplam, s) => toplam + s.toplam, 0)
   if (

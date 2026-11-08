@@ -313,12 +313,13 @@ describe('çözücü düzeltmeleri', () => {
         { dersId: 'turkce', dogru: 32, yanlis: 4 },
         { dersId: 'matematik', dogru: 28, yanlis: 2 },
       ],
+      toplu: [
+        { grup: 'sosyal', dogru: 14, yanlis: 3 },
+        { grup: 'fen', dogru: 15, yanlis: 2 },
+      ],
       toplamNet: null,
     })
-    expect(uzunGrup.anlasilmayan).toEqual([
-      'sosyal bilimler 14 doğru 3 yanlış',
-      'fen bilimleri 15 doğru 2 yanlış',
-    ])
+    expect(uzunGrup.anlasilmayan).toEqual([])
   })
 
   it('kullanıcı şablonunda "Sosyal" veya "Fen" adlı tek ders varsa doğrudan ona eşler', () => {

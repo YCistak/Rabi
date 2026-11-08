@@ -6,9 +6,11 @@
  * hâliyle `anlasilmayan` listesine konur ki kullanıcı ekranda görüp düzeltsin.
  */
 
-import { anahtarlar, ESANLAMLI, type OkunanDers, sozSiniriMi } from './deneme-okuma'
+import { type OkunanDers, sozSiniriMi } from './deneme-okuma'
 import { CALISMA_DERSLERI } from './dersler'
 import { sadelestir } from './metin'
+import { SESLI_AD_TABLOSU, SESLI_SORU_ADLARI, type SesliAd } from './sesli-adlar'
+import { HAZIR_SABLONLAR } from './sablonlar'
 import { dersinGrubu } from './toplu-grup'
 import type { Sablon, SablonDers, SablonTuru, TopluGrup as TopluGrupTemeli } from './types'
 
@@ -23,6 +25,8 @@ export type SesliCozum = {
   deneme: SesliDeneme | null
   anlasilmayan: string[]
   yanlisYer?: 'deneme' | 'soru'
+  denemedeYok?: string[]
+  fazlaSoru?: { ad: string; soruSayisi: number }[]
 }
 
 const EN_COK_SORU = 500
@@ -55,6 +59,7 @@ export const TANIMA_IPUCLARI: string[] = [
   'Geometri',
   'Paragraf',
   'Edebiyat',
+  ...SESLI_AD_TABLOSU.map((ad) => ad.ad),
 ]
 
 // --- Telefonun yanlış duyduğu özel sözcükleri düzeltme ---
@@ -453,7 +458,7 @@ function metniHazirla(hamMetin: string): HazirMetin {
 const CEKIM_EKLERI = new Set([
   'den', 'dan', 'ten', 'tan', 'nden', 'ndan', 'de', 'da', 'te', 'ta', 'nde', 'nda',
   'e', 'a', 'ye', 'ya', 'ne', 'na', 'i', 'u', 'yi', 'yu', 'si', 'su', 'ni', 'nu',
-  'in', 'un', 'nin', 'nun', 'le', 'la', 'yle', 'yla', 'm', 'im', 'um',
+  'in', 'un', 'nin', 'nun', 'le', 'la', 'yle', 'yla', 'ile', 'm', 'im', 'um',
 ])
 const YUMUSAMA_EKLERI = new Set(['e', 'a', 'i', 'u', 'in', 'un', 'im', 'um'])
 const KISA_KOKLER = new Set(['din', 'dil', 'fen'])
@@ -464,7 +469,7 @@ const KISALTMALAR = new Set([
 ])
 // "Geodan" ve "coğdan" gibi ek alan yerleşik kısaltmalar, sözcük sınırı
 // korunduğu için başka kelimelerin içinde ders diye okunmaz.
-const EK_ALABILEN_KISALTMALAR = new Set(['geo', 'cog'])
+const EK_ALABILEN_KISALTMALAR = new Set(KISALTMALAR)
 const YUMUSAYAN_KOKLER: Record<string, readonly string[]> = { matematik: ['matematig', 'temel matematig'], fizik: ['fizig'], mantik: ['mantig'] }
 
 type AnahtarTanimi = { metin: string; yumusamis: boolean; ekAlabilir: boolean }
@@ -513,32 +518,18 @@ function denemeAdiOnuMu(metin: string, son: number): boolean {
   return /^\s+(?:dil\s+)?deneme(?:si|sinde|sinden|de|den|ye|yi|nin|ler)?(?![a-z0-9])/.test(metin.slice(son))
 }
 
-const SORU_DERS_EK_ADLARI: Record<string, readonly [readonly string[], readonly string[]]> = {
-  Türkçe: [['turkce', 'edebiyat'], ['turk dili ve edebiyati', 'paragraf', 'dil bilgisi', 'dilbilgisi']],
-  Matematik: [['matematik'], ['geometri', 'geo', 'mat1', 'mat2', 'problem']],
-  Tarih: [['tarih', 'tarih1', 'tarih2'], ['inkilap tarihi', 'inkilap']],
-  Coğrafya: [['cografya', 'cografya1', 'cografya2'], []],
-  'Yabancı Dil': [['ingilizce'], ['yabanci dil', 'almanca', 'fransizca', 'arapca', 'rusca', 'dil']],
-  Felsefe: [['felsefe'], ['felsefe grubu', 'sosyoloji', 'sos', 'psikoloji', 'psi', 'psik', 'mantik']],
-  'Din Kültürü': [['din'], ['din kulturu ve ahlak bilgisi']],
-}
-
-const SORU_HEDEFLERI: DersHedefi<string>[] = CALISMA_DERSLERI.map((ders) => {
-  const sade = sadelestir(ders)
-  const [esanlamlilar, ekler] = SORU_DERS_EK_ADLARI[ders] ?? [[sade], []]
-  const kume = new Set<string>([sade, ...ekler])
-  // Özel ders eşlemelerinde belirtilen adlara ek olarak, dersin kendi kısa ve
-  // eş anlamlı biçimlerini de tanır; böylece ek almış "biyoya" gibi doğal
-  // söyleyişler ortak çekim eki kuralından geçer.
-  for (const id of new Set([sade, ...esanlamlilar])) for (const a of ESANLAMLI[id] ?? []) kume.add(a)
-  return { hedef: ders, kimlik: ders, anahtarlar: anahtarlariGenislet(kume) }
-})
+const SORU_HEDEFLERI: DersHedefi<string>[] = CALISMA_DERSLERI.map((ders) => ({
+  hedef: ders,
+  kimlik: ders,
+  anahtarlar: anahtarlariGenislet(SESLI_SORU_ADLARI.filter((ad) => ad.soruDersi === ders).map((ad) => ad.ad)),
+}))
 const SORU_TUM_ANAHTARLAR: AnahtarTanimi[] = SORU_HEDEFLERI.flatMap((h) => h.anahtarlar)
-const GRUP_KUMELERI: readonly (readonly string[])[] = [
-  ['sosyal', 'sosyal bilimler', 'sosyal bilimleri', 'sosyal bilgiler'],
-  ['fen', 'fen bilimleri', 'fen bilgisi'],
-]
-const GRUP_ANAHTARLARI: AnahtarTanimi[] = anahtarlariGenislet(GRUP_KUMELERI.flat())
+const GRUP_HEDEFLERI: DersHedefi<TopluGrup>[] = (['sosyal', 'fen'] as const).map((grup) => ({
+  hedef: grup,
+  kimlik: grup,
+  anahtarlar: anahtarlariGenislet(SESLI_AD_TABLOSU.filter((ad) => ad.grup === grup).map((ad) => ad.ad)),
+}))
+const GRUP_ANAHTARLARI: AnahtarTanimi[] = GRUP_HEDEFLERI.flatMap((hedef) => hedef.anahtarlar)
 /** Deneme şablonundaki ilgili derslerden grup sonuçlarının soru üst sınırını bulur. */
 function topluGrupDersleri(sablonDersleri: readonly SablonDers[], grup: TopluGrup): SablonDers[] {
   return sablonDersleri.filter((ders) => dersinGrubu(ders.id) === grup)
@@ -940,10 +931,11 @@ function sablonSec(denemeMetni: string, tumMetin: string, sablonlar: Sablon[], v
 function sablonDersHedefleri(sablonDersleri: SablonDers[]): DersHedefi<SablonDers>[] {
   return sablonDersleri.map((ders) => {
     const sadeAd = sadelestir(ders.ad)
-    const kume = new Set<string>(anahtarlar(ders))
-    if (ders.id === 'ydt') for (const a of ESANLAMLI.ingilizce ?? []) kume.add(a)
-    for (const a of GRUP_KUMELERI.find((g) => g.includes(sadeAd)) ?? []) kume.add(a)
-    return { hedef: ders, kimlik: ders.id, anahtarlar: anahtarlariGenislet(kume) }
+    const grup = sadeAd === 'sosyal' || sadeAd === 'fen' ? sadeAd : null
+    const adlar = SESLI_AD_TABLOSU.filter(
+      (ad) => ad.dersKimlikleri.includes(ders.id) || (grup !== null && ad.grup === grup),
+    ).map((ad) => ad.ad)
+    return { hedef: ders, kimlik: ders.id, anahtarlar: anahtarlariGenislet(adlar) }
   })
 }
 
@@ -1006,27 +998,11 @@ function topluSonuclariCoz(parca: string, soruSayisi: number): { dogru: number; 
 
 /** Bir grubun adını, yalın veya çekimli biçimiyle deneme metninde arar. */
 function topluGrupBulgulari(metin: string): { grup: TopluGrup; bas: number; son: number }[] {
-  const bulgular: { grup: TopluGrup; bas: number; son: number }[] = []
-  for (const grup of ['sosyal', 'fen'] as const) {
-    const anahtar = anahtarlariGenislet(GRUP_KUMELERI[grup === 'sosyal' ? 0 : 1])
-    for (const aday of anahtar) {
-      for (let bas = metin.indexOf(aday.metin); bas !== -1; bas = metin.indexOf(aday.metin, bas + 1)) {
-        const son = dersEslesmeSonu(metin, bas, aday)
-        // Deneme bağlamındaki yalın grup adı da toplu sonuçtur. Özel şablonda
-        // aynı adlı gerçek ders varsa aşağıda o ders önceliklidir.
-        if (
-          son !== -1 &&
-          /^(?:sosyal|fen)(?:den|dan)?$/.test(metin.slice(bas, son)) &&
-          !/^\s+bilim/.test(metin.slice(son))
-        ) {
-          bulgular.push({ grup, bas, son })
-        }
-      }
-    }
-  }
-  return bulgular
-    .sort((a, b) => a.bas - b.bas || b.son - a.son)
-    .filter((bulgu, indeks, dizi) => indeks === 0 || bulgu.bas !== dizi[indeks - 1]!.bas)
+  // `dersleriTara` aynı başlangıçta en uzun adı seçer; örneğin "fen bilimleri"
+  // önce tek grup olur, "fen" diye kesilip kalan sözcük kaybolmaz.
+  return dersleriTara(metin, GRUP_HEDEFLERI).flatMap((bulgu) =>
+    bulgu.hedef === null ? [] : [{ grup: bulgu.hedef, bas: bulgu.bas, son: bulgu.son }],
+  )
 }
 
 /** `anlasilmayan` dilimine ders sonrasındaki alakasız yüklemleri katmamak için anlamlı sonu bulur. */
@@ -1044,15 +1020,15 @@ function denemeBolumleriniCoz(
   bolumler: Bolum[],
   hazir: HazirMetin,
   secenek: { sablonlar: Sablon[]; varsayilanSablonId: string; sabitSablonMu?: boolean },
-): { deneme: SesliDeneme | null; anlasilmayan: string[] } {
+): { deneme: SesliDeneme | null; anlasilmayan: string[]; denemedeYok: string[]; fazlaSoru: { ad: string; soruSayisi: number }[] } {
   const denemeBolumleri = bolumler.filter((b) => b.tur === 'deneme')
-  if (denemeBolumleri.length === 0) return { deneme: null, anlasilmayan: [] }
+  if (denemeBolumleri.length === 0) return { deneme: null, anlasilmayan: [], denemedeYok: [], fazlaSoru: [] }
 
   const birlesik = denemeBolumleri.map((b) => hazir.norm.slice(b.bas, b.son)).join(' ')
   const sablon = secenek.sabitSablonMu
     ? secenek.sablonlar.find((aday) => aday.id === secenek.varsayilanSablonId) ?? null
     : sablonSec(birlesik, hazir.norm, secenek.sablonlar, secenek.varsayilanSablonId)
-  if (!sablon) return { deneme: null, anlasilmayan: [] }
+  if (!sablon) return { deneme: null, anlasilmayan: [], denemedeYok: [], fazlaSoru: [] }
 
   const hedefler = sablonDersHedefleri(sablon.dersler)
   const yedekSinirlar = [...GRUP_ANAHTARLARI, ...SORU_TUM_ANAHTARLAR]
@@ -1060,10 +1036,18 @@ function denemeBolumleriniCoz(
   const cakisanlar = new Set<string>()
   const anlasilmayan = new Set<string>()
   const toplu = new Map<TopluGrup, SesliTopluSonuc>()
+  const kipliDeneme = secenek.sabitSablonMu === true
+  const denemedeYok = new Set<string>()
+  const fazlaSoru = new Map<string, number>()
   let toplamNet: number | null = null
 
   const kayitEkle = (hedef: SablonDers | null, sayilar: { dogru: number; yanlis: number } | null, hamParca: string) => {
-    if (!hedef || !sayilar || sayilar.dogru < 0 || sayilar.yanlis < 0 || sayilar.dogru + sayilar.yanlis > Math.min(hedef.soruSayisi, EN_COK_SORU)) {
+    const sinir = sablon.tur === 'okul' ? EN_COK_SORU : Math.min(hedef?.soruSayisi ?? EN_COK_SORU, EN_COK_SORU)
+    if (!hedef || !sayilar || sayilar.dogru < 0 || sayilar.yanlis < 0 || sayilar.dogru + sayilar.yanlis > sinir) {
+      if (kipliDeneme && hedef && sayilar && sayilar.dogru + sayilar.yanlis > sinir && sablon.tur !== 'okul') {
+        fazlaSoru.set(hedef.ad, hedef.soruSayisi)
+        return
+      }
       if (hamParca) anlasilmayan.add(hamParca)
       return
     }
@@ -1082,8 +1066,25 @@ function denemeBolumleriniCoz(
     const grupNeti = /(?<![a-z0-9])(?:sosyal|fen)\w*\s+\d+(?:[.,]\d+)?\s+net\w*/.test(hamDenemeMetni)
     if (toplamNet === null && net !== null && !grupNeti) toplamNet = net
     const bulgular = dersleriTara(temizMetin, hedefler, yedekSinirlar)
+    const tumAdHedefleri: DersHedefi<SesliAd>[] = SESLI_AD_TABLOSU.map((ad) => ({
+      hedef: ad, kimlik: ad.ad, anahtarlar: anahtarlariGenislet([ad.ad]),
+    }))
+    const denemedeOlmayanBulgular = dersleriTara(temizMetin, tumAdHedefleri).filter((bulgu) => {
+      const ad = bulgu.hedef
+      if (!ad) return false
+      const dersVar = ad.dersKimlikleri.some((id) => sablon.dersler.some((ders) => ders.id === id))
+      const grupVar = ad.grup !== null && topluGrupDersleri(sablon.dersler, ad.grup).length >= 2
+      return !dersVar && !grupVar
+    })
+    for (const bulgu of denemedeOlmayanBulgular) {
+      const ad = bulgu.hedef!
+      const resmi = HAZIR_SABLONLAR.flatMap((s) => s.dersler).find((ders) => sadelestir(ders.ad) === ad.ad)?.ad
+      denemedeYok.add(ad.grup === 'sosyal' ? 'Sosyal' : ad.grup === 'fen' ? 'Fen' : resmi ?? ad.soruDersi ?? ad.ad)
+    }
     const grupBulgulari = topluGrupBulgulari(temizMetin).filter(
-      (grup) => !bulgular.some((ders) => ders.bas === grup.bas && ders.hedef !== null),
+      // Uzun grup adı, aynı yerden başlayan kısa bir ders adıyla bastırılmaz:
+      // "edebiyat sosyal 1"deki Edebiyat tek başına ayrı sonuç değildir.
+      (grup) => !bulgular.some((ders) => ders.bas === grup.bas && ders.son >= grup.son && ders.hedef !== null),
     )
 
     if (bulgular.length === 0 && grupBulgulari.length === 0 && sablon.dersler.length === 1) {
@@ -1098,7 +1099,7 @@ function denemeBolumleriniCoz(
       const bulgu = bulgular[sira]!
       const sonraki = bulgular[sira + 1]
       const parca = temizMetin.slice(bulgu.son, sonraki?.bas ?? temizMetin.length)
-      if (bulgu.hedef === null && grupBulgulari.some((grup) => grup.bas === bulgu.bas)) continue
+      if (bulgu.hedef === null && (grupBulgulari.some((grup) => grup.bas === bulgu.bas) || (kipliDeneme && denemedeOlmayanBulgular.some((ad) => ad.bas === bulgu.bas)))) continue
       if (bulgu.hedef && sonraki?.hedef?.id === bulgu.hedef.id && /^[\s,;-]*$/.test(parca)) continue
       const hamParca = hazir.hamKesit(bolum.bas + bulgu.bas, bolum.bas + bulgu.son + parcaAnlamliSonu(parca))
       const oncekiSon = bulgular[sira - 1]?.son ?? 0
@@ -1121,7 +1122,7 @@ function denemeBolumleriniCoz(
       const hamParca = hazir.hamKesit(bolum.bas + bulgu.bas, bolum.bas + bulgu.son + parcaAnlamliSonu(parca))
       // Tek dersli şablonda "fen" ya da "sosyal" diyerek hangi grubu kastettiği belli değildir.
       if (uyeler.length < 2) {
-        if (hamParca) anlasilmayan.add(hamParca)
+        if (hamParca && (!kipliDeneme || !denemedeOlmayanBulgular.some((ad) => ad.bas === bulgu.bas))) anlasilmayan.add(hamParca)
         continue
       }
       const oncekiDersSon = Math.max(
@@ -1159,16 +1160,16 @@ function denemeBolumleriniCoz(
 
   if (dersler.length === 0 && toplu.size === 0 && toplamNet === null) {
     const yalnizBirDeneme = denemeBolumleri.length === 1 && !/^\s*\d+\s+/.test(hazir.norm.slice(denemeBolumleri[0]!.bas, denemeBolumleri[0]!.son))
-    if (yalnizBirDeneme && anlasilmayan.size === 0) return { deneme: denemeOlustur(sablon.id, [], [], null), anlasilmayan: [] }
+    if (yalnizBirDeneme && anlasilmayan.size === 0) return { deneme: denemeOlustur(sablon.id, [], [], null), anlasilmayan: [], denemedeYok: [...denemedeYok], fazlaSoru: [...fazlaSoru].map(([ad, soruSayisi]) => ({ ad, soruSayisi })) }
     if (anlasilmayan.size === 0) {
       for (const b of denemeBolumleri) {
         const ham = hazir.hamKesit(b.bas, b.son)
         if (ham) anlasilmayan.add(ham)
       }
     }
-    return { deneme: null, anlasilmayan: [...anlasilmayan] }
+    return { deneme: null, anlasilmayan: [...anlasilmayan], denemedeYok: [...denemedeYok], fazlaSoru: [...fazlaSoru].map(([ad, soruSayisi]) => ({ ad, soruSayisi })) }
   }
-  return { deneme: denemeOlustur(sablon.id, dersler, [...toplu.values()], toplamNet), anlasilmayan: [...anlasilmayan] }
+  return { deneme: denemeOlustur(sablon.id, dersler, [...toplu.values()], toplamNet), anlasilmayan: [...anlasilmayan], denemedeYok: [...denemedeYok], fazlaSoru: [...fazlaSoru].map(([ad, soruSayisi]) => ({ ad, soruSayisi })) }
 }
 
 // --- Soru Takibi çözümleme ---
@@ -1414,7 +1415,10 @@ export function enIyiAdayiSec(adaylar: string[]): string {
 
 /** Günlük soru anlatımını deneme kipindeki metinden ayırır; yer tutucular dizinleri korur. */
 function denemeKipindeGunlukSoruyuMaskele(metin: string): { metin: string; gunlukSoruVar: boolean } {
-  const dersAdi = '(?:turkce\\w*|turk\\w*|edebiyat\\w*|paragraf\\w*|matematik\\w*|mat\\w*|geometri\\w*|geo\\w*|problem\\w*|fizik\\w*|fiz\\w*|kimya\\w*|kim\\w*|biyoloji\\w*|biyo\\w*|tarih\\w*|cografya\\w*|cog\\w*|felsefe\\w*|din\\w*|yabanci\\s+dil\\w*|ingilizce\\w*|ing\\w*)'
+  const dersAdi = `(?:${SESLI_SORU_ADLARI
+    .map((ad) => ad.ad.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replaceAll(' ', '\\s+'))
+    .sort((a, b) => b.length - a.length)
+    .join('|')})(?:[a-z0-9]+)?`
   const desen = new RegExp(
     `\\b(?:\\d+\\s+(?:tane\\s+)?soru\\w*|\\d+\\s+(?:tane\\s+)?${dersAdi}|${dersAdi}\\s+\\d+(?:\\s+tane)?)\\s+(?:soru\\w*\\s+)?(?:coz|yap|bitir|hallet|bak)\\w*`,
     'g',
@@ -1472,7 +1476,9 @@ export function sesliMetniCoz(
 
   if (secenek.kip === 'deneme') {
     const maskelenen = denemeKipindeGunlukSoruyuMaskele(hazir.norm)
-    const denemeHazir = metniHazirla(maskelenen.metin)
+    // Maskeleme uzunluğu korur; ilk hazırlıktaki izleri saklamak, çözülemeyen
+    // parçayı kullanıcının Türkçe karakterli ham söyleyişiyle göstermemizi sağlar.
+    const denemeHazir: HazirMetin = { ...hazir, norm: maskelenen.metin }
     const denemeBolumu: Bolum[] = denemeHazir.norm ? [{ tur: 'deneme', bas: 0, son: denemeHazir.norm.length }] : []
     const denemeSonucu = denemeBolumleriniCoz(denemeBolumu, denemeHazir, { ...secenek, sabitSablonMu: true })
     const sonuc: SesliCozum = {
@@ -1480,6 +1486,8 @@ export function sesliMetniCoz(
       deneme: denemeKipiSonucunuTamamla(denemeSonucu.deneme, secenek.varsayilanSablonId),
       anlasilmayan: denemeSonucu.anlasilmayan,
     }
+    if (denemeSonucu.denemedeYok.length > 0) sonuc.denemedeYok = denemeSonucu.denemedeYok
+    if (denemeSonucu.fazlaSoru.length > 0) sonuc.fazlaSoru = denemeSonucu.fazlaSoru
     if (maskelenen.gunlukSoruVar) sonuc.yanlisYer = 'soru'
     return sonuc
   }
