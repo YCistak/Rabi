@@ -21,6 +21,7 @@ import type {
   PomodoroAyar,
   PomodoroSeans,
   Sablon,
+  TopluSonuc,
   YanlisSoru,
   Yedek,
 } from './types'
@@ -31,7 +32,8 @@ import {
   type BankaKaydi,
   type BankaSorusu,
 } from './oyunlar/banka'
-import { VARSAYILAN_SABLON_ID } from './sablonlar'
+import { sablonlariBirlestir, VARSAYILAN_SABLON_ID } from './sablonlar'
+import { sablonGruplari, TOPLU_GRUPLAR, topluGecerliMi } from './toplu-grup'
 import { VARSAYILAN_OZEL_PROVA, ozelProvaSuresi } from './sinav-provasi'
 import { egitimYili } from './hesap'
 import { dakikayiKirp, saatiKirp } from './hatirlatma'
@@ -518,6 +520,48 @@ function dizi<T>(deger: unknown): T[] {
 }
 
 /**
+ * Denemelerin toplu grup alanını (`Deneme.toplu`) doğrular; öteki alanlara
+ * dokunmaz. Bozuk satır atılır: grup tanınmıyorsa, sayılar ≥ 0 tam sayı
+ * değilse, doğru + yanlış grubun soru sayısını aşıyorsa ya da grup şablonda
+ * yoksa. Şablonu bulunamayan denemede soru sınırı denetlenemez, yalnız biçim
+ * denetlenir (şablon sonra gelebilir; hesaplar yine `gecerliToplu`yla süzer).
+ * Toplu girilen grubun ders satırları `sonuclar`dan çıkarılır: grup ya toplu
+ * ya ders ders. Alanı olmayan eski kayıt aynen döner.
+ */
+export function denemeleriNormalize(denemeler: Deneme[], sablonlar: Sablon[]): Deneme[] {
+  const tumSablonlar = sablonlariBirlestir(sablonlar)
+  return denemeler.map((deneme) => {
+    if (deneme?.toplu === undefined) return deneme
+    const { toplu: ham, ...geri } = deneme
+    const sablon = tumSablonlar.find((s) => s.id === deneme.sablonId)
+    const gruplar = sablon ? sablonGruplari(sablon) : null
+    const toplu: TopluSonuc[] = []
+    for (const satir of Array.isArray(ham) ? ham : []) {
+      if (typeof satir !== 'object' || satir === null) continue
+      if (!TOPLU_GRUPLAR.includes(satir.grup)) continue
+      if (toplu.some((t) => t.grup === satir.grup)) continue
+      const grup = gruplar?.find((g) => g.grup === satir.grup)
+      if (gruplar && !grup) continue
+      if (!topluGecerliMi(satir, grup ? grup.soruSayisi : Number.POSITIVE_INFINITY)) continue
+      toplu.push({ grup: satir.grup, dogru: satir.dogru, yanlis: satir.yanlis })
+    }
+    if (toplu.length === 0) return geri
+    const topluDersler = new Set(
+      (gruplar ?? [])
+        .filter((g) => toplu.some((t) => t.grup === g.grup))
+        .flatMap((g) => g.dersIdleri),
+    )
+    return {
+      ...geri,
+      sonuclar: dizi<Deneme['sonuclar'][number]>(geri.sonuclar).filter(
+        (s) => !topluDersler.has(s.dersId),
+      ),
+      toplu,
+    }
+  })
+}
+
+/**
  * Yedekten okul yıllarını çıkarır.
  *
  * Eski yedeklerde alan `gecmisYillar` adındaydı ve yalnızca bitmiş yılları
@@ -565,7 +609,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       uygulama: 'rabi',
       surum: 1,
       tarih: typeof nesne.tarih === 'string' ? nesne.tarih : new Date().toISOString(),
-      denemeler: dizi<Deneme>(nesne.denemeler),
+      denemeler: denemeleriNormalize(dizi<Deneme>(nesne.denemeler), dizi<Sablon>(nesne.sablonlar)),
       sablonlar: dizi<Sablon>(nesne.sablonlar),
       okulYillari: okulYillariniCoz(nesne),
       gunlukKayitlar: dizi<GunlukKayit>(nesne.gunlukKayitlar),

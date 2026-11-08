@@ -25,6 +25,7 @@ import {
   type DenemeSiralamasi,
   type DenemeSuzgeci,
 } from '@/lib/deneme-liste'
+import { gecerliToplu, sablonGruplari, TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
 import { cn } from '@/lib/utils'
 import type { Deneme, Sablon, SablonTuru } from '@/lib/types'
 
@@ -214,14 +215,28 @@ export function DenemelerEkrani({
                             ))}
                           </div>
                           {sablon.dersler.map((ders) => {
-                            const sonuc = deneme.sonuclar.find((s) => s.dersId === ders.id)
+                            // Toplu girilen grup tek satır: "Sosyal (toplu)", ilk
+                            // dersinin yerinde; öteki dersleri çizilmiyor.
+                            const grup = sablonGruplari(sablon).find((g) =>
+                              g.dersIdleri.includes(ders.id),
+                            )
+                            const topluSonuc = grup
+                              ? gecerliToplu(deneme, sablon).find((t) => t.grup === grup.grup)
+                              : undefined
+                            if (grup && topluSonuc && grup.dersIdleri[0] !== ders.id) return null
+                            const sonuc = topluSonuc ?? deneme.sonuclar.find((s) => s.dersId === ders.id)
                             const dogru = sonuc?.dogru ?? 0
                             const yanlis = sonuc?.yanlis ?? 0
+                            const soruSayisi = grup && topluSonuc ? grup.soruSayisi : ders.soruSayisi
+                            const satirNeti =
+                              grup && topluSonuc
+                                ? (ozet.topluNetleri[grup.grup] ?? 0)
+                                : (ozet.dersNetleri[ders.id] ?? 0)
                             const hucre = 'border-t border-border/70 py-[9px]'
                             return (
                               <div key={ders.id} role="row" className="contents">
                                 <div role="cell" className={cn(hucre, 'truncate pl-2.5 font-bold')}>
-                                  {ders.ad}
+                                  {grup && topluSonuc ? `${TOPLU_GRUP_ADI[grup.grup]} (toplu)` : ders.ad}
                                 </div>
                                 <div role="cell" className={cn(hucre, 'text-right font-extrabold text-success')}>
                                   {dogru}
@@ -230,10 +245,10 @@ export function DenemelerEkrani({
                                   {yanlis}
                                 </div>
                                 <div role="cell" className={cn(hucre, 'text-right font-semibold text-muted-foreground')}>
-                                  {ders.soruSayisi - dogru - yanlis}
+                                  {soruSayisi - dogru - yanlis}
                                 </div>
                                 <div role="cell" className={cn(hucre, 'pr-2.5 text-right font-extrabold')}>
-                                  {netYaz(ozet.dersNetleri[ders.id] ?? 0)}
+                                  {netYaz(satirNeti)}
                                 </div>
                               </div>
                             )

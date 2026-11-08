@@ -9,8 +9,9 @@
  * sınavının soru sayısı farklı, netleri aynı hesaba girmez.
  */
 
-import { denemeOzeti, tarihSirala, yuvarla } from './hesap'
-import type { Deneme, Sablon } from './types'
+import { denemeOzeti, tarihSirala, yuvarla, type DenemeOzeti } from './hesap'
+import { gecerliToplu, TOPLU_GRUPLAR, TOPLU_GRUP_ADI } from './toplu-grup'
+import type { Deneme, Sablon, TopluGrup } from './types'
 
 /** Kayan nokta artığı: 0,25'lik netlerin farkında 1e-15 kalıyor ve "değişmedi"yi bozuyor. */
 const ESIK = 0.001
@@ -35,6 +36,35 @@ export type DersDegisimi = {
   fark: number
 }
 
+/**
+ * Ders analizinde kaç denemede bir grubun toplu girildiği. O denemeler
+ * grubun derslerinin serisinde boş (sıfır sayılmıyor); not bunu söylüyor.
+ */
+export type TopluNotu = { grup: TopluGrup; ad: string; denemeSayisi: number }
+
+/** Denemelerde toplu girilen grupların sayımı; hiç toplu yoksa boş. */
+export function topluNotlari(denemeler: Deneme[], sablon: Sablon): TopluNotu[] {
+  return TOPLU_GRUPLAR.flatMap((grup) => {
+    const sayi = denemeler.filter((d) =>
+      gecerliToplu(d, sablon).some((t) => t.grup === grup),
+    ).length
+    return sayi > 0 ? [{ grup, ad: TOPLU_GRUP_ADI[grup], denemeSayisi: sayi }] : []
+  })
+}
+
+/**
+ * İki özette de ders ders girilmiş dersin değişimi. Birinde toplu girildiyse
+ * ders atlanıyor: boş deneme sıfır sayılsaydı sahte bir "−5 net" çıkardı.
+ */
+function dersDegisimleri(a: DenemeOzeti, b: DenemeOzeti, sablon: Sablon): DersDegisimi[] {
+  return sablon.dersler.flatMap((ders) => {
+    const once = a.dersNetleri[ders.id]
+    const sonra = b.dersNetleri[ders.id]
+    if (once === undefined || sonra === undefined) return []
+    return [{ dersId: ders.id, ad: ders.ad, onceki: once, son: sonra, fark: yuvarla(sonra - once) }]
+  })
+}
+
 export type IstatistikOzeti = {
   denemeSayisi: number
   sonNet: number
@@ -50,6 +80,8 @@ export type IstatistikOzeti = {
   /** Ortalama netin soru sayısına oranı en yüksek / en düşük ders. */
   enGucluDers: string | null
   enZayifDers: string | null
+  /** Toplu girilen gruplar — ders analizindeki "N denemede toplu girildi" notu. */
+  topluNotlari: TopluNotu[]
 }
 
 export function istatistikOzeti(denemeler: Deneme[], sablon: Sablon): IstatistikOzeti | null {
@@ -61,21 +93,20 @@ export function istatistikOzeti(denemeler: Deneme[], sablon: Sablon): Istatistik
   const son = ozetler[ozetler.length - 1]
   const onceki = ozetler.length > 1 ? ozetler[ozetler.length - 2] : null
 
-  const degisimler: DersDegisimi[] = onceki
-    ? sablon.dersler.map((ders) => {
-        const a = onceki.dersNetleri[ders.id] ?? 0
-        const b = son.dersNetleri[ders.id] ?? 0
-        return { dersId: ders.id, ad: ders.ad, onceki: a, son: b, fark: yuvarla(b - a) }
-      })
-    : []
+  const degisimler: DersDegisimi[] = onceki ? dersDegisimleri(onceki, son, sablon) : []
 
   // Ders kıyası ham net değil oranla: 40 soruluk Türkçe'nin 20 neti, 5 soruluk
-  // Felsefe'nin 4 netinden "güçlü" değil.
+  // Felsefe'nin 4 netinden "güçlü" değil. Ortalama yalnız dersin ders ders
+  // girildiği denemelerden; hiç verisi olmayan ders kıyasa girmez.
   const oranlar = sablon.dersler
     .filter((d) => d.soruSayisi > 0)
-    .map((ders) => {
-      const toplam = ozetler.reduce((t, o) => t + (o.dersNetleri[ders.id] ?? 0), 0)
-      return { ad: ders.ad, oran: toplam / ozetler.length / ders.soruSayisi }
+    .flatMap((ders) => {
+      const netler = ozetler.flatMap((o) =>
+        o.dersNetleri[ders.id] === undefined ? [] : [o.dersNetleri[ders.id]],
+      )
+      if (netler.length === 0) return []
+      const toplam = netler.reduce((t, n) => t + n, 0)
+      return [{ ad: ders.ad, oran: toplam / netler.length / ders.soruSayisi }]
     })
   const oranSirali = [...oranlar].sort((a, b) => b.oran - a.oran)
 
@@ -91,6 +122,7 @@ export function istatistikOzeti(denemeler: Deneme[], sablon: Sablon): Istatistik
     enGucluDers: oranSirali[0]?.ad ?? null,
     // Tek ders varsa aynı ders iki kutuda birden yazılırdı.
     enZayifDers: oranSirali.length > 1 ? oranSirali[oranSirali.length - 1].ad : null,
+    topluNotlari: topluNotlari(sirali, sablon),
   }
 }
 
@@ -109,6 +141,8 @@ export type Karsilastirma = {
   artanlar: DersDegisimi[]
   azalanlar: DersDegisimi[]
   sabitler: DersDegisimi[]
+  /** İki denemeden birinde toplu girilen gruplar — dersleri kıyasa girmedi. */
+  topluGruplar: TopluGrup[]
 }
 
 /** İki denemeyi ders ders karşılaştırır; sıralama farkın büyüklüğüne göre. */
@@ -117,13 +151,12 @@ export function denemeKarsilastir(x: Deneme, y: Deneme, sablon: Sablon): Karsila
   const oa = denemeOzeti(a, sablon)
   const ob = denemeOzeti(b, sablon)
 
-  const satirlar = sablon.dersler
-    .map((ders) => {
-      const once = oa.dersNetleri[ders.id] ?? 0
-      const sonra = ob.dersNetleri[ders.id] ?? 0
-      return { dersId: ders.id, ad: ders.ad, onceki: once, son: sonra, fark: yuvarla(sonra - once) }
-    })
-    .sort((p, q) => Math.abs(q.fark) - Math.abs(p.fark))
+  const satirlar = dersDegisimleri(oa, ob, sablon).sort(
+    (p, q) => Math.abs(q.fark) - Math.abs(p.fark),
+  )
+  const topluGruplar = TOPLU_GRUPLAR.filter((g) =>
+    [a, b].some((d) => gecerliToplu(d, sablon).some((t) => t.grup === g)),
+  )
 
   return {
     a,
@@ -134,6 +167,7 @@ export function denemeKarsilastir(x: Deneme, y: Deneme, sablon: Sablon): Karsila
     artanlar: satirlar.filter((s) => yon(s.fark) === 'artti'),
     azalanlar: satirlar.filter((s) => yon(s.fark) === 'azaldi'),
     sabitler: satirlar.filter((s) => yon(s.fark) === 'ayni'),
+    topluGruplar,
   }
 }
 

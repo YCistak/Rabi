@@ -21,3 +21,25 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - **Dersleri düzenle soru sınırı:** ders başı en çok 40 (`DERS_EN_COK_SORU`, kullanıcı
   istedi, 2026-10-29). Hazırda fazlası olan ders (Dil alanında Yabancı Dil 80)
   hazırdaki sayıya kadar çıkar (`dersSoruSiniri`); yoksa o alanda kayıt yapılamazdı.
+- **Toplu grup girişi** (kullanıcı istedi, 2026-11): denemede Sosyal ve Fen
+  "Ders ders · Toplu" segmentiyle grup hâlinde girilebilir ("sosyalden 20 doğru").
+  - **Model:** `Deneme.toplu?: TopluSonuc[]` (`{ grup: 'sosyal' | 'fen', dogru, yanlis }`).
+    Toplu girilen grubun derslerinin `sonuclar`da satırı olmaz; grup ya toplu ya ders
+    ders. Üyelik tek yerde, ders kimliğinden (`lib/toplu-grup.ts`): Fen = fizik, kimya,
+    biyoloji; Sosyal = tarih, cografya, felsefe, din, tarih1/2, cografya1/2. Şablonda
+    en az iki üyesi olan grup çıkar (`sablonGruplari`). Alanı olmayan eski kayıt aynen
+    çalışır; yedekte `denemeleriNormalize` (`lib/depo.ts`) bozuk satırı atar.
+  - **Hesap:** toplam net, D/Y/boş toplamları ve ÖSYM test netleri toplu satırı sayar
+    (`denemeOzeti`, `osymNetleri`). TYT'de grup tek test, net olduğu gibi o teste gider.
+    AYT'de grup birden çok teste yayılıyorsa net, üye derslerin soru sayısına
+    **orantılı** dağıtılır (`topluTestDagilimi`) — yalnız puan tahmini için; ders netine
+    ve ders istatistiğine yazılmaz.
+  - **İstatistik:** toplu denemede grubun dersleri o deneme için **boş** (anahtar yok,
+    sıfır sayılmaz): değişim, en güçlü/zayıf ders ve karşılaştırma o dersi atlar. Ders
+    sayfasında tek satır sönük not ("Fen: 2 denemede toplu girildi"), karşılaştırmada
+    "… toplu girildi; dersleri ayrı kıyaslanmadı". Formda toplu satırın altında tek
+    satır uyarı.
+  - **Sahte ders verisi yasak:** toplu sonuç derslere bölünüp "Tarih 5 doğru" gibi
+    yazılmaz; toplu → ders ders geçişte ders kutuları boş açılır. Ders ders → toplu
+    geçişte yazılmış ders sayıları toplanıp taşınır. Okut (OCR) ders ders okur; okunan
+    dersi olan grup ders derse döner.

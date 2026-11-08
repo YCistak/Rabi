@@ -20,7 +20,14 @@ import {
   type SeviyeSinifi,
 } from '@/lib/seviye-tespit'
 import { bugun, cn, yeniId } from '@/lib/utils'
-import type { Deneme, PuanTuru, Sablon, SablonDers, YanlisSoru } from '@/lib/types'
+import type { Deneme, PuanTuru, Sablon, SablonDers, TopluGrup, YanlisSoru } from '@/lib/types'
+import {
+  gecerliToplu,
+  sablonGruplari,
+  TOPLU_GRUP_ADI,
+  topluGecerliMi,
+  type SablonGrubu,
+} from '@/lib/toplu-grup'
 import { DenemeOkut } from '@/components/deneme-okut'
 import type { DenemeBaslangici } from '@/components/sesli-giris'
 import { bosSifir } from '@/lib/bos-sifir'
@@ -31,6 +38,73 @@ import { Rabi } from '@/components/maskot/rabi'
 const useYerlesimEtkisi = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 type Giris = { dogru: string; yanlis: string }
+
+const BOS_GIRIS: Giris = { dogru: '', yanlis: '' }
+
+/** Ders kutularındaki sayıların toplamı; hiçbiri yazılmamışsa kutu boş kalır. */
+function girisToplami(girisler: Giris[]): Giris {
+  const topla = (alan: keyof Giris) => {
+    if (girisler.every((g) => g[alan] === '')) return ''
+    return String(girisler.reduce((t, g) => t + sayi(g[alan]), 0))
+  }
+  return { dogru: topla('dogru'), yanlis: topla('yanlis') }
+}
+
+/** Ders satırı da toplu satır da aynı görünümle çiziliyor. */
+type SatirCizimi = {
+  ad: string
+  soruSayisi: number
+  bos: number
+  net: number
+  asim: boolean
+  giris: Giris
+  onDegis: (alan: keyof Giris, deger: string) => void
+}
+
+function DersSatiri({ satir }: { satir: SatirCizimi }) {
+  return (
+    <li className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 last:border-b-0">
+      <div className="min-w-0">
+        <p className="truncate text-sm font-medium">{satir.ad}</p>
+        <p className="text-xs text-muted-foreground">
+          {satir.soruSayisi} soru · {satir.bos} boş
+        </p>
+      </div>
+
+      <Alan
+        inputMode="numeric"
+        placeholder="0"
+        aria-label={`${satir.ad} doğru sayısı`}
+        value={satir.giris.dogru}
+        onChange={(e) => satir.onDegis('dogru', e.target.value)}
+        className={cn(
+          'h-10 w-14 px-0 text-center rakam focus:placeholder:text-transparent',
+          satir.asim && 'border-danger text-danger',
+        )}
+      />
+      <Alan
+        inputMode="numeric"
+        placeholder="0"
+        aria-label={`${satir.ad} yanlış sayısı`}
+        value={satir.giris.yanlis}
+        onChange={(e) => satir.onDegis('yanlis', e.target.value)}
+        className={cn(
+          'h-10 w-14 px-0 text-center rakam focus:placeholder:text-transparent',
+          satir.asim && 'border-danger text-danger',
+        )}
+      />
+
+      <span
+        className={cn(
+          'w-14 text-right font-display text-[15px] font-semibold rakam',
+          satir.asim && 'text-danger',
+        )}
+      >
+        {satir.asim ? '—' : netYaz(satir.net)}
+      </span>
+    </li>
+  )
+}
 
 const ALANLAR = Object.keys(ALAN_KISA_ADI) as PuanTuru[]
 
@@ -159,6 +233,61 @@ export function YeniDenemeEkrani({
   })
 
   /*
+    Sosyal/Fen toplu girişi (kullanıcı istedi, 2026-11): grup ya ders ders ya
+    toplu. Toplu sonuç derslere bölünmez (`lib/toplu-grup.ts`).
+  */
+  const gruplar = useMemo(() => sablonGruplari(sablon), [sablon])
+  const [toplu, setToplu] = useState<Partial<Record<TopluGrup, Giris>>>(() => {
+    if (duzenlenen) {
+      return Object.fromEntries(
+        gecerliToplu(duzenlenen, sablon).map((t) => [
+          t.grup,
+          { dogru: String(t.dogru), yanlis: String(t.yanlis) },
+        ]),
+      )
+    }
+    const gelen = baslangic?.toplu
+    if (!gelen) return {}
+    return Object.fromEntries(
+      gruplar.flatMap((g) => {
+        const giris = gelen[g.grup]
+        return giris ? [[g.grup, { dogru: giris.dogru, yanlis: giris.yanlis }]] : []
+      }),
+    )
+  })
+
+  /** Ders ders → toplu: yazılmış ders sayıları toplanıp toplu kutulara taşınır. */
+  const topluyaGec = (grup: SablonGrubu) => {
+    if (toplu[grup.grup]) return
+    setToplu((t) => ({
+      ...t,
+      [grup.grup]: girisToplami(grup.dersIdleri.map((id) => girisler[id] ?? BOS_GIRIS)),
+    }))
+    setGirisler((g) => ({
+      ...g,
+      ...Object.fromEntries(grup.dersIdleri.map((id) => [id, BOS_GIRIS])),
+    }))
+  }
+
+  /**
+   * Toplu → ders ders: ders kutuları boş açılır. Toplu sayı derslere
+   * bölünmez — bölünseydi öğrencinin hiç girmediği ders sonuçları uydurulurdu.
+   */
+  const dersDerseGec = (grup: SablonGrubu, dersleriBosalt = true) => {
+    setToplu((t) => {
+      const yeni = { ...t }
+      delete yeni[grup.grup]
+      return yeni
+    })
+    if (dersleriBosalt) {
+      setGirisler((g) => ({
+        ...g,
+        ...Object.fromEntries(grup.dersIdleri.map((id) => [id, BOS_GIRIS])),
+      }))
+    }
+  }
+
+  /*
     Yanlış soru ekleme bu ekranın **içinde** bir katman olarak açılıyor,
     Yanlış Soru Bankası ekranına gidilmiyor.
 
@@ -192,14 +321,26 @@ export function YeniDenemeEkrani({
         ...bosGirisler(sablon),
         ...Object.fromEntries(sablon.dersler.flatMap((d) => (g[d.id] ? [[d.id, g[d.id]]] : []))),
       }))
+      // Yeni şablonda da olan toplu grup yerinde kalıyor.
+      const yeniGruplar = new Set(sablonGruplari(sablon).map((g) => g.grup))
+      setToplu((t) =>
+        Object.fromEntries(Object.entries(t).filter(([grup]) => yeniGruplar.has(grup as TopluGrup))),
+      )
       return
     }
     setGirisler(bosGirisler(sablon))
+    setToplu({})
   }, [sablon, duzenlenen])
+
+  // Toplu girilen grubun dersleri ders satırı olarak çizilmez, kaydedilmez.
+  const topluDersler = useMemo(
+    () => new Set(gruplar.filter((g) => toplu[g.grup]).flatMap((g) => g.dersIdleri)),
+    [gruplar, toplu],
+  )
 
   const satirlar = useMemo(
     () =>
-      sablon.dersler.map((ders) => {
+      sablon.dersler.filter((ders) => !topluDersler.has(ders.id)).map((ders) => {
         const giris = girisler[ders.id] ?? { dogru: '', yanlis: '' }
         const dogru = sayi(giris.dogru)
         const yanlis = sayi(giris.yanlis)
@@ -215,11 +356,41 @@ export function YeniDenemeEkrani({
           asim,
         }
       }),
-    [sablon, girisler],
+    [sablon, girisler, topluDersler],
   )
 
-  const hataliDers = satirlar.find((s) => s.asim)
-  const bosMu = satirlar.every((s) => s.dogru === 0 && s.yanlis === 0)
+  const topluSatirlar = useMemo(
+    () =>
+      gruplar.flatMap((grup) => {
+        const giris = toplu[grup.grup]
+        if (!giris) return []
+        const dogru = sayi(giris.dogru)
+        const yanlis = sayi(giris.yanlis)
+        return [
+          {
+            grup,
+            ad: TOPLU_GRUP_ADI[grup.grup],
+            dogru,
+            yanlis,
+            bos: Math.max(0, grup.soruSayisi - dogru - yanlis),
+            net: net(dogru, yanlis, sablon.yanlisKatsayi),
+            asim: !topluGecerliMi({ grup: grup.grup, dogru, yanlis }, grup.soruSayisi),
+          },
+        ]
+      }),
+    [gruplar, toplu, sablon],
+  )
+
+  const dersHatasi = satirlar.find((s) => s.asim)
+  const topluHatasi = topluSatirlar.find((s) => s.asim)
+  const hataliDers = dersHatasi
+    ? { ad: dersHatasi.ders.ad, soruSayisi: dersHatasi.ders.soruSayisi }
+    : topluHatasi
+      ? { ad: topluHatasi.ad, soruSayisi: topluHatasi.grup.soruSayisi }
+      : undefined
+  const bosMu =
+    satirlar.every((s) => s.dogru === 0 && s.yanlis === 0) &&
+    topluSatirlar.every((s) => s.dogru === 0 && s.yanlis === 0)
   /*
     Tarih kutusu temizlenebiliyor (tarayıcının "temizle" düğmesi, Android'de
     silme tuşu) ve boş tarihle kaydedilen deneme listede tarihsiz duruyor,
@@ -235,16 +406,35 @@ export function YeniDenemeEkrani({
     }))
   }
 
+  const topluDegistir = (grup: TopluGrup, alan: keyof Giris, deger: string) => {
+    const temiz = deger.replace(/[^0-9]/g, '').slice(0, 3)
+    setToplu((onceki) => ({
+      ...onceki,
+      [grup]: { ...(onceki[grup] ?? BOS_GIRIS), [alan]: temiz },
+    }))
+  }
+
+  const dersCizimi = (satir: (typeof satirlar)[number]): SatirCizimi => ({
+    ad: satir.ders.ad,
+    soruSayisi: satir.ders.soruSayisi,
+    bos: satir.bos,
+    net: satir.net,
+    asim: satir.asim,
+    giris: girisler[satir.ders.id] ?? BOS_GIRIS,
+    onDegis: (alan, deger) => girisDegistir(satir.ders.id, alan, deger),
+  })
+
   /*
     Vazgeç yalnız girilmiş bir şey kaybolacaksa soruyor: yeni denemede bir
     sayı ya da ad yazıldıysa, düzenlemede bir şey değiştiyse. Boş formu
     kapatmak bir şey kaybettirmez.
   */
-  const [ilkHal] = useState(() => JSON.stringify({ ad, girisler }))
+  const [ilkHal] = useState(() => JSON.stringify({ ad, girisler, toplu }))
   const girildi = duzenlenen
-    ? JSON.stringify({ ad, girisler }) !== ilkHal
+    ? JSON.stringify({ ad, girisler, toplu }) !== ilkHal
     : ad.trim() !== '' ||
-      Object.values(girisler).some((g) => g.dogru !== '' || g.yanlis !== '')
+      Object.values(girisler).some((g) => g.dogru !== '' || g.yanlis !== '') ||
+      Object.values(toplu).some((g) => g !== undefined && (g.dogru !== '' || g.yanlis !== ''))
   const vazgecOnayi = useKapatmaOnayi({
     aciklama: duzenlenen
       ? 'Yaptığın değişiklikler kaydedilmez.'
@@ -263,6 +453,10 @@ export function YeniDenemeEkrani({
         dogru: s.dogru,
         yanlis: s.yanlis,
       })),
+      // Toplu grup yoksa alan hiç yazılmıyor: kayıt eski biçimle aynı kalıyor.
+      ...(topluSatirlar.length > 0 && {
+        toplu: topluSatirlar.map((s) => ({ grup: s.grup.grup, dogru: s.dogru, yanlis: s.yanlis })),
+      }),
     })
   }
 
@@ -417,6 +611,11 @@ export function YeniDenemeEkrani({
           for (const ders of okunanlar) yeni[ders.dersId] = { dogru: String(ders.dogru), yanlis: String(ders.yanlis) }
           return yeni
         })
+        // Okut ders ders okuyor: okunan dersi olan toplu grup ders derse döner,
+        // yoksa okunan sayılar gizli satırlarda kalırdı.
+        for (const g of gruplar) {
+          if (toplu[g.grup] && okunanlar.some((o) => g.dersIdleri.includes(o.dersId))) dersDerseGec(g, false)
+        }
       }} />
       <div>
       <p className="mb-2 text-xs font-semibold text-muted-foreground">Elle gir</p>
@@ -429,51 +628,81 @@ export function YeniDenemeEkrani({
         </div>
 
         <ul>
-          {satirlar.map((satir) => (
-            <li
-              key={satir.ders.id}
-              className="grid grid-cols-[1fr_auto_auto_auto] items-center gap-2 border-b border-border px-3 py-2 last:border-b-0"
-            >
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{satir.ders.ad}</p>
-                <p className="text-xs text-muted-foreground">
-                  {satir.ders.soruSayisi} soru · {satir.bos} boş
-                </p>
-              </div>
-
-              <Alan
-                inputMode="numeric"
-                placeholder="0"
-                aria-label={`${satir.ders.ad} doğru sayısı`}
-                value={girisler[satir.ders.id]?.dogru ?? ''}
-                onChange={(e) => girisDegistir(satir.ders.id, 'dogru', e.target.value)}
-                className={cn(
-                  'h-10 w-14 px-0 text-center rakam focus:placeholder:text-transparent',
-                  satir.asim && 'border-danger text-danger',
+          {/*
+            Ders sırası şablondan; bir grubun dersleri ilk üyesinin yerinde,
+            grup başlığının altında bir arada (9. sınıfta Din, Fen'in
+            arkasında kalıyor).
+          */}
+          {sablon.dersler.map((ders) => {
+            const grup = gruplar.find((g) => g.dersIdleri.includes(ders.id))
+            if (!grup) {
+              const satir = satirlar.find((s) => s.ders.id === ders.id)
+              return satir ? <DersSatiri key={ders.id} satir={dersCizimi(satir)} /> : null
+            }
+            if (grup.dersIdleri[0] !== ders.id) return null
+            const topluSatir = topluSatirlar.find((s) => s.grup.grup === grup.grup)
+            return (
+              <li key={`grup-${grup.grup}`} className="border-b border-border last:border-b-0">
+                <div className="flex items-center justify-between gap-2 border-b border-border bg-muted/50 px-3 py-1.5">
+                  <span className="text-xs font-extrabold text-muted-foreground">
+                    {TOPLU_GRUP_ADI[grup.grup]}
+                  </span>
+                  <div
+                    className="flex gap-0.5 rounded-[10px] bg-muted p-0.5"
+                    role="group"
+                    aria-label={`${TOPLU_GRUP_ADI[grup.grup]} giriş biçimi`}
+                  >
+                    {(['ders', 'toplu'] as const).map((bicim) => {
+                      const secili = (bicim === 'toplu') === !!topluSatir
+                      return (
+                        <button
+                          key={bicim}
+                          type="button"
+                          aria-pressed={secili}
+                          onClick={() =>
+                            bicim === 'toplu' ? topluyaGec(grup) : topluSatir && dersDerseGec(grup)
+                          }
+                          className={cn(
+                            'h-7 rounded-[8px] px-2.5 text-xs font-extrabold transition-[background-color,box-shadow] duration-200',
+                            secili
+                              ? 'bg-secili text-primary shadow-[0_1px_3px_rgba(27,26,25,0.12),0_1px_1px_rgba(27,26,25,0.04)] ring-1 ring-secili-kenar'
+                              : 'text-muted-foreground',
+                          )}
+                        >
+                          {bicim === 'toplu' ? 'Toplu' : 'Ders ders'}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+                <ul>
+                  {topluSatir ? (
+                    <DersSatiri
+                      satir={{
+                        ad: topluSatir.ad,
+                        soruSayisi: grup.soruSayisi,
+                        bos: topluSatir.bos,
+                        net: topluSatir.net,
+                        asim: topluSatir.asim,
+                        giris: toplu[grup.grup] ?? BOS_GIRIS,
+                        onDegis: (alan, deger) => topluDegistir(grup.grup, alan, deger),
+                      }}
+                    />
+                  ) : (
+                    grup.dersIdleri.map((id) => {
+                      const satir = satirlar.find((s) => s.ders.id === id)
+                      return satir ? <DersSatiri key={id} satir={dersCizimi(satir)} /> : null
+                    })
+                  )}
+                </ul>
+                {topluSatir && (
+                  <p className="-mt-1 px-3 pb-2 text-[11px] text-muted-foreground/80">
+                    Toplu girince istatistiklerde bu derslerin ayrı analizi olmaz.
+                  </p>
                 )}
-              />
-              <Alan
-                inputMode="numeric"
-                placeholder="0"
-                aria-label={`${satir.ders.ad} yanlış sayısı`}
-                value={girisler[satir.ders.id]?.yanlis ?? ''}
-                onChange={(e) => girisDegistir(satir.ders.id, 'yanlis', e.target.value)}
-                className={cn(
-                  'h-10 w-14 px-0 text-center rakam focus:placeholder:text-transparent',
-                  satir.asim && 'border-danger text-danger',
-                )}
-              />
-
-              <span
-                className={cn(
-                  'w-14 text-right font-display text-[15px] font-semibold rakam',
-                  satir.asim && 'text-danger',
-                )}
-              >
-                {satir.asim ? '—' : netYaz(satir.net)}
-              </span>
-            </li>
-          ))}
+              </li>
+            )
+          })}
         </ul>
       </Kart>
 
@@ -481,8 +710,8 @@ export function YeniDenemeEkrani({
         <p className="mt-3 flex items-start gap-2 rounded-xl bg-danger/10 px-3 py-2.5 text-sm text-danger">
           <AlertCircle size={16} className="mt-0.5 shrink-0" />
           <span>
-            <strong>{hataliDers.ders.ad}</strong>: doğru + yanlış toplamı{' '}
-            {hataliDers.ders.soruSayisi} soruyu aşıyor.
+            <strong>{hataliDers.ad}</strong>: doğru + yanlış toplamı{' '}
+            {hataliDers.soruSayisi} soruyu aşıyor.
           </span>
         </p>
       )}

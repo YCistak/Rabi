@@ -90,3 +90,60 @@ describe('secimGuncelle', () => {
     expect(secimGuncelle([], 'a')).toEqual(['a'])
   })
 })
+
+describe('toplu grup girişi', () => {
+  const tyt: Sablon = {
+    id: 'tyt',
+    ad: 'TYT',
+    tur: 'tyt',
+    yanlisKatsayi: 4,
+    hazir: true,
+    dersler: [
+      { id: 'turkce', ad: 'Türkçe', soruSayisi: 40 },
+      { id: 'fizik', ad: 'Fizik', soruSayisi: 7 },
+      { id: 'kimya', ad: 'Kimya', soruSayisi: 7 },
+      { id: 'biyoloji', ad: 'Biyoloji', soruSayisi: 6 },
+    ],
+  }
+  const dersDers: Deneme = {
+    id: 'a',
+    sablonId: 'tyt',
+    ad: 'a',
+    tarih: '2026-05-01',
+    sonuclar: [
+      { dersId: 'turkce', dogru: 30, yanlis: 0 },
+      { dersId: 'fizik', dogru: 5, yanlis: 0 },
+      { dersId: 'kimya', dogru: 5, yanlis: 0 },
+      { dersId: 'biyoloji', dogru: 5, yanlis: 0 },
+    ],
+  }
+  const toplu: Deneme = {
+    id: 'b',
+    sablonId: 'tyt',
+    ad: 'b',
+    tarih: '2026-05-08',
+    sonuclar: [{ dersId: 'turkce', dogru: 32, yanlis: 0 }],
+    toplu: [{ grup: 'fen', dogru: 10, yanlis: 0 }],
+  }
+
+  it('toplu denemede grubun dersleri değişime girmez, sıfır sayılmaz', () => {
+    const o = istatistikOzeti([dersDers, toplu], tyt)!
+    expect(o.degisimler.map((d) => d.dersId)).toEqual(['turkce'])
+    expect(o.sonNet).toBe(42)
+    expect(o.topluNotlari).toEqual([{ grup: 'fen', ad: 'Fen', denemeSayisi: 1 }])
+    // Biyoloji ortalaması yalnız ders ders girilen denemeden: 5/6, en güçlü o.
+    // Sıfır sayılsaydı 2,5/6 olur, Türkçe'nin (31/40) altına düşerdi.
+    expect(o.enGucluDers).toBe('Biyoloji')
+  })
+
+  it('karşılaştırma toplu grubu kıyaslamaz, belirtir', () => {
+    const k = denemeKarsilastir(dersDers, toplu, tyt)
+    expect([...k.artanlar, ...k.azalanlar, ...k.sabitler].map((s) => s.dersId)).toEqual(['turkce'])
+    expect(k.topluGruplar).toEqual(['fen'])
+    expect(k.toplamFark).toBe(-3)
+  })
+
+  it('toplu yoksa not boş', () => {
+    expect(istatistikOzeti([dersDers], tyt)!.topluNotlari).toEqual([])
+  })
+})

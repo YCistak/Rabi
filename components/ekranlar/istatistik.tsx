@@ -13,8 +13,10 @@ import {
   secimGuncelle,
   yon,
   type DersDegisimi,
+  type TopluNotu,
   type Yon,
 } from '@/lib/istatistik'
+import { TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { cn } from '@/lib/utils'
@@ -282,6 +284,7 @@ export function IstatistikEkrani({
         <DersSayfasi
           degisimler={ozet.degisimler}
           altYazi={`${ozet.degisimler.length} ders · ${sablon.ad} · ${ozet.denemeSayisi} deneme`}
+          topluNotlari={ozet.topluNotlari}
           onKapat={() => setDersSayfasi(false)}
         />
       )}
@@ -439,13 +442,28 @@ function Tutamak() {
   return <div className="mx-auto mb-3.5 h-1 w-10 rounded-sm bg-grid" />
 }
 
+/**
+ * Toplu girilen grubun notu: o denemeler grubun derslerinin serisinde boş
+ * (sıfır sayılmıyor, derslere bölünmüyor). Tek satır, sönük.
+ */
+function TopluNotuSatiri({ notlar }: { notlar: TopluNotu[] }) {
+  if (notlar.length === 0) return null
+  return (
+    <p className="mt-1 text-[11.5px] font-semibold text-muted-foreground/70">
+      {notlar.map((n) => `${n.ad}: ${n.denemeSayisi} denemede toplu girildi`).join(' · ')}
+    </p>
+  )
+}
+
 function DersSayfasi({
   degisimler,
   altYazi,
+  topluNotlari,
   onKapat,
 }: {
   degisimler: DersDegisimi[]
   altYazi: string
+  topluNotlari: TopluNotu[]
   onKapat: () => void
 }) {
   const sirali = [...degisimler].sort((a, b) => b.fark - a.fark)
@@ -459,6 +477,7 @@ function DersSayfasi({
           <KapatDugmesi onClick={onKapat} />
         </div>
         <p className="mt-1.5 text-[12.5px] font-bold text-muted-foreground">{altYazi}</p>
+        <TopluNotuSatiri notlar={topluNotlari} />
       </div>
       <div className="min-h-0 flex-1 overflow-auto px-[18px] pt-1 pb-[calc(1.25rem+var(--guvenli-alt))]">
         <div className="golge-kart overflow-hidden rounded-[18px] bg-card">
@@ -646,6 +665,13 @@ function KarsilastirmaKatmani({
               {farkYaz(k.toplamFark, netYaz)} net
             </span>
           </div>
+          {/* Toplu girilen grubun dersleri kıyasa girmiyor; toplam nette var. */}
+          {k.topluGruplar.length > 0 && (
+            <p className="mt-2 text-[11.5px] font-semibold text-muted-foreground/70">
+              {k.topluGruplar.map((g) => TOPLU_GRUP_ADI[g]).join(', ')} toplu girildi; dersleri
+              ayrı kıyaslanmadı.
+            </p>
+          )}
         </div>
 
         <div

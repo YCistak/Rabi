@@ -82,6 +82,18 @@ export type DersSonuc = {
   yanlis: number
 }
 
+/**
+ * Ders ders ayrılmadan girilebilen ders grubu. Üyelik şablon dersinin
+ * kimliğinden gelir, tek yerde: `lib/toplu-grup.ts`.
+ */
+export type TopluGrup = 'sosyal' | 'fen'
+
+/**
+ * Bir grubun toplu sonucu ("sosyalden 20 doğru 0 yanlış"). O grubun
+ * derslerinin `sonuclar`da satırı olmaz: grup ya toplu ya ders ders girilir.
+ */
+export type TopluSonuc = { grup: TopluGrup; dogru: number; yanlis: number }
+
 export type Deneme = {
   id: string
   sablonId: string
@@ -89,6 +101,12 @@ export type Deneme = {
   /** 'YYYY-AA-GG' */
   tarih: string
   sonuclar: DersSonuc[]
+  /**
+   * Toplu girilen gruplar. Eski kayıtlarda alan yok; varsa o grubun dersleri
+   * ders istatistiğinde bu deneme için boş kalır (toplu sonuç derslere
+   * bölünmez — bkz. `docs/kurallar/denemeler.md`).
+   */
+  toplu?: TopluSonuc[]
   not?: string
 }
 

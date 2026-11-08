@@ -79,6 +79,84 @@ describe('osymNetleri', () => {
   })
 })
 
+describe('toplu grup girişi', () => {
+  const aytSay = HAZIR_SABLONLAR.find((s) => s.id === 'ayt-say')!
+  const tytToplu: Deneme = {
+    id: 't1',
+    sablonId: 'tyt',
+    ad: 'TYT toplu',
+    tarih: '2026-08-16',
+    sonuclar: [
+      { dersId: 'turkce', dogru: 30, yanlis: 4 },
+      { dersId: 'fizik', dogru: 5, yanlis: 0 },
+    ],
+    toplu: [{ grup: 'sosyal', dogru: 16, yanlis: 4 }],
+  }
+
+  it('toplu TYT sosyal neti test netine aynen girer', () => {
+    expect(osymNetleri(tytToplu, tyt)['tyt-sosyal']).toBe(15)
+    expect(osymNetleri(tytToplu, tyt)['tyt-fen']).toBe(5)
+  })
+
+  it('toplamlar topluyu sayar, ders netine yazılmaz', () => {
+    const ozet = denemeOzeti(tytToplu, tyt)
+    // Türkçe 29 + Fizik 5 + Sosyal 15
+    expect(ozet.toplamNet).toBe(49)
+    expect(ozet.toplamDogru).toBe(51)
+    expect(ozet.toplamYanlis).toBe(8)
+    expect(ozet.toplamBos).toBe(120 - 51 - 8)
+    expect(ozet.topluNetleri).toEqual({ sosyal: 15 })
+    expect(ozet.dersNetleri.tarih).toBeUndefined()
+    expect(ozet.dersNetleri.din).toBeUndefined()
+    expect(ozet.dersNetleri.kimya).toBe(0)
+  })
+
+  it('AYT fen neti testlere soru sayısına orantılı dağılır', () => {
+    const deneme: Deneme = {
+      id: 'a1',
+      sablonId: 'ayt-say',
+      ad: 'AYT',
+      tarih: '2026-08-16',
+      sonuclar: [{ dersId: 'matematik', dogru: 30, yanlis: 0 }],
+      toplu: [{ grup: 'fen', dogru: 20, yanlis: 0 }],
+    }
+    const netler = osymNetleri(deneme, aytSay)
+    expect(netler['ayt-mat']).toBe(30)
+    expect(netler['ayt-fizik']).toBe(7)
+    expect(netler['ayt-kimya']).toBe(6.5)
+    expect(netler['ayt-biyoloji']).toBe(6.5)
+    expect(denemeOzeti(deneme, aytSay).toplamNet).toBe(50)
+  })
+
+  it('alanı olmayan eski kayıt aynı sonucu verir', () => {
+    const eski: Deneme = {
+      id: 'e1',
+      sablonId: 'tyt',
+      ad: 'Eski',
+      tarih: '2026-08-16',
+      sonuclar: [
+        { dersId: 'turkce', dogru: 30, yanlis: 4 },
+        { dersId: 'tarih', dogru: 4, yanlis: 1 },
+      ],
+    }
+    const ozet = denemeOzeti(eski, tyt)
+    expect(ozet.toplamNet).toBe(32.75)
+    expect(ozet.topluNetleri).toEqual({})
+    expect(ozet.dersNetleri.tarih).toBe(3.75)
+    expect(osymNetleri(eski, tyt)).toEqual({
+      'tyt-turkce': 29,
+      'tyt-sosyal': 3.75,
+      'tyt-mat': 0,
+      'tyt-fen': 0,
+    })
+  })
+
+  it('soru sayısını aşan toplu satır hesaba girmez', () => {
+    const bozuk: Deneme = { ...tytToplu, toplu: [{ grup: 'sosyal', dogru: 18, yanlis: 5 }] }
+    expect(denemeOzeti(bozuk, tyt).topluNetleri).toEqual({})
+  })
+})
+
 describe('obpTahmini', () => {
   const yil = (sinif: number, ortalama: number) => ({
     id: String(sinif),

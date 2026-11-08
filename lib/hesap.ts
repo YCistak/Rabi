@@ -7,8 +7,10 @@ import type {
   OsymTest,
   Sablon,
   SablonDers,
+  TopluGrup,
 } from './types'
 import { haftaBasi, tariheCevir, tariheYaz } from './utils'
+import { gecerliToplu, topluDersIdleri, topluTestDagilimi } from './toplu-grup'
 
 /** Ondalık gösterimde kayan nokta artıklarını temizler (0.30000000000000004 gibi). */
 export function yuvarla(sayi: number, basamak = 2): number {
@@ -57,7 +59,13 @@ export function sonucGecerliMi(sonuc: DersSonuc, ders: SablonDers): boolean {
 }
 
 export type DenemeOzeti = {
+  /**
+   * Ders ders netler. Toplu girilmiş grubun derslerinin anahtarı **yok**:
+   * o deneme o dersin serisinde boş kalır, sıfır sayılmaz.
+   */
   dersNetleri: Record<string, number>
+  /** Toplu girilen grupların neti (`Deneme.toplu`). */
+  topluNetleri: Partial<Record<TopluGrup, number>>
   toplamNet: number
   toplamDogru: number
   toplamYanlis: number
@@ -65,15 +73,22 @@ export type DenemeOzeti = {
   toplamSoru: number
 }
 
-/** Bir denemenin ders bazlı netleri ve toplamı. */
+/**
+ * Bir denemenin ders bazlı netleri ve toplamı. Toplu girilen grup toplamlara
+ * tek satır olarak girer; derslerine net yazılmaz (`lib/toplu-grup.ts`).
+ */
 export function denemeOzeti(deneme: Deneme, sablon: Sablon): DenemeOzeti {
   const dersNetleri: Record<string, number> = {}
+  const topluNetleri: Partial<Record<TopluGrup, number>> = {}
+  const topluDersler = topluDersIdleri(deneme, sablon)
   let toplamNet = 0
   let toplamDogru = 0
   let toplamYanlis = 0
   let toplamSoru = 0
 
   for (const ders of sablon.dersler) {
+    toplamSoru += ders.soruSayisi
+    if (topluDersler.has(ders.id)) continue
     const sonuc = deneme.sonuclar.find((s) => s.dersId === ders.id)
     const dogru = sonuc?.dogru ?? 0
     const yanlis = sonuc?.yanlis ?? 0
@@ -83,11 +98,19 @@ export function denemeOzeti(deneme: Deneme, sablon: Sablon): DenemeOzeti {
     toplamNet += dersNeti
     toplamDogru += dogru
     toplamYanlis += yanlis
-    toplamSoru += ders.soruSayisi
+  }
+
+  for (const satir of gecerliToplu(deneme, sablon)) {
+    const grupNeti = net(satir.dogru, satir.yanlis, sablon.yanlisKatsayi)
+    topluNetleri[satir.grup] = grupNeti
+    toplamNet += grupNeti
+    toplamDogru += satir.dogru
+    toplamYanlis += satir.yanlis
   }
 
   return {
     dersNetleri,
+    topluNetleri,
     toplamNet: yuvarla(toplamNet),
     toplamDogru,
     toplamYanlis,
@@ -114,22 +137,28 @@ export type DersIstatistigi = {
   yuzde: number
 }
 
-/** Belirli bir şablonun denemeleri için ders bazlı ortalama ve gidişat. */
+/**
+ * Belirli bir şablonun denemeleri için ders bazlı ortalama ve gidişat. "Son 3"
+ * dersin ders ders girildiği son üç denemedir.
+ */
 export function dersIstatistikleri(denemeler: Deneme[], sablon: Sablon): DersIstatistigi[] {
   const sirali = tarihSirala(denemeler)
   if (sirali.length === 0) return []
 
   const ozetler = sirali.map((d) => denemeOzeti(d, sablon))
-  const sonKac = Math.min(3, ozetler.length)
-  const sonOzetler = ozetler.slice(-sonKac)
 
-  return sablon.dersler.map((ders) => {
-    const netler = ozetler.map((o) => o.dersNetleri[ders.id] ?? 0)
-    const sonNetler = sonOzetler.map((o) => o.dersNetleri[ders.id] ?? 0)
+  // Dersin toplu girildiği denemeler serisine girmez (sıfır sayılmaz); hiç
+  // ders ders verisi olmayan ders listede yer almaz.
+  return sablon.dersler.flatMap((ders) => {
+    const netler = ozetler.flatMap((o) =>
+      o.dersNetleri[ders.id] === undefined ? [] : [o.dersNetleri[ders.id]],
+    )
+    if (netler.length === 0) return []
+    const sonNetler = netler.slice(-Math.min(3, netler.length))
     const ortalama = yuvarla(netler.reduce((a, b) => a + b, 0) / netler.length)
     const sonOrtalama = yuvarla(sonNetler.reduce((a, b) => a + b, 0) / sonNetler.length)
 
-    return {
+    return [{
       ders,
       ortalama,
       sonOrtalama,
@@ -137,7 +166,7 @@ export function dersIstatistikleri(denemeler: Deneme[], sablon: Sablon): DersIst
       enIyi: yuvarla(Math.max(...netler)),
       enKotu: yuvarla(Math.min(...netler)),
       yuzde: ders.soruSayisi > 0 ? yuvarla((ortalama / ders.soruSayisi) * 100, 1) : 0,
-    }
+    }]
   })
 }
 
@@ -155,6 +184,10 @@ export function trendSerisi(denemeler: Deneme[], sablon: Sablon): TrendNoktasi[]
  * Denemenin netlerini ÖSYM test bloklarına toplar — puan hesabının girdisi.
  * Birden çok ders aynı bloğa bağlıysa (TYT Sosyal = Tarih + Coğrafya + Felsefe + Din)
  * netleri toplanır. `osymTesti` verilmemiş dersler dışarıda kalır.
+ *
+ * Toplu girilen grup (`Deneme.toplu`) testlerine `topluTestDagilimi` ile
+ * gider: TYT'de olduğu gibi, AYT'de üye derslerin soru sayısına orantılı —
+ * yalnız puan tahmini için, ders netine yazılmaz.
  */
 export function osymNetleri(deneme: Deneme, sablon: Sablon): Partial<Record<OsymTest, number>> {
   const ozet = denemeOzeti(deneme, sablon)
@@ -162,8 +195,19 @@ export function osymNetleri(deneme: Deneme, sablon: Sablon): Partial<Record<Osym
 
   for (const ders of sablon.dersler) {
     if (!ders.osymTesti) continue
-    const dersNeti = ozet.dersNetleri[ders.id] ?? 0
+    // Toplu grubun dersinin anahtarı yok; onun payı aşağıda gruptan geliyor.
+    if (ozet.dersNetleri[ders.id] === undefined) continue
+    const dersNeti = ozet.dersNetleri[ders.id]
     netler[ders.osymTesti] = yuvarla((netler[ders.osymTesti] ?? 0) + dersNeti)
+  }
+
+  for (const [grup, grupNeti] of Object.entries(ozet.topluNetleri) as [TopluGrup, number][]) {
+    for (const [test, pay] of Object.entries(topluTestDagilimi(grupNeti, grup, sablon)) as [
+      OsymTest,
+      number,
+    ][]) {
+      netler[test] = yuvarla((netler[test] ?? 0) + pay)
+    }
   }
 
   return netler
