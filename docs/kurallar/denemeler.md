@@ -21,8 +21,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - **Dersleri düzenle soru sınırı:** ders başı en çok 40 (`DERS_EN_COK_SORU`, kullanıcı
   istedi, 2026-10-29). Hazırda fazlası olan ders (Dil alanında Yabancı Dil 80)
   hazırdaki sayıya kadar çıkar (`dersSoruSiniri`); yoksa o alanda kayıt yapılamazdı.
-- **Toplu grup girişi** (kullanıcı istedi, 2026-11): denemede Sosyal ve Fen
-  "Ders ders · Toplu" segmentiyle grup hâlinde girilebilir ("sosyalden 20 doğru").
+- **Toplu grup girişi** (kullanıcı istedi, 2026-11): denemede Sosyal ve Fen Katlanır Satır
+  tasarımıyla grup hâlinde girilebilir ("sosyalden 20 doğru").
+  - **Arayüz (Katlanır Satır, her zaman açık):** "Ders ders · Toplu" segmenti ve
+    aç/kapa chevron'u yok; grup satırı ve altındaki girintili dersler her zaman
+    görünür. Hangi tarafın kullanılacağı yazılan sayılardan anlaşılır: grup
+    satırına sayı yazılırsa grup toplu sayılır, ders kutuları pasif (`disabled`)
+    ve boş kalır; ders satırlarından birine sayı yazılırsa grup satırının kutuları
+    gizlenir, yerinde kutusuz toplam özet rakamları yazar. Bir taraftan öbürüne
+    geçmek için o tarafı silmek yeterlidir; sayılar otomatik aktarılmaz veya
+    bölünmez (sahte veri ve veri kaybı olmasın). Uyarı grup başında değil, tablonun
+    en altında tek satır dipnot olarak yalnız en az bir grup toplu doluyken
+    çıkar ("Toplu girince istatistiklerde bu derslerin ayrı analizi olmaz.").
   - **Model:** `Deneme.toplu?: TopluSonuc[]` (`{ grup: 'sosyal' | 'fen', dogru, yanlis }`).
     Toplu girilen grubun derslerinin `sonuclar`da satırı olmaz; grup ya toplu ya ders
     ders. Üyelik tek yerde, ders kimliğinden (`lib/toplu-grup.ts`): Fen = fizik, kimya,
@@ -37,9 +47,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   - **İstatistik:** toplu denemede grubun dersleri o deneme için **boş** (anahtar yok,
     sıfır sayılmaz): değişim, en güçlü/zayıf ders ve karşılaştırma o dersi atlar. Ders
     sayfasında tek satır sönük not ("Fen: 2 denemede toplu girildi"), karşılaştırmada
-    "… toplu girildi; dersleri ayrı kıyaslanmadı". Formda toplu satırın altında tek
-    satır uyarı.
+    "… toplu girildi; dersleri ayrı kıyaslanmadı". Formda tablonun altında tek
+    satır dipnot.
   - **Sahte ders verisi yasak:** toplu sonuç derslere bölünüp "Tarih 5 doğru" gibi
-    yazılmaz; toplu → ders ders geçişte ders kutuları boş açılır. Ders ders → toplu
-    geçişte yazılmış ders sayıları toplanıp taşınır. Okut (OCR) ders ders okur; okunan
-    dersi olan grup ders derse döner.
+    yazılmaz; sayılar otomatik aktarılmaz. Okut (OCR) ders ders okur; okunan dersi
+    olan grup ders derse döner (grup kutuları boşaltılır).

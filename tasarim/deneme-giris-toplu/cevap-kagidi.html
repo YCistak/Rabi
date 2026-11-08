@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cevap Kâğıdı — Deneme Girişi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #f8f8f7;
+      --foreground: #1b1a19;
+      --card: #ffffff;
+      --muted: #efeeeb;
+      --muted-foreground: #6b6764;
+      --border: #eae9e6;
+      --input: #eae9e6;
+      --primary: #b3491f;
+      --primary-parlak: #d9622f;
+      --primary-soft: #fbeee7;
+      --success: #4f7a4a;
+      --success-soft: #e9f0e4;
+      --danger: #b23b2b;
+      --danger-soft: #f7e5e2;
+      --shadow-kart: 0 6px 20px rgba(90, 60, 35, 0.07);
+    }
+    .koyu {
+      --background: #1f1d1b;
+      --foreground: #f5f1ed;
+      --card: #2a2724;
+      --muted: #37322e;
+      --muted-foreground: #bbb3ac;
+      --border: #45403b;
+      --input: #4b4540;
+      --primary: #f19a70;
+      --primary-parlak: #d9622f;
+      --primary-soft: #492e21;
+      --success: #9dca93;
+      --success-soft: #29382a;
+      --danger: #ee9a91;
+      --danger-soft: #452b29;
+      --shadow-kart: 0 6px 20px rgba(0, 0, 0, 0.22);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 880px; height: 1000px; margin: 0; overflow: hidden; }
+    body { background: #ECEAE6; color: #1b1a19; font-family: Nunito, sans-serif; }
+    .sayfa { padding-top: 24px; }
+    .baslik { margin: 0 0 2px 28px; font-size: 28px; font-weight: 800; line-height: 1.1; letter-spacing: -.7px; }
+    .ozet { margin: 0 0 16px 28px; color: #6b6764; font-size: 15px; font-weight: 600; }
+    .telefonlar { display: flex; gap: 44px; padding: 0 28px; }
+    .ornek { width: 390px; }
+    .telefon {
+      width: 390px; height: 844px; overflow: hidden; border: 1.5px solid #292724; border-radius: 44px;
+      background: var(--background); box-shadow: 0 10px 22px rgba(44, 37, 31, .16); color: var(--foreground);
+    }
+    .ekran { padding: 30px 16px 18px; }
+    .ust { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .ust h2 { margin: 0; font-size: 20px; line-height: 1; font-weight: 800; letter-spacing: -.35px; }
+    .ust button { width: 27px; height: 27px; border: 0; border-radius: 6px; background: transparent; color: var(--muted-foreground); font: 700 18px/1 Nunito; }
+    .bolum { margin: 0 0 8px; color: var(--muted-foreground); font-size: 12px; font-weight: 800; }
+    .kart { overflow: hidden; border: 1px solid var(--border); border-radius: 8px; background: var(--card); box-shadow: var(--shadow-kart); }
+    .sutunlar, .satir { display: grid; grid-template-columns: minmax(0, 1fr) 45px 45px 45px; column-gap: 7px; align-items: center; }
+    .sutunlar { min-height: 35px; padding: 0 11px; border-bottom: 1px solid var(--border); color: var(--muted-foreground); font-size: 11px; font-weight: 800; }
+    .sutunlar span:not(:first-child) { text-align: center; }
+    .satir { min-height: 58px; padding: 7px 11px; border-bottom: 1px solid var(--border); }
+    .satir:last-child { border-bottom: 0; }
+    .ders-ad { display: block; font-size: 14px; font-weight: 800; line-height: 17px; }
+    .ders-bilgi { display: block; margin-top: 2px; color: var(--muted-foreground); font-size: 11px; font-weight: 600; }
+    .kutu { height: 32px; border: 1px solid var(--input); border-radius: 6px; background: var(--background); color: var(--foreground); font-size: 14px; font-weight: 800; line-height: 30px; text-align: center; font-variant-numeric: tabular-nums; }
+    .net { color: var(--success); font-size: 14px; font-weight: 900; text-align: right; font-variant-numeric: tabular-nums; }
+    .grup-baslik { display: flex; align-items: baseline; justify-content: space-between; min-height: 35px; padding: 7px 11px 4px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--muted) 54%, transparent); }
+    .grup-baslik strong { font-size: 12px; font-weight: 900; }
+    .grup-baslik a { color: var(--primary); font-size: 11px; font-weight: 800; text-decoration: none; }
+    .alt-ders .ders-ad { padding-left: 10px; font-size: 13px; }
+    .alt-ders .ders-bilgi { padding-left: 10px; font-size: 10.5px; }
+    .uyari { margin: 9px 2px 0; color: var(--muted-foreground); font-size: 11px; font-weight: 600; line-height: 16px; }
+    .etiket { margin-top: 8px; color: #5f5b57; font-size: 12px; font-weight: 800; text-align: center; }
+  </style>
+</head>
+<body>
+  <main class="sayfa">
+    <h1 class="baslik">Cevap Kâğıdı</h1>
+    <p class="ozet">Ders ve grup sonuçları, tek kartta kısa ve okunur.</p>
+
+    <section class="telefonlar" aria-label="Deneme girişi tasarım örnekleri">
+      <article class="ornek">
+        <div class="telefon koyu">
+          <div class="ekran">
+            <header class="ust"><h2>Yeni Deneme · TYT</h2><button aria-label="Kapat">×</button></header>
+            <p class="bolum">Elle gir</p>
+            <section class="kart" aria-label="Koyu tema toplu giriş">
+              <div class="sutunlar"><span>Ders</span><span>D</span><span>Y</span><span>Net</span></div>
+              <div class="satir"><div><span class="ders-ad">Türkçe</span><span class="ders-bilgi">40 soru · 5 boş</span></div><div class="kutu">30</div><div class="kutu">5</div><div class="net">28,75</div></div>
+              <div class="grup-baslik"><strong>Sosyal</strong><a href="#">Derslere ayır</a></div>
+              <div class="satir"><div><span class="ders-ad">Sosyal</span><span class="ders-bilgi">20 soru · 3 boş</span></div><div class="kutu">15</div><div class="kutu">2</div><div class="net">14,50</div></div>
+              <div class="satir"><div><span class="ders-ad">Temel Matematik</span><span class="ders-bilgi">40 soru · 10 boş</span></div><div class="kutu">25</div><div class="kutu">5</div><div class="net">23,75</div></div>
+              <div class="grup-baslik"><strong>Fen</strong><a href="#">Derslere ayır</a></div>
+              <div class="satir"><div><span class="ders-ad">Fen</span><span class="ders-bilgi">20 soru · 5 boş</span></div><div class="kutu">12</div><div class="kutu">3</div><div class="net">11,25</div></div>
+            </section>
+            <p class="uyari">Toplu girilen grupların ders bazında istatistiği oluşmaz.</p>
+          </div>
+        </div>
+        <p class="etiket">Koyu · toplu</p>
+      </article>
+
+      <article class="ornek">
+        <div class="telefon">
+          <div class="ekran">
+            <header class="ust"><h2>Yeni Deneme · TYT</h2><button aria-label="Kapat">×</button></header>
+            <p class="bolum">Elle gir</p>
+            <section class="kart" aria-label="Açık tema ders ders giriş">
+              <div class="sutunlar"><span>Ders</span><span>D</span><span>Y</span><span>Net</span></div>
+              <div class="satir"><div><span class="ders-ad">Türkçe</span><span class="ders-bilgi">40 soru · 5 boş</span></div><div class="kutu">30</div><div class="kutu">5</div><div class="net">28,75</div></div>
+              <div class="grup-baslik"><strong>Sosyal</strong><a href="#">Toplu gir</a></div>
+              <div class="satir alt-ders"><div><span class="ders-ad">Tarih</span><span class="ders-bilgi">5 soru · 0 boş</span></div><div class="kutu">4</div><div class="kutu">1</div><div class="net">3,75</div></div>
+              <div class="satir alt-ders"><div><span class="ders-ad">Coğrafya</span><span class="ders-bilgi">5 soru · 1 boş</span></div><div class="kutu">4</div><div class="kutu">0</div><div class="net">4</div></div>
+              <div class="satir alt-ders"><div><span class="ders-ad">Felsefe</span><span class="ders-bilgi">5 soru · 1 boş</span></div><div class="kutu">3</div><div class="kutu">1</div><div class="net">2,75</div></div>
+              <div class="satir alt-ders"><div><span class="ders-ad">Din Kültürü</span><span class="ders-bilgi">5 soru · 0 boş</span></div><div class="kutu">5</div><div class="kutu">0</div><div class="net">5</div></div>
+              <div class="satir"><div><span class="ders-ad">Temel Matematik</span><span class="ders-bilgi">40 soru · 10 boş</span></div><div class="kutu">25</div><div class="kutu">5</div><div class="net">23,75</div></div>
+              <div class="grup-baslik"><strong>Fen</strong><a href="#">Derslere ayır</a></div>
+              <div class="satir"><div><span class="ders-ad">Fen</span><span class="ders-bilgi">20 soru · 5 boş</span></div><div class="kutu">12</div><div class="kutu">3</div><div class="net">11,25</div></div>
+            </section>
+            <p class="uyari">Toplu girilen grupların ders bazında istatistiği oluşmaz.</p>
+          </div>
+        </div>
+        <p class="etiket">Açık · ders ders</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
