@@ -45,10 +45,16 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     **orantılı** dağıtılır (`topluTestDagilimi`) — yalnız puan tahmini için; ders netine
     ve ders istatistiğine yazılmaz.
   - **İstatistik:** toplu denemede grubun dersleri o deneme için **boş** (anahtar yok,
-    sıfır sayılmaz): değişim, en güçlü/zayıf ders ve karşılaştırma o dersi atlar. Ders
-    sayfasında tek satır sönük not ("Fen: 2 denemede toplu girildi"), karşılaştırmada
-    "… toplu girildi; dersleri ayrı kıyaslanmadı". Formda tablonun altında tek
-    satır dipnot.
+    sıfır sayılmaz): en güçlü/zayıf ders hesabı bu dersleri atlar (yalnız ders ders girilen
+    denemelerden oranlanır). Karşılaştırma ve en çok ilerleyen derslerde ise grup
+    düzeyinde karşılaştırma yapılır (`grupNeti`): iki denemede de ders ders ise ders ders
+    kıyaslanır; en az birinde toplu girildiyse o grubun dersleri yerine tek bir grup
+    satırı ("Sosyal" / "Fen", grup neti) "toplu" etiketiyle listelere (kazanç/kayıp/sabit)
+    ve en büyük sıçrama/düşüş adaylarına girer. Ders bazında ilerleyiş sayfasında grubu
+    olan şablonlarda Sosyal ve Fen için grup neti serisi her zaman çizilir ("Sosyal (toplam)" /
+    "Fen (toplam)"); ders serileri yalnız ders ders denemelerden çizilmeye devam eder;
+    "N denemede toplu girildi" notu kalır. Karşılaştırmadaki eski "dersleri ayrı
+    kıyaslanmadı" uyarısı kaldırılmıştır.
   - **Sahte ders verisi yasak:** toplu sonuç derslere bölünüp "Tarih 5 doğru" gibi
     yazılmaz; sayılar otomatik aktarılmaz. Okut (OCR) ders ders okur; okunan dersi
     olan grup ders derse döner (grup kutuları boşaltılır).

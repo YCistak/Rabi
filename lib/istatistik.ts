@@ -9,9 +9,11 @@
  * sınavının soru sayısı farklı, netleri aynı hesaba girmez.
  */
 
-import { denemeOzeti, tarihSirala, yuvarla, type DenemeOzeti } from './hesap'
-import { gecerliToplu, TOPLU_GRUPLAR, TOPLU_GRUP_ADI } from './toplu-grup'
+import { denemeOzeti, grupNeti, tarihSirala, yuvarla, type DenemeOzeti } from './hesap'
+import { gecerliToplu, sablonGruplari, TOPLU_GRUPLAR, TOPLU_GRUP_ADI } from './toplu-grup'
 import type { Deneme, Sablon, TopluGrup } from './types'
+
+export { grupNeti } from './hesap'
 
 /** Kayan nokta artığı: 0,25'lik netlerin farkında 1e-15 kalıyor ve "değişmedi"yi bozuyor. */
 const ESIK = 0.001
@@ -34,6 +36,8 @@ export type DersDegisimi = {
   onceki: number
   son: number
   fark: number
+  /** Toplu grup satırı mı? */
+  toplu?: boolean
 }
 
 /**
@@ -53,16 +57,122 @@ export function topluNotlari(denemeler: Deneme[], sablon: Sablon): TopluNotu[] {
 }
 
 /**
- * İki özette de ders ders girilmiş dersin değişimi. Birinde toplu girildiyse
- * ders atlanıyor: boş deneme sıfır sayılsaydı sahte bir "−5 net" çıkardı.
+ * İki deneme arasındaki ders değişimleri.
+ * Bir grup iki denemede de ders ders girildiyse: ders ders.
+ * Grup en az birinde toplu girildiyse: o grup için dersler yerine
+ * tek bir grup satırı ("Sosyal" / "Fen") eklenir (toplu: true).
  */
-function dersDegisimleri(a: DenemeOzeti, b: DenemeOzeti, sablon: Sablon): DersDegisimi[] {
-  return sablon.dersler.flatMap((ders) => {
-    const once = a.dersNetleri[ders.id]
-    const sonra = b.dersNetleri[ders.id]
-    if (once === undefined || sonra === undefined) return []
-    return [{ dersId: ders.id, ad: ders.ad, onceki: once, son: sonra, fark: yuvarla(sonra - once) }]
-  })
+export function dersDegisimleri(
+  aDeneme: Deneme,
+  bDeneme: Deneme,
+  sablon: Sablon,
+): DersDegisimi[] {
+  const oa = denemeOzeti(aDeneme, sablon)
+  const ob = denemeOzeti(bDeneme, sablon)
+
+  const gruplar = sablonGruplari(sablon)
+  const topluGrupKumesi = new Set<TopluGrup>()
+  for (const g of gruplar) {
+    const aToplu = gecerliToplu(aDeneme, sablon).some((t) => t.grup === g.grup)
+    const bToplu = gecerliToplu(bDeneme, sablon).some((t) => t.grup === g.grup)
+    if (aToplu || bToplu) {
+      topluGrupKumesi.add(g.grup)
+    }
+  }
+
+  const atlanacakDersIdleri = new Set<string>()
+  for (const g of gruplar) {
+    if (topluGrupKumesi.has(g.grup)) {
+      for (const id of g.dersIdleri) atlanacakDersIdleri.add(id)
+    }
+  }
+
+  const degisimler: DersDegisimi[] = []
+
+  // Şablondaki dersler (toplu olan grupların dersleri atlanır)
+  for (const ders of sablon.dersler) {
+    if (atlanacakDersIdleri.has(ders.id)) continue
+    const once = oa.dersNetleri[ders.id]
+    const sonra = ob.dersNetleri[ders.id]
+    if (once === undefined || sonra === undefined) continue
+    degisimler.push({
+      dersId: ders.id,
+      ad: ders.ad,
+      onceki: once,
+      son: sonra,
+      fark: yuvarla(sonra - once),
+    })
+  }
+
+  // En az bir denemede toplu girilen gruplar tek grup satırı olarak eklenir
+  for (const g of gruplar) {
+    if (!topluGrupKumesi.has(g.grup)) continue
+    const once = grupNeti(aDeneme, sablon, g.grup)
+    const sonra = grupNeti(bDeneme, sablon, g.grup)
+    if (once === null || sonra === null) continue
+    degisimler.push({
+      dersId: g.grup,
+      ad: TOPLU_GRUP_ADI[g.grup],
+      onceki: once,
+      son: sonra,
+      fark: yuvarla(sonra - once),
+      toplu: true,
+    })
+  }
+
+  return degisimler
+}
+
+/**
+ * Ders bazında ilerleyiş sayfası için değişim listesi:
+ * Şablonun dersleri yalnız ders ders denemelerden çizilir (biri topluysa atlanır).
+ * Grubu olan şablonlarda Sosyal ve Fen için grup neti serisi ("Sosyal (toplam)",
+ * "Fen (toplam)") her zaman çizilir (her deneme için grupNeti).
+ */
+export function dersBazindaIlerleyisler(
+  aDeneme: Deneme,
+  bDeneme: Deneme,
+  sablon: Sablon,
+): DersDegisimi[] {
+  const oa = denemeOzeti(aDeneme, sablon)
+  const ob = denemeOzeti(bDeneme, sablon)
+
+  const degisimler: DersDegisimi[] = []
+
+  // 1. Mevcut ders serileri: yalnız ders ders girilmişse var olur
+  for (const ders of sablon.dersler) {
+    const once = oa.dersNetleri[ders.id]
+    const sonra = ob.dersNetleri[ders.id]
+    if (once === undefined || sonra === undefined) continue
+    degisimler.push({
+      dersId: ders.id,
+      ad: ders.ad,
+      onceki: once,
+      son: sonra,
+      fark: yuvarla(sonra - once),
+    })
+  }
+
+  // 2. Grubu olan şablonlarda Sosyal ve Fen grup toplamı her zaman çizilir
+  const gruplar = sablonGruplari(sablon)
+  for (const g of gruplar) {
+    const once = grupNeti(aDeneme, sablon, g.grup)
+    const sonra = grupNeti(bDeneme, sablon, g.grup)
+    if (once === null || sonra === null) continue
+    const enAzBiriToplu = [aDeneme, bDeneme].some((d) =>
+      gecerliToplu(d, sablon).some((t) => t.grup === g.grup),
+    )
+    degisimler.push({
+      dersId: `${g.grup}-toplam`,
+      ad: `${TOPLU_GRUP_ADI[g.grup]} (toplam)`,
+      onceki: once,
+      son: sonra,
+      fark: yuvarla(sonra - once),
+      toplu: enAzBiriToplu,
+    })
+  }
+
+  return degisimler
 }
 
 export type IstatistikOzeti = {
@@ -77,6 +187,8 @@ export type IstatistikOzeti = {
   sonDortNet: number[]
   /** Son deneme ile bir öncekinin ders ders farkı; tek denemede boş. */
   degisimler: DersDegisimi[]
+  /** Ders bazında ilerleyiş sayfası için; grup serileri dahil. */
+  dersIlerleyisleri: DersDegisimi[]
   /** Ortalama netin soru sayısına oranı en yüksek / en düşük ders. */
   enGucluDers: string | null
   enZayifDers: string | null
@@ -93,7 +205,13 @@ export function istatistikOzeti(denemeler: Deneme[], sablon: Sablon): Istatistik
   const son = ozetler[ozetler.length - 1]
   const onceki = ozetler.length > 1 ? ozetler[ozetler.length - 2] : null
 
-  const degisimler: DersDegisimi[] = onceki ? dersDegisimleri(onceki, son, sablon) : []
+  const sonDeneme = sirali[sirali.length - 1]
+  const oncekiDeneme = sirali.length > 1 ? sirali[sirali.length - 2] : null
+
+  const degisimler: DersDegisimi[] =
+    oncekiDeneme && sonDeneme ? dersDegisimleri(oncekiDeneme, sonDeneme, sablon) : []
+  const dersIlerleyisleri: DersDegisimi[] =
+    oncekiDeneme && sonDeneme ? dersBazindaIlerleyisler(oncekiDeneme, sonDeneme, sablon) : []
 
   // Ders kıyası ham net değil oranla: 40 soruluk Türkçe'nin 20 neti, 5 soruluk
   // Felsefe'nin 4 netinden "güçlü" değil. Ortalama yalnız dersin ders ders
@@ -119,6 +237,7 @@ export function istatistikOzeti(denemeler: Deneme[], sablon: Sablon): Istatistik
     enDusuk: Math.min(...netler),
     sonDortNet: netler.slice(-4),
     degisimler,
+    dersIlerleyisleri,
     enGucluDers: oranSirali[0]?.ad ?? null,
     // Tek ders varsa aynı ders iki kutuda birden yazılırdı.
     enZayifDers: oranSirali.length > 1 ? oranSirali[oranSirali.length - 1].ad : null,
@@ -151,7 +270,7 @@ export function denemeKarsilastir(x: Deneme, y: Deneme, sablon: Sablon): Karsila
   const oa = denemeOzeti(a, sablon)
   const ob = denemeOzeti(b, sablon)
 
-  const satirlar = dersDegisimleri(oa, ob, sablon).sort(
+  const satirlar = dersDegisimleri(a, b, sablon).sort(
     (p, q) => Math.abs(q.fark) - Math.abs(p.fark),
   )
   const topluGruplar = TOPLU_GRUPLAR.filter((g) =>

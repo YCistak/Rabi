@@ -16,7 +16,6 @@ import {
   type TopluNotu,
   type Yon,
 } from '@/lib/istatistik'
-import { TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { cn } from '@/lib/utils'
@@ -241,6 +240,11 @@ export function IstatistikEkrani({
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[15px] font-extrabold tracking-[-0.01em]">
                   {d.ad}
+                  {d.toplu && (
+                    <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                      toplu
+                    </span>
+                  )}
                 </span>
                 <span className="mt-1.5 block h-1.5 overflow-hidden rounded-[3px] bg-muted">
                   <span
@@ -282,8 +286,8 @@ export function IstatistikEkrani({
 
       {dersSayfasi && (
         <DersSayfasi
-          degisimler={ozet.degisimler}
-          altYazi={`${ozet.degisimler.length} ders · ${sablon.ad} · ${ozet.denemeSayisi} deneme`}
+          degisimler={ozet.dersIlerleyisleri}
+          altYazi={`${ozet.dersIlerleyisleri.length} ders · ${sablon.ad} · ${ozet.denemeSayisi} deneme`}
           topluNotlari={ozet.topluNotlari}
           onKapat={() => setDersSayfasi(false)}
         />
@@ -489,6 +493,11 @@ function DersSayfasi({
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[14.5px] font-extrabold tracking-[-0.01em]">
                   {d.ad}
+                  {d.toplu && (
+                    <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                      toplu
+                    </span>
+                  )}
                 </span>
                 <span className="mt-1.5 block h-1.5 overflow-hidden rounded-[3px] bg-muted">
                   <span
@@ -665,13 +674,6 @@ function KarsilastirmaKatmani({
               {farkYaz(k.toplamFark, netYaz)} net
             </span>
           </div>
-          {/* Toplu girilen grubun dersleri kıyasa girmiyor; toplam nette var. */}
-          {k.topluGruplar.length > 0 && (
-            <p className="mt-2 text-[11.5px] font-semibold text-muted-foreground/70">
-              {k.topluGruplar.map((g) => TOPLU_GRUP_ADI[g]).join(', ')} toplu girildi; dersleri
-              ayrı kıyaslanmadı.
-            </p>
-          )}
         </div>
 
         <div
@@ -705,6 +707,11 @@ function KarsilastirmaKatmani({
                 >
                   <span className="min-w-0 flex-1 truncate text-[13.5px] font-extrabold tracking-[-0.01em]">
                     {s.ad}
+                    {s.toplu && (
+                      <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                        toplu
+                      </span>
+                    )}
                   </span>
                   <span className="rakam shrink-0 whitespace-nowrap text-xs font-extrabold text-muted-foreground/70">
                     {netYaz(s.son)} net
@@ -786,6 +793,11 @@ function DegisimKutusu({
           >
             <span className="min-w-0 flex-1 truncate text-[13.5px] font-extrabold tracking-[-0.01em]">
               {s.ad}
+              {s.toplu && (
+                <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                  toplu
+                </span>
+              )}
             </span>
             <span className="rakam flex shrink-0 items-baseline gap-[5px] whitespace-nowrap text-xs font-extrabold">
               <span className="text-muted-foreground/70">{netYaz(s.onceki)}</span>

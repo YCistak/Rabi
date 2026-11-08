@@ -10,7 +10,7 @@ import type {
   TopluGrup,
 } from './types'
 import { haftaBasi, tariheCevir, tariheYaz } from './utils'
-import { gecerliToplu, topluDersIdleri, topluTestDagilimi } from './toplu-grup'
+import { gecerliToplu, sablonGruplari, topluDersIdleri, topluTestDagilimi } from './toplu-grup'
 
 /** Ondalık gösterimde kayan nokta artıklarını temizler (0.30000000000000004 gibi). */
 export function yuvarla(sayi: number, basamak = 2): number {
@@ -117,6 +117,35 @@ export function denemeOzeti(deneme: Deneme, sablon: Sablon): DenemeOzeti {
     toplamBos: toplamSoru - toplamDogru - toplamYanlis,
     toplamSoru,
   }
+}
+
+/**
+ * Bir denemede grubun neti: toplu girildiyse toplu satırın neti;
+ * ders ders girildiyse üye derslerin netlerinin toplamı.
+ * Grubun hiç verisi yoksa (veya şablonda grup yoksa) null döner.
+ */
+export function grupNeti(deneme: Deneme, sablon: Sablon, grup: TopluGrup): number | null {
+  const gruplar = sablonGruplari(sablon)
+  const sablonGrup = gruplar.find((g) => g.grup === grup)
+  if (!sablonGrup) return null
+
+  const toplu = gecerliToplu(deneme, sablon).find((t) => t.grup === grup)
+  if (toplu) {
+    return net(toplu.dogru, toplu.yanlis, sablon.yanlisKatsayi)
+  }
+
+  const uyeDersIdleri = new Set(sablonGrup.dersIdleri)
+  const uyeSonuclar = deneme.sonuclar.filter((s) => uyeDersIdleri.has(s.dersId))
+  if (uyeSonuclar.length === 0) return null
+
+  let toplam = 0
+  for (const dersId of sablonGrup.dersIdleri) {
+    const sonuc = deneme.sonuclar.find((s) => s.dersId === dersId)
+    const dogru = sonuc?.dogru ?? 0
+    const yanlis = sonuc?.yanlis ?? 0
+    toplam += net(dogru, yanlis, sablon.yanlisKatsayi)
+  }
+  return yuvarla(toplam)
 }
 
 /** Denemeleri tarihe göre eskiden yeniye sıralar (eşitlikte kayıt sırası korunur). */
