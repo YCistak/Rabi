@@ -431,9 +431,9 @@ function metniHazirla(hamMetin: string): HazirMetin {
 const CEKIM_EKLERI = new Set([
   'den', 'dan', 'ten', 'tan', 'nden', 'ndan', 'de', 'da', 'te', 'ta', 'nde', 'nda',
   'e', 'a', 'ye', 'ya', 'ne', 'na', 'i', 'u', 'yi', 'yu', 'si', 'su', 'ni', 'nu',
-  'in', 'un', 'nin', 'nun', 'le', 'la', 'yle', 'yla', 'm',
+  'in', 'un', 'nin', 'nun', 'le', 'la', 'yle', 'yla', 'm', 'im', 'um',
 ])
-const YUMUSAMA_EKLERI = new Set(['e', 'a', 'i', 'u', 'in', 'un'])
+const YUMUSAMA_EKLERI = new Set(['e', 'a', 'i', 'u', 'in', 'un', 'im', 'um'])
 const KISA_KOKLER = new Set(['din', 'dil', 'fen'])
 const KISA_INCE_EKLER = new Set(['den', 'de', 'e', 'i', 'in'])
 const KISALTMALAR = new Set([
@@ -556,15 +556,14 @@ function dersleriTara<T>(
 // --- Ortak sayı/etiket okuma ve maskeleme ---
 
 const NET_DESENI =
-  /(?<![a-z0-9])(\d+)(?:(?:[.,]|\s*(?:virgul|nokta)\s*)(\d+)|\s+(bucuk))?\s*net(?:im|imiz|le|ten|te|e|i)?(?![a-z0-9])/g
-const SURE_VE_SIRA_DESENLERI = [
-  // "ayrıca" bağlacındaki "ay", süre birimi değildir; aksi hâlde önceki
-  // dersin soru sayısı da bağlaçla birlikte maskelenir.
-  /(?<![a-z0-9])\d+(?:[.,]\d+)?(?:\s+bucuk)?\s+(?:saat|dakika|dk|saniye|sn|gun|hafta|ay(?!rica)|yil)\w*(?![a-z0-9])/g,
-  /(?<![a-z0-9])\d+\s*(?:\.\s*|(?:inci|nci|uncu|ncu)\s+)(?:sinif|unite|adim|test|deneme|konu|bolum)\w*(?![a-z0-9])/g,
-  /(?<![a-z0-9])\d+\s+test\w*(?![a-z0-9])/g,
-  /(?<![a-z0-9])(?:9|10|11|12)\s+sinif\w*(?![a-z0-9])/g,
-]
+  /(?<![a-z0-9])(\d+)(?:(?:[.,]|\s*(?:virgul|nokta)\s*)(\d+)|\s+(bucuk))?\s*net[a-z0-9]*(?![a-z0-9])/g
+// "ayrıca" bağlacındaki "ay", süre birimi değildir; aksi hâlde önceki
+// dersin soru sayısı da bağlaçla birlikte maskelenir.
+const SURE_DESENI = /(?<![a-z0-9])\d+(?:[.,]\d+)?(?:\s+bucuk)?\s+(?:saat|dakika|dk|saniye|sn|gun|hafta|ay(?!rica)|yil)\w*(?![a-z0-9])/g
+const SIRA_DESENI = /(?<![a-z0-9])\d+\s*(?:\.\s*|(?:inci|nci|uncu|ncu)\s+)(?:sinif|unite|adim|deneme|konu|bolum)\w*(?![a-z0-9])/g
+const TEST_SIRA_DESENI = /(?<![a-z0-9])\d+\s*(?:\.\s*|(?:inci|nci|uncu|ncu)\s+)test\w*(?![a-z0-9])/g
+const TEST_DESENI = /(?<![a-z0-9])\d+\s+test\w*(?![a-z0-9])/g
+const SINIF_DESENI = /(?<![a-z0-9])(?:9|10|11|12)\s+sinif\w*(?![a-z0-9])/g
 const REDDEDILEN_TOPLAM_DESENI = /(?<![a-z0-9])toplam\s+\d+\s+degil(?![a-z0-9])/g
 const YANLIS_YOK_DESENI = /(?<![a-z0-9])(?:hic\s+yanlis\w*\s+yok|yanlis\w*\s+yok|yanlissiz)(?![a-z0-9])/
 const HEPSI_DOGRU_DESENI =
@@ -592,25 +591,55 @@ function netAyiklaVeMaskele(metin: string): { temizMetin: string; net: number | 
   return { temizMetin, net }
 }
 
-/** Çalışma süresi ("2 saat") ve sınıf/ünite sıra sayılarını soru sayısından ayırmak için maskeler. */
-function soruDisiSayilariMaskele(kesit: string): string {
-  const netsiz = netAyiklaVeMaskele(kesit).temizMetin
-  const siralanmis = SURE_VE_SIRA_DESENLERI.reduce((m, d) => bosluklaMaskele(m, d), netsiz)
+type SayiMaskeTuru = 'net' | 'sure' | 'sira' | 'test' | 'sinif' | 'reddedilen-toplam'
+type SayiMaskesi = { tur: SayiMaskeTuru; bas: number; son: number; anlasilmayanMi: boolean }
+
+/** Soru sayısı olmayan sayıların neden gizlendiğini, sonradan kullanıcıya açıklanacakları ayırmak için saklar. */
+function soruDisiSayilariAyir(kesit: string): { temizMetin: string; maskeler: SayiMaskesi[] } {
+  const maskeler: SayiMaskesi[] = []
+  const maskele = (metin: string, desen: RegExp, tur: SayiMaskeTuru, anlasilmayanMi: boolean) =>
+    bosluklaMaskele(metin, desen, (es) => {
+      const bas = es.index ?? 0
+      maskeler.push({ tur, bas, son: bas + es[0].length, anlasilmayanMi })
+    })
+
+  let temizMetin = maskele(kesit, NET_DESENI, 'net', false)
+  temizMetin = maskele(temizMetin, SURE_DESENI, 'sure', true)
+  temizMetin = maskele(temizMetin, SIRA_DESENI, 'sira', false)
+  temizMetin = maskele(temizMetin, TEST_SIRA_DESENI, 'test', true)
+  temizMetin = maskele(temizMetin, TEST_DESENI, 'test', true)
+  temizMetin = maskele(temizMetin, SINIF_DESENI, 'sinif', false)
   // Öğrenci "toplam 40 değil, ayrı ayrı 20" dediğinde reddettiği toplamı
   // kayda geçirmek yerine, açıkça söylediği dağıtımı kullanıyoruz.
-  return bosluklaMaskele(siralanmis, REDDEDILEN_TOPLAM_DESENI)
+  temizMetin = maskele(temizMetin, REDDEDILEN_TOPLAM_DESENI, 'reddedilen-toplam', false)
+  return { temizMetin, maskeler }
 }
 
-type SayiOgesi = { tur: 'toplam' | 'ulestirme' | 'dogru' | 'yanlis' | 'bos' | 'hepsi-dogru'; deger: number; bas: number; son: number; toplamEtiketli: boolean }
+/** Sayı dışı bağlamı yalnızca çözümleme yapan çağrılar için maskeler. */
+function soruDisiSayilariMaskele(kesit: string): string {
+  return soruDisiSayilariAyir(kesit).temizMetin
+}
 
-const IYELIK_EK_DESENI = "(?:\\s*'?\\s*(?:sini|sunu|sinda|sinde|sunda|sunde|ini|unu|inda|inde|unda|unde|si|su|i|u))"
+type SayiOgesi = {
+  tur: 'toplam' | 'ulestirme' | 'dogru' | 'yanlis' | 'bos' | 'hepsi-dogru' | 'kalan-dogru' | 'kalan-yanlis' | 'kalan-bos'
+  deger: number
+  bas: number
+  son: number
+  toplamEtiketli: boolean
+}
+
+const IYELIK_EK_DESENI = "(?:\\s*'?\\s*(?:sini|sunu|sını|sünü|sinda|sinde|sunda|sunde|sında|sünde|ini|unu|ını|ünü|inda|inde|unda|unde|ında|ünde|si|su|sı|sü|i|u|ı|ü))"
 const TANE_EK_DESENI = '(?:\\s+tane(?:si(?:ni|nde|nden)?|de|den)?)'
 const SAYI_ARA_EK_DESENI = `(?:${IYELIK_EK_DESENI}|${TANE_EK_DESENI})`
+// Konuşmada "10 tanesi ise boş"taki "ise" sonuç etiketinden önce girer.
+// Bu bağlaç sayı ile sonucu değiştirmez; etiketi ayırmak için yok sayılır.
+const SONUC_BAGLACI_DESENI = '(?:\\s+ise)?'
+const KALAN_SONUC_DESENI = /(?<![a-z0-9])(?:geri\s+)?kalan(?:i|lari)?\s+(?:ise\s+)?(dogru|yanlis|bos)\w*(?![a-z0-9])/g
 const SAYI_SON_ETIKETLERI: readonly { tur: SayiOgesi['tur']; desen: RegExp }[] = [
   { tur: 'ulestirme', desen: /^\s*'?\s*(?:ser|sar|er|ar)(?![a-z0-9])/ },
-  { tur: 'dogru', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?\\s*dogru\\w*|^${IYELIK_EK_DESENI}?\\s*d(?![a-z0-9])`) },
-  { tur: 'yanlis', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?\\s*yanlis\\w*|^${IYELIK_EK_DESENI}?\\s*y(?![a-z0-9])`) },
-  { tur: 'bos', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?\\s*bos\\w*|^${IYELIK_EK_DESENI}?\\s*b(?![a-z0-9])`) },
+  { tur: 'dogru', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?${SONUC_BAGLACI_DESENI}(?:\\s+d[ea])?\\s*dogru\\w*|^${IYELIK_EK_DESENI}?\\s*d(?![a-z0-9])`) },
+  { tur: 'yanlis', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?${SONUC_BAGLACI_DESENI}(?:\\s+d[ea])?\\s*yanlis\\w*|^${IYELIK_EK_DESENI}?\\s*y(?![a-z0-9])`) },
+  { tur: 'bos', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?${SONUC_BAGLACI_DESENI}(?:\\s+d[ea])?\\s*bos\\w*|^${IYELIK_EK_DESENI}?\\s*b(?![a-z0-9])`) },
 ]
 
 /** Verilen aralıktaki sayıları, doğru/yanlış/boş etiketlerini ve "hepsi doğru" ifadelerini çıkarır. */
@@ -644,6 +673,11 @@ function araliktakiSayilar(kesit: string, aralikBas: number, aralikSon: number):
   if (yanlisYokEs?.index !== undefined && !ogeler.some((o) => o.tur === 'yanlis')) {
     ekle('yanlis', 0, yanlisYokEs.index, yanlisYokEs.index + yanlisYokEs[0].length)
   }
+  for (const es of aralik.matchAll(KALAN_SONUC_DESENI)) {
+    const yer = es.index ?? 0
+    const sonuc = es[1] as 'dogru' | 'yanlis' | 'bos'
+    ekle(`kalan-${sonuc}`, 0, yer, yer + es[0].length)
+  }
   return ogeler.sort((a, b) => a.bas - b.bas)
 }
 
@@ -651,12 +685,14 @@ function araliktakiSayilar(kesit: string, aralikBas: number, aralikSon: number):
 function etiketleriAyir(ogeler: SayiOgesi[]) {
   const say = (tur: SayiOgesi['tur']) => ogeler.filter((o) => o.tur === tur)
   const [dogrular, yanlislar, boslar, hepsi] = [say('dogru'), say('yanlis'), say('bos'), say('hepsi-dogru')]
-  if (dogrular.length > 1 || yanlislar.length > 1 || boslar.length > 1 || hepsi.length > 1) return null
+  const kalanlar = [say('kalan-dogru'), say('kalan-yanlis'), say('kalan-bos')].flat()
+  if (dogrular.length > 1 || yanlislar.length > 1 || boslar.length > 1 || hepsi.length > 1 || kalanlar.length > 1) return null
   const d = dogrular[0]?.deger ?? null
   const y = yanlislar[0]?.deger ?? null
   const b = boslar[0]?.deger ?? null
-  if (hepsi.length === 1 && ((y ?? 0) !== 0 || (b ?? 0) !== 0)) return null
-  return { d, y, b, hepsiDogru: hepsi.length === 1, toplamlar: ogeler.filter((o) => o.tur === 'toplam' || o.tur === 'ulestirme') }
+  const kalan = kalanlar[0]?.tur.replace('kalan-', '') as 'dogru' | 'yanlis' | 'bos' | undefined
+  if (hepsi.length === 1 && ((y ?? 0) !== 0 || (b ?? 0) !== 0 || kalan !== undefined)) return null
+  return { d, y, b, kalan, hepsiDogru: hepsi.length === 1, toplamlar: ogeler.filter((o) => o.tur === 'toplam' || o.tur === 'ulestirme') }
 }
 
 // --- Bağlam ayırma (Deneme ↔ Soru Takibi) ---
@@ -892,7 +928,16 @@ function denemeSayilariCoz(parca: string, soruSayisi: number): { dogru: number; 
   const ayrilan = etiketleriAyir(ogeler)
   if (!ayrilan) return null
 
-  const { d, y, b, hepsiDogru, toplamlar: yalinar } = ayrilan
+  let { d, y, b } = ayrilan
+  const { kalan, hepsiDogru, toplamlar: yalinar } = ayrilan
+  if (kalan !== undefined) {
+    if ((kalan === 'dogru' && d !== null) || (kalan === 'yanlis' && y !== null) || (kalan === 'bos' && b !== null)) return null
+    const kalanSayi = soruSayisi - (d ?? 0) - (y ?? 0) - (b ?? 0)
+    if (kalanSayi < 0) return null
+    if (kalan === 'dogru') d = kalanSayi
+    if (kalan === 'yanlis') y = kalanSayi
+    if (kalan === 'bos') b = kalanSayi
+  }
   if (hepsiDogru) {
     if ((d !== null && d !== soruSayisi) || yalinar.some((o) => o.deger !== soruSayisi && o.deger !== 0)) return null
     return { dogru: soruSayisi, yanlis: 0 }
@@ -1038,7 +1083,17 @@ function soruGrubuDegerlendir(grup: DersGrubu, sayilar: SayiOgesi[]): SesliSoru[
   const ayrilan = etiketleriAyir(sayilar)
   if (!ayrilan || ayrilan.toplamlar.length > 1) return null
 
-  const { d, y, b, hepsiDogru, toplamlar } = ayrilan
+  let { d, y, b } = ayrilan
+  const { kalan, hepsiDogru, toplamlar } = ayrilan
+  const toplam = toplamlar[0]?.deger
+  if (kalan !== undefined) {
+    if (toplam === undefined || (kalan === 'dogru' && d !== null) || (kalan === 'yanlis' && y !== null) || (kalan === 'bos' && b !== null)) return null
+    const kalanSayi = toplam - (d ?? 0) - (y ?? 0) - (b ?? 0)
+    if (kalanSayi < 0) return null
+    if (kalan === 'dogru') d = kalanSayi
+    if (kalan === 'yanlis') y = kalanSayi
+    if (kalan === 'bos') b = kalanSayi
+  }
   const bos = b ?? 0
   const cozum = hepsiDogru
     ? toplamlar.length === 1 && (d === null || d === toplamlar[0]!.deger)
@@ -1060,7 +1115,8 @@ function soruGrubuDegerlendir(grup: DersGrubu, sayilar: SayiOgesi[]): SesliSoru[
 
 /** Tek bir soru bölümündeki ders gruplarını ve sayılarını eşleştirir. */
 function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[]; anlasilmayan: string[] } {
-  const kesit = soruDisiSayilariMaskele(hazir.norm.slice(bolum.bas, bolum.son))
+  const soruDisi = soruDisiSayilariAyir(hazir.norm.slice(bolum.bas, bolum.son))
+  const kesit = soruDisi.temizMetin
   const bulgular = dersleriTara(kesit, SORU_HEDEFLERI, GRUP_ANAHTARLARI)
   if (bulgular.length === 0) {
     // Ders adı olmadan söylenen soru adedini bir derse yazmak güvenli değildir.
@@ -1097,6 +1153,18 @@ function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[
   for (let i = 0; i < gruplar.length; i++) {
     const grup = gruplar[i]!
     const sayilar = atanan[i]!
+    if (sayilar.length === 0) {
+      const aralikBas = i === 0 ? 0 : gruplar[i - 1]!.son
+      const aralikSon = gruplar[i + 1]?.bas ?? kesit.length
+      const anlamliMaskeler = soruDisi.maskeler.filter((maske) => maske.anlasilmayanMi && maske.bas >= aralikBas && maske.son <= aralikSon)
+      // Net, sınıf ve sıra bilgisi ders adını tek başına anlaşılmayan yapmaz.
+      // Buna karşılık test adedi ya da süre, soru sayısı olmadığı için kullanıcıdan açıklama ister.
+      if (anlamliMaskeler.length === 0) continue
+      const parcaBas = Math.min(grup.bas, ...anlamliMaskeler.map((maske) => maske.bas))
+      const ham = hazir.hamKesit(bolum.bas + parcaBas, bolum.bas + aralikSon)
+      if (ham) anlasilmayan.push(ham)
+      continue
+    }
     const cozum = soruGrubuDegerlendir(grup, sayilar)
     if (cozum) {
       sorular.push(...cozum)

@@ -1,12 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { CalendarDays, MessageCircle, Mic, Plus, X } from 'lucide-react'
+import { CalendarDays, MessageCircle, Plus, X } from 'lucide-react'
 import type { Ayarlar, GunlukKayit, Sablon, SoruKaydi } from '@/lib/types'
 import { bosSayisi, gunOzeti } from '@/lib/hesap'
 import { calismaSirasi, sadelestir } from '@/lib/dersler'
 import { HAZIR_SABLONLAR } from '@/lib/sablonlar'
-import { sesTanimaDurumu } from '@/lib/ses-tanima'
 import { useGeriKatmani } from '@/lib/geri'
 import { bosSifir, herhangiDolu } from '@/lib/bos-sifir'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
@@ -37,7 +36,7 @@ export function sayiya(ham: string): string {
 
 /**
  * Yeni soru girişlerini günün mevcut satırlarına ekler; aynı ders varsa
- * sayıları üstüne toplar. Hem "Soru ekle" hem "Sesle anlat" kaydı aynı
+ * sayıları üstüne toplar. Hem "Soru ekle" hem "Rabi'ye anlat" kaydı aynı
  * birleştirme kuralını kullanır.
  */
 export function soruGirisleriniBirlestir(
@@ -113,20 +112,7 @@ export function SoruTakibiEkrani({
   }, [yerlesim])
   const [sayfaAcik, setSayfaAcik] = useState(false)
   const [sesliAcik, setSesliAcik] = useState(false)
-  // Düğme her zaman var (Rabi'ye yazarak da anlatılır); yalnız simgesi ve
-  // etiketi buna göre değişir. İlk karede kapalı, etkide bir kez sorulur.
-  const [sesDestekli, setSesDestekli] = useState(false)
   const [mesaj, setMesaj] = useState<string | null>(null)
-
-  useEffect(() => {
-    let iptal = false
-    sesTanimaDurumu().then((durum) => {
-      if (!iptal) setSesDestekli(durum !== 'yok')
-    })
-    return () => {
-      iptal = true
-    }
-  }, [])
 
   /**
    * "Bugün" ekran açılırken bir kez hesaplanıyordu; uygulama gece yarısını açık
@@ -364,14 +350,11 @@ export function SoruTakibiEkrani({
               <Buton
                 bicim="ikincil"
                 onClick={() => setSesliAcik(true)}
+                aria-label="Rabi'ye anlat"
                 className="h-[54px] shrink-0 rounded-[18px] px-4 text-[15px]"
               >
-                {sesDestekli ? (
-                  <Mic size={18} strokeWidth={2.3} aria-hidden />
-                ) : (
-                  <MessageCircle size={18} strokeWidth={2.3} aria-hidden />
-                )}
-                {sesDestekli ? 'Sesle anlat' : "Rabi'ye anlat"}
+                <MessageCircle size={18} strokeWidth={2.3} aria-hidden />
+                Rabi&apos;ye anlat
               </Buton>
             )}
           </div>

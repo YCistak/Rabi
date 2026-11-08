@@ -129,7 +129,7 @@ function RabiAvatari({ gizli = false }: { gizli?: boolean }) {
 }
 
 /**
- * Soru Takibi'nin "Sesle anlat" alt sayfası: Rabi ile kısa bir sohbet.
+ * Soru Takibi'nin "Rabi'ye anlat" alt sayfası: Rabi ile kısa bir sohbet.
  *
  * Kullanıcı yazarak ya da dikte ederek anlatır; her mesaj `sesliMetniCoz` ile
  * çözülüp birikime eklenir, Rabi kurallı kısa cevaplar verir (`lib/sesli-sohbet.ts`,
@@ -382,17 +382,23 @@ export function SesliGirisSayfasi({
     }
   }, [oturumuTemizle, mesajGonder, rabiSoylesin])
 
-  // Pencere "Sesle anlat"tan açılıyor: dinleme kendiliğinden başlar.
+  // Açılışta dinleme kendiliğinden başlamaz; ses tanıma desteği sessizce sorgulanır.
   useEffect(() => {
     etkinRef.current = true
-    void dinlemeyiBaslat()
+    let iptal = false
+    sesTanimaDurumu().then((sonuc) => {
+      if (!iptal) {
+        setSesDurumu(sonuc === 'yok' ? 'yok' : 'var')
+      }
+    })
     return () => {
+      iptal = true
       etkinRef.current = false
       oturumuTemizle()
       for (const z of zamanlayicilarRef.current) window.clearTimeout(z)
       zamanlayicilarRef.current = []
     }
-  }, [dinlemeyiBaslat, oturumuTemizle])
+  }, [oturumuTemizle])
 
   // Dinleme süresi sayacı.
   useEffect(() => {
@@ -514,7 +520,7 @@ export function SesliGirisSayfasi({
         ref={kaydir}
         role="dialog"
         aria-modal="true"
-        aria-label="Rabi ile sohbet"
+        aria-label="Rabi'ye anlat"
         className="alt-pencere-girisi tablet-orta-pencere flex h-[88%] w-full max-w-md flex-col overflow-hidden rounded-t-[26px] bg-card pb-[calc(0.75rem+var(--guvenli-alt))] tablet:pb-4"
         onClick={(e) => e.stopPropagation()}
       >

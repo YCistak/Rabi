@@ -22,6 +22,7 @@ Soru Takibi ekranında öğrencinin gününü konuşarak anlatması ("80 matemat
 ## Kurallar
 
 - **Çözücü saf ve testli (`lib/sesli-giris.ts`):** Metinden ders, soru sayısı, doğru/yanlış ve deneme neti çıkarma mantığı saf fonksiyondur; React bileşenlerinden veya yerli köprüden bağımsızdır. Kapsamlı birim testleri (`lib/sesli-giris.test.ts`) ile doğrulanır; yeni kalıp eklenirse testle birlikte eklenir.
+- **Konuşma kalıpları kataloğu:** Konuşma dili yuvaları ve sıra kuralları [sesli-konusma-kaliplari.md](sesli-konusma-kaliplari.md) içindedir. Yeni bir kalıp bildirilince önce kataloğa, sonra `lib/sesli-kalip.test.ts` üretecine, en son çözücüye eklenir.
 - **Doğal konuşma payı:** Dolgu sözcükleri ve yaklaşık sayı belirteçleri ders-sayı eşleşmesini bozmaz; ders kısaltmaları/eş anlamlıları tek tabloda kanonik `CALISMA_DERSLERI` adına eşlenir. `fen` ve `sosyal` gibi grup adları ise ders yerine tahmin edilmez.
 - **Eksik bağlam görünür kalır:** Soru veya sonuç diliyle birlikte sayı söylenip ders adı söylenmezse sayı herhangi bir derse yazılmaz; ham parça `anlasilmayan`a gider. Test/deneme adedi de soru adedi sayılmaz.
 - **Karma anlatım:** `ve`, `ile`, `artı`, `sonra`, `ayrıca` gibi doğal bağlaçlar ayrı ders parçalarını ayırmaya yardım eder; çözülemeyen grup, aynı cümlede güvenle çözülen başka dersi veya deneme sonucunu düşürmez.
