@@ -127,7 +127,7 @@ function TekDersSatiri({
   onDegis: (alan: keyof Giris, deger: string) => void
 }) {
   return (
-    <li className="grid grid-cols-[1fr_54px_54px_58px] items-center gap-1.5 border-b border-border px-3 py-2.5 transition-colors last:border-b-0">
+    <li className="grid grid-cols-[1fr_54px_54px_58px] items-center gap-1.5 border-b border-border bg-muted/40 px-3 py-2.5 transition-colors last:border-b-0">
       <div className="min-w-0">
         <p className="truncate text-[13.5px] font-bold tracking-tight text-foreground">{ad}</p>
         <p className="mt-0.5 text-[11px] font-semibold text-muted-foreground">
