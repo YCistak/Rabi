@@ -6,7 +6,11 @@ import type { Sablon } from './types'
 const sablonlar: Sablon[] = secilebilirSablonlar(HAZIR_SABLONLAR, 12, null)
 const bos: SesliCozum = { sorular: [], deneme: null, anlasilmayan: [] }
 const soru = (ders: string, toplam: number, dogru = 0, yanlis = 0) => ({ ders, toplam, dogru, yanlis })
-const deneme = (dersler: { dersId: string; dogru: number; yanlis: number }[] = [], toplamNet: number | null = null) => ({ sablonId: 'tyt', dersler, toplamNet })
+const deneme = (
+  dersler: { dersId: string; dogru: number; yanlis: number }[] = [],
+  toplamNet: number | null = null,
+  toplu: { grup: 'sosyal' | 'fen'; dogru: number; yanlis: number }[] = [],
+) => toplu.length > 0 ? { sablonId: 'tyt', dersler, toplu, toplamNet } : { sablonId: 'tyt', dersler, toplamNet }
 
 function coz(metin: string): SesliCozum {
   return sesliMetniCoz(metin, { sablonlar, varsayilanSablonId: 'tyt' })
@@ -78,7 +82,7 @@ describe('sesliMetniCoz — doğal öğrenci konuşması', () => {
     ['yaklaşık yüz soru paragraf', { ...bos, sorular: [soru('Türkçe', 100)] }],
     ['elli tane falan geo', { ...bos, sorular: [soru('Matematik', 50)] }],
     ['sabah mat 30 akşam mat 20', { ...bos, sorular: [soru('Matematik', 50)] }],
-    ['denemede sosyal 15 doğru türkçe 30 doğru 5 yanlış', { ...bos, deneme: deneme([{ dersId: 'turkce', dogru: 30, yanlis: 5 }]), anlasilmayan: ['sosyal 15 doğru'] }],
+    ['denemede sosyal 15 doğru türkçe 30 doğru 5 yanlış', { ...bos, deneme: deneme([{ dersId: 'turkce', dogru: 30, yanlis: 5 }], null, [{ grup: 'sosyal', dogru: 15, yanlis: 0 }]) }],
     ['TYT türkçe 30 doğru 6 yanlış sonra da mat 40 soru çözdüm', { sorular: [soru('Matematik', 40)], deneme: deneme([{ dersId: 'turkce', dogru: 30, yanlis: 6 }]), anlasilmayan: [] }],
     ['TYT denemesinde türkçe 30 doğru 5 yanlış ayrıca fizik 20 soru çözdüm', { sorular: [soru('Fizik', 20)], deneme: deneme([{ dersId: 'turkce', dogru: 30, yanlis: 5 }]), anlasilmayan: [] }],
     ['bugün tyt denemesinde türkçe 30 doğru 5 yanlış matematik 25 doğru 4 yanlış sonra da biyo 40 soru ve coğ 20 soru çözdüm', { sorular: [soru('Biyoloji', 40), soru('Coğrafya', 20)], deneme: deneme([{ dersId: 'turkce', dogru: 30, yanlis: 5 }, { dersId: 'matematik', dogru: 25, yanlis: 4 }]), anlasilmayan: [] }],

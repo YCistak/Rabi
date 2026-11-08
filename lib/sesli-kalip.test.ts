@@ -48,6 +48,16 @@ const URETILEN_KALIPLAR: KalipTesti[] = DERS_YUVALARI.flatMap(({ ders, bicimler 
   ),
 )
 
+/** Yeni yuvaların yanında eski temel kalıbı farklı ders/sayı dönüşümleriyle çaprazlar. */
+const GENISLETILMIS_KALIPLAR: KalipTesti[] = Array.from({ length: 500 }, (_, sira) => {
+  const { ders, bicimler } = DERS_YUVALARI[sira % DERS_YUVALARI.length]!
+  const bicim = bicimler[sira % bicimler.length]!
+  return {
+    metin: dersCumlesi(ders, bicim, 'elli tane'),
+    beklenen: { ...bosCozum(), sorular: [{ ders, toplam: 50, dogru: 0, yanlis: 0 }] },
+  }
+})
+
 const SONUC_KALIPLARI: KalipTesti[] = [
   {
     metin: 'matematik 50 soru çözdüm 20 doğru 20 yanlış 10 boş',
@@ -115,12 +125,16 @@ const SONUC_KALIPLARI: KalipTesti[] = [
 ]
 
 describe('sesli konuşma kalıpları — üretilen katalog', () => {
-  it('en az 600 cümle üretir; tüm ders ve çekim yuvaları kapsanır', () => {
-    expect(URETILEN_KALIPLAR).toHaveLength(700)
+  it('en az 1200 cümle üretir; tüm ders ve çekim yuvaları kapsanır', () => {
+    expect([...URETILEN_KALIPLAR, ...GENISLETILMIS_KALIPLAR]).toHaveLength(1200)
     expect(new Set(URETILEN_KALIPLAR.map((kalip) => kalip.beklenen.sorular[0]!.ders))).toEqual(new Set(DERS_YUVALARI.map(({ ders }) => ders)))
   })
 
   it.each(URETILEN_KALIPLAR)('$metin', ({ metin, beklenen }) => {
+    expect(cozumle(metin)).toEqual(beklenen)
+  })
+
+  it.each(GENISLETILMIS_KALIPLAR)('$metin', ({ metin, beklenen }) => {
     expect(cozumle(metin)).toEqual(beklenen)
   })
 
@@ -133,5 +147,16 @@ describe('sesli konuşma kalıpları — üretilen katalog', () => {
       ...bosCozum(),
       sorular: [{ ders: 'Matematik', toplam: 50, dogru: 20, yanlis: 20 }],
     })
+  })
+
+  it('yeni ders, geçmiş zaman, sonuç-ders sırası ve bağlam yuvalarını çözer', () => {
+    expect(cozumle("matematik 50 soru çözdüm matematik sorularının 20'si doğru 10 tanesi yanlıştı kalanları boştu").sorular).toEqual([
+      { ders: 'Matematik', toplam: 50, dogru: 20, yanlis: 10 },
+    ])
+    const deneme = cozumle('TYT denemesine girdim 20 doğru 20 yanlış Türkçe yaptım 10 doğru 30 yanlış matematik yaptım')
+    expect(deneme.deneme?.dersler).toEqual([
+      { dersId: 'turkce', dogru: 20, yanlis: 20 },
+      { dersId: 'matematik', dogru: 10, yanlis: 30 },
+    ])
   })
 })

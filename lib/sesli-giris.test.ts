@@ -285,7 +285,7 @@ describe('kenar durumları', () => {
 })
 
 describe('çözücü düzeltmeleri', () => {
-  it('deneme bağlamında grup adlarını (sosyal/fen) uydurmayıp anlaşılmayana atar, kalan dersleri korur', () => {
+  it('deneme bağlamında yalın grup adlarını toplu sonuç olarak kaydeder, kalan dersleri korur', () => {
     const sonuc = coz(
       'TYT denemesi çözdüm türkçe 30 doğru 5 yanlış sosyal 15 doğru matematik 25 doğru 3 yanlış fen 12 doğru',
     )
@@ -296,9 +296,13 @@ describe('çözücü düzeltmeleri', () => {
         { dersId: 'turkce', dogru: 30, yanlis: 5 },
         { dersId: 'matematik', dogru: 25, yanlis: 3 },
       ],
+      toplu: [
+        { grup: 'sosyal', dogru: 15, yanlis: 0 },
+        { grup: 'fen', dogru: 12, yanlis: 0 },
+      ],
       toplamNet: null,
     })
-    expect(sonuc.anlasilmayan).toEqual(['sosyal 15 doğru', 'fen 12 doğru'])
+    expect(sonuc.anlasilmayan).toEqual([])
 
     const uzunGrup = coz(
       'TYT denemesinde Türkçe 32 doğru 4 yanlış sosyal bilimler 14 doğru 3 yanlış matematik 28 doğru 2 yanlış fen bilimleri 15 doğru 2 yanlış',
@@ -421,10 +425,11 @@ describe('çözücü düzeltmeleri', () => {
     expect(sonuc.deneme).toEqual({
       sablonId: 'tyt',
       dersler: [{ dersId: 'matematik', dogru: 40, yanlis: 0 }],
+      toplu: [{ grup: 'sosyal', dogru: 15, yanlis: 0 }],
       toplamNet: null,
     })
     expect(sonuc.sorular).toEqual([{ ders: 'Kimya', toplam: 25, dogru: 25, yanlis: 0 }])
-    expect(sonuc.anlasilmayan).toEqual(['sosyal 15 doğru'])
+    expect(sonuc.anlasilmayan).toEqual([])
   })
 })
 

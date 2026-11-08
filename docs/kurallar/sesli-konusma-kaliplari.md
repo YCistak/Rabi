@@ -32,7 +32,7 @@ Kökler yalın veya şu çekimlerle gelebilir: belirtme (`matematiği`,
 `türkçede`), ayrılma (`matematikten`, `fizikten`), birliktelik
 (`fizikle`, `kimyayla`) ve iyelik (`matematiğim`, `türkçem`). Ünsüz
 yumuşaması kökle birlikte tanınır. `matematik dersi`, `matematik dersinden`,
-`matematik sorusu` ve bunların çoğulları da aynı köke bağlanır. Kısa adların
+`matematik sorusu`, `matematik sorularının` ve bunların çoğulları da aynı köke bağlanır. Kısa adların
 ekli biçimleri ancak yerleşik ve ayırt ediciyse kullanılır (`geodan`,
 `coğdan`); belirsiz grup adları `fen` ve `sosyal` ders diye uydurulmaz.
 
@@ -51,6 +51,10 @@ Sonuç etiketi `doğru`, `yanlış` veya `boş`tur. `20 doğru`, `20'si doğru`,
 ise boş` aynı üç etikete açılır. `hepsi doğru`, `hepsini doğru yaptım`,
 `tamamı doğru` ve `full` toplamı doğruya eşitler. `hiç yanlışım yok` ve
 `yanlışım yok` yanlış sayısını sıfır yapar. Sonuçların sırası önemli değildir.
+
+Geçmiş zamanlı `doğruydu`, `yanlıştı`, `boştu` da aynı sonuç etiketidir. Bir
+ders adı ikinci kez yalnız `DERS sorularının` biçiminde geldiyse yeni soru
+kaydı değildir; önceki dersin sonuçlarına bağlanır.
 
 `geri kalanı/kalanı doğru-yanlış-boş` yalnız toplam ve öteki sonuçlar
 tek anlamlıysa kalan sayıyı ifade eder; aksi durumda parça anlaşılmayana
@@ -92,7 +96,8 @@ her zaman açık olan bugünün kaydına gider.
 
 Deneme bağlamı `TYT/AYT/YDT denemesi`, `denemesine girdim`, `deneme çözdüm
 TYT` veya sınav adı ardından ders + sonuçla kurulur. `Bugün 50 TYT matematik
-sorusu çözdüm` soru kaydıdır, deneme değildir.
+sorusu çözdüm` soru kaydıdır, deneme değildir. Deneme çerçevesindeki `10 tane
+Türkçe doğrusu` sonuç anlatımıdır; `tane` sözcüğü onu günlük soru geçişi yapmaz.
 
 `N net` ve çekimli biçimleri (`netti`, `netim`, `net yaptım`, `net çıktı`)
 asla soru adedi sayılmaz. Deneme bağlamı yoksa bu ifade deneme sonucu diye de
@@ -108,3 +113,30 @@ uydurulmaz; soru kaydı oluşturmaz ve anlaşılmayan ya da boş kalır.
 - Ders adı olmayan sonuç hiçbir derse eklenmez. Aynı cümledeki çözülemeyen
   ders, güvenle çözülen diğer dersleri veya deneme sonucunu düşürmez.
 - Aynı ders için çelişen iki sonuç, kullanıcı doğrulayana dek kayda yazılmaz.
+
+## BAĞLAM
+
+Deneme çerçevesi açıldıktan sonra gelen ders sonuçları denemeye aittir. Çerçeve
+yalnız açık günlük geçişle (`ayrıca/bir de/onun dışında N soru çözdüm`,
+`günlük`, `test çözdüm`, `deneme dışında`) veya yeni bir deneme çerçevesiyle
+kapanır. Denemeden önceki sonuçlar günlük soru kaydıdır. `20 doğru 20 yanlış
+Türkçe yaptım` biçiminde fiilden önce gelen sonuçlar da Türkçe deneme sonucudur.
+
+## SOSYAL ve FEN (toplu)
+
+Yalnız deneme bağlamında `sosyal`/`fen` ve `sosyalden`/`fenden` toplu sonuçtur: Sosyal; tarih,
+coğrafya, felsefe, din ve AYT tarih/coğrafya varyantlarını; Fen ise fizik,
+kimya ve biyolojiyi kapsar. Şablonda en az iki üye ders bulunmalı; doğru +
+yanlış grup soru toplamını aşmamalıdır. `Sosyalden 15 doğru 2 yanlış` toplu olarak
+kaydedilir; `Sosyalden 12 net` ise doğru/yanlış bilinmediği için açıklama ister.
+Toplu sonuç ile aynı grupta ayrı ders sonucu birlikte söylenirse ikisi de
+korunur ve Rabi bu çakışmayı belirtir. Günlük soru takibinde Sosyal/Fen ders
+değildir; Rabi öğrenciden hangi dersi kastettiğini sorar.
+
+## SOHBET
+
+`merhaba/selam`, hâl sorma, teşekkür, veda, çalışmadım, moral ve yardım
+niyetleri veri çözümünden bağımsız tanınır. Niyetin yanında veri varsa kısa
+karşılama özetin başına gelir; veri yoksa yalnız samimi kısa cevap verilir,
+"anlayamadım" denmez. `merhaba abi`, `bu arada`, `neyse` ve `işte` dolgu veya
+sohbet sözüdür; çözülemeyen parça sayılmaz.

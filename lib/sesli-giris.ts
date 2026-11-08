@@ -9,14 +9,30 @@
 import { anahtarlar, ESANLAMLI, type OkunanDers, sozSiniriMi } from './deneme-okuma'
 import { CALISMA_DERSLERI } from './dersler'
 import { sadelestir } from './metin'
-import type { Sablon, SablonDers, SablonTuru } from './types'
+import { dersinGrubu } from './toplu-grup'
+import type { Sablon, SablonDers, SablonTuru, TopluGrup as TopluGrupTemeli } from './types'
 
 export type { OkunanDers }
 export type SesliSoru = { ders: string; toplam: number; dogru: number; yanlis: number }
-export type SesliDeneme = { sablonId: string; dersler: OkunanDers[]; toplamNet: number | null }
+export type TopluGrup = TopluGrupTemeli
+export type SesliTopluSonuc = { grup: TopluGrup; dogru: number; yanlis: number }
+export type SesliDeneme = { sablonId: string; dersler: OkunanDers[]; toplu?: SesliTopluSonuc[]; toplamNet: number | null }
 export type SesliCozum = { sorular: SesliSoru[]; deneme: SesliDeneme | null; anlasilmayan: string[] }
 
 const EN_COK_SORU = 500
+
+/**
+ * Toplu sonuç alanı yeni bir ayrıntıdır; boşken eski çözücü çıktı biçimi
+ * korunur. Böylece kayıtlı eski deneme sonuçlarıyla uyumluluk sürer.
+ */
+function denemeOlustur(
+  sablonId: string,
+  dersler: OkunanDers[],
+  toplu: SesliTopluSonuc[],
+  toplamNet: number | null,
+): SesliDeneme {
+  return toplu.length > 0 ? { sablonId, dersler, toplu, toplamNet } : { sablonId, dersler, toplamNet }
+}
 
 /** Yerli konuşma tanıyıcıya bağlam ipucu olarak verilen sözcükler. */
 export const TANIMA_IPUCLARI: string[] = [
@@ -517,6 +533,10 @@ const GRUP_KUMELERI: readonly (readonly string[])[] = [
   ['fen', 'fen bilimleri', 'fen bilgisi'],
 ]
 const GRUP_ANAHTARLARI: AnahtarTanimi[] = anahtarlariGenislet(GRUP_KUMELERI.flat())
+/** Deneme şablonundaki ilgili derslerden grup sonuçlarının soru üst sınırını bulur. */
+function topluGrupDersleri(sablonDersleri: readonly SablonDers[], grup: TopluGrup): SablonDers[] {
+  return sablonDersleri.filter((ders) => dersinGrubu(ders.id) === grup)
+}
 
 /** Uzun eşleşmenin kısayı ezdiği, çakışan veya şablon/liste dışı dersleri `hedef: null` bırakan ortak tarayıcı. */
 function dersleriTara<T>(
@@ -705,7 +725,7 @@ const DENEME_KELIMESI_DESENI =
 const ACIK_SORU_GECISI_DESENI =
   /(?<![a-z0-9])(?:(?:onun|bunun|deneme|denemenin)\s+(?:disinda|haricinde)|disinda|haricinde|ayrica|bir\s+de|(?:buna\s+)?ek\s+olarak|ustune)(?![a-z0-9])/
 const SORU_BELIRTECI_DESENI =
-  /(?<![a-z0-9])(?:tane(?![a-z0-9])(?!\s+(?:d[ea]\s+)?(?:dogru|yanlis|bos|net))|soru(?:su|da|dan|lar|lari)?(?![a-z0-9]))/
+  /(?<![a-z0-9])(?:tane(?![a-z0-9])(?!\s+[a-z0-9]+\s+(?:d[ea]\s+)?(?:dogru|yanlis|bos|net))|soru(?:su|da|dan|lar|lari)?(?![a-z0-9]))/
 const SINAV_KISA_ADLARI_DESENI = /(?<![a-z0-9])(?:tyt|ayt|ydt)(?:'?([a-z]+))?(?![a-z0-9])/g
 
 /** Arada sayı veya yüklem olmadan "ve / ile / veya" ile bağlanan dersleri tek grup yapar. */
@@ -957,6 +977,52 @@ function denemeSayilariCoz(parca: string, soruSayisi: number): { dogru: number; 
   return null
 }
 
+/** Sonuçların ders isminden önce söylendiği "20 doğru Türkçe yaptım" kalıbını ayırt eder. */
+function sonucDersinOnundeMi(metin: string): boolean {
+  return /^\s*(?:yap|coz|bitir)\w*/.test(metin)
+}
+
+/** "10 tane Türkçe doğrusu yaptım" sonucunun ders adını ortada taşıdığını ayırt eder. */
+function dersArasindaSonucMu(metin: string): boolean {
+  return /^\s*(?:dogru|yanlis|bos)\w*\s+(?:yap|coz|bitir)\w*/.test(metin)
+}
+
+/** Toplu grupta yalnız doğru veya yanlış söylense de öteki değer sıfırdır; net asla sonuç sayılmaz. */
+function topluSonuclariCoz(parca: string, soruSayisi: number): { dogru: number; yanlis: number } | null {
+  const tam = denemeSayilariCoz(parca, soruSayisi)
+  if (tam) return tam
+  const ayrilan = etiketleriAyir(araliktakiSayilar(parca, 0, parca.length))
+  if (!ayrilan || ayrilan.toplamlar.length > 0 || ayrilan.b !== null || ayrilan.kalan !== undefined || ayrilan.hepsiDogru) return null
+  if (ayrilan.d !== null && ayrilan.y === null && ayrilan.d <= soruSayisi) return { dogru: ayrilan.d, yanlis: 0 }
+  if (ayrilan.y !== null && ayrilan.d === null && ayrilan.y <= soruSayisi) return { dogru: 0, yanlis: ayrilan.y }
+  return null
+}
+
+/** Bir grubun adını, yalın veya çekimli biçimiyle deneme metninde arar. */
+function topluGrupBulgulari(metin: string): { grup: TopluGrup; bas: number; son: number }[] {
+  const bulgular: { grup: TopluGrup; bas: number; son: number }[] = []
+  for (const grup of ['sosyal', 'fen'] as const) {
+    const anahtar = anahtarlariGenislet(GRUP_KUMELERI[grup === 'sosyal' ? 0 : 1])
+    for (const aday of anahtar) {
+      for (let bas = metin.indexOf(aday.metin); bas !== -1; bas = metin.indexOf(aday.metin, bas + 1)) {
+        const son = dersEslesmeSonu(metin, bas, aday)
+        // Deneme bağlamındaki yalın grup adı da toplu sonuçtur. Özel şablonda
+        // aynı adlı gerçek ders varsa aşağıda o ders önceliklidir.
+        if (
+          son !== -1 &&
+          /^(?:sosyal|fen)(?:den|dan)?$/.test(metin.slice(bas, son)) &&
+          !/^\s+bilim/.test(metin.slice(son))
+        ) {
+          bulgular.push({ grup, bas, son })
+        }
+      }
+    }
+  }
+  return bulgular
+    .sort((a, b) => a.bas - b.bas || b.son - a.son)
+    .filter((bulgu, indeks, dizi) => indeks === 0 || bulgu.bas !== dizi[indeks - 1]!.bas)
+}
+
 /** `anlasilmayan` dilimine ders sonrasındaki alakasız yüklemleri katmamak için anlamlı sonu bulur. */
 function parcaAnlamliSonu(parca: string): number {
   const desen = new RegExp(
@@ -981,6 +1047,7 @@ function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { s
   const bulunanlar = new Map<string, { kayit: OkunanDers; hamParca: string }>()
   const cakisanlar = new Set<string>()
   const anlasilmayan = new Set<string>()
+  const toplu = new Map<TopluGrup, SesliTopluSonuc>()
   let toplamNet: number | null = null
 
   const kayitEkle = (hedef: SablonDers | null, sayilar: { dogru: number; yanlis: number } | null, hamParca: string) => {
@@ -998,11 +1065,16 @@ function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { s
   }
 
   for (const bolum of denemeBolumleri) {
-    const { temizMetin, net } = netAyiklaVeMaskele(hazir.norm.slice(bolum.bas, bolum.son))
-    if (toplamNet === null && net !== null) toplamNet = net
+    const hamDenemeMetni = hazir.norm.slice(bolum.bas, bolum.son)
+    const { temizMetin, net } = netAyiklaVeMaskele(hamDenemeMetni)
+    const grupNeti = /(?<![a-z0-9])(?:sosyal|fen)\w*\s+\d+(?:[.,]\d+)?\s+net\w*/.test(hamDenemeMetni)
+    if (toplamNet === null && net !== null && !grupNeti) toplamNet = net
     const bulgular = dersleriTara(temizMetin, hedefler, yedekSinirlar)
+    const grupBulgulari = topluGrupBulgulari(temizMetin).filter(
+      (grup) => !bulgular.some((ders) => ders.bas === grup.bas && ders.hedef !== null),
+    )
 
-    if (bulgular.length === 0 && sablon.dersler.length === 1) {
+    if (bulgular.length === 0 && grupBulgulari.length === 0 && sablon.dersler.length === 1) {
       const tek = sablon.dersler[0]!
       const sonDeneme = [...temizMetin.matchAll(DENEME_KELIMESI_DESENI)].pop()
       const aday = sonDeneme?.index !== undefined ? temizMetin.slice(sonDeneme.index + sonDeneme[0].length) : temizMetin
@@ -1014,9 +1086,52 @@ function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { s
       const bulgu = bulgular[sira]!
       const sonraki = bulgular[sira + 1]
       const parca = temizMetin.slice(bulgu.son, sonraki?.bas ?? temizMetin.length)
+      if (bulgu.hedef === null && grupBulgulari.some((grup) => grup.bas === bulgu.bas)) continue
       if (bulgu.hedef && sonraki?.hedef?.id === bulgu.hedef.id && /^[\s,;-]*$/.test(parca)) continue
       const hamParca = hazir.hamKesit(bolum.bas + bulgu.bas, bolum.bas + bulgu.son + parcaAnlamliSonu(parca))
-      kayitEkle(bulgu.hedef, bulgu.hedef ? denemeSayilariCoz(parca, bulgu.hedef.soruSayisi) : null, hamParca)
+      const oncekiSon = bulgular[sira - 1]?.son ?? 0
+      const onParca = temizMetin.slice(oncekiSon, bulgu.bas)
+      const onSonuc = bulgu.hedef && sonucDersinOnundeMi(parca)
+        ? denemeSayilariCoz(onParca, bulgu.hedef.soruSayisi)
+        : bulgu.hedef && dersArasindaSonucMu(parca)
+          ? denemeSayilariCoz(`${onParca} ${parca}`, bulgu.hedef.soruSayisi)
+          : null
+      kayitEkle(bulgu.hedef, onSonuc ?? (bulgu.hedef ? denemeSayilariCoz(parca, bulgu.hedef.soruSayisi) : null), hamParca)
+    }
+
+    for (let sira = 0; sira < grupBulgulari.length; sira++) {
+      const bulgu = grupBulgulari[sira]!
+      const sonrakiDersBas = bulgular.find((ders) => ders.bas > bulgu.bas)?.bas ?? temizMetin.length
+      const sonrakiBas = Math.min(grupBulgulari[sira + 1]?.bas ?? temizMetin.length, sonrakiDersBas)
+      const parca = temizMetin.slice(bulgu.son, sonrakiBas)
+      const uyeler = topluGrupDersleri(sablon.dersler, bulgu.grup)
+      const soruSayisi = uyeler.reduce((toplam, ders) => toplam + ders.soruSayisi, 0)
+      const hamParca = hazir.hamKesit(bolum.bas + bulgu.bas, bolum.bas + bulgu.son + parcaAnlamliSonu(parca))
+      // Tek dersli şablonda "fen" ya da "sosyal" diyerek hangi grubu kastettiği belli değildir.
+      if (uyeler.length < 2) {
+        if (hamParca) anlasilmayan.add(hamParca)
+        continue
+      }
+      const oncekiDersSon = Math.max(
+        0,
+        ...bulgular.filter((ders) => ders.son <= bulgu.bas).map((ders) => ders.son),
+        ...grupBulgulari.filter((grup) => grup.son <= bulgu.bas).map((grup) => grup.son),
+      )
+      const onParca = temizMetin.slice(oncekiDersSon, bulgu.bas)
+      const sayilar = sonucDersinOnundeMi(parca)
+        ? topluSonuclariCoz(onParca, soruSayisi) ?? topluSonuclariCoz(parca, soruSayisi)
+        : dersArasindaSonucMu(parca)
+          ? topluSonuclariCoz(`${onParca} ${parca}`, soruSayisi) ?? topluSonuclariCoz(parca, soruSayisi)
+        : topluSonuclariCoz(parca, soruSayisi)
+      if (!sayilar) {
+        if (hamParca) anlasilmayan.add(hamParca)
+        continue
+      }
+      if (sayilar.dogru + sayilar.yanlis > soruSayisi) {
+        if (hamParca) anlasilmayan.add(hamParca)
+        continue
+      }
+      toplu.set(bulgu.grup, { grup: bulgu.grup, ...sayilar })
     }
   }
 
@@ -1030,9 +1145,9 @@ function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { s
   for (const id of cakisanlar) bulunanlar.delete(id)
   const dersler = sablon.dersler.map((d) => bulunanlar.get(d.id)?.kayit).filter((o): o is OkunanDers => o !== undefined)
 
-  if (dersler.length === 0 && toplamNet === null) {
+  if (dersler.length === 0 && toplu.size === 0 && toplamNet === null) {
     const yalnizBirDeneme = denemeBolumleri.length === 1 && !/^\s*\d+\s+/.test(hazir.norm.slice(denemeBolumleri[0]!.bas, denemeBolumleri[0]!.son))
-    if (yalnizBirDeneme && anlasilmayan.size === 0) return { deneme: { sablonId: sablon.id, dersler: [], toplamNet: null }, anlasilmayan: [] }
+    if (yalnizBirDeneme && anlasilmayan.size === 0) return { deneme: denemeOlustur(sablon.id, [], [], null), anlasilmayan: [] }
     if (anlasilmayan.size === 0) {
       for (const b of denemeBolumleri) {
         const ham = hazir.hamKesit(b.bas, b.son)
@@ -1041,7 +1156,7 @@ function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { s
     }
     return { deneme: null, anlasilmayan: [...anlasilmayan] }
   }
-  return { deneme: { sablonId: sablon.id, dersler, toplamNet }, anlasilmayan: [...anlasilmayan] }
+  return { deneme: denemeOlustur(sablon.id, dersler, [...toplu.values()], toplamNet), anlasilmayan: [...anlasilmayan] }
 }
 
 // --- Soru Takibi çözümleme ---
@@ -1164,6 +1279,22 @@ function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[
       const ham = hazir.hamKesit(bolum.bas + parcaBas, bolum.bas + aralikSon)
       if (ham) anlasilmayan.push(ham)
       continue
+    }
+    const tekDers = grup.dersler.length === 1 ? grup.dersler[0] : null
+    const onceki = tekDers ? sorular.find((soru) => soru.ders === tekDers) : undefined
+    const ayrilan = etiketleriAyir(sayilar)
+    if (onceki && ayrilan && ayrilan.toplamlar.length === 0) {
+      let { d, y, b } = ayrilan
+      if (ayrilan.kalan === 'bos') b = onceki.toplam - (d ?? 0) - (y ?? 0)
+      if (ayrilan.kalan === 'dogru') d = onceki.toplam - (y ?? 0) - (b ?? 0)
+      if (ayrilan.kalan === 'yanlis') y = onceki.toplam - (d ?? 0) - (b ?? 0)
+      const dogru = d ?? (y !== null && b !== null ? onceki.toplam - y - b : null)
+      const yanlis = y ?? (d !== null && b !== null ? onceki.toplam - d - b : null)
+      if (dogru !== null && yanlis !== null && dogru >= 0 && yanlis >= 0 && dogru + yanlis + (b ?? 0) <= onceki.toplam) {
+        onceki.dogru = dogru
+        onceki.yanlis = yanlis
+        continue
+      }
     }
     const cozum = soruGrubuDegerlendir(grup, sayilar)
     if (cozum) {

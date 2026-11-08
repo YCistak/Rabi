@@ -7,7 +7,8 @@
  */
 
 import type { Sablon } from './types'
-import type { SesliCozum, SesliDeneme, SesliSoru } from './sesli-giris'
+import type { SesliCozum, SesliDeneme, SesliSoru, TopluGrup } from './sesli-giris'
+import { dersinGrubu } from './toplu-grup'
 
 export type SohbetBirikimi = { sorular: SesliSoru[]; deneme: SesliDeneme | null }
 
@@ -27,6 +28,88 @@ const KAPANIS_SORULARI = [
 
 const ANLASILMAYAN_ORNEK_CEVAP =
   'Bunu anlayamadım. Mesela “80 matematik” ya da “TYT Türkçe 33 doğru 4 yanlış” diyebilirsin.'
+
+export type SohbetNiyeti = 'selam' | 'orada' | 'hal' | 'tesekkur' | 'veda' | 'cozmedim' | 'moral' | 'yardim'
+
+const SOHBET_CEVAPLARI: Record<SohbetNiyeti, readonly string[]> = {
+  selam: [
+    'Merhaba!',
+    'Selam!',
+    'Merhaba, anlat bakalım.',
+    'Selam, hoş geldin.',
+    'Merhaba, dinliyorum.',
+  ],
+  orada: [
+    'Buradayım!',
+    'Buradayım, dinliyorum.',
+    'Evet, buradayım.',
+    'Buradayım, seni dinliyorum.',
+  ],
+  hal: [
+    'İyiyim, teşekkür ederim. Sen nasılsın?',
+    'İyiyim, sağ ol. Senin günün nasıl geçiyor?',
+    'İyiyim. Bugün ne yaptın?',
+    'Hazırım, sen nasılsın?',
+    'Gayet iyiyim. Sende durumlar nasıl?',
+  ],
+  tesekkur: [
+    'Rica ederim!',
+    'Ne demek, her zaman.',
+    'Rica ederim, kolay gelsin.',
+    'İşe yaradıysa ne mutlu.',
+    'Bir şey değil, her zaman.',
+  ],
+  veda: [
+    'Görüşürüz, kolay gelsin.',
+    'İyi dinlenmeler.',
+    'Görüşürüz, yarın devam ederiz.',
+    'Hoşça kal, iyi çalışmalar.',
+    'Kendine iyi bak, görüşürüz.',
+  ],
+  cozmedim: [
+    'Olsun, her gün aynı geçmez. Yarın küçük bir hedefle başlayalım mı?',
+    'Bugün dinlenmek de gerekliydi. Yarın 10 soruyla başlayabilirsin.',
+    'Bir gün boş geçmesi her şeyi bozmaz. Yarın yeniden başlarız.',
+    'Kendine yüklenme. Küçük bir başlangıç yeter.',
+    'Canın sağ olsun. Yarın kaldığımız yerden devam ederiz.',
+  ],
+  moral: [
+    'Mola vermek de çalışmanın parçası. Kısa bir Pomodoro denemek ister misin?',
+    'Zorlanman normal. Beş dakika ara verip küçük bir soruyla dönebilirsin.',
+    'Bugünü kusursuz yapmak zorunda değilsin. Biraz nefes al.',
+    'Yalnız değilsin. En kolay dersten kısa bir turla başlayalım mı?',
+    'Bazen yorulmak çok doğal. Biraz dinlenip öyle devam edebilirsin.',
+  ],
+  yardim: [
+    'Bugün kaç soru çözdüğünü ya da deneme sonucunu anlat; mesela “matematikten 40 soru çözdüm, 5’i yanlış” de.',
+    'Ders ders çözdüğün soruları veya deneme doğru-yanlışlarını söyleyebilirsin.',
+    'Örneğin “TYT denemesinde Türkçe 30 doğru 5 yanlış yaptım” diyebilirsin.',
+    'Söylediklerini soru takibine ve deneme özetine ayırırım.',
+    'Çözdüğün soru sayılarını veya deneme netlerini söyleyebilirsin.',
+  ],
+}
+
+/** Gündelik sohbeti, veriyi çözmeye çalışmadan kısa niyetlere ayırır. */
+export function sohbetNiyeti(metin: string): SohbetNiyeti | null {
+  const sade = metin.toLocaleLowerCase('tr-TR')
+  if (/(?:hiç soru çözmedim|hic soru cozmedim|bugün çalışmadım|bugun calismadim|bir şey yapmadım|bir sey yapmadim|boş geçti|bos gecti)/.test(sade)) return 'cozmedim'
+  if (/(?:yoruldum|sıkıldım|canım sıkkın|yapamıyorum|motivasyonum yok|stresliyim)/.test(sade)) return 'moral'
+  if (/(?:ne yapabilirsin|nasıl kullanılır|nasil kullanilir|ne diyeyim|yardım|yardim)/.test(sade)) return 'yardim'
+  if (/(?:sağ\s*ol|sag\s*ol|teşekkür|tesekkur|eyvallah)/.test(sade)) return 'tesekkur'
+  if (/(?:gorusuruz|görüşürüz|iyi geceler|bay bay|hosca kal|hoşça kal)/.test(sade)) return 'veda'
+  if (/(?:orada mısın|orada misin|burada mısın|burada misin)/.test(sade)) return 'orada'
+  if (/(?:nasilsin|nasılsın|ne haber|iyi misin)/.test(sade)) return 'hal'
+  if (/(?:merhaba|selam|naber|hey|gunaydin|günaydın|iyi aksamlar|iyi akşamlar|\babi\b|\bkanka\b|\bhocam\b)/.test(sade)) return 'selam'
+  return null
+}
+
+function niyetCevabi(niyet: SohbetNiyeti, mesajSirasi: number, metin?: string): string {
+  const baslangic = metin?.trim().toLocaleLowerCase('tr-TR') ?? ''
+  if (niyet === 'selam' && /^(?:merhaba)(?:\s|$)/.test(baslangic)) return 'Merhaba!'
+  if (niyet === 'selam' && /^(?:selam)(?:\s|$)/.test(baslangic)) return 'Selam!'
+  const cevaplar = SOHBET_CEVAPLARI[niyet]
+  return cevaplar[Math.floor(Math.abs(mesajSirasi)) % cevaplar.length]!
+}
 
 /** Anlaşılmayan parçayı en çok 40 karakter olacak şekilde tırnak içinde biçimlendirir. */
 function anlasilmayanMetni(parca: string): string {
@@ -78,7 +161,7 @@ function soruOzetiUret(sorular: readonly SesliSoru[]): string {
 function denemeOzetiUret(deneme: SesliDeneme, sablonlar: readonly Sablon[]): string {
   const baslik = sablonBasligiBul(sablonlar, deneme.sablonId)
 
-  if (deneme.dersler.length === 0) {
+  if (deneme.dersler.length === 0 && (deneme.toplu?.length ?? 0) === 0) {
     if (deneme.toplamNet !== null) {
       return `${baslik}, toplam ${netMetni(deneme.toplamNet)} net.`
     }
@@ -92,6 +175,10 @@ function denemeOzetiUret(deneme: SesliDeneme, sablonlar: readonly Sablon[]): str
     return `${dersAdi} ${d.dogru} doğru ${d.yanlis} yanlış`
   })
 
+  const grupAdi: Record<TopluGrup, string> = { sosyal: 'Sosyal', fen: 'Fen' }
+  for (const sonuc of deneme.toplu ?? []) {
+    parcalar.push(`${grupAdi[sonuc.grup]} ${sonuc.dogru} doğru ${sonuc.yanlis} yanlış (toplu)`)
+  }
   return `${baslik}: ${parcalar.join(', ')}.`
 }
 
@@ -121,6 +208,7 @@ export function birikimeEkle(birikim: SohbetBirikimi, cozum: SesliCozum): Sohbet
       ? {
           sablonId: birikim.deneme.sablonId,
           dersler: birikim.deneme.dersler.map((d) => ({ ...d })),
+          toplu: (birikim.deneme.toplu ?? []).map((sonuc) => ({ ...sonuc })),
           toplamNet: birikim.deneme.toplamNet,
         }
       : null
@@ -128,10 +216,12 @@ export function birikimeEkle(birikim: SohbetBirikimi, cozum: SesliCozum): Sohbet
     yeniDeneme = {
       sablonId: cozum.deneme.sablonId,
       dersler: cozum.deneme.dersler.map((d) => ({ ...d })),
+      toplu: (cozum.deneme.toplu ?? []).map((sonuc) => ({ ...sonuc })),
       toplamNet: cozum.deneme.toplamNet,
     }
   } else if (birikim.deneme.sablonId === cozum.deneme.sablonId) {
     const yeniDersler = birikim.deneme.dersler.map((d) => ({ ...d }))
+    const yeniToplu = (birikim.deneme.toplu ?? []).map((sonuc) => ({ ...sonuc }))
     for (const d of cozum.deneme.dersler) {
       const dIndeks = yeniDersler.findIndex((x) => x.dersId === d.dersId)
       if (dIndeks !== -1) {
@@ -140,9 +230,15 @@ export function birikimeEkle(birikim: SohbetBirikimi, cozum: SesliCozum): Sohbet
         yeniDersler.push({ ...d })
       }
     }
+    for (const sonuc of cozum.deneme.toplu ?? []) {
+      const indeks = yeniToplu.findIndex((eski) => eski.grup === sonuc.grup)
+      if (indeks === -1) yeniToplu.push({ ...sonuc })
+      else yeniToplu[indeks] = { ...sonuc }
+    }
     yeniDeneme = {
       sablonId: birikim.deneme.sablonId,
       dersler: yeniDersler,
+      toplu: yeniToplu,
       toplamNet: cozum.deneme.toplamNet !== null ? cozum.deneme.toplamNet : birikim.deneme.toplamNet,
     }
   } else {
@@ -150,6 +246,7 @@ export function birikimeEkle(birikim: SohbetBirikimi, cozum: SesliCozum): Sohbet
     yeniDeneme = {
       sablonId: cozum.deneme.sablonId,
       dersler: cozum.deneme.dersler.map((d) => ({ ...d })),
+      toplu: (cozum.deneme.toplu ?? []).map((sonuc) => ({ ...sonuc })),
       toplamNet: cozum.deneme.toplamNet,
     }
   }
@@ -163,20 +260,34 @@ export function birikimeEkle(birikim: SohbetBirikimi, cozum: SesliCozum): Sohbet
 /** Bu mesaja Rabi'nin cevabı: 1–2 kısa balon döner. */
 export function rabiCevabi(
   cozum: SesliCozum,
-  secenek: { sablonlar: Sablon[]; mesajSirasi: number; hedefeKalan?: number | null },
+  secenek: { sablonlar: Sablon[]; mesajSirasi: number; hedefeKalan?: number | null; metin?: string },
 ): string[] {
   const soruOzeti = soruOzetiUret(cozum.sorular)
   const denemeOzeti = cozum.deneme ? denemeOzetiUret(cozum.deneme, secenek.sablonlar) : ''
   const anlasilanVar = soruOzeti.length > 0 || denemeOzeti.length > 0
+  const niyet = secenek.metin ? sohbetNiyeti(secenek.metin) : null
 
   if (!anlasilanVar) {
+    if (niyet) return [niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin)]
     if (cozum.anlasilmayan.length > 0) {
-      return [anlasilmayanMetni(cozum.anlasilmayan[0]!)]
+      const anlasilmayan = cozum.anlasilmayan[0]!
+      if (/(?:sosyal|fen)\w*\s+\d+(?:[.,]\d+)?\s+net/i.test(secenek.metin ?? '')) {
+        const grup = /sosyal/i.test(secenek.metin ?? '') ? 'Sosyal' : 'Fen'
+        return [`${grup} için doğru ve yanlış sayısını söyler misin?`]
+      }
+      if (/(?:sosyal|fen)/i.test(anlasilmayan) && /(?:20|30|40|50|60|70|80|90)/.test(anlasilmayan) && /(?:deneme|tyt|ayt|ydt)/i.test(secenek.metin ?? '')) {
+        const grup = /sosyal/i.test(anlasilmayan) ? 'Sosyal' : 'Fen'
+        return [`${grup} için doğru ve yanlış toplamı soru sayısını aşıyor.`]
+      }
+      if (/(?:sosyal|fen)/i.test(anlasilmayan)) {
+        return [/(?:sosyal)/i.test(anlasilmayan) ? 'Sosyal derslerden hangisi olduğunu söyler misin?' : 'Fen derslerinden hangisi olduğunu söyler misin?']
+      }
+      return [anlasilmayanMetni(anlasilmayan)]
     }
     return [ANLASILMAYAN_ORNEK_CEVAP]
   }
 
-  let ilkBalon = [soruOzeti, denemeOzeti].filter(Boolean).join(' ')
+  let ilkBalon = [niyet ? niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin) : '', soruOzeti, denemeOzeti].filter(Boolean).join(' ')
 
   const buMesajdakiToplamSoru = cozum.sorular.reduce((toplam, s) => toplam + s.toplam, 0)
   if (
@@ -188,7 +299,22 @@ export function rabiCevabi(
   }
 
   if (cozum.anlasilmayan.length > 0) {
-    ilkBalon += ` ${anlasilmayanMetni(cozum.anlasilmayan[0]!)}`
+    const anlasilmayan = cozum.anlasilmayan[0]!
+    if (/(?:sosyal|fen)\w*\s+\d+(?:[.,]\d+)?\s+net/i.test(secenek.metin ?? '')) {
+      const grup = /sosyal/i.test(secenek.metin ?? '') ? 'Sosyal' : 'Fen'
+      ilkBalon += ` ${grup} için doğru ve yanlış sayısını söyler misin?`
+    } else if (/(?:sosyal|fen)/i.test(anlasilmayan) && /(?:20|30|40|50|60|70|80|90)/.test(anlasilmayan)) {
+      const grup = /sosyal/i.test(anlasilmayan) ? 'Sosyal' : 'Fen'
+      ilkBalon += ` ${grup} için bu doğru ve yanlış sayısı soru sayısını aşıyor.`
+    } else {
+      ilkBalon += ` ${anlasilmayanMetni(anlasilmayan)}`
+    }
+  }
+
+  if (cozum.deneme?.toplu?.some((toplu) => cozum.deneme!.dersler.some((ders) => {
+    return dersinGrubu(ders.dersId) === toplu.grup
+  }))) {
+    ilkBalon += ' Toplu grup sonucu ile ayrı ders sonucu birlikte kaydedildi.'
   }
 
   const sira = Math.floor(Math.abs(secenek.mesajSirasi)) % KAPANIS_SORULARI.length

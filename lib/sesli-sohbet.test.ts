@@ -25,6 +25,19 @@ describe('Sabitler', () => {
   })
 })
 
+describe('sohbet niyeti', () => {
+  const bosCozum: SesliCozum = { sorular: [], deneme: null, anlasilmayan: [] }
+
+  it('merhaba ve selam öneklerini mesaj sırasından bağımsız korur', () => {
+    expect(rabiCevabi(bosCozum, { sablonlar: SECENEK_SABLONLAR, mesajSirasi: 2, metin: 'Merhaba abi' })).toEqual(['Merhaba!'])
+    expect(rabiCevabi(bosCozum, { sablonlar: SECENEK_SABLONLAR, mesajSirasi: 1, metin: 'Selam kanka' })).toEqual(['Selam!'])
+  })
+
+  it('Buradayım yanıtını yalnız varlık yoklamasında verir', () => {
+    expect(rabiCevabi(bosCozum, { sablonlar: SECENEK_SABLONLAR, mesajSirasi: 0, metin: 'Orada mısın?' })).toEqual(['Buradayım!'])
+  })
+})
+
 describe('birikimeEkle', () => {
   it('aynı ders tekrar geldiğinde toplam, doğru ve yanlış sayıları toplanır', () => {
     const baslangic: SohbetBirikimi = {
@@ -79,6 +92,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [{ dersId: 'turkce', dogru: 30, yanlis: 5 }],
+        toplu: [],
         toplamNet: 80,
       },
     }
@@ -88,6 +102,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [{ dersId: 'matematik', dogru: 25, yanlis: 4 }],
+        toplu: [],
         toplamNet: 85,
       },
       anlasilmayan: ['anlasilmayan parca'],
@@ -116,6 +131,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [{ dersId: 'turkce', dogru: 35, yanlis: 4 }],
+        toplu: [],
         toplamNet: 85.5,
       },
       anlasilmayan: [],
@@ -126,6 +142,7 @@ describe('birikimeEkle', () => {
     expect(sonuc.deneme).toEqual({
       sablonId: 'tyt',
       dersler: [{ dersId: 'turkce', dogru: 35, yanlis: 4 }],
+      toplu: [],
       toplamNet: 85.5,
     })
   })
@@ -139,6 +156,7 @@ describe('birikimeEkle', () => {
           { dersId: 'turkce', dogru: 30, yanlis: 5 },
           { dersId: 'matematik', dogru: 25, yanlis: 3 },
         ],
+        toplu: [],
         toplamNet: null,
       },
     }
@@ -151,6 +169,7 @@ describe('birikimeEkle', () => {
           { dersId: 'turkce', dogru: 34, yanlis: 4 },
           { dersId: 'fizik', dogru: 6, yanlis: 1 },
         ],
+        toplu: [],
         toplamNet: 90,
       },
       anlasilmayan: [],
@@ -165,6 +184,7 @@ describe('birikimeEkle', () => {
         { dersId: 'matematik', dogru: 25, yanlis: 3 },
         { dersId: 'fizik', dogru: 6, yanlis: 1 },
       ],
+      toplu: [],
       toplamNet: 90,
     })
   })
@@ -175,6 +195,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [],
+        toplu: [],
         toplamNet: 80,
       },
     }
@@ -184,6 +205,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [{ dersId: 'turkce', dogru: 35, yanlis: 3 }],
+        toplu: [],
         toplamNet: null,
       },
       anlasilmayan: [],
@@ -197,6 +219,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [],
+        toplu: [],
         toplamNet: 88.5,
       },
       anlasilmayan: [],
@@ -212,6 +235,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [{ dersId: 'turkce', dogru: 30, yanlis: 5 }],
+        toplu: [],
         toplamNet: 80,
       },
     }
@@ -221,6 +245,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'ayt-say',
         dersler: [{ dersId: 'matematik', dogru: 35, yanlis: 3 }],
+        toplu: [],
         toplamNet: 65,
       },
       anlasilmayan: [],
@@ -231,6 +256,7 @@ describe('birikimeEkle', () => {
     expect(sonuc.deneme).toEqual({
       sablonId: 'ayt-say',
       dersler: [{ dersId: 'matematik', dogru: 35, yanlis: 3 }],
+      toplu: [],
       toplamNet: 65,
     })
   })
@@ -241,6 +267,7 @@ describe('birikimeEkle', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [{ dersId: 'turkce', dogru: 32, yanlis: 6 }],
+        toplu: [],
         toplamNet: null,
       },
     }
@@ -256,6 +283,7 @@ describe('birikimeEkle', () => {
     expect(sonuc.deneme).toEqual({
       sablonId: 'tyt',
       dersler: [{ dersId: 'turkce', dogru: 32, yanlis: 6 }],
+      toplu: [],
       toplamNet: null,
     })
     expect(sonuc.sorular).toEqual([
@@ -409,6 +437,7 @@ describe('rabiCevabi', () => {
           { dersId: 'turkce', dogru: 33, yanlis: 4 },
           { dersId: 'matematik', dogru: 29, yanlis: 6 },
         ],
+        toplu: [],
         toplamNet: null,
       },
       anlasilmayan: [],
@@ -431,6 +460,7 @@ describe('rabiCevabi', () => {
       deneme: {
         sablonId: 'bilinmeyen-sablon',
         dersler: [{ dersId: 'bilinmeyen-ders', dogru: 10, yanlis: 2 }],
+        toplu: [],
         toplamNet: null,
       },
       anlasilmayan: [],
@@ -453,6 +483,7 @@ describe('rabiCevabi', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [],
+        toplu: [],
         toplamNet: 85.5,
       },
       anlasilmayan: [],
@@ -470,6 +501,7 @@ describe('rabiCevabi', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [],
+        toplu: [],
         toplamNet: 90,
       },
       anlasilmayan: [],
@@ -633,6 +665,7 @@ describe('rabiCevabi', () => {
       deneme: {
         sablonId: 'tyt',
         dersler: [],
+        toplu: [],
         toplamNet: 87,
       },
       anlasilmayan: [],

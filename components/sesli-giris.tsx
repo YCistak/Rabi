@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowUp, Check, FileSpreadsheet, Mic, X } from 'lucide-react'
-import type { Ayarlar, Sablon, SoruKaydi } from '@/lib/types'
+import type { Ayarlar, Sablon, SoruKaydi, TopluGrup } from '@/lib/types'
 import { dersRengi } from '@/lib/banka'
 import { sadelestir } from '@/lib/dersler'
 import type { KonuDersId } from '@/lib/konu/tip'
@@ -10,6 +10,7 @@ import { secilebilirSablonlar } from '@/lib/sablonlar'
 import { seviyeSablonu, varsayilanSeviyeSinifi } from '@/lib/seviye-tespit'
 import { dinle, sesIzniIste, sesTanimaDurumu } from '@/lib/ses-tanima'
 import { sesliMetniCoz, type SesliDeneme } from '@/lib/sesli-giris'
+import { TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
 import {
   ACILIS_SORUSU,
   BOS_BIRIKIM,
@@ -26,6 +27,7 @@ import { BosKutusu, HataNotu, SayiKutusu, sayiya } from '@/components/ekranlar/s
 export type DenemeBaslangici = {
   sablonId: string
   girisler: Record<string, { dogru: string; yanlis: string }>
+  toplu?: Partial<Record<TopluGrup, { dogru: string; yanlis: string }>>
 }
 
 type Mesaj = { id: number; kim: 'rabi' | 'kullanici'; metin: string }
@@ -97,7 +99,15 @@ function denemedenBaslangic(deneme: SesliDeneme): DenemeBaslangici {
   for (const d of deneme.dersler) {
     girisler[d.dersId] = { dogru: String(d.dogru), yanlis: String(d.yanlis) }
   }
-  return { sablonId: deneme.sablonId, girisler }
+  const toplu: Partial<Record<TopluGrup, { dogru: string; yanlis: string }>> = {}
+  for (const sonuc of deneme.toplu ?? []) {
+    toplu[sonuc.grup] = { dogru: String(sonuc.dogru), yanlis: String(sonuc.yanlis) }
+  }
+  return {
+    sablonId: deneme.sablonId,
+    girisler,
+    ...(Object.keys(toplu).length > 0 ? { toplu } : {}),
+  }
 }
 
 function hareketAzaltilmisMi(): boolean {
@@ -275,6 +285,7 @@ export function SesliGirisSayfasi({
       sablonlar: cozucuRef.current.sablonlar,
       mesajSirasi: sira,
       hedefeKalan: kalan,
+      metin,
     })
 
     const yeniBirikim = birikimeEkle(birikimRef.current, cozum)
@@ -732,7 +743,7 @@ export function SesliGirisSayfasi({
                         </button>
                       </div>
 
-                      {deneme.dersler.length > 0 ? (
+                      {deneme.dersler.length > 0 || (deneme.toplu && deneme.toplu.length > 0) ? (
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {deneme.dersler.map((okunan) => {
                             const dersAdi =
@@ -746,6 +757,21 @@ export function SesliGirisSayfasi({
                                 <span>{dersAdi}</span>
                                 <span className="text-success">{okunan.dogru}D</span>
                                 <span className="text-danger">{okunan.yanlis}Y</span>
+                              </span>
+                            )
+                          })}
+                          {deneme.toplu?.map((topluSonuc) => {
+                            const grupAdi =
+                              TOPLU_GRUP_ADI[topluSonuc.grup] ??
+                              (topluSonuc.grup === 'sosyal' ? 'Sosyal' : 'Fen')
+                            return (
+                              <span
+                                key={`toplu-${topluSonuc.grup}`}
+                                className="rakam inline-flex items-center gap-1 rounded-[10px] border border-border bg-card px-2.5 py-1 text-xs font-bold text-foreground"
+                              >
+                                <span>{grupAdi} (toplu)</span>
+                                <span className="text-success">{topluSonuc.dogru}D</span>
+                                <span className="text-danger">{topluSonuc.yanlis}Y</span>
                               </span>
                             )
                           })}
