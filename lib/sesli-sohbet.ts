@@ -23,6 +23,12 @@ export const ACILIS_SORUSU = 'Bugün ne çözdün?'
 /** Denemeler sohbeti, tür seçilmeden sonuç anlatımına başlamaz. */
 export const DENEME_ACILIS_SORUSU = 'Hangi denemeye girdin?'
 
+/** Seviye tespit seçildiğinde sınıfı sorar. */
+export const SEVIYE_SINIF_SORUSU = 'Kaçıncı sınıf seviye tespiti?'
+
+/** 11 veya 12. sınıf seviye tespitinde alan seçilmemişse alanı sorar. */
+export const SEVIYE_ALAN_SORUSU = 'Hangi alan?'
+
 /** Seçilen deneme türünü kısa ve değişmeyen bir cümleyle onaylar. */
 export function denemeTuruSecildi(sablonAdi: string): string {
   return `${sablonAdi}, tamam. Ders ders doğru ve yanlışlarını anlat.`

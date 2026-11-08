@@ -2,12 +2,18 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowUp, Check, ChevronDown, FileSpreadsheet, Mic, X } from 'lucide-react'
-import type { Ayarlar, Sablon, SoruKaydi, TopluGrup } from '@/lib/types'
+import type { Ayarlar, PuanTuru, Sablon, SoruKaydi, TopluGrup } from '@/lib/types'
 import { dersRengi } from '@/lib/banka'
 import { sadelestir } from '@/lib/dersler'
 import type { KonuDersId } from '@/lib/konu/tip'
-import { secilebilirSablonlar } from '@/lib/sablonlar'
-import { seviyeSablonu, varsayilanSeviyeSinifi } from '@/lib/seviye-tespit'
+import { ALAN_KISA_ADI, secilebilirSablonlar } from '@/lib/sablonlar'
+import {
+  alanGerekir,
+  SEVIYE_SINIFLARI,
+  seviyeSablonu,
+  varsayilanSeviyeSinifi,
+  type SeviyeSinifi,
+} from '@/lib/seviye-tespit'
 import { dinle, sesIzniIste, sesTanimaDurumu } from '@/lib/ses-tanima'
 import { sesliMetniCoz, type SesliDeneme, type SesliKip } from '@/lib/sesli-giris'
 import { TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
@@ -15,6 +21,8 @@ import {
   ACILIS_SORUSU,
   BOS_BIRIKIM,
   DENEME_ACILIS_SORUSU,
+  SEVIYE_ALAN_SORUSU,
+  SEVIYE_SINIF_SORUSU,
   birikimeEkle,
   denemeTuruSecildi,
   rabiCevabi,
@@ -60,6 +68,13 @@ const SONA_YAKIN_PX = 96
 const YAZI_KUTUSU_EN_YUKSEK_PX = 104
 
 const DALGA_BOYLARI = [8, 16, 24, 14, 28, 19, 26, 12, 22, 17, 25, 15, 20, 11, 18, 9]
+
+const SEVIYE_ALAN_SECENEKLERI: readonly { id: PuanTuru; ad: string }[] = [
+  { id: 'say', ad: 'Sayısal' },
+  { id: 'ea', ad: 'Eşit Ağırlık' },
+  { id: 'soz', ad: 'Sözel' },
+  { id: 'dil', ad: 'Dil' },
+]
 
 function soruDersAilesi(ders: string): KonuDersId | null {
   const bankaAilesi = dersRengi(ders)
@@ -196,6 +211,13 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
     bekleyenCevap: 0,
   }))
   const [seciliSablonId, setSeciliSablonId] = useState<string | null>(null)
+  type SeviyeSecimAsamasi =
+    | null
+    | { adim: 'sinif' }
+    | { adim: 'alan'; sinif: SeviyeSinifi }
+
+  const [seviyeSecimAsamasi, setSeviyeSecimAsamasi] = useState<SeviyeSecimAsamasi>(null)
+  const [seciliSeviye, setSeciliSeviye] = useState<{ sinif: SeviyeSinifi; alan?: PuanTuru } | null>(null)
   const [ciplerAcik, setCiplerAcik] = useState(kip === 'deneme')
   const [sesDurumu, setSesDurumu] = useState<SesDurumu>('bilinmiyor')
   const [yazi, setYazi] = useState('')
@@ -219,20 +241,21 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
 
   const seciliSablonIdRef = useRef<string | null>(seciliSablonId)
   seciliSablonIdRef.current = seciliSablonId
+  const oncekiTurKimligiRef = useRef<string | null>(null)
 
   /*
     Seviye tespit tür satırında tek kimlik (`okul`) taşıyor ama Yeni Deneme
     ekranında öğrencinin sınıfına/alanına ait ders listesini açıyor. Burada da
-    aynı ders listesini veriyoruz ki 10–12. sınıf dersleri doğru eşleşsin ve
-    aktarılan `dersId`ler Yeni Deneme'deki şablonla bire bir örtüşsün.
+    kullanıcının seçtiği sınıf ve alana ait seviye şablonunu çözücüye veriyoruz.
   */
   const cozucuSablonlari = useMemo(() => {
-    const liste = secilebilirSablonlar(sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru)
-    const sinif = varsayilanSeviyeSinifi(ayarlar.buYilSinif)
-    const alan = ayarlar.puanTuru ?? 'say'
-    const guncelSeviye = seviyeSablonu(sablonlar, sinif, alan)
-    return liste.map((s) => (s.id === 'okul' ? { ...guncelSeviye, id: 'okul' } : s))
-  }, [sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru])
+    const temel = secilebilirSablonlar(sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru)
+    const sinif = seciliSeviye?.sinif ?? varsayilanSeviyeSinifi(ayarlar.buYilSinif)
+    const alan = seciliSeviye?.alan ?? ayarlar.puanTuru ?? 'say'
+    const aktifSeviye = seviyeSablonu(sablonlar, sinif, alan)
+    const idler = new Set(temel.map((s) => s.id))
+    return idler.has(aktifSeviye.id) ? temel : [...temel, aktifSeviye]
+  }, [sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru, seciliSeviye])
 
   const secenekler = useMemo(
     () => secilebilirSablonlar(sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru),
@@ -241,12 +264,17 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
 
   const seciliSablonAd = useMemo(() => {
     if (!seciliSablonId) return null
-    if (seciliSablonId === 'okul') return 'Seviye Tespit'
+    if (seciliSeviye) {
+      const { sinif, alan } = seciliSeviye
+      return alanGerekir(sinif) && alan
+        ? `Seviye Tespit · ${sinif} · ${ALAN_KISA_ADI[alan]}`
+        : `Seviye Tespit · ${sinif}`
+    }
     const bulunan =
       cozucuSablonlari.find((s) => s.id === seciliSablonId) ??
       sablonlar.find((s) => s.id === seciliSablonId)
     return bulunan?.ad ?? seciliSablonId
-  }, [seciliSablonId, cozucuSablonlari, sablonlar])
+  }, [seciliSablonId, seciliSeviye, cozucuSablonlari, sablonlar])
 
   /** Deneme kipinde tür seçilmeden yazı kutusu ve mikrofon pasif kalır. */
   const turSecilmedi = kip === 'deneme' && seciliSablonId === null
@@ -316,9 +344,13 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
     })
   }, [])
 
-  const sablonSec = (yeniId: string, yeniAd: string) => {
-    const oncekiId = seciliSablonIdRef.current
+  const turSec = (yeniId: string, yeniAd: string) => {
+    const oncekiId = oncekiTurKimligiRef.current ?? seciliSablonIdRef.current
+    oncekiTurKimligiRef.current = yeniId
+    seciliSablonIdRef.current = yeniId
     setSeciliSablonId(yeniId)
+    setSeciliSeviye(null)
+    setSeviyeSecimAsamasi(null)
     setCiplerAcik(false)
 
     // Kullanıcı balonu ekle
@@ -360,6 +392,149 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
       }))
     }, YAZIYOR_SURESI_MS)
     zamanlayicilarRef.current.push(zamanlayici)
+  }
+
+  const seviyeTamamla = (sinif: SeviyeSinifi, alan: PuanTuru) => {
+    const oncekiId = oncekiTurKimligiRef.current
+    const hedefSablon = seviyeSablonu(sablonlar, sinif, alan)
+    const yeniId = hedefSablon.id
+
+    oncekiTurKimligiRef.current = yeniId
+    seciliSablonIdRef.current = yeniId
+    setSeciliSablonId(yeniId)
+    setSeciliSeviye({ sinif, ...(alanGerekir(sinif) ? { alan } : {}) })
+    setSeviyeSecimAsamasi(null)
+    setCiplerAcik(false)
+
+    setDurum((onceki) => ({
+      ...onceki,
+      bekleyenCevap: onceki.bekleyenCevap + 1,
+    }))
+    sonaYakinRef.current = true
+
+    const alanMetni = alanGerekir(sinif) ? ` ${alan === 'ea' ? 'Eşit Ağırlık' : ALAN_KISA_ADI[alan]}` : ''
+    const turAdi = `${sinif}. sınıf${alanMetni} seviye tespit`
+
+    let rabiMetni: string
+    const oncekiSonucVar =
+      birikimRef.current.deneme !== null &&
+      (birikimRef.current.deneme.dersler.length > 0 ||
+        (birikimRef.current.deneme.toplu !== undefined && birikimRef.current.deneme.toplu.length > 0) ||
+        birikimRef.current.deneme.toplamNet !== null)
+
+    if (oncekiId !== null && oncekiId !== yeniId) {
+      birikimiYaz({ ...birikimRef.current, deneme: null })
+      rabiMetni = oncekiSonucVar
+        ? `Deneme türünü ${turAdi} olarak değiştirdin, önceki deneme sonuçlarını sıfırladım. Ders ders doğru ve yanlışlarını anlat.`
+        : `Deneme türünü ${turAdi} olarak değiştirdin. Ders ders doğru ve yanlışlarını anlat.`
+    } else {
+      rabiMetni = denemeTuruSecildi(turAdi)
+    }
+
+    const zamanlayici = window.setTimeout(() => {
+      zamanlayicilarRef.current = zamanlayicilarRef.current.filter((z) => z !== zamanlayici)
+      if (!etkinRef.current) return
+      setDurum((onceki) => ({
+        ...onceki,
+        mesajlar: [
+          ...onceki.mesajlar,
+          { id: mesajKimligiRef.current++, kim: 'rabi', metin: rabiMetni },
+        ],
+        bekleyenCevap: Math.max(0, onceki.bekleyenCevap - 1),
+      }))
+    }, YAZIYOR_SURESI_MS)
+    zamanlayicilarRef.current.push(zamanlayici)
+  }
+
+  const seviyeSeciminiBaslat = () => {
+    oncekiTurKimligiRef.current = seciliSablonIdRef.current
+    seciliSablonIdRef.current = null
+    setSeciliSablonId(null)
+    setSeciliSeviye(null)
+    setSeviyeSecimAsamasi({ adim: 'sinif' })
+
+    const kullaniciMesajId = mesajKimligiRef.current++
+    setDurum((onceki) => ({
+      ...onceki,
+      mesajlar: [
+        ...onceki.mesajlar,
+        { id: kullaniciMesajId, kim: 'kullanici', metin: 'Seviye Tespit' },
+      ],
+      bekleyenCevap: onceki.bekleyenCevap + 1,
+    }))
+    sonaYakinRef.current = true
+
+    const zamanlayici = window.setTimeout(() => {
+      zamanlayicilarRef.current = zamanlayicilarRef.current.filter((z) => z !== zamanlayici)
+      if (!etkinRef.current) return
+      setDurum((onceki) => ({
+        ...onceki,
+        mesajlar: [
+          ...onceki.mesajlar,
+          { id: mesajKimligiRef.current++, kim: 'rabi', metin: SEVIYE_SINIF_SORUSU },
+        ],
+        bekleyenCevap: Math.max(0, onceki.bekleyenCevap - 1),
+      }))
+    }, YAZIYOR_SURESI_MS)
+    zamanlayicilarRef.current.push(zamanlayici)
+  }
+
+  const seviyeSinifSec = (secilenSinif: SeviyeSinifi) => {
+    const kullaniciMesajId = mesajKimligiRef.current++
+    const sinifEtiketi = `${secilenSinif}. sınıf`
+
+    const alanSorulmali = alanGerekir(secilenSinif) && ayarlar.puanTuru === null
+
+    if (alanSorulmali) {
+      setSeviyeSecimAsamasi({ adim: 'alan', sinif: secilenSinif })
+      setDurum((onceki) => ({
+        ...onceki,
+        mesajlar: [
+          ...onceki.mesajlar,
+          { id: kullaniciMesajId, kim: 'kullanici', metin: sinifEtiketi },
+        ],
+        bekleyenCevap: onceki.bekleyenCevap + 1,
+      }))
+      sonaYakinRef.current = true
+
+      const zamanlayici = window.setTimeout(() => {
+        zamanlayicilarRef.current = zamanlayicilarRef.current.filter((z) => z !== zamanlayici)
+        if (!etkinRef.current) return
+        setDurum((onceki) => ({
+          ...onceki,
+          mesajlar: [
+            ...onceki.mesajlar,
+            { id: mesajKimligiRef.current++, kim: 'rabi', metin: SEVIYE_ALAN_SORUSU },
+          ],
+          bekleyenCevap: Math.max(0, onceki.bekleyenCevap - 1),
+        }))
+      }, YAZIYOR_SURESI_MS)
+      zamanlayicilarRef.current.push(zamanlayici)
+    } else {
+      const alan = alanGerekir(secilenSinif) ? ayarlar.puanTuru! : (ayarlar.puanTuru ?? 'say')
+      setDurum((onceki) => ({
+        ...onceki,
+        mesajlar: [
+          ...onceki.mesajlar,
+          { id: kullaniciMesajId, kim: 'kullanici', metin: sinifEtiketi },
+        ],
+      }))
+      sonaYakinRef.current = true
+      seviyeTamamla(secilenSinif, alan)
+    }
+  }
+
+  const seviyeAlanSec = (sinif: SeviyeSinifi, alan: PuanTuru, alanAdi: string) => {
+    const kullaniciMesajId = mesajKimligiRef.current++
+    setDurum((onceki) => ({
+      ...onceki,
+      mesajlar: [
+        ...onceki.mesajlar,
+        { id: kullaniciMesajId, kim: 'kullanici', metin: alanAdi },
+      ],
+    }))
+    sonaYakinRef.current = true
+    seviyeTamamla(sinif, alan)
   }
 
   /** Kullanıcı mesajını sohbete ekler, birikime işler ve kısa bir beklemeyle Rabi'yi cevaplatır. */
@@ -657,7 +832,10 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
               seciliSablonAd && (
                 <button
                   type="button"
-                  onClick={() => setCiplerAcik((o) => !o)}
+                  onClick={() => {
+                    setSeviyeSecimAsamasi(null)
+                    setCiplerAcik((o) => !o)
+                  }}
                   className="inline-flex items-center gap-1 rounded-lg border border-primary/30 bg-primary-soft px-2.5 py-1 text-xs font-extrabold text-primary transition active:scale-95"
                   aria-label={`Deneme türü: ${seciliSablonAd}. Değiştirmek için dokun.`}
                 >
@@ -744,25 +922,64 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
 
             {kip === 'deneme' && ciplerAcik && (
               <div className="flex flex-wrap gap-2 pl-[44px] pt-1 pb-1">
-                {secenekler.map((s) => {
-                  const ad = s.id === 'okul' ? 'Seviye Tespit' : s.ad
-                  const secili = s.id === seciliSablonId
-                  return (
+                {seviyeSecimAsamasi === null &&
+                  secenekler.map((s) => {
+                    const ad = s.id === 'okul' ? 'Seviye Tespit' : s.ad
+                    const secili = s.id === 'okul' ? seciliSeviye !== null : s.id === seciliSablonId
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => {
+                          if (s.id === 'okul') {
+                            seviyeSeciminiBaslat()
+                          } else {
+                            turSec(s.id, ad)
+                          }
+                        }}
+                        className={cn(
+                          'flex h-10 items-center rounded-xl border px-3.5 text-[13px] font-bold transition active:scale-95',
+                          secili
+                            ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
+                            : 'border-border bg-card text-foreground active:bg-muted',
+                        )}
+                      >
+                        {ad}
+                      </button>
+                    )
+                  })}
+
+                {seviyeSecimAsamasi?.adim === 'sinif' &&
+                  SEVIYE_SINIFLARI.map((s) => {
+                    const oneri = s === varsayilanSeviyeSinifi(ayarlar.buYilSinif)
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => seviyeSinifSec(s)}
+                        className={cn(
+                          'flex h-10 items-center rounded-xl border px-3.5 text-[13px] font-bold transition active:scale-95',
+                          oneri
+                            ? 'border-primary/40 bg-primary-soft/35 font-extrabold text-foreground'
+                            : 'border-border bg-card text-foreground active:bg-muted',
+                        )}
+                      >
+                        {s}. sınıf
+                      </button>
+                    )
+                  })}
+
+                {seviyeSecimAsamasi?.adim === 'alan' &&
+                  SEVIYE_ALAN_SECENEKLERI.map((alan) => (
                     <button
-                      key={s.id}
+                      key={alan.id}
                       type="button"
-                      onClick={() => sablonSec(s.id, ad)}
-                      className={cn(
-                        'flex h-10 items-center rounded-xl border px-3.5 text-[13px] font-bold transition active:scale-95',
-                        secili
-                          ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
-                          : 'border-border bg-card text-foreground active:bg-muted',
-                      )}
+                      onClick={() => seviyeAlanSec(seviyeSecimAsamasi.sinif, alan.id, alan.ad)}
+                      className="flex h-10 items-center rounded-xl border border-border bg-card px-3.5 text-[13px] font-bold text-foreground transition active:scale-95 active:bg-muted"
                     >
-                      {ad}
+                      {alan.ad}
                     </button>
-                  )
-                })}
+                  ))}
               </div>
             )}
 
@@ -888,7 +1105,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
                       <div className="flex items-center gap-2">
                         <FileSpreadsheet size={17} className="shrink-0 text-primary" aria-hidden />
                         <p className="min-w-0 flex-1 truncate font-display text-[15px] font-extrabold tracking-tight text-foreground">
-                          {deneme.sablonId === 'okul' ? 'Seviye Tespit' : (denemeSablonu?.ad ?? 'Deneme')}
+                          {seciliSablonAd ?? denemeSablonu?.ad ?? 'Deneme'}
                         </p>
                         <button
                           type="button"

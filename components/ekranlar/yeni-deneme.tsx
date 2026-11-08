@@ -361,9 +361,14 @@ export function YeniDenemeEkrani({
 
   // Tür satırında seçili düğme; seviye tespit tek düğme (`okul`).
   const [sablonId, setSablonId] = useState(() => {
-    const aranan = !duzenlenen && baslangic ? baslangic.sablonId : varsayilanSablonId
+    if (!duzenlenen && baslangic) {
+      const baslangicSablonu = sablonlar.find((s) => s.id === baslangic.sablonId)
+      if (baslangicSablonu?.seviye) return 'okul'
+      const aranan = baslangic.sablonId
+      const bulunan = secenekler.find((s) => s.id === aranan)
+      if (bulunan) return bulunan.id
+    }
     return (
-      secenekler.find((s) => s.id === aranan) ??
       secenekler.find((s) => s.id === varsayilanSablonId) ??
       secenekler[0]
     ).id
@@ -371,13 +376,23 @@ export function YeniDenemeEkrani({
   /*
     Seviye tespit sınıfa göre (kullanıcı istedi, 2026-10): 9 eski biçim, 10'da
     Felsefe ekleniyor, 11 ve 12 alanın AYT'si gibi. Varsayılan öğrencinin kendi
-    sınıfı.
+    sınıfı; sesli girişten seviye şablonu geldiyse onun sınıfı ve alanı.
     Alan Ayarlar'dan; seçilmemişse 11-12'de altta soruluyor.
   */
-  const [seviyeSinifi, setSeviyeSinifi] = useState<SeviyeSinifi>(() =>
-    varsayilanSeviyeSinifi(sinif),
-  )
-  const [seciliAlan, setSeciliAlan] = useState<PuanTuru>(puanTuru ?? 'say')
+  const [seviyeSinifi, setSeviyeSinifi] = useState<SeviyeSinifi>(() => {
+    if (!duzenlenen && baslangic) {
+      const baslangicSablonu = sablonlar.find((s) => s.id === baslangic.sablonId)
+      if (baslangicSablonu?.seviye?.sinif) return baslangicSablonu.seviye.sinif as SeviyeSinifi
+    }
+    return varsayilanSeviyeSinifi(sinif)
+  })
+  const [seciliAlan, setSeciliAlan] = useState<PuanTuru>(() => {
+    if (!duzenlenen && baslangic) {
+      const baslangicSablonu = sablonlar.find((s) => s.id === baslangic.sablonId)
+      if (baslangicSablonu?.seviye?.alan) return baslangicSablonu.seviye.alan
+    }
+    return puanTuru ?? 'say'
+  })
   const seviyeAlani = puanTuru ?? seciliAlan
   const seviyeSecili = !duzenlenen && sablonId === 'okul'
   const [derslerAcik, setDerslerAcik] = useState(false)
