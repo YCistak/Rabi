@@ -2,19 +2,26 @@
  * Kabul testleri: Emre'nin uygulamada gerçekten yazdığı/söylediği cümleler
  * (2026-11-08 ekran görüntüleri), birebir yazımlarıyla. Beklentiler KESİNDİR;
  * çözücü bunlara uyar, bu dosyadaki beklenti değiştirilmez (operatör yazdı).
+ *
+ * 2026-11-08 karar (Emre): iki ayrı sohbet kipi.
+ * - 'soru'   → Soru Takibi'ndeki "Rabi'ye anlat": yalnız günlük soru; deneme
+ *              söylenirse kaydedilmez, Rabi Denemeler'e yönlendirir (yanlisYer: 'deneme').
+ * - 'deneme' → Denemeler'deki "Rabi'ye anlat": tür önce seçilir (sabit şablon);
+ *              yalnız deneme sonucu; günlük soru söylenirse reddedilir (yanlisYer: 'soru').
  */
 import { describe, expect, it } from 'vitest'
 import { HAZIR_SABLONLAR, secilebilirSablonlar } from './sablonlar'
-import { sesliMetniCoz } from './sesli-giris'
+import { sesliMetniCoz, type SesliKip } from './sesli-giris'
 import { rabiCevabi } from './sesli-sohbet'
 import type { Sablon } from './types'
 
 const sablonlar: Sablon[] = secilebilirSablonlar(HAZIR_SABLONLAR, 12, null)
-const coz = (metin: string) => sesliMetniCoz(metin, { sablonlar, varsayilanSablonId: 'tyt' })
-const cevap = (metin: string) =>
-  rabiCevabi(coz(metin), { sablonlar, mesajSirasi: 0, hedefeKalan: null, metin }).join(' ')
+const coz = (metin: string, kip: SesliKip = 'soru', sablonId = 'tyt') =>
+  sesliMetniCoz(metin, { sablonlar, varsayilanSablonId: sablonId, kip })
+const cevap = (metin: string, kip: SesliKip = 'soru', sablonId = 'tyt') =>
+  rabiCevabi(coz(metin, kip, sablonId), { sablonlar, mesajSirasi: 0, hedefeKalan: null, metin, kip }).join(' ')
 
-describe('kabul — Emre’nin cümleleri', () => {
+describe('kabul — soru kipi (Soru Takibi)', () => {
   it('selam + günlük soru + DERS sorularının + kalanları ise boştu', () => {
     const metin =
       "Merhaba abi  bugün 50 tane matematik sorusu çözdüm  matematik sorularının 20'si doğru 10 tanesi yanlış kalanları ise boştu"
@@ -39,51 +46,77 @@ describe('kabul — Emre’nin cümleleri', () => {
     expect(cevap('Bugün hiç soru çözmedim')).not.toMatch(/anlayamadım/)
   })
 
-  it('önce günlük soru, sonra deneme: deneme dersleri günlüğe karışmaz', () => {
+  it('teşekkür niyeti: "Ben buradayım" değil, teşekküre karşılık', () => {
+    for (const m of ['teşekkürler', 'Teşekkürler', 'teşekkür ederim', 'sağ ol', 'sağol', 'eyvallah']) {
+      for (let sira = 0; sira < 5; sira++) {
+        const r = rabiCevabi(coz(m), { sablonlar, mesajSirasi: sira, hedefeKalan: null, metin: m, kip: 'soru' }).join(' ')
+        expect(r, `${m} / ${sira}`).not.toMatch(/burada|anlayamadım/i)
+      }
+    }
+  })
+
+  it('günlük soru + deneme karışık: yalnız günlük soru alınır, deneme kaydedilmez ve yönlendirilir', () => {
     const metin =
       "bugün 50 Türkçe çözdüm 10 tanesi doğru 30 tanesi boş denemeye girdim denemede tyt denemesi bu arada  10 tane Türkçe doğrusu yaptım 20'si yanlıştı matematikten 20 doğru 20 yanlış yaptım"
     const c = coz(metin)
     expect(c.sorular).toEqual([{ ders: 'Türkçe', toplam: 50, dogru: 10, yanlis: 10 }])
-    expect(c.deneme).toMatchObject({
-      sablonId: 'tyt',
-      dersler: [
-        { dersId: 'turkce', dogru: 10, yanlis: 20 },
-        { dersId: 'matematik', dogru: 20, yanlis: 20 },
-      ],
-    })
+    expect(c.deneme).toBeNull()
+    expect(c.yanlisYer).toBe('deneme')
     expect(c.anlasilmayan).toEqual([])
+    const r = cevap(metin)
+    expect(r).toMatch(/Türkçe 50/)
+    expect(r).toMatch(/Denemeler/)
+    expect(r).not.toMatch(/anlayamadım/)
   })
 
-  it('aynı cümlenin devamı: imkânsız Sosyal/Fen (40 > 20) anlaşılmayana, gerisi bozulmaz', () => {
-    const metin =
-      "bugün 50 Türkçe çözdüm 10 tanesi doğru 30 tanesi boş denemeye girdim denemede tyt denemesi bu arada  10 tane Türkçe doğrusu yaptım 20'si yanlıştı matematikten 20 doğru 20 yanlış yaptım  Sosyalden 10 doğru 30 yanlış fenden ise 20 doğru 20 yanlış"
+  it('yalnız deneme anlatılırsa hiçbir şey kaydedilmez, Denemeler’e yönlendirilir', () => {
+    const metin = 'tyt denemesine girdim türkçe 30 doğru 5 yanlış matematik 25 doğru 5 yanlış'
     const c = coz(metin)
-    expect(c.sorular).toEqual([{ ders: 'Türkçe', toplam: 50, dogru: 10, yanlis: 10 }])
-    expect(c.deneme?.dersler).toEqual([
-      { dersId: 'turkce', dogru: 10, yanlis: 20 },
-      { dersId: 'matematik', dogru: 20, yanlis: 20 },
-    ])
-    expect(c.deneme?.toplu ?? []).toEqual([])
-    expect(c.anlasilmayan.length).toBe(2)
+    expect(c.sorular).toEqual([])
+    expect(c.deneme).toBeNull()
+    expect(c.yanlisYer).toBe('deneme')
+    expect(cevap(metin)).toMatch(/Denemeler/)
   })
 
-  it('SONUÇ … DERS yaptım sırası', () => {
-    const metin =
-      'tyt denemesine girdim 20 doğru 20 yanlış Türkçe yaptım 10 doğru 30 yanlış matematik yaptım'
-    const c = coz(metin)
+  it('"TT denemesi" yanlış duyulsa da deneme sayılır ve yönlendirilir', () => {
+    const c = coz('TT denemesinde türkçe 33 doğru 4 yanlış')
+    expect(c.deneme).toBeNull()
+    expect(c.yanlisYer).toBe('deneme')
+  })
+
+  it('denemesiz düz günlük soruda yönlendirme yok', () => {
+    const c = coz('matematikten 40 soru çözdüm 8 tanesini yanlış yaptım')
+    expect(c.sorular).toEqual([{ ders: 'Matematik', toplam: 40, dogru: 32, yanlis: 8 }])
+    expect(c.yanlisYer ?? null).toBeNull()
+    expect(cevap('matematikten 40 soru çözdüm 8 tanesini yanlış yaptım')).not.toMatch(/Denemeler/)
+  })
+})
+
+describe('kabul — deneme kipi (Denemeler, tür önceden seçili)', () => {
+  it('"deneme" ya da "TYT" demeden ders sonuçları seçili denemeye yazılır', () => {
+    const c = coz('türkçe 30 doğru 5 yanlış matematik 25 doğru 5 yanlış', 'deneme', 'tyt')
     expect(c.sorular).toEqual([])
     expect(c.deneme).toMatchObject({
       sablonId: 'tyt',
       dersler: [
-        { dersId: 'turkce', dogru: 20, yanlis: 20 },
-        { dersId: 'matematik', dogru: 10, yanlis: 30 },
+        { dersId: 'turkce', dogru: 30, yanlis: 5 },
+        { dersId: 'matematik', dogru: 25, yanlis: 5 },
       ],
     })
     expect(c.anlasilmayan).toEqual([])
   })
 
-  it('yalın "sosyal" ve "fen" denemede toplu sonuçtur (Emre: "direkt sosyal 20 doğru 0 yanlış")', () => {
-    const c = coz('tyt denemesine girdim türkçe 30 doğru 5 yanlış sosyal 15 doğru 2 yanlış fen 12 doğru 3 yanlış')
+  it('SONUÇ … DERS yaptım sırası', () => {
+    const c = coz('20 doğru 20 yanlış Türkçe yaptım 10 doğru 30 yanlış matematik yaptım', 'deneme', 'tyt')
+    expect(c.deneme?.dersler).toEqual([
+      { dersId: 'turkce', dogru: 20, yanlis: 20 },
+      { dersId: 'matematik', dogru: 10, yanlis: 30 },
+    ])
+    expect(c.anlasilmayan).toEqual([])
+  })
+
+  it('yalın "sosyal" ve "fen" toplu sonuçtur (Emre: "direkt sosyal 20 doğru 0 yanlış")', () => {
+    const c = coz('türkçe 30 doğru 5 yanlış sosyal 15 doğru 2 yanlış fen 12 doğru 3 yanlış', 'deneme', 'tyt')
     expect(c.deneme?.dersler).toEqual([{ dersId: 'turkce', dogru: 30, yanlis: 5 }])
     expect(c.deneme?.toplu).toEqual([
       { grup: 'sosyal', dogru: 15, yanlis: 2 },
@@ -92,23 +125,44 @@ describe('kabul — Emre’nin cümleleri', () => {
     expect(c.anlasilmayan).toEqual([])
   })
 
-  it('"sosyal 20 doğru 0 yanlış" tek başına TYT denemesinde', () => {
-    const c = coz('TYT denemesi sosyal 20 doğru 0 yanlış')
-    expect(c.deneme?.toplu).toEqual([{ grup: 'sosyal', dogru: 20, yanlis: 0 }])
-    expect(c.anlasilmayan).toEqual([])
+  it('imkânsız Sosyal/Fen (40 > 20) anlaşılmayana, gerisi bozulmaz', () => {
+    const c = coz(
+      "10 tane Türkçe doğrusu yaptım 20'si yanlıştı matematikten 20 doğru 20 yanlış yaptım  Sosyalden 10 doğru 30 yanlış fenden ise 20 doğru 20 yanlış",
+      'deneme',
+      'tyt',
+    )
+    expect(c.deneme?.dersler).toEqual([
+      { dersId: 'turkce', dogru: 10, yanlis: 20 },
+      { dersId: 'matematik', dogru: 20, yanlis: 20 },
+    ])
+    expect(c.deneme?.toplu ?? []).toEqual([])
+    expect(c.anlasilmayan.length).toBe(2)
   })
 
-  it('teşekkür niyeti: "Ben buradayım" değil, teşekküre karşılık', () => {
-    for (const m of ['teşekkürler', 'Teşekkürler', 'teşekkür ederim', 'sağ ol', 'sağol', 'eyvallah']) {
-      for (let sira = 0; sira < 5; sira++) {
-        const r = rabiCevabi(coz(m), { sablonlar, mesajSirasi: sira, hedefeKalan: null, metin: m }).join(' ')
-        expect(r, `${m} / ${sira}`).not.toMatch(/burada|anlayamadım/i)
-      }
-    }
+  it('günlük soru söylenirse reddedilir, deneme bozulmaz', () => {
+    const metin = 'türkçe 30 doğru 5 yanlış bir de bugün 50 matematik sorusu çözdüm'
+    const c = coz(metin, 'deneme', 'tyt')
+    expect(c.sorular).toEqual([])
+    expect(c.deneme?.dersler).toEqual([{ dersId: 'turkce', dogru: 30, yanlis: 5 }])
+    expect(c.yanlisYer).toBe('soru')
+    expect(cevap(metin, 'deneme', 'tyt')).toMatch(/Soru Takibi/)
   })
 
-  it('"sosyalden 20 net" toplam net değildir, deneme toplam netine yazılmaz', () => {
-    const c = coz('TYT denemesinde sosyalden 12 net yaptım')
+  it('yalnız günlük soru söylenirse hiçbir şey alınmaz', () => {
+    const c = coz('matematikten 40 soru çözdüm', 'deneme', 'tyt')
+    expect(c.sorular).toEqual([])
+    expect(c.deneme?.dersler ?? []).toEqual([])
+    expect(c.yanlisYer).toBe('soru')
+  })
+
+  it('seçili tür AYT sayısal: matematik ve fen AYT şablonuna yazılır', () => {
+    const c = coz('matematik 20 doğru 5 yanlış fen 15 doğru 3 yanlış', 'deneme', 'ayt-say')
+    expect(c.deneme).toMatchObject({ sablonId: 'ayt-say', dersler: [{ dersId: 'matematik', dogru: 20, yanlis: 5 }] })
+    expect(c.deneme?.toplu).toEqual([{ grup: 'fen', dogru: 15, yanlis: 3 }])
+  })
+
+  it('"sosyalden 12 net" toplam net değildir', () => {
+    const c = coz('sosyalden 12 net yaptım', 'deneme', 'tyt')
     expect(c.deneme?.toplamNet ?? null).toBeNull()
   })
 })

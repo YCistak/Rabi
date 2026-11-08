@@ -16,6 +16,10 @@ function cozumle(metin: string): SesliCozum {
   return sesliMetniCoz(metin, { sablonlar: SABLONLAR, varsayilanSablonId: 'tyt' })
 }
 
+function denemeKipindeCozumle(metin: string): SesliCozum {
+  return sesliMetniCoz(metin, { sablonlar: SABLONLAR, varsayilanSablonId: 'tyt', kip: 'deneme' })
+}
+
 /** Katalogdaki ders çekimlerinin her biri, kanonik ders adıyla eşlenmelidir. */
 const DERS_YUVALARI = [
   { ders: 'Türkçe', bicimler: ['türkçe', 'türkçeyi', 'türkçeye', 'türkçede', 'türkçeden', 'türkçeyle', 'türkçem'] },
@@ -57,6 +61,34 @@ const GENISLETILMIS_KALIPLAR: KalipTesti[] = Array.from({ length: 500 }, (_, sir
     beklenen: { ...bosCozum(), sorular: [{ ders, toplam: 50, dogru: 0, yanlis: 0 }] },
   }
 })
+
+/** Deneme kipinde de aynı ders çekimleri, seçilen sabit TYT şablonuna yazılır. */
+const DENEME_KIPI_DERS_YUVALARI = [
+  { dersId: 'turkce', bicimler: DERS_YUVALARI[0].bicimler },
+  { dersId: 'matematik', bicimler: DERS_YUVALARI[1].bicimler },
+  { dersId: 'fizik', bicimler: DERS_YUVALARI[2].bicimler },
+  { dersId: 'kimya', bicimler: DERS_YUVALARI[3].bicimler },
+  { dersId: 'biyoloji', bicimler: DERS_YUVALARI[4].bicimler },
+  { dersId: 'tarih', bicimler: DERS_YUVALARI[5].bicimler },
+  { dersId: 'cografya', bicimler: DERS_YUVALARI[6].bicimler },
+  { dersId: 'felsefe', bicimler: DERS_YUVALARI[8].bicimler },
+  { dersId: 'din', bicimler: DERS_YUVALARI[9].bicimler },
+] as const
+
+const DENEME_DOLGU_SOZCUKLERI = ['', 'bugün ', 'sabah ', 'akşam ', 'şey ', 'işte ', 'ee ', 'bu arada ', 'neyse ', 'lütfen '] as const
+
+const DENEME_KIPI_KALIPLARI: KalipTesti[] = DENEME_KIPI_DERS_YUVALARI.flatMap(({ dersId, bicimler }) =>
+  bicimler.flatMap((bicim) =>
+    DENEME_DOLGU_SOZCUKLERI.map((dolgu) => ({
+      metin: `${dolgu}${bicim} 3 doğru 1 yanlış`,
+      beklenen: {
+        sorular: [],
+        deneme: { sablonId: 'tyt', dersler: [{ dersId, dogru: 3, yanlis: 1 }], toplu: [], toplamNet: null },
+        anlasilmayan: [],
+      },
+    })),
+  ),
+)
 
 const SONUC_KALIPLARI: KalipTesti[] = [
   {
@@ -140,6 +172,14 @@ describe('sesli konuşma kalıpları — üretilen katalog', () => {
 
   it.each(SONUC_KALIPLARI)('$metin', ({ metin, beklenen }) => {
     expect(cozumle(metin)).toEqual(beklenen)
+  })
+
+  it('deneme kipinde en az 400 ders çekimi üretir', () => {
+    expect(DENEME_KIPI_KALIPLARI.length).toBeGreaterThanOrEqual(400)
+  })
+
+  it.each(DENEME_KIPI_KALIPLARI)('deneme: $metin', ({ metin, beklenen }) => {
+    expect(denemeKipindeCozumle(metin)).toEqual(beklenen)
   })
 
   it("bugün 50 matematik sorusu çözdüm 20'si doğru 20'si yanlış 10 tanesi ise boş", () => {

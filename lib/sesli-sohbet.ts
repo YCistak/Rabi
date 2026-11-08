@@ -7,7 +7,7 @@
  */
 
 import type { Sablon } from './types'
-import type { SesliCozum, SesliDeneme, SesliSoru, TopluGrup } from './sesli-giris'
+import type { SesliCozum, SesliDeneme, SesliKip, SesliSoru, TopluGrup } from './sesli-giris'
 import { dersinGrubu } from './toplu-grup'
 
 export type SohbetBirikimi = { sorular: SesliSoru[]; deneme: SesliDeneme | null }
@@ -20,10 +20,24 @@ export const BOS_BIRIKIM: SohbetBirikimi = {
 /** Rabi'nin pencere açılınca ilk sorusu. */
 export const ACILIS_SORUSU = 'Bugün ne çözdün?'
 
+/** Denemeler sohbeti, tür seçilmeden sonuç anlatımına başlamaz. */
+export const DENEME_ACILIS_SORUSU = 'Hangi denemeye girdin?'
+
+/** Seçilen deneme türünü kısa ve değişmeyen bir cümleyle onaylar. */
+export function denemeTuruSecildi(sablonAdi: string): string {
+  return `${sablonAdi}, tamam. Ders ders doğru ve yanlışlarını anlat.`
+}
+
 const KAPANIS_SORULARI = [
   'Başka?',
   'Başka ne çözdün?',
   'Eklemek istediğin başka bir şey var mı?',
+] as const
+
+const DENEME_KAPANIS_SORULARI = [
+  'Başka ders var mı?',
+  'Kalan dersleri de söyler misin?',
+  "Bitince Denemeye geç'e basabilirsin.",
 ] as const
 
 const ANLASILMAYAN_ORNEK_CEVAP =
@@ -158,12 +172,14 @@ function soruOzetiUret(sorular: readonly SesliSoru[]): string {
 }
 
 /** Deneme çözümünü ders doğru/yanlışları veya toplam nete göre özetler. */
-function denemeOzetiUret(deneme: SesliDeneme, sablonlar: readonly Sablon[]): string {
+function denemeOzetiUret(deneme: SesliDeneme, sablonlar: readonly Sablon[], kip?: SesliKip): string {
   const baslik = sablonBasligiBul(sablonlar, deneme.sablonId)
 
   if (deneme.dersler.length === 0 && (deneme.toplu?.length ?? 0) === 0) {
     if (deneme.toplamNet !== null) {
-      return `${baslik}, toplam ${netMetni(deneme.toplamNet)} net.`
+      return kip === 'deneme'
+        ? `Toplam ${netMetni(deneme.toplamNet)} net.`
+        : `${baslik}, toplam ${netMetni(deneme.toplamNet)} net.`
     }
     return ''
   }
@@ -179,7 +195,14 @@ function denemeOzetiUret(deneme: SesliDeneme, sablonlar: readonly Sablon[]): str
   for (const sonuc of deneme.toplu ?? []) {
     parcalar.push(`${grupAdi[sonuc.grup]} ${sonuc.dogru} doğru ${sonuc.yanlis} yanlış (toplu)`)
   }
-  return `${baslik}: ${parcalar.join(', ')}.`
+  const ozet = `${parcalar.join(', ')}.`
+  return kip === 'deneme' ? ozet : `${baslik}: ${ozet}`
+}
+
+function yanlisYerYonu(yanlisYer: SesliCozum['yanlisYer']): string {
+  if (yanlisYer === 'deneme') return "Denemeleri buradan giremezsin, Denemeler'deki ‘Rabi'ye anlat’tan girebilirsin."
+  if (yanlisYer === 'soru') return "Günlük çözdüğün soruları Soru Takibi'ndeki ‘Rabi'ye anlat’tan ekleyebilirsin."
+  return ''
 }
 
 /** Yeni çözümü birikime ekler (saf fonksiyon, girdileri değiştirmez). */
@@ -260,15 +283,18 @@ export function birikimeEkle(birikim: SohbetBirikimi, cozum: SesliCozum): Sohbet
 /** Bu mesaja Rabi'nin cevabı: 1–2 kısa balon döner. */
 export function rabiCevabi(
   cozum: SesliCozum,
-  secenek: { sablonlar: Sablon[]; mesajSirasi: number; hedefeKalan?: number | null; metin?: string },
+  secenek: { sablonlar: Sablon[]; mesajSirasi: number; hedefeKalan?: number | null; metin?: string; kip?: SesliKip },
 ): string[] {
   const soruOzeti = soruOzetiUret(cozum.sorular)
-  const denemeOzeti = cozum.deneme ? denemeOzetiUret(cozum.deneme, secenek.sablonlar) : ''
+  const denemeOzeti = cozum.deneme ? denemeOzetiUret(cozum.deneme, secenek.sablonlar, secenek.kip) : ''
   const anlasilanVar = soruOzeti.length > 0 || denemeOzeti.length > 0
   const niyet = secenek.metin ? sohbetNiyeti(secenek.metin) : null
+  const yonlendirme = yanlisYerYonu(cozum.yanlisYer)
 
   if (!anlasilanVar) {
+    if (niyet && yonlendirme) return [`${niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin)} ${yonlendirme}`]
     if (niyet) return [niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin)]
+    if (yonlendirme) return [yonlendirme]
     if (cozum.anlasilmayan.length > 0) {
       const anlasilmayan = cozum.anlasilmayan[0]!
       if (/(?:sosyal|fen)\w*\s+\d+(?:[.,]\d+)?\s+net/i.test(secenek.metin ?? '')) {
@@ -311,14 +337,17 @@ export function rabiCevabi(
     }
   }
 
+  if (yonlendirme) ilkBalon += ` ${yonlendirme}`
+
   if (cozum.deneme?.toplu?.some((toplu) => cozum.deneme!.dersler.some((ders) => {
     return dersinGrubu(ders.dersId) === toplu.grup
   }))) {
     ilkBalon += ' Toplu grup sonucu ile ayrı ders sonucu birlikte kaydedildi.'
   }
 
-  const sira = Math.floor(Math.abs(secenek.mesajSirasi)) % KAPANIS_SORULARI.length
-  const kapanisSorusu = KAPANIS_SORULARI[sira]!
+  const kapanisSorulari = secenek.kip === 'deneme' ? DENEME_KAPANIS_SORULARI : KAPANIS_SORULARI
+  const sira = Math.floor(Math.abs(secenek.mesajSirasi)) % kapanisSorulari.length
+  const kapanisSorusu = kapanisSorulari[sira]!
 
   return [ilkBalon, kapanisSorusu]
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowUp, Check, FileSpreadsheet, Mic, X } from 'lucide-react'
+import { ArrowUp, Check, ChevronDown, FileSpreadsheet, Mic, X } from 'lucide-react'
 import type { Ayarlar, Sablon, SoruKaydi, TopluGrup } from '@/lib/types'
 import { dersRengi } from '@/lib/banka'
 import { sadelestir } from '@/lib/dersler'
@@ -9,12 +9,14 @@ import type { KonuDersId } from '@/lib/konu/tip'
 import { secilebilirSablonlar } from '@/lib/sablonlar'
 import { seviyeSablonu, varsayilanSeviyeSinifi } from '@/lib/seviye-tespit'
 import { dinle, sesIzniIste, sesTanimaDurumu } from '@/lib/ses-tanima'
-import { sesliMetniCoz, type SesliDeneme } from '@/lib/sesli-giris'
+import { sesliMetniCoz, type SesliDeneme, type SesliKip } from '@/lib/sesli-giris'
 import { TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
 import {
   ACILIS_SORUSU,
   BOS_BIRIKIM,
+  DENEME_ACILIS_SORUSU,
   birikimeEkle,
+  denemeTuruSecildi,
   rabiCevabi,
   type SohbetBirikimi,
 } from '@/lib/sesli-sohbet'
@@ -146,31 +148,55 @@ function RabiAvatari({ gizli = false }: { gizli?: boolean }) {
  * yapay zekâ ve ağ yok). Kullanıcı özet kartından "Kaydet" demeden yerel depoya
  * hiçbir şey yazılmaz (`docs/kurallar/sesli-giris.md`).
  */
-export function SesliGirisSayfasi({
-  sablonlar,
-  ayarlar,
-  gunEtiketi,
-  hedefeKalan = null,
-  onKapat,
-  onSorulariKaydet,
-  onDenemeAc,
-}: {
+type TemelProps = {
   sablonlar: Sablon[]
   ayarlar: Ayarlar
-  gunEtiketi: string
-  /** Soru Takibi'nde seçili günün hedefine pencere açılırken kalan soru; hedef yoksa `null`. */
+  gunEtiketi?: string
   hedefeKalan?: number | null
   onKapat: () => void
+}
+
+type SoruKipiProps = TemelProps & {
+  kip: 'soru'
   onSorulariKaydet: (sorular: SoruKaydi[]) => void
   onDenemeAc?: (baslangic: DenemeBaslangici) => void
-}) {
+}
+
+type DenemeKipiProps = TemelProps & {
+  kip: 'deneme'
+  onDenemeAc: (baslangic: DenemeBaslangici) => void
+  onSorulariKaydet?: (sorular: SoruKaydi[]) => void
+}
+
+export type SesliGirisSayfasiProps = SoruKipiProps | DenemeKipiProps
+
+export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
+  const {
+    kip,
+    sablonlar,
+    ayarlar,
+    gunEtiketi,
+    hedefeKalan = null,
+    onKapat,
+    onSorulariKaydet,
+    onDenemeAc,
+  } = props
+
   const [durum, setDurum] = useState<Durum>(() => ({
-    mesajlar: [{ id: 0, kim: 'rabi', metin: ACILIS_SORUSU }],
+    mesajlar: [
+      {
+        id: 0,
+        kim: 'rabi',
+        metin: kip === 'deneme' ? DENEME_ACILIS_SORUSU : ACILIS_SORUSU,
+      },
+    ],
     birikim: BOS_BIRIKIM,
     dinleme: 'bos',
     araMetin: '',
     bekleyenCevap: 0,
   }))
+  const [seciliSablonId, setSeciliSablonId] = useState<string | null>(null)
+  const [ciplerAcik, setCiplerAcik] = useState(kip === 'deneme')
   const [sesDurumu, setSesDurumu] = useState<SesDurumu>('bilinmiyor')
   const [yazi, setYazi] = useState('')
   const [saniye, setSaniye] = useState(0)
@@ -191,6 +217,9 @@ export function SesliGirisSayfasi({
   const sonaYakinRef = useRef(true)
   const yaziKutusuRef = useRef<HTMLTextAreaElement | null>(null)
 
+  const seciliSablonIdRef = useRef<string | null>(seciliSablonId)
+  seciliSablonIdRef.current = seciliSablonId
+
   /*
     Seviye tespit tür satırında tek kimlik (`okul`) taşıyor ama Yeni Deneme
     ekranında öğrencinin sınıfına/alanına ait ders listesini açıyor. Burada da
@@ -204,6 +233,23 @@ export function SesliGirisSayfasi({
     const guncelSeviye = seviyeSablonu(sablonlar, sinif, alan)
     return liste.map((s) => (s.id === 'okul' ? { ...guncelSeviye, id: 'okul' } : s))
   }, [sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru])
+
+  const secenekler = useMemo(
+    () => secilebilirSablonlar(sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru),
+    [sablonlar, ayarlar.buYilSinif, ayarlar.puanTuru],
+  )
+
+  const seciliSablonAd = useMemo(() => {
+    if (!seciliSablonId) return null
+    if (seciliSablonId === 'okul') return 'Seviye Tespit'
+    const bulunan =
+      cozucuSablonlari.find((s) => s.id === seciliSablonId) ??
+      sablonlar.find((s) => s.id === seciliSablonId)
+    return bulunan?.ad ?? seciliSablonId
+  }, [seciliSablonId, cozucuSablonlari, sablonlar])
+
+  /** Deneme kipinde tür seçilmeden yazı kutusu ve mikrofon pasif kalır. */
+  const turSecilmedi = kip === 'deneme' && seciliSablonId === null
 
   const cozucuRef = useRef({
     sablonlar: cozucuSablonlari,
@@ -270,33 +316,36 @@ export function SesliGirisSayfasi({
     })
   }, [])
 
-  /** Kullanıcı mesajını sohbete ekler, birikime işler ve kısa bir beklemeyle Rabi'yi cevaplatır. */
-  const mesajGonder = useCallback((ham: string) => {
-    const metin = ham.trim()
-    if (!metin) return
-    const sira = kullaniciSirasiRef.current++
-    const cozum = sesliMetniCoz(metin, cozucuRef.current)
+  const sablonSec = (yeniId: string, yeniAd: string) => {
+    const oncekiId = seciliSablonIdRef.current
+    setSeciliSablonId(yeniId)
+    setCiplerAcik(false)
 
-    // Kalan, bu mesajdan önceki birikim düşülerek verilir; bu mesajın payını `rabiCevabi` bilir.
-    const oncekiToplam = birikimRef.current.sorular.reduce((t, s) => t + s.toplam, 0)
-    const kalan =
-      hedefeKalanRef.current == null ? null : Math.max(0, hedefeKalanRef.current - oncekiToplam)
-    const cevap = rabiCevabi(cozum, {
-      sablonlar: cozucuRef.current.sablonlar,
-      mesajSirasi: sira,
-      hedefeKalan: kalan,
-      metin,
-    })
-
-    const yeniBirikim = birikimeEkle(birikimRef.current, cozum)
-    birikimRef.current = yeniBirikim
-    sonaYakinRef.current = true
+    // Kullanıcı balonu ekle
+    const kullaniciMesajId = mesajKimligiRef.current++
     setDurum((onceki) => ({
       ...onceki,
-      mesajlar: [...onceki.mesajlar, { id: mesajKimligiRef.current++, kim: 'kullanici', metin }],
-      birikim: yeniBirikim,
+      mesajlar: [...onceki.mesajlar, { id: kullaniciMesajId, kim: 'kullanici', metin: yeniAd }],
       bekleyenCevap: onceki.bekleyenCevap + 1,
     }))
+    sonaYakinRef.current = true
+
+    let rabiMetni: string
+    const oncekiSonucVar =
+      birikimRef.current.deneme !== null &&
+      (birikimRef.current.deneme.dersler.length > 0 ||
+        (birikimRef.current.deneme.toplu !== undefined && birikimRef.current.deneme.toplu.length > 0) ||
+        birikimRef.current.deneme.toplamNet !== null)
+
+    if (oncekiId !== null && oncekiId !== yeniId) {
+      // Tür değişti: birikmiş deneme sonuçları sıfırlanır
+      birikimiYaz({ ...birikimRef.current, deneme: null })
+      rabiMetni = oncekiSonucVar
+        ? `Deneme türünü ${yeniAd} olarak değiştirdin, önceki deneme sonuçlarını sıfırladım. Ders ders doğru ve yanlışlarını anlat.`
+        : `Deneme türünü ${yeniAd} olarak değiştirdin. Ders ders doğru ve yanlışlarını anlat.`
+    } else {
+      rabiMetni = denemeTuruSecildi(yeniAd)
+    }
 
     const zamanlayici = window.setTimeout(() => {
       zamanlayicilarRef.current = zamanlayicilarRef.current.filter((z) => z !== zamanlayici)
@@ -305,15 +354,68 @@ export function SesliGirisSayfasi({
         ...onceki,
         mesajlar: [
           ...onceki.mesajlar,
-          ...cevap.map((m) => ({ id: mesajKimligiRef.current++, kim: 'rabi' as const, metin: m })),
+          { id: mesajKimligiRef.current++, kim: 'rabi', metin: rabiMetni },
         ],
         bekleyenCevap: Math.max(0, onceki.bekleyenCevap - 1),
       }))
     }, YAZIYOR_SURESI_MS)
     zamanlayicilarRef.current.push(zamanlayici)
-  }, [])
+  }
+
+  /** Kullanıcı mesajını sohbete ekler, birikime işler ve kısa bir beklemeyle Rabi'yi cevaplatır. */
+  const mesajGonder = useCallback(
+    (ham: string) => {
+      const metin = ham.trim()
+      if (!metin) return
+      if (kip === 'deneme' && seciliSablonIdRef.current === null) return
+      const sira = kullaniciSirasiRef.current++
+      const cozum = sesliMetniCoz(metin, {
+        sablonlar: cozucuRef.current.sablonlar,
+        varsayilanSablonId: seciliSablonIdRef.current ?? cozucuRef.current.varsayilanSablonId,
+        kip,
+      })
+
+      // Kalan, bu mesajdan önceki birikim düşülerek verilir; bu mesajın payını `rabiCevabi` bilir.
+      const oncekiToplam = birikimRef.current.sorular.reduce((t, s) => t + s.toplam, 0)
+      const kalan =
+        hedefeKalanRef.current == null ? null : Math.max(0, hedefeKalanRef.current - oncekiToplam)
+      const cevap = rabiCevabi(cozum, {
+        sablonlar: cozucuRef.current.sablonlar,
+        mesajSirasi: sira,
+        hedefeKalan: kip === 'soru' ? kalan : null,
+        metin,
+        kip,
+      })
+
+      const yeniBirikim = birikimeEkle(birikimRef.current, cozum)
+      birikimRef.current = yeniBirikim
+      sonaYakinRef.current = true
+      setDurum((onceki) => ({
+        ...onceki,
+        mesajlar: [...onceki.mesajlar, { id: mesajKimligiRef.current++, kim: 'kullanici', metin }],
+        birikim: yeniBirikim,
+        bekleyenCevap: onceki.bekleyenCevap + 1,
+      }))
+
+      const zamanlayici = window.setTimeout(() => {
+        zamanlayicilarRef.current = zamanlayicilarRef.current.filter((z) => z !== zamanlayici)
+        if (!etkinRef.current) return
+        setDurum((onceki) => ({
+          ...onceki,
+          mesajlar: [
+            ...onceki.mesajlar,
+            ...cevap.map((m) => ({ id: mesajKimligiRef.current++, kim: 'rabi' as const, metin: m })),
+          ],
+          bekleyenCevap: Math.max(0, onceki.bekleyenCevap - 1),
+        }))
+      }, YAZIYOR_SURESI_MS)
+      zamanlayicilarRef.current.push(zamanlayici)
+    },
+    [kip],
+  )
 
   const dinlemeyiBaslat = useCallback(async () => {
+    if (kip === 'deneme' && seciliSablonIdRef.current === null) return
     oturumuTemizle()
     const buSurum = oturumSurumuRef.current
     const gecerli = () => etkinRef.current && oturumSurumuRef.current === buSurum
@@ -430,7 +532,7 @@ export function SesliGirisSayfasi({
     const liste = listeRef.current
     if (!liste || !sonaYakinRef.current) return
     liste.scrollTo({ top: liste.scrollHeight, behavior: hareketAzaltilmisMi() ? 'auto' : 'smooth' })
-  }, [durum.mesajlar.length, durum.araMetin, durum.bekleyenCevap, durum.birikim])
+  }, [durum.mesajlar.length, durum.araMetin, durum.bekleyenCevap, durum.birikim, ciplerAcik])
 
   const listeKaydirildi = () => {
     const liste = listeRef.current
@@ -448,6 +550,7 @@ export function SesliGirisSayfasi({
   }, [yazi, durum.dinleme])
 
   const yaziyiGonder = () => {
+    if (kip === 'deneme' && seciliSablonIdRef.current === null) return
     if (!yazi.trim()) return
     mesajGonder(yazi)
     setYazi('')
@@ -484,21 +587,35 @@ export function SesliGirisSayfasi({
 
   const { sorular, deneme } = durum.birikim
 
+  const denemeDolu =
+    deneme !== null &&
+    (deneme.dersler.length > 0 ||
+      (deneme.toplu !== undefined && deneme.toplu.length > 0) ||
+      deneme.toplamNet !== null)
+
+  const kaydedilecekVar = kip === 'deneme' ? denemeDolu : sorular.length > 0
+  const soruHatasiVar =
+    kip === 'soru' && sorular.some((s) => s.toplam <= 0 || s.dogru + s.yanlis > s.toplam)
+
   // Birikimde okunan satır varken ✕ ile çıkmak emeği sileceği için sorar.
   const kapatmaOnayi = useKapatmaOnayi({
-    aciklama: 'Anlatılan sorular ve deneme bilgileri kaydedilmeden pencere kapanır.',
+    aciklama:
+      kip === 'deneme'
+        ? 'Anlatılan deneme bilgileri kaydedilmeden pencere kapanır.'
+        : 'Anlatılan sorular kaydedilmeden pencere kapanır.',
   })
-  const kaydedilecekVar = sorular.length > 0 || deneme !== null
-
-  const soruHatasiVar = sorular.some((s) => s.toplam <= 0 || s.dogru + s.yanlis > s.toplam)
 
   const onaylaVeIlerle = () => {
     if (!kaydedilecekVar || soruHatasiVar) return
-    if (sorular.length > 0) {
-      onSorulariKaydet(sorular)
+    if (kip === 'soru') {
+      if (sorular.length > 0 && onSorulariKaydet) {
+        onSorulariKaydet(sorular)
+      }
+      kapat()
+      return
     }
-    kapat()
-    if (deneme !== null && onDenemeAc) {
+    if (kip === 'deneme' && deneme !== null && onDenemeAc) {
+      kapat()
       onDenemeAc(denemedenBaslangic(deneme))
     }
   }
@@ -509,12 +626,7 @@ export function SesliGirisSayfasi({
       null)
     : null
 
-  const anaButonMetni =
-    sorular.length > 0 && deneme !== null
-      ? 'Kaydet ve denemeye geç'
-      : sorular.length > 0
-        ? 'Kaydet'
-        : 'Denemeye geç'
+  const anaButonMetni = kip === 'deneme' ? 'Denemeye geç' : 'Kaydet'
 
   const dinleniyor = durum.dinleme !== 'bos'
   const canliBalon = dinleniyor && durum.araMetin.trim() !== ''
@@ -541,7 +653,28 @@ export function SesliGirisSayfasi({
           <div className="flex items-center gap-2.5 pb-3">
             <RabiAvatari />
             <p className="font-display text-lg font-extrabold tracking-tight">Rabi</p>
-            <p className="text-[12.5px] font-bold text-muted-foreground/70">{gunEtiketi}</p>
+            {kip === 'deneme' ? (
+              seciliSablonAd && (
+                <button
+                  type="button"
+                  onClick={() => setCiplerAcik((o) => !o)}
+                  className="inline-flex items-center gap-1 rounded-lg border border-primary/30 bg-primary-soft px-2.5 py-1 text-xs font-extrabold text-primary transition active:scale-95"
+                  aria-label={`Deneme türü: ${seciliSablonAd}. Değiştirmek için dokun.`}
+                >
+                  <span>{seciliSablonAd}</span>
+                  <ChevronDown
+                    size={13}
+                    strokeWidth={2.5}
+                    aria-hidden
+                    className={cn('transition-transform duration-200', ciplerAcik && 'rotate-180')}
+                  />
+                </button>
+              )
+            ) : (
+              gunEtiketi && (
+                <p className="text-[12.5px] font-bold text-muted-foreground/70">{gunEtiketi}</p>
+              )
+            )}
             <button
               type="button"
               onClick={() => (kaydedilecekVar ? kapatmaOnayi.sor(kapat) : kapat())}
@@ -609,9 +742,33 @@ export function SesliGirisSayfasi({
               </div>
             )}
 
+            {kip === 'deneme' && ciplerAcik && (
+              <div className="flex flex-wrap gap-2 pl-[44px] pt-1 pb-1">
+                {secenekler.map((s) => {
+                  const ad = s.id === 'okul' ? 'Seviye Tespit' : s.ad
+                  const secili = s.id === seciliSablonId
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => sablonSec(s.id, ad)}
+                      className={cn(
+                        'flex h-10 items-center rounded-xl border px-3.5 text-[13px] font-bold transition active:scale-95',
+                        secili
+                          ? 'border-[1.5px] border-primary-parlak bg-primary-soft font-extrabold text-primary'
+                          : 'border-border bg-card text-foreground active:bg-muted',
+                      )}
+                    >
+                      {ad}
+                    </button>
+                  )
+                })}
+              </div>
+            )}
+
             {kaydedilecekVar && (
               <div className="mt-2 rounded-[22px] border border-border p-3">
-                {sorular.length > 0 && (
+                {kip === 'soru' && sorular.length > 0 && (
                   <div className="flex flex-col gap-2">
                     <span className="px-0.5 text-[11.5px] font-extrabold uppercase tracking-wider text-muted-foreground">
                       Sorular
@@ -722,8 +879,8 @@ export function SesliGirisSayfasi({
                   </div>
                 )}
 
-                {deneme !== null && (
-                  <div className={cn(sorular.length > 0 && 'mt-3.5')}>
+                {kip === 'deneme' && denemeDolu && (
+                  <div>
                     <span className="mb-1.5 block px-0.5 text-[11.5px] font-extrabold uppercase tracking-wider text-muted-foreground">
                       Deneme
                     </span>
@@ -731,7 +888,7 @@ export function SesliGirisSayfasi({
                       <div className="flex items-center gap-2">
                         <FileSpreadsheet size={17} className="shrink-0 text-primary" aria-hidden />
                         <p className="min-w-0 flex-1 truncate font-display text-[15px] font-extrabold tracking-tight text-foreground">
-                          {denemeSablonu?.ad ?? 'Deneme'}
+                          {deneme.sablonId === 'okul' ? 'Seviye Tespit' : (denemeSablonu?.ad ?? 'Deneme')}
                         </p>
                         <button
                           type="button"
@@ -864,6 +1021,7 @@ export function SesliGirisSayfasi({
               <textarea
                 ref={yaziKutusuRef}
                 value={yazi}
+                disabled={turSecilmedi}
                 onChange={(e) => setYazi(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -873,26 +1031,38 @@ export function SesliGirisSayfasi({
                 }}
                 rows={1}
                 enterKeyHint="send"
-                placeholder="Yaz ya da konuş"
+                placeholder={turSecilmedi ? 'Önce deneme türünü seç' : 'Yaz ya da konuş'}
                 aria-label="Mesaj"
-                className="min-w-0 flex-1 resize-none bg-transparent py-2 text-[15px] leading-[22px] text-foreground outline-none placeholder:text-muted-foreground/80"
+                className={cn(
+                  'min-w-0 flex-1 resize-none bg-transparent py-2 text-[15px] leading-[22px] text-foreground outline-none placeholder:text-muted-foreground/80',
+                  turSecilmedi && 'cursor-not-allowed opacity-50',
+                )}
               />
               {yaziVar || sesDurumu !== 'var' ? (
                 <button
                   type="button"
                   onClick={yaziyiGonder}
-                  disabled={!yaziVar}
+                  disabled={!yaziVar || turSecilmedi}
                   aria-label="Gönder"
-                  className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-parlak text-white transition active:scale-95 disabled:opacity-40"
+                  className={cn(
+                    'inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-parlak text-white transition active:scale-95 disabled:opacity-40',
+                    turSecilmedi && 'cursor-not-allowed opacity-40',
+                  )}
                 >
                   <ArrowUp size={19} strokeWidth={2.6} aria-hidden />
                 </button>
               ) : (
                 <button
                   type="button"
-                  onClick={() => void dinlemeyiBaslat()}
+                  disabled={turSecilmedi}
+                  onClick={() => {
+                    if (!turSecilmedi) void dinlemeyiBaslat()
+                  }}
                   aria-label="Konuşarak anlat"
-                  className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-parlak text-white transition active:scale-95"
+                  className={cn(
+                    'inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-parlak text-white transition active:scale-95',
+                    turSecilmedi && 'cursor-not-allowed opacity-40',
+                  )}
                 >
                   <Mic size={18} strokeWidth={2.3} aria-hidden />
                 </button>

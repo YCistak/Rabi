@@ -17,7 +17,13 @@ export type SesliSoru = { ders: string; toplam: number; dogru: number; yanlis: n
 export type TopluGrup = TopluGrupTemeli
 export type SesliTopluSonuc = { grup: TopluGrup; dogru: number; yanlis: number }
 export type SesliDeneme = { sablonId: string; dersler: OkunanDers[]; toplu?: SesliTopluSonuc[]; toplamNet: number | null }
-export type SesliCozum = { sorular: SesliSoru[]; deneme: SesliDeneme | null; anlasilmayan: string[] }
+export type SesliKip = 'soru' | 'deneme'
+export type SesliCozum = {
+  sorular: SesliSoru[]
+  deneme: SesliDeneme | null
+  anlasilmayan: string[]
+  yanlisYer?: 'deneme' | 'soru'
+}
 
 const EN_COK_SORU = 500
 
@@ -1034,12 +1040,18 @@ function parcaAnlamliSonu(parca: string): number {
 }
 
 /** Çözülemeyen ders parçalarını yalıtarak denemeyi çözer; tamamen boş denemeleri `anlasilmayan`a atar. */
-function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { sablonlar: Sablon[]; varsayilanSablonId: string }): { deneme: SesliDeneme | null; anlasilmayan: string[] } {
+function denemeBolumleriniCoz(
+  bolumler: Bolum[],
+  hazir: HazirMetin,
+  secenek: { sablonlar: Sablon[]; varsayilanSablonId: string; sabitSablonMu?: boolean },
+): { deneme: SesliDeneme | null; anlasilmayan: string[] } {
   const denemeBolumleri = bolumler.filter((b) => b.tur === 'deneme')
   if (denemeBolumleri.length === 0) return { deneme: null, anlasilmayan: [] }
 
   const birlesik = denemeBolumleri.map((b) => hazir.norm.slice(b.bas, b.son)).join(' ')
-  const sablon = sablonSec(birlesik, hazir.norm, secenek.sablonlar, secenek.varsayilanSablonId)
+  const sablon = secenek.sabitSablonMu
+    ? secenek.sablonlar.find((aday) => aday.id === secenek.varsayilanSablonId) ?? null
+    : sablonSec(birlesik, hazir.norm, secenek.sablonlar, secenek.varsayilanSablonId)
   if (!sablon) return { deneme: null, anlasilmayan: [] }
 
   const hedefler = sablonDersHedefleri(sablon.dersler)
@@ -1400,12 +1412,78 @@ export function enIyiAdayiSec(adaylar: string[]): string {
   return enIyi
 }
 
+/** Günlük soru anlatımını deneme kipindeki metinden ayırır; yer tutucular dizinleri korur. */
+function denemeKipindeGunlukSoruyuMaskele(metin: string): { metin: string; gunlukSoruVar: boolean } {
+  const dersAdi = '(?:turkce\\w*|turk\\w*|edebiyat\\w*|paragraf\\w*|matematik\\w*|mat\\w*|geometri\\w*|geo\\w*|problem\\w*|fizik\\w*|fiz\\w*|kimya\\w*|kim\\w*|biyoloji\\w*|biyo\\w*|tarih\\w*|cografya\\w*|cog\\w*|felsefe\\w*|din\\w*|yabanci\\s+dil\\w*|ingilizce\\w*|ing\\w*)'
+  const desen = new RegExp(
+    `\\b(?:\\d+\\s+(?:tane\\s+)?soru\\w*|\\d+\\s+(?:tane\\s+)?${dersAdi}|${dersAdi}\\s+\\d+(?:\\s+tane)?)\\s+(?:soru\\w*\\s+)?(?:coz|yap|bitir|hallet|bak)\\w*`,
+    'g',
+  )
+  let gunlukSoruVar = false
+  const maskelenmis = metin.replace(desen, (eslesen) => {
+    gunlukSoruVar = true
+    return eslesen.replace(/[^\s]/g, ' ')
+  })
+  return { metin: maskelenmis, gunlukSoruVar }
+}
+
+/** Deneme kipinde seçili şablon için boş da olsa kararlı sonuç biçimini döndürür. */
+function denemeKipiSonucunuTamamla(
+  deneme: SesliDeneme | null,
+  sablonId: string,
+): SesliDeneme {
+  return {
+    sablonId,
+    dersler: deneme?.dersler.map((ders) => ({ ...ders })) ?? [],
+    toplu: deneme?.toplu?.map((sonuc) => ({ ...sonuc })) ?? [],
+    toplamNet: deneme?.toplamNet ?? null,
+  }
+}
+
 /** Konuşma tanıma metnini Soru Takibi ve Deneme kayıtlarına dönüştürür. */
-export function sesliMetniCoz(metin: string, secenek: { sablonlar: Sablon[]; varsayilanSablonId: string }): SesliCozum {
+export function sesliMetniCoz(
+  metin: string,
+  secenek: { sablonlar: Sablon[]; varsayilanSablonId: string; kip?: SesliKip },
+): SesliCozum {
   const hazir = metniHazirla(duyulaniDuzelt(metin))
-  if (!hazir.norm) return { sorular: [], deneme: null, anlasilmayan: [] }
+  if (!hazir.norm) {
+    if (secenek.kip === 'deneme') {
+      return { sorular: [], deneme: denemeKipiSonucunuTamamla(null, secenek.varsayilanSablonId), anlasilmayan: [] }
+    }
+    return { sorular: [], deneme: null, anlasilmayan: [] }
+  }
 
   const bolumler = bolumlereAyir(hazir.norm)
+
+  if (secenek.kip === 'soru') {
+    const hamSorular: SesliSoru[] = []
+    const anlasilmayan = new Set<string>()
+    const denemeVar = bolumler.some((bolum) => bolum.tur === 'deneme')
+    for (const bolum of bolumler) {
+      if (bolum.tur !== 'soru') continue
+      const sonuc = soruBolumunuCoz(bolum, hazir)
+      hamSorular.push(...sonuc.sorular)
+      for (const parca of sonuc.anlasilmayan) anlasilmayan.add(parca)
+    }
+    const sonuc: SesliCozum = { sorular: sorulariBirlestir(hamSorular), deneme: null, anlasilmayan: [...anlasilmayan] }
+    if (denemeVar) sonuc.yanlisYer = 'deneme'
+    return sonuc
+  }
+
+  if (secenek.kip === 'deneme') {
+    const maskelenen = denemeKipindeGunlukSoruyuMaskele(hazir.norm)
+    const denemeHazir = metniHazirla(maskelenen.metin)
+    const denemeBolumu: Bolum[] = denemeHazir.norm ? [{ tur: 'deneme', bas: 0, son: denemeHazir.norm.length }] : []
+    const denemeSonucu = denemeBolumleriniCoz(denemeBolumu, denemeHazir, { ...secenek, sabitSablonMu: true })
+    const sonuc: SesliCozum = {
+      sorular: [],
+      deneme: denemeKipiSonucunuTamamla(denemeSonucu.deneme, secenek.varsayilanSablonId),
+      anlasilmayan: denemeSonucu.anlasilmayan,
+    }
+    if (maskelenen.gunlukSoruVar) sonuc.yanlisYer = 'soru'
+    return sonuc
+  }
+
   const denemeSonucu = denemeBolumleriniCoz(bolumler, hazir, secenek)
   const hamSorular: SesliSoru[] = []
   const anlasilmayan = new Set<string>()

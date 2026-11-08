@@ -427,13 +427,13 @@ export function SoruTakibiEkrani({
 
       {sesliAcik && !tanitim && (
         <SesliGirisSayfasi
+          kip="soru"
           sablonlar={sablonlar}
           ayarlar={ayarlar}
           gunEtiketi={bugunMu ? 'Bugün' : 'Dün'}
           hedefeKalan={hedef > 0 ? Math.max(0, hedef - ozet.toplam) : null}
           onKapat={() => setSesliAcik(false)}
           onSorulariKaydet={sesliSorulariKaydet}
-          onDenemeAc={onDenemeAc}
         />
       )}
     </div>

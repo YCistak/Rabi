@@ -2,17 +2,18 @@
 
 Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md](../../AGENTS.md).
 
-Soru Takibi ekranında öğrencinin gününü konuşarak anlatması ("80 matematik, 65 kimya sorusu çözdüm, TYT denemesinde 87 net yaptım"). Ağ istisnası, gizlilik ve üçüncü taraf servis kuralları için: [ag-ve-gizlilik.md](ag-ve-gizlilik.md).
+Soru Takibi ve Denemeler ekranında öğrencinin sonucunu konuşarak anlatması. Ağ istisnası, gizlilik ve üçüncü taraf servis kuralları için: [ag-ve-gizlilik.md](ag-ve-gizlilik.md).
 
 ## Mimari ve dosyalar
 
 - **Paket:** `@capgo/capacitor-speech-recognition` (MPL-2.0). Cihaz köprüsü `lib/ses-tanima.ts`, saf metin çözümleyici `lib/sesli-giris.ts`, Rabi'nin kurallı cevapları ve birikim `lib/sesli-sohbet.ts`, sohbet arayüzü `components/sesli-giris.tsx`.
+- **İki ayrı kip:** Soru Takibi'ndeki “Rabi'ye anlat” `soru` kipidir ve yalnız günlük soru kaydeder. Denemeler'deki “Rabi'ye anlat” `deneme` kipidir; öğrenci önce türü seçer ve bu seçim sohbet boyunca sabittir. Kip verilmezse eski karma çözüm, eski çağıranlar için korunur.
 - **Sunucu yok:** Rabi'nin kendi sunucusu yoktur. Ses yalnızca telefonun işletim sisteminin konuşma tanıma servisine (Android'de Google, iOS'ta Apple Konuşma Tanıma) gider; Rabi sesi veya metni hiçbir sunucuya aktarmaz, saklamaz veya kaydetmez.
 - **İzin ve düğme görünürlüğü:** Mikrofon izni yalnızca kullanıcı düğmeye bastığında (pencere açılınca otomatik dinleme) istenir; uygulama açılışında istenmez. Soru Takibi'ndeki düğme düzenlenebilir günlerde **her zaman** görünür: ses tanıma varsa `Mic` + "Sesle anlat", yoksa `MessageCircle` + "Rabi'ye anlat" (yalnız yazarak).
 
 ## Sohbet akışı
 
-- **Pencere bir sohbet:** Rabi solda (avatar `/tavsan-yuz.png`, gri balon), kullanıcı sağda (`bg-primary-parlak` balon). İlk balon `ACILIS_SORUSU`. Başlıkta yalnız avatar + "Rabi" + gün etiketi + ✕; açıklayıcı yazı, örnek cümle, "Dinleniyor…" gibi durum metinleri konmaz.
+- **Pencere bir sohbet:** Rabi solda (avatar `/tavsan-yuz.png`, gri balon), kullanıcı sağda (`bg-primary-parlak` balon). Soru kipinin ilk balonu `ACILIS_SORUSU`, deneme kipinin tür seçimi sorusu `DENEME_ACILIS_SORUSU`dur. Başlıkta yalnız avatar + "Rabi" + gün etiketi + ✕; açıklayıcı yazı, örnek cümle, "Dinleniyor…" gibi durum metinleri konmaz.
 - **Kurallı cevap, yapay zekâ yok:** Her kullanıcı mesajı `sesliMetniCoz` → `birikimeEkle` → kısa "yazıyor" beklemesi → `rabiCevabi` balonları. Cevaplar `lib/sesli-sohbet.ts`teki saf kurallarla üretilir; dil modeli ya da ağ çağrısı eklenmez.
 - **Yazarak ya da dikte ederek:** Alt çubukta 1–4 satır büyüyen yazı kutusu; kutu boşken mikrofon, doluyken gönder (`ArrowUp`). Enter gönderir, Shift+Enter yeni satır. Dinlerken çubuk ses dalgası + süre + "Bitir" olur; canlı metin sağda imleçli kullanıcı balonudur, "Bitir"le gönderilmiş mesaja döner. Ses yoksa ya da izin reddedildiyse mikrofon gizlenir, sohbet yazıyla sürer.
 - **Ham metin balonda:** Kullanıcı balonu, `duyulaniDuzelt`ten önceki ham metnin kendisidir; ayrı bir "Duyduğum" satırı yoktur.
@@ -20,6 +21,9 @@ Soru Takibi ekranında öğrencinin gününü konuşarak anlatması ("80 matemat
 - **Özet kartı:** Birikim boş değilse listenin en sonunda tek bir kart: ders satırları (dokununca `SayiKutusu` ile düzeltme, ✕ ile silme) + deneme kartı + "Kaydet" / "Kaydet ve denemeye geç" / "Denemeye geç". Karttaki düzeltmeler birikime yazılır. ✕ ile kapatırken kaydedilmemiş birikim varsa kapatma onayı sorulur.
 
 ## Kurallar
+
+- **Kip sınırı kesindir:** Soru kipinde deneme/TYT/AYT/YDT (yanlış duyulmuş `TT` dâhil) ve o çerçevedeki sonuçlar kayda ya da `anlasilmayan`a girmez; `yanlisYer: 'deneme'` ile öğrenci Denemeler'e yönlendirilir. Deneme kipinde günlük `N soru çözdüm`/`N tane matematik çözdüm` kalıpları kayda ya da `anlasilmayan`a girmez; `yanlisYer: 'soru'` ile Soru Takibi'ne yönlendirilir.
+- **Deneme kipinde seçili tür değişmez:** Cümlede başka bir TYT/AYT/YDT adı geçse bile `varsayilanSablonId` kullanılır. Deneme sonucu boş olsa bile çözücü seçili kimlik, boş ders/toplu dizileri ve `toplamNet: null` içeren deneme nesnesi döndürür; arayüz türü böyle korur.
 
 - **Çözücü saf ve testli (`lib/sesli-giris.ts`):** Metinden ders, soru sayısı, doğru/yanlış ve deneme neti çıkarma mantığı saf fonksiyondur; React bileşenlerinden veya yerli köprüden bağımsızdır. Kapsamlı birim testleri (`lib/sesli-giris.test.ts`) ile doğrulanır; yeni kalıp eklenirse testle birlikte eklenir.
 - **Konuşma kalıpları kataloğu:** Konuşma dili yuvaları ve sıra kuralları [sesli-konusma-kaliplari.md](sesli-konusma-kaliplari.md) içindedir. Yeni bir kalıp bildirilince önce kataloğa, sonra `lib/sesli-kalip.test.ts` üretecine, en son çözücüye eklenir.

@@ -1322,9 +1322,6 @@ function RabiUygulamasi() {
                 setKayitlar={anaTurda ? (g) => tanitim.demoGuncelle('soruKayitlari', g, 'soru') : setGunlukKayitlar}
                 ayarlar={ayarlar}
                 sablonlar={sablonlar}
-                onDenemeAc={(baslangic) => {
-                  if (!anaTurda) setDenemeFormu({ duzenlenen: null, baslangic })
-                }}
                 tanitim={anaTurda ? turFormu('soru-form', 'soru-ekle') : undefined}
               />
             )}
@@ -1332,10 +1329,14 @@ function RabiUygulamasi() {
               <DenemelerEkrani
                 denemeler={gorunenDenemeler}
                 sablonlar={sablonlar}
+                ayarlar={ayarlar}
                 hazir={anaTurda || denemelerHazir}
                 onSil={(id) => (anaTurda ? tanitim.demoGuncelle('denemeler', (o) => o.filter((d) => d.id !== id)) : setDenemeler((onceki) => onceki.filter((d) => d.id !== id)))}
                 onDuzenle={(deneme) => { if (!anaTurda) setDenemeFormu({ duzenlenen: deneme }) }}
                 onYeniyeGit={() => { if (!anaTurda) setDenemeFormu({ duzenlenen: null }) }}
+                onDenemeAc={(baslangic) => {
+                  if (!anaTurda) setDenemeFormu({ duzenlenen: null, baslangic })
+                }}
                 // Turda örnek denemenin kartı adıma bağlı açılıyor (`deneme-detay`).
                 tanitim={anaTurda ? {
                   ornekAcik: tanitim.adim?.kimlik === 'deneme-detay',

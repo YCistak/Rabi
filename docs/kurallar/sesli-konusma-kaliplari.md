@@ -6,6 +6,16 @@ cümleyi ezberlemez. Yeni bir gerçek konuşma örneği geldiğinde önce burada
 yuvası ve sırası belirlenir, sonra `lib/sesli-kalip.test.ts` üretecine, en son
 çözücüye eklenir.
 
+## Kip sınırı
+
+Günlük soru yuvaları yalnız Soru Takibi'ndeki `soru` kipinde kaydedilir. Bu
+kipte deneme/TYT/AYT/YDT çerçevesi ve çerçevenin devamındaki ders sonuçları
+tamamen yok sayılır; öğrenci Denemeler'deki sohbete yönlendirilir. Denemeler'in
+`deneme` kipinde öğrenci türü baştan seçer; ders doğru/yanlış yuvaları seçilen
+sabit şablona yazılır ve metindeki başka tür adı şablonu değiştirmez. Günlük
+`N soru çözdüm` ve `N tane ders çözdüm` yuvaları bu kipte yok sayılır; öğrenci
+Soru Takibi'ne yönlendirilir.
+
 ## Yuvalar
 
 ### DERS
@@ -114,13 +124,16 @@ uydurulmaz; soru kaydı oluşturmaz ve anlaşılmayan ya da boş kalır.
   ders, güvenle çözülen diğer dersleri veya deneme sonucunu düşürmez.
 - Aynı ders için çelişen iki sonuç, kullanıcı doğrulayana dek kayda yazılmaz.
 
-## BAĞLAM
+## BAĞLAM (kip verilmediğinde eski karma çözüm)
 
 Deneme çerçevesi açıldıktan sonra gelen ders sonuçları denemeye aittir. Çerçeve
 yalnız açık günlük geçişle (`ayrıca/bir de/onun dışında N soru çözdüm`,
 `günlük`, `test çözdüm`, `deneme dışında`) veya yeni bir deneme çerçevesiyle
 kapanır. Denemeden önceki sonuçlar günlük soru kaydıdır. `20 doğru 20 yanlış
 Türkçe yaptım` biçiminde fiilden önce gelen sonuçlar da Türkçe deneme sonucudur.
+
+Kipli sohbette bu eski geçiş kuralı uygulanmaz: sohbetin ekranı bağlamı baştan
+belirler. Böylece deneme ile günlük çalışma aynı birikimde karışmaz.
 
 ## SOSYAL ve FEN (toplu)
 
