@@ -267,6 +267,30 @@ describe('kenar durumları', () => {
     expect(sonuc.deneme?.dersler).toEqual([{ dersId: 'edebiyat', dogru: 20, yanlis: 4 }])
   })
 
+  it('Emre’nin kuralı: Türkçe = Edebiyat = Türk Dili ve Edebiyatı şablondaki karşılığına yazılır', () => {
+    const tytEdebiyat = sesliMetniCoz('edebiyat 32 doğru 6 yanlış', {
+      sablonlar: SECENEK_SABLONLAR,
+      varsayilanSablonId: 'tyt',
+      kip: 'deneme',
+    })
+    expect(tytEdebiyat.deneme?.dersler).toEqual([{ dersId: 'turkce', dogru: 32, yanlis: 6 }])
+
+    const aytTurkce = sesliMetniCoz('türkçe 20 doğru 4 yanlış', {
+      sablonlar: SECENEK_SABLONLAR,
+      varsayilanSablonId: 'ayt-ea',
+      kip: 'deneme',
+    })
+    expect(aytTurkce.deneme?.dersler).toEqual([{ dersId: 'edebiyat', dogru: 20, yanlis: 4 }])
+
+    const aytSay = sesliMetniCoz('edebiyat 20 doğru 4 yanlış', {
+      sablonlar: SECENEK_SABLONLAR,
+      varsayilanSablonId: 'ayt-say',
+      kip: 'deneme',
+    })
+    expect(aytSay.deneme?.dersler ?? []).toEqual([])
+    expect(aytSay.denemedeYok).toEqual(['Türkçe'])
+  })
+
   it('buçuklu neti ve önce soru sonra deneme anlatılan akışı çözer', () => {
     const sonuc = coz(
       'Sabah 40 paragraf sorusu çözdüm akşam TYT denemesinde seksen yedi buçuk net yaptım bir de 30 fizik sorusu çözdüm',

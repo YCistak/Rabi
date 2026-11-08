@@ -929,12 +929,24 @@ function sablonSec(denemeMetni: string, tumMetin: string, sablonlar: Sablon[], v
 
 /** Şablon dersinin arama anahtarlarını üretir; şablonda "Sosyal"/"Fen" adlı tek ders varsa eşler. */
 function sablonDersHedefleri(sablonDersleri: SablonDers[]): DersHedefi<SablonDers>[] {
+  const turkceVar = sablonDersleri.some((d) => d.id === 'turkce')
+  const edebiyatVar = sablonDersleri.some((d) => d.id === 'edebiyat')
+  const ikisiBirden = turkceVar && edebiyatVar
+
   return sablonDersleri.map((ders) => {
     const sadeAd = sadelestir(ders.ad)
     const grup = sadeAd === 'sosyal' || sadeAd === 'fen' ? sadeAd : null
-    const adlar = SESLI_AD_TABLOSU.filter(
-      (ad) => ad.dersKimlikleri.includes(ders.id) || (grup !== null && ad.grup === grup),
-    ).map((ad) => ad.ad)
+    const adlar = SESLI_AD_TABLOSU.filter((ad) => {
+      if (grup !== null && ad.grup === grup) return true
+      if (!ad.dersKimlikleri.includes(ders.id)) return false
+      // Emre'nin kuralı: ikisi birden olan şablon varsa söylenen ada en yakın olan:
+      // 'edebiyat'/'tde' → edebiyat, 'türkçe'/'paragraf' → turkce
+      if (ikisiBirden && (ders.id === 'turkce' || ders.id === 'edebiyat')) {
+        const edebiyataYakin = ad.ad.includes('edebiyat') || ad.ad === 'tde'
+        return ders.id === 'edebiyat' ? edebiyataYakin : !edebiyataYakin
+      }
+      return true
+    }).map((ad) => ad.ad)
     return { hedef: ders, kimlik: ders.id, anahtarlar: anahtarlariGenislet(adlar) }
   })
 }
@@ -1078,8 +1090,18 @@ function denemeBolumleriniCoz(
     })
     for (const bulgu of denemedeOlmayanBulgular) {
       const ad = bulgu.hedef!
+      const turkceAilesi =
+        (ad.dersKimlikleri.includes('turkce') && ad.dersKimlikleri.includes('edebiyat')) ||
+        ad.soruDersi === 'Türkçe'
       const resmi = HAZIR_SABLONLAR.flatMap((s) => s.dersler).find((ders) => sadelestir(ders.ad) === ad.ad)?.ad
-      denemedeYok.add(ad.grup === 'sosyal' ? 'Sosyal' : ad.grup === 'fen' ? 'Fen' : resmi ?? ad.soruDersi ?? ad.ad)
+      const gorunenAd = turkceAilesi
+        ? 'Türkçe'
+        : ad.grup === 'sosyal'
+          ? 'Sosyal'
+          : ad.grup === 'fen'
+            ? 'Fen'
+            : resmi ?? ad.soruDersi ?? ad.ad
+      denemedeYok.add(gorunenAd)
     }
     const grupBulgulari = topluGrupBulgulari(temizMetin).filter(
       // Uzun grup adı, aynı yerden başlayan kısa bir ders adıyla bastırılmaz:

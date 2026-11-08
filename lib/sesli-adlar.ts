@@ -77,11 +77,17 @@ const GRUP_TESTLERI: Partial<Record<keyof typeof OSYM_TEST_ADI, TopluGrup>> = {
   'tyt-fen': 'fen',
 }
 
+export const TURKCE_AILESI_KIMLIKLERI: readonly string[] = ['turkce', 'edebiyat']
+
 // Hazır şablonlardaki bütün ders adları yeni şablonla birlikte kendiliğinden
 // eklenir. Aynı kimlik farklı şablonlarda tekrar etse de küme tek kaydı korur.
 for (const sablon of HAZIR_SABLONLAR) {
   for (const ders of sablon.dersler) {
-    ekle(ders.ad, { soruDersi: KANONIK_SORU_DERSI[ders.id], dersKimlikleri: [ders.id] })
+    const dersKimlikleri =
+      ders.id === 'turkce' || ders.id === 'edebiyat'
+        ? TURKCE_AILESI_KIMLIKLERI
+        : [ders.id]
+    ekle(ders.ad, { soruDersi: KANONIK_SORU_DERSI[ders.id], dersKimlikleri })
   }
 }
 
@@ -90,20 +96,29 @@ for (const sablon of HAZIR_SABLONLAR) {
 for (const [test, ad] of Object.entries(OSYM_TEST_ADI) as [keyof typeof OSYM_TEST_ADI, string][]) {
   const grup = GRUP_TESTLERI[test]
   const dersler = HAZIR_SABLONLAR.flatMap((s) => s.dersler).filter((d) => d.osymTesti === test)
+  const turkceAilesi = dersler.some((d) => d.id === 'turkce' || d.id === 'edebiyat')
   const secenek = grup
     ? { grup }
     : {
         soruDersi: dersler.map((d) => KANONIK_SORU_DERSI[d.id]).find((d): d is string => d !== undefined),
-        dersKimlikleri: [...new Set(dersler.map((d) => d.id))],
+        dersKimlikleri: turkceAilesi ? TURKCE_AILESI_KIMLIKLERI : [...new Set(dersler.map((d) => d.id))],
       }
   ekle(ad, secenek)
   ekle(ad.replace(/^(?:TYT|AYT)\s+/u, ''), secenek)
 }
 
 const EK_ADLAR: readonly { adlar: readonly string[]; soruDersi?: string; dersKimlikleri?: readonly string[] }[] = [
-  { adlar: ['türkçe', 'türkçe testi', 'türk', 'paragraf', 'dil bilgisi', 'dilbilgisi'], soruDersi: 'Türkçe', dersKimlikleri: ['turkce', 'edebiyat'] },
+  // Emre'nin kuralı: 'Edebiyat da Türkçe de Türk Dili ve Edebiyatı da aynı şey.'
+  // Türkçe ailesi tek aile; aday kimliklerine hem 'turkce' hem 'edebiyat' girer.
+  {
+    adlar: [
+      'türkçe', 'türkçe testi', 'türk', 'paragraf', 'dil bilgisi', 'dilbilgisi',
+      'edebiyat', 'türk dili ve edebiyatı', 'tde',
+    ],
+    soruDersi: 'Türkçe',
+    dersKimlikleri: TURKCE_AILESI_KIMLIKLERI,
+  },
   { adlar: ['mat', 'matematik', 'temel matematik', 'temel mat', 'tyt matematik', 'ayt matematik', 'geometri', 'geo', 'problem'], soruDersi: 'Matematik', dersKimlikleri: ['matematik'] },
-  { adlar: ['edebiyat', 'türk dili ve edebiyatı', 'tde'], soruDersi: 'Türkçe', dersKimlikleri: ['edebiyat'] },
   { adlar: ['fizik', 'fiz'], soruDersi: 'Fizik', dersKimlikleri: ['fizik'] },
   { adlar: ['kimya', 'kim'], soruDersi: 'Kimya', dersKimlikleri: ['kimya'] },
   { adlar: ['biyoloji', 'biyo', 'bio'], soruDersi: 'Biyoloji', dersKimlikleri: ['biyoloji'] },

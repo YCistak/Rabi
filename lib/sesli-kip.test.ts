@@ -93,4 +93,12 @@ describe('iki kip — deneme (Denemeler)', () => {
     expect(rabiCevabi(coz('50 matematik sorusu çözdüm', 'deneme'), { sablonlar: SABLONLAR, mesajSirasi: 0, metin: '50 matematik sorusu çözdüm', kip: 'deneme' }).join(' ')).toMatch(/Soru Takibi/)
     expect(denemeTuruSecildi('TYT')).toBe('TYT, tamam. Ders ders doğru ve yanlışlarını anlat.')
   })
+
+  it('Emre’nin kuralı: deneme kipinde TYT’de edebiyat turkce’ye, AYT EA’da türkçe edebiyat’a yazılır', () => {
+    const tyt = coz('edebiyat 28 doğru 4 yanlış', 'deneme', 'tyt')
+    expect(tyt.deneme?.dersler).toEqual([{ dersId: 'turkce', dogru: 28, yanlis: 4 }])
+
+    const ea = coz('türkçe 20 doğru 4 yanlış', 'deneme', 'ayt-ea')
+    expect(ea.deneme?.dersler).toEqual([{ dersId: 'edebiyat', dogru: 20, yanlis: 4 }])
+  })
 })

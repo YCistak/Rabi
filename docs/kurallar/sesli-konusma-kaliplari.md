@@ -26,7 +26,7 @@ Kullanılan adlar sırasıyla şunları da kapsar:
 
 | Hedef | Konuşulan kökler |
 | --- | --- |
-| Türkçe | türkçe, türk, edebiyat, paragraf, dil bilgisi |
+| Türkçe | türkçe, türk, edebiyat, türk dili ve edebiyatı, tde, paragraf, dil bilgisi |
 | Matematik | matematik, mat, geometri, geo, problem |
 | Fizik | fizik, fiz, fzk |
 | Kimya | kimya, kim, kmy |
@@ -147,6 +147,20 @@ kaydedilir; `Sosyalden 12 net` ise doğru/yanlış bilinmediği için açıklama
 Toplu sonuç ile aynı grupta ayrı ders sonucu birlikte söylenirse ikisi de
 korunur ve Rabi bu çakışmayı belirtir. Günlük soru takibinde Sosyal/Fen ders
 değildir; Rabi öğrenciden hangi dersi kastettiğini sorar.
+
+## TÜRKÇE VE EDEBİYAT EŞİTLİĞİ (Emre'nin kuralı)
+
+Emre'nin kuralı: "Edebiyat da Türkçe de Türk Dili ve Edebiyatı da aynı şey."
+Ad tablosunda (`lib/sesli-adlar.ts`, `SESLI_AD_TABLOSU`) Türkçe ailesi (`türkçe`,
+`edebiyat`, `türk dili ve edebiyatı`, `tde`, `paragraf`, `dil bilgisi` ve ekli biçimleri)
+TEK ailedir ve ders kimliği adaylarına hem `'turkce'` hem `'edebiyat'` girer:
+
+- **Deneme kipinde:** Seçili şablonda hangisi varsa ona yazılır:
+  - TYT'de `turkce`
+  - AYT EA / Sözel ve seviye tespitte `edebiyat`
+  - İkisi birden olan şablon varsa söylenen ada en yakın olan (`edebiyat` / `tde` → `edebiyat`; `türkçe` / `paragraf` → `turkce`)
+  - Hiçbiri yoksa (AYT Sayısal, YDT) denemede yok (`denemedeYok`) listesine görünen ad olarak `'Türkçe'` yazılır.
+- **Soru kipinde:** Hepsi kanonik `'Türkçe'` dersine yazılır.
 
 ## SOHBET
 

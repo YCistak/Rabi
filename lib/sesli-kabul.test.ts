@@ -201,10 +201,29 @@ describe('kabul — deneme kipi (Denemeler, tür önceden seçili)', () => {
     expect(r).not.toMatch(/anlayamadım/)
   })
 
-  it('TYT\'de olmayan AYT dersi (edebiyat) de "bu denemede yok"', () => {
-    const c = coz('edebiyat 20 doğru 3 yanlış türkçe 30 doğru 5 yanlış', 'deneme', 'tyt')
-    expect(c.deneme?.dersler).toEqual([{ dersId: 'turkce', dogru: 30, yanlis: 5 }])
-    expect(c.denemedeYok).toEqual(['Edebiyat'])
+  it('Türkçe = Edebiyat = Türk Dili ve Edebiyatı (Emre, 2026-11-08): denemedeki karşılığına yazılır', () => {
+    // TYT'de ders 'turkce'
+    for (const ad of ['edebiyat', 'Edebiyat', 'türk dili ve edebiyatı', 'tde', 'türkçe', 'paragraf']) {
+      const c = coz(`${ad} 20 doğru 3 yanlış`, 'deneme', 'tyt')
+      expect(c.deneme?.dersler, ad).toEqual([{ dersId: 'turkce', dogru: 20, yanlis: 3 }])
+      expect(c.denemedeYok ?? [], ad).toEqual([])
+    }
+    // AYT EA / Sözel ve 9. sınıf seviye tespitte ders 'edebiyat'
+    for (const sablonId of ['ayt-ea', 'ayt-soz', 'okul']) {
+      for (const ad of ['türkçe', 'edebiyat', 'türk dili ve edebiyatı', 'türkçeden']) {
+        const c = coz(`${ad} 20 doğru 3 yanlış`, 'deneme', sablonId)
+        expect(c.deneme?.dersler, `${sablonId}: ${ad}`).toEqual([{ dersId: 'edebiyat', dogru: 20, yanlis: 3 }])
+        expect(c.denemedeYok ?? [], `${sablonId}: ${ad}`).toEqual([])
+      }
+    }
+    // AYT Sayısal'da bu ders yok
+    expect(coz('edebiyat 20 doğru 3 yanlış', 'deneme', 'ayt-say').denemedeYok).toEqual(['Türkçe'])
+  })
+
+  it('soru kipinde de üçü Türkçe sayılır', () => {
+    for (const ad of ['edebiyattan', 'türk dili ve edebiyatından', 'türkçeden']) {
+      expect(coz(`${ad} 30 soru çözdüm`).sorular, ad).toEqual([{ ders: 'Türkçe', toplam: 30, dogru: 0, yanlis: 0 }])
+    }
   })
 
   it('TYT/AYT\'de dersin soru sayısını aşan sonuç: kaydedilmez, soru sayısıyla uyarılır (Emre, 2026-11-08)', () => {
