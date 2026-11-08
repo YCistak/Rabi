@@ -95,7 +95,7 @@ export const ESANLAMLI: Record<string, readonly string[]> = {
   din: ['din', 'din kulturu', 'dkab'],
   fizik: ['fizik', 'fzk', 'fiz'],
   kimya: ['kimya', 'kmy', 'kim'],
-  biyoloji: ['biyoloji', 'byoloji', 'biyo', 'byl', 'biy'],
+  biyoloji: ['biyoloji', 'byoloji', 'biyo', 'bio', 'byl', 'biy'],
   ingilizce: ['ingilizce', 'ing', 'yds', 'ydt'],
 }
 

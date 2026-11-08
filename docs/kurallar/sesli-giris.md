@@ -22,6 +22,9 @@ Soru Takibi ekranında öğrencinin gününü konuşarak anlatması ("80 matemat
 ## Kurallar
 
 - **Çözücü saf ve testli (`lib/sesli-giris.ts`):** Metinden ders, soru sayısı, doğru/yanlış ve deneme neti çıkarma mantığı saf fonksiyondur; React bileşenlerinden veya yerli köprüden bağımsızdır. Kapsamlı birim testleri (`lib/sesli-giris.test.ts`) ile doğrulanır; yeni kalıp eklenirse testle birlikte eklenir.
+- **Doğal konuşma payı:** Dolgu sözcükleri ve yaklaşık sayı belirteçleri ders-sayı eşleşmesini bozmaz; ders kısaltmaları/eş anlamlıları tek tabloda kanonik `CALISMA_DERSLERI` adına eşlenir. `fen` ve `sosyal` gibi grup adları ise ders yerine tahmin edilmez.
+- **Eksik bağlam görünür kalır:** Soru veya sonuç diliyle birlikte sayı söylenip ders adı söylenmezse sayı herhangi bir derse yazılmaz; ham parça `anlasilmayan`a gider. Test/deneme adedi de soru adedi sayılmaz.
+- **Karma anlatım:** `ve`, `ile`, `artı`, `sonra`, `ayrıca` gibi doğal bağlaçlar ayrı ders parçalarını ayırmaya yardım eder; çözülemeyen grup, aynı cümlede güvenle çözülen başka dersi veya deneme sonucunu düşürmez.
 - **Uydurma yok (çözülemeyen `anlasilmayan`a):** Çözücü kesin emin olmadığı hiçbir bilgiyi tahmin etmez veya uydurmaz. Metindeki ayrıştırılamayan, eksik veya şüpheli parçalar `anlasilmayan` listesine aktarılır; Rabi'nin cevabında kullanıcıya söylenerek elle girmesi sağlanır.
 - **Özet kartı atlanmaz:** Çözülen metin doğrudan kayda geçmez; dersler, soru sayıları ve netler özet kartında kullanıcıya sunulur. Kullanıcı "Kaydet" demeden hiçbir veri yerel depoya yazılmaz; pencere kapanırsa birikim silinir.
 - **Ders adları `CALISMA_DERSLERI`ne eşlenir:** Kullanıcının telaffuz ettiği ders adları ve kısaltmalar (mat, geometri, edebiyat vb.) projenin kanonik ders listesine (`CALISMA_DERSLERI`, `lib/dersler.ts`) eşlenir. Eşleşmeyen ya da belirsiz kalan dersler uydurulmaz, `anlasilmayan`a aktarılır.

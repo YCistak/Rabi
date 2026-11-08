@@ -92,6 +92,7 @@ interface TarayiciSpeechRecognition extends EventTarget {
   continuous: boolean
   interimResults: boolean
   lang: string
+  maxAlternatives: number
   start(): void
   stop(): void
   abort(): void
@@ -447,6 +448,7 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
     tanima.continuous = true
     tanima.interimResults = true
     tanima.lang = 'tr-TR'
+    tanima.maxAlternatives = 5
 
     const baslangicZamani = Date.now()
 
@@ -485,7 +487,15 @@ function tarayicidaDinle(secenek: { onKismi: (metin: string) => void }): {
 
       for (let i = 0; i < olay.results.length; i++) {
         const sonuc = olay.results[i]
-        const metin = sonuc[0]?.transcript || ''
+        if (!sonuc) continue
+        const adaylar: string[] = []
+        for (let j = 0; j < sonuc.length; j++) {
+          const transkript = sonuc[j]?.transcript
+          if (transkript) {
+            adaylar.push(transkript)
+          }
+        }
+        const metin = enIyiAdayiSec(adaylar)
         if (sonuc.isFinal) {
           kesinMetin = kesinMetin ? `${kesinMetin} ${metin}` : metin
         } else {

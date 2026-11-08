@@ -431,7 +431,7 @@ function metniHazirla(hamMetin: string): HazirMetin {
 const CEKIM_EKLERI = new Set([
   'den', 'dan', 'ten', 'tan', 'nden', 'ndan', 'de', 'da', 'te', 'ta', 'nde', 'nda',
   'e', 'a', 'ye', 'ya', 'ne', 'na', 'i', 'u', 'yi', 'yu', 'si', 'su', 'ni', 'nu',
-  'in', 'un', 'nin', 'nun', 'le', 'la', 'yle', 'yla',
+  'in', 'un', 'nin', 'nun', 'le', 'la', 'yle', 'yla', 'm',
 ])
 const YUMUSAMA_EKLERI = new Set(['e', 'a', 'i', 'u', 'in', 'un'])
 const KISA_KOKLER = new Set(['din', 'dil', 'fen'])
@@ -440,6 +440,9 @@ const KISALTMALAR = new Set([
   'turk', 'mat', 'mat1', 'mat2', 'edb', 'tdb', 'tde', 'trh', 'tar', 'cog', 'fel', 'fels',
   'dkab', 'fzk', 'fiz', 'kmy', 'kim', 'byl', 'biy', 'ing', 'yds', 'ydt', 'geo', 'sos', 'psi', 'psik',
 ])
+// "Geodan" ve "coğdan" gibi ek alan yerleşik kısaltmalar, sözcük sınırı
+// korunduğu için başka kelimelerin içinde ders diye okunmaz.
+const EK_ALABILEN_KISALTMALAR = new Set(['geo', 'cog'])
 const YUMUSAYAN_KOKLER: Record<string, readonly string[]> = { matematik: ['matematig', 'temel matematig'], fizik: ['fizig'], mantik: ['mantig'] }
 
 type AnahtarTanimi = { metin: string; yumusamis: boolean; ekAlabilir: boolean }
@@ -451,7 +454,7 @@ function anahtarlariGenislet(metinler: Iterable<string>): AnahtarTanimi[] {
   const kur = (metin: string, yumusamis: boolean): AnahtarTanimi => ({
     metin,
     yumusamis,
-    ekAlabilir: yumusamis || (!KISALTMALAR.has(metin) && (metin.length >= 4 || KISA_KOKLER.has(metin))),
+    ekAlabilir: yumusamis || (EK_ALABILEN_KISALTMALAR.has(metin) || (!KISALTMALAR.has(metin) && (metin.length >= 4 || KISA_KOKLER.has(metin)))),
   })
   const sonuc: AnahtarTanimi[] = []
   for (const metin of metinler) {
@@ -490,7 +493,7 @@ function denemeAdiOnuMu(metin: string, son: number): boolean {
 
 const SORU_DERS_EK_ADLARI: Record<string, readonly [readonly string[], readonly string[]]> = {
   Türkçe: [['turkce', 'edebiyat'], ['turk dili ve edebiyati', 'paragraf', 'dil bilgisi', 'dilbilgisi']],
-  Matematik: [['matematik'], ['geometri', 'geo', 'mat1', 'mat2']],
+  Matematik: [['matematik'], ['geometri', 'geo', 'mat1', 'mat2', 'problem']],
   Tarih: [['tarih', 'tarih1', 'tarih2'], ['inkilap tarihi', 'inkilap']],
   Coğrafya: [['cografya', 'cografya1', 'cografya2'], []],
   'Yabancı Dil': [['ingilizce'], ['yabanci dil', 'almanca', 'fransizca', 'arapca', 'rusca', 'dil']],
@@ -502,7 +505,10 @@ const SORU_HEDEFLERI: DersHedefi<string>[] = CALISMA_DERSLERI.map((ders) => {
   const sade = sadelestir(ders)
   const [esanlamlilar, ekler] = SORU_DERS_EK_ADLARI[ders] ?? [[sade], []]
   const kume = new Set<string>([sade, ...ekler])
-  for (const id of esanlamlilar) for (const a of ESANLAMLI[id] ?? []) kume.add(a)
+  // Özel ders eşlemelerinde belirtilen adlara ek olarak, dersin kendi kısa ve
+  // eş anlamlı biçimlerini de tanır; böylece ek almış "biyoya" gibi doğal
+  // söyleyişler ortak çekim eki kuralından geçer.
+  for (const id of new Set([sade, ...esanlamlilar])) for (const a of ESANLAMLI[id] ?? []) kume.add(a)
   return { hedef: ders, kimlik: ders, anahtarlar: anahtarlariGenislet(kume) }
 })
 const SORU_TUM_ANAHTARLAR: AnahtarTanimi[] = SORU_HEDEFLERI.flatMap((h) => h.anahtarlar)
@@ -552,10 +558,14 @@ function dersleriTara<T>(
 const NET_DESENI =
   /(?<![a-z0-9])(\d+)(?:(?:[.,]|\s*(?:virgul|nokta)\s*)(\d+)|\s+(bucuk))?\s*net(?:im|imiz|le|ten|te|e|i)?(?![a-z0-9])/g
 const SURE_VE_SIRA_DESENLERI = [
-  /(?<![a-z0-9])\d+(?:[.,]\d+)?(?:\s+bucuk)?\s+(?:saat|dakika|dk|saniye|sn|gun|hafta|ay|yil)\w*(?![a-z0-9])/g,
+  // "ayrıca" bağlacındaki "ay", süre birimi değildir; aksi hâlde önceki
+  // dersin soru sayısı da bağlaçla birlikte maskelenir.
+  /(?<![a-z0-9])\d+(?:[.,]\d+)?(?:\s+bucuk)?\s+(?:saat|dakika|dk|saniye|sn|gun|hafta|ay(?!rica)|yil)\w*(?![a-z0-9])/g,
   /(?<![a-z0-9])\d+\s*(?:\.\s*|(?:inci|nci|uncu|ncu)\s+)(?:sinif|unite|adim|test|deneme|konu|bolum)\w*(?![a-z0-9])/g,
+  /(?<![a-z0-9])\d+\s+test\w*(?![a-z0-9])/g,
   /(?<![a-z0-9])(?:9|10|11|12)\s+sinif\w*(?![a-z0-9])/g,
 ]
+const REDDEDILEN_TOPLAM_DESENI = /(?<![a-z0-9])toplam\s+\d+\s+degil(?![a-z0-9])/g
 const YANLIS_YOK_DESENI = /(?<![a-z0-9])(?:hic\s+yanlis\w*\s+yok|yanlis\w*\s+yok|yanlissiz)(?![a-z0-9])/
 const HEPSI_DOGRU_DESENI =
   /(?<![a-z0-9])(?:(?:hepsi(?:ni)?|tamami(?:ni)?|tumu(?:nu)?)(?:\s+d[ea])?\s+dogru\w*|full(?:e\w*)?(?:\s+dogru\w*)?|ful(?:\s+dogru\w*)?)(?![a-z0-9])/
@@ -584,7 +594,11 @@ function netAyiklaVeMaskele(metin: string): { temizMetin: string; net: number | 
 
 /** Çalışma süresi ("2 saat") ve sınıf/ünite sıra sayılarını soru sayısından ayırmak için maskeler. */
 function soruDisiSayilariMaskele(kesit: string): string {
-  return SURE_VE_SIRA_DESENLERI.reduce((m, d) => bosluklaMaskele(m, d), netAyiklaVeMaskele(kesit).temizMetin)
+  const netsiz = netAyiklaVeMaskele(kesit).temizMetin
+  const siralanmis = SURE_VE_SIRA_DESENLERI.reduce((m, d) => bosluklaMaskele(m, d), netsiz)
+  // Öğrenci "toplam 40 değil, ayrı ayrı 20" dediğinde reddettiği toplamı
+  // kayda geçirmek yerine, açıkça söylediği dağıtımı kullanıyoruz.
+  return bosluklaMaskele(siralanmis, REDDEDILEN_TOPLAM_DESENI)
 }
 
 type SayiOgesi = { tur: 'toplam' | 'ulestirme' | 'dogru' | 'yanlis' | 'bos' | 'hepsi-dogru'; deger: number; bas: number; son: number; toplamEtiketli: boolean }
@@ -663,7 +677,7 @@ function dersGruplariniKur(bulgular: DersBulgu<string>[], kesit: string): DersGr
   const gruplar: DersGrubu[] = []
   for (const b of bulgular) {
     const onceki = gruplar[gruplar.length - 1]
-    if (onceki && /^[\s,]*(?:(?:ve|ile|veya)\s+)?$/.test(kesit.slice(onceki.son, b.bas))) {
+    if (onceki && /^[\s,]*(?:(?:ve|ile|veya|arti)\s+)?$/.test(kesit.slice(onceki.son, b.bas))) {
       onceki.dersler.push(b.hedef)
       onceki.son = b.son
     } else gruplar.push({ dersler: [b.hedef], bas: b.bas, son: b.son })
@@ -752,6 +766,9 @@ function sinavDenemeCapasiMi(norm: string, sBas: number, sSon: number, ustSinir:
   }
 
   const sag = norm.slice(sSon, ustSinir)
+  // "TYT'den 90 net yaptım" ders sonuçları vermese de açıkça bir deneme
+  // sonucudur; toplam neti derslere dağıtmadan deneme kartına taşır.
+  if (/^\s*(?:'?\s*[a-z]+)?\s+\d+(?:[.,]\d+)?\s+net\w*(?![a-z0-9])/.test(sag)) return true
   const gecis = denemeKuyrugundaSoruGecisi(sag)
   const adayDilim = sag.slice(0, gecis.denemeUzunluk)
   if (!adayDilim.trim()) return false
@@ -898,7 +915,7 @@ function denemeSayilariCoz(parca: string, soruSayisi: number): { dogru: number; 
 /** `anlasilmayan` dilimine ders sonrasındaki alakasız yüklemleri katmamak için anlamlı sonu bulur. */
 function parcaAnlamliSonu(parca: string): number {
   const desen = new RegExp(
-    `\\d+${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?(?:\\s+(?:dogru|yanlis|bos)\\w*)?|(?:hepsi(?:ni)?|tamami(?:ni)?|tumu(?:nu)?|full|ful)(?:\\s+d[ea])?(?:\\s+(?:dogru|yanlis|bos)\\w*)?|fulle\\w*|yanlis\\w*\\s+yok|yanlissiz`,
+    `\\d+${SAYI_ARA_EK_DESENI}?(?:\\s+d[ea])?(?:\\s+(?:dogru|yanlis|bos)\\w*)?(?:\\s+var)?|(?:hepsi(?:ni)?|tamami(?:ni)?|tumu(?:nu)?|full|ful)(?:\\s+d[ea])?(?:\\s+(?:dogru|yanlis|bos)\\w*)?|fulle\\w*|yanlis\\w*\\s+yok|yanlissiz`,
     'g',
   )
   const son = [...parca.matchAll(desen)].pop()
@@ -969,6 +986,8 @@ function denemeBolumleriniCoz(bolumler: Bolum[], hazir: HazirMetin, secenek: { s
   const dersler = sablon.dersler.map((d) => bulunanlar.get(d.id)?.kayit).filter((o): o is OkunanDers => o !== undefined)
 
   if (dersler.length === 0 && toplamNet === null) {
+    const yalnizBirDeneme = denemeBolumleri.length === 1 && !/^\s*\d+\s+/.test(hazir.norm.slice(denemeBolumleri[0]!.bas, denemeBolumleri[0]!.son))
+    if (yalnizBirDeneme && anlasilmayan.size === 0) return { deneme: { sablonId: sablon.id, dersler: [], toplamNet: null }, anlasilmayan: [] }
     if (anlasilmayan.size === 0) {
       for (const b of denemeBolumleri) {
         const ham = hazir.hamKesit(b.bas, b.son)
@@ -1043,7 +1062,14 @@ function soruGrubuDegerlendir(grup: DersGrubu, sayilar: SayiOgesi[]): SesliSoru[
 function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[]; anlasilmayan: string[] } {
   const kesit = soruDisiSayilariMaskele(hazir.norm.slice(bolum.bas, bolum.son))
   const bulgular = dersleriTara(kesit, SORU_HEDEFLERI, GRUP_ANAHTARLARI)
-  if (bulgular.length === 0) return { sorular: [], anlasilmayan: [] }
+  if (bulgular.length === 0) {
+    // Ders adı olmadan söylenen soru adedini bir derse yazmak güvenli değildir.
+    // Sayı tek başına da gürültü olabileceğinden yalnız soru/sonuç dili taşıyan
+    // parçayı kullanıcıya geri veriyoruz.
+    const soruDiliVar = /\d/.test(kesit) && /(?:soru\w*|coz\w*|dogru\w*|yanlis\w*|bos\w*)/.test(kesit)
+    const ham = soruDiliVar ? hazir.hamKesit(bolum.bas, bolum.son) : ''
+    return { sorular: [], anlasilmayan: ham ? [ham] : [] }
+  }
 
   const gruplar = dersGruplariniKur(bulgular, kesit)
   const araliklar = Array.from({ length: gruplar.length + 1 }, (_, i) =>
