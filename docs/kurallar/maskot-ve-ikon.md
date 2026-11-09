@@ -129,17 +129,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
   (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
   `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
-  - Disko gözlüğü (`disko`, kullanıcı istedi, 2026-11-09): beyaz parlak plastik çerçeve, camsız;
-    her göz bölmesinde 6 yatay neon çubuk (pembe→mor). Çubuk sayısı **çift** olmalı: ortadaki
-    boşluk gözün hizasına denk gelir, tek sayıda orta çubuk gözü kapatıyordu. Yerleşim güneş
-    gözlüğüyle aynı ölçüden (`gozluk_yerlesimi`). `disko_kur.py` → `rabi_giydir_disko.blend`
-    Göz bölmeleri **belirgin dikdörtgen** (en/boy ≈ 1,7, köşe yarıçapı 6 mm; yuvarlak köşe
-    elips gibi okunuyordu), **saplar görünür** (kullanıcı istedi, 2026-11-09; güneş gözlüğündeki
-    "sap başa dalar" kuralının istisnası): menteşeden başın yan yüzeyini izleyip kulak köküne
-    yükselir, yüzeyden ışın atılarak ölçülen 16 mm üstten gider (6 mm'de baş konturunun
-    arkasında kalıp neredeyse görünmüyordu); önden yalnız dışa taşan kıvrım seçilir.
-    `disko_kur.py` → `rabi_giydir_disko.blend`
-    (`rabi_giydir7.blend`ten türer), `disko_katman.py` (`katman4.py` kopyası), `disko_sikistir.mjs`.
+  - Disko gözlüğü (`disko`, kullanıcı istedi, 2026-11-09): beyaz kalıp plastik çerçeve, camsız;
+    her göz bölmesinde 4 yatay renkli **yassı lamel** (pembe, turuncu, sarı, mavi; kısık gerçek
+    plastik tonu, emissive yok). Lamel kalınlığı aradaki boşluğa eşit; sayı **çift** olmalı: ortadaki
+    boşluk gözün hizasına denk gelir. Lameller ve çerçeve dikdörtgen kesitli, önü düz, uçlar
+    çerçevenin içine gömülü tek parça; **yuvarlak çubuk/boru abaküs gibi duruyordu** (kullanıcı,
+    2026-11-09). Göz bölmeleri belirgin dikdörtgen (en/boy ≈ 1,7, köşe 8 mm; yuvarlak köşe elips
+    gibi okunuyordu). **Saplar görünür** (kullanıcı istedi; güneş gözlüğündeki "sap başa dalar"
+    kuralının istisnası): menteşeden başın yan yüzeyini izleyip kulak köküne yükselir, yüzeyden ışın
+    atılarak ölçülen 16 mm üstten gider (6 mm'de baş konturunun arkasında kalıp görünmüyordu).
+    Yerleşim güneş gözlüğüyle aynı ölçüden (`gozluk_yerlesimi`). `disko_kur.py` →
+    `rabi_giydir_disko.blend` (`rabi_giydir7.blend`ten türer), `disko_katman.py` (`katman4.py`
+    kopyası), `disko_sikistir.mjs`.
   - Kulaklık: bant kulakların önünden geçer; kabuk kafanın **yüzey normaline** göre
     oturur (sabit açıyla yastık bir kenardan havada kalıyordu).
   - Bere: kulaklar **gizli** (kullanıcı istedi; yana sarkık ve içinden çıkan kulak
