@@ -133,6 +133,12 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     her göz bölmesinde 6 yatay neon çubuk (pembe→mor). Çubuk sayısı **çift** olmalı: ortadaki
     boşluk gözün hizasına denk gelir, tek sayıda orta çubuk gözü kapatıyordu. Yerleşim güneş
     gözlüğüyle aynı ölçüden (`gozluk_yerlesimi`). `disko_kur.py` → `rabi_giydir_disko.blend`
+    Göz bölmeleri **belirgin dikdörtgen** (en/boy ≈ 1,7, köşe yarıçapı 6 mm; yuvarlak köşe
+    elips gibi okunuyordu), **saplar görünür** (kullanıcı istedi, 2026-11-09; güneş gözlüğündeki
+    "sap başa dalar" kuralının istisnası): menteşeden başın yan yüzeyini izleyip kulak köküne
+    yükselir, yüzeyden ışın atılarak ölçülen 16 mm üstten gider (6 mm'de baş konturunun
+    arkasında kalıp neredeyse görünmüyordu); önden yalnız dışa taşan kıvrım seçilir.
+    `disko_kur.py` → `rabi_giydir_disko.blend`
     (`rabi_giydir7.blend`ten türer), `disko_katman.py` (`katman4.py` kopyası), `disko_sikistir.mjs`.
   - Kulaklık: bant kulakların önünden geçer; kabuk kafanın **yüzey normaline** göre
     oturur (sabit açıyla yastık bir kenardan havada kalıyordu).
