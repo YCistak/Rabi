@@ -124,11 +124,16 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
-  gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye); kulak ve ayak
+  gözlüğü, disko gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye); kulak ve ayak
   yuvaları boş; ayrıca hazır avatarlar (Sigma, Gece Kuşu, Sokak Stili, Astronot). Kulakta kalem
   kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
   (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
   `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
+  - Disko gözlüğü (`disko`, kullanıcı istedi, 2026-11-09): beyaz parlak plastik çerçeve, camsız;
+    her göz bölmesinde 6 yatay neon çubuk (pembe→mor). Çubuk sayısı **çift** olmalı: ortadaki
+    boşluk gözün hizasına denk gelir, tek sayıda orta çubuk gözü kapatıyordu. Yerleşim güneş
+    gözlüğüyle aynı ölçüden (`gozluk_yerlesimi`). `disko_kur.py` → `rabi_giydir_disko.blend`
+    (`rabi_giydir7.blend`ten türer), `disko_katman.py` (`katman4.py` kopyası), `disko_sikistir.mjs`.
   - Kulaklık: bant kulakların önünden geçer; kabuk kafanın **yüzey normaline** göre
     oturur (sabit açıyla yastık bir kenardan havada kalıyordu).
   - Bere: kulaklar **gizli** (kullanıcı istedi; yana sarkık ve içinden çıkan kulak

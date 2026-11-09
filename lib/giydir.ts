@@ -19,6 +19,7 @@ export type EsyaId =
   | 'tac'
   | 'kulaklik'
   | 'gunes'
+  | 'disko'
   | 'papyon'
   | 'atki'
   | 'kolye'
@@ -83,6 +84,7 @@ export const ESYALAR: readonly Esya[] = [
   { id: 'tac', ad: 'Taç', yuva: 'kafa', gorsel: '/giydir/tac.png', ikon: '/giydir/tac-ikon.png', fiyat: 0, taban: 'tac' },
   { id: 'kulaklik', ad: 'Kulaklık', yuva: 'kafa', gorsel: '/giydir/kulaklik.png', ikon: '/giydir/kulaklik-ikon.png', fiyat: 0 },
   { id: 'gunes', ad: 'Güneş Gözlüğü', yuva: 'yuz', gorsel: '/giydir/gunes.png', ikon: '/giydir/gunes-ikon.png', fiyat: 0 },
+  { id: 'disko', ad: 'Disko Gözlüğü', yuva: 'yuz', gorsel: '/giydir/disko.png', ikon: '/giydir/disko-ikon.png', fiyat: 0 },
   { id: 'papyon', ad: 'Papyon', yuva: 'boyun', gorsel: '/giydir/papyon.png', ikon: '/giydir/papyon-ikon.png', fiyat: 0 },
   { id: 'atki', ad: 'Atkı', yuva: 'boyun', gorsel: '/giydir/atki.png', ikon: '/giydir/atki-ikon.png', fiyat: 0 },
   // İlk Sigma paketinin altın zinciri + "R" ucu; Sigma takım elbiseli avatar olunca

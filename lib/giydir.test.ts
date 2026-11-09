@@ -21,6 +21,7 @@ describe('katalog', () => {
       ['tac', 'kafa'],
       ['kulaklik', 'kafa'],
       ['gunes', 'yuz'],
+      ['disko', 'yuz'],
       ['papyon', 'boyun'],
       ['atki', 'boyun'],
       ['kolye', 'boyun'],
