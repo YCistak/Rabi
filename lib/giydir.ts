@@ -27,6 +27,10 @@ export type EsyaId =
   | 'gecekusu'
   | 'sokak'
   | 'astronot'
+  | 'madalya'
+  | 'ayakkabi'
+  | 'ayakkabi-mavi'
+  | 'ayakkabi-siyah'
 
 export type Esya = {
   id: EsyaId
@@ -51,6 +55,13 @@ export type Esya = {
    * kıyafeti başka olduğu için öbür eşyaların ona göre çizilmiş hâli yok.
    */
   hazir?: boolean
+  /**
+   * Renk ailesi: aynı eşyanın renkleri ayrı `EsyaId` (kayıt biçimi değişmesin),
+   * ama listede tek kutucuk. Ailenin ilk üyesi varsayılan renk ve kutucuğun yüzü.
+   */
+  aile?: string
+  /** Aile içindeki renk adı (renk düğmesinin erişilebilir adı). */
+  renkAdi?: string
 }
 
 /** Yuva → giyilen eşya. Her yuvada en çok bir eşya: aynı yere iki şapka olmaz. */
@@ -66,8 +77,7 @@ export const CIPLAK_RABI = '/giydir/rabi.png'
  *
  * Gözlük (`gozluk`), bahçıvan botu (`bot`) ve kulakta kalem (`kalem`) kullanıcı
  * kaldırttı (2026-10-31); kayıtta kalan eski seçim `giyilenleriCoz`ta sessizce
- * düşer. Kulak ve ayak yuvaları boş ama tip ve sırada duruyor: ileride eşya
- * gelirse yeri hazır.
+ * düşer. Kulak yuvası boş ama tip ve sırada duruyor: ileride eşya gelirse yeri hazır.
  */
 export const ESYALAR: readonly Esya[] = [
   {
@@ -90,6 +100,12 @@ export const ESYALAR: readonly Esya[] = [
   { id: 'kolye', ad: 'Altın Kolye', yuva: 'boyun', gorsel: '/giydir/kolye.png', ikon: '/giydir/kolye-ikon.png', fiyat: 0 },
   // Taşlı gümüş Küba zinciri + "Allah" lafzı ucu (kullanıcı istedi, 2026-11-01).
   { id: 'lafza', ad: 'Allah Yazılı Kolye', yuva: 'boyun', gorsel: '/giydir/lafza.png', ikon: '/giydir/lafza-ikon.png', fiyat: 0 },
+  // Madalya boyna asılır (kullanıcı istedi, 2026-11-09).
+  { id: 'madalya', ad: 'Madalya', yuva: 'boyun', gorsel: '/giydir/madalya.png', ikon: '/giydir/madalya-ikon.png', fiyat: 0 },
+  // Spor ayakkabı: üç renk, üç ayrı kimlik, listede tek kutucuk (`aile`).
+  { id: 'ayakkabi', ad: 'Spor Ayakkabı', yuva: 'ayak', gorsel: '/giydir/ayakkabi.png', ikon: '/giydir/ayakkabi-ikon.png', fiyat: 0, aile: 'ayakkabi', renkAdi: 'Turuncu' },
+  { id: 'ayakkabi-mavi', ad: 'Spor Ayakkabı', yuva: 'ayak', gorsel: '/giydir/ayakkabi-mavi.png', ikon: '/giydir/ayakkabi-mavi-ikon.png', fiyat: 0, aile: 'ayakkabi', renkAdi: 'Mavi' },
+  { id: 'ayakkabi-siyah', ad: 'Spor Ayakkabı', yuva: 'ayak', gorsel: '/giydir/ayakkabi-siyah.png', ikon: '/giydir/ayakkabi-siyah-ikon.png', fiyat: 0, aile: 'ayakkabi', renkAdi: 'Siyah' },
   // Sigma Rabi hazır avatar (kullanıcı istedi, 2026-10-31): takım elbise, kırmızı
   // kravat, yarı kapalı gözler, eli çene hattında. Yuvası eski kayıtlar (`boyun:
   // 'sigma'`) geçerli kalsın diye boyun; `hazir` olduğu için yuvadan bağımsız
@@ -156,6 +172,48 @@ export function dokun(giyilenler: Giyilenler, id: EsyaId): Giyilenler {
   const esya = esyaBul(id)
   if (!esya) return giyilenler
   return giyiliMi(giyilenler, id) ? cikar(giyilenler, esya.yuva) : giy(giyilenler, id)
+}
+
+/** Bir renk ailesinin üyeleri, katalog sırasıyla (ilki varsayılan renk). */
+export function aileUyeleri(aile: string): Esya[] {
+  return ESYALAR.filter((e) => e.aile === aile)
+}
+
+/**
+ * Listede görünecek kutucuklar: aile başına tek, yüzü giyili üye (yoksa ilki).
+ * Giyilenler verilmezse her ailenin ilk üyesi.
+ */
+export function esyaKutulari(liste: readonly Esya[], giyilenler: Giyilenler = {}): Esya[] {
+  const sonuc: Esya[] = []
+  for (const e of liste) {
+    if (!e.aile) {
+      sonuc.push(e)
+      continue
+    }
+    const uyeler = liste.filter((x) => x.aile === e.aile)
+    if (uyeler[0] !== e) continue
+    sonuc.push(uyeler.find((x) => giyiliMi(giyilenler, x.id)) ?? e)
+  }
+  return sonuc
+}
+
+/** Kutucuğun ailesinden giyili üye (yoksa `undefined`). */
+export function giyiliUye(giyilenler: Giyilenler, esya: Esya): Esya | undefined {
+  if (!esya.aile) return giyiliMi(giyilenler, esya.id) ? esya : undefined
+  return aileUyeleri(esya.aile).find((e) => giyiliMi(giyilenler, e.id))
+}
+
+/**
+ * Aile kutucuğuna dokunuş: aileden biri giyiliyse çıkarır; değilse son seçilen
+ * rengi (yoksa ilk rengi) giydirir. Ailesiz eşyada `dokun` gibi.
+ */
+export function kutuyaDokun(giyilenler: Giyilenler, esya: Esya, sonRenk?: EsyaId): Giyilenler {
+  if (!esya.aile) return dokun(giyilenler, esya.id)
+  const uyeler = aileUyeleri(esya.aile)
+  const giyili = uyeler.find((e) => giyiliMi(giyilenler, e.id))
+  if (giyili) return cikar(giyilenler, giyili.yuva)
+  const hedef = uyeler.find((e) => e.id === sonRenk) ?? uyeler[0]
+  return giy(giyilenler, hedef.id)
 }
 
 /** Taban ekleri (katman sırasıyla) → alttaki Rabi'nin dosyası. Ek yoksa çıplak Rabi. */

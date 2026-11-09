@@ -124,8 +124,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
-  gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye); kulak ve ayak
-  yuvaları boş; ayrıca hazır avatarlar (Sigma, Gece Kuşu, Sokak Stili, Astronot). Kulakta kalem
+  gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye, madalya), ayak (spor
+  ayakkabı, 3 renk); kulak yuvası boş; ayrıca hazır avatarlar (Sigma, Gece Kuşu, Sokak Stili, Astronot). Kulakta kalem
   kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
   (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
   `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
@@ -148,6 +148,16 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     rastgele eğim + az sayıda ışıyan taş; yalnız eğimle yapınca taşlar kararıp yakından
     çatlak boya gibi duruyordu. Uç askıya 1 cm girer (az girince havada asılı kalıyordu),
     şedde askının tam altında (askı şeddeyi örtüyordu).
+  - Madalya (kullanıcı istedi, 2026-11-09): `madalya_kur.py` → `rabi_giydir_madalya.blend`,
+    `madalya_katman.py`. Disk çapı ≈0,19 × kafa genişliği (Emre büyük bulup küçülttü); düz
+    metal disk sarı plastik gibi duruyordu → hafif kubbe + yalnız yansımada görünen ışık kartı.
+  - Spor ayakkabı (kullanıcı istedi, 2026-11-09): `ayakkabi_kur.py` → `rabi_giydir_ayakkabi.blend`,
+    `ayakkabi_katman.py` (renkler `VARYANT`, geometri tek). Yandaki kıvrımlı şerit Nike logosunu
+    çağrıştırdığı için kaldırıldı, düz çevre şeridi; marka çağrıştıran şerit (swoosh, üç şerit)
+    kullanma. Renk = aile içinde ayrı `EsyaId` (`ayakkabi`, `-mavi`, `-siyah`; `Esya.aile`):
+    listede tek kutucuk, giyiliyken önizlemenin altında 3 renk düğmesi.
+  - Yeni eşya katmanı `katman4.py`'den değil güncel `ayakkabi_katman.py` / `madalya_katman.py`
+    kopyasından türetilir (eski kopyada eşya `TUM` sözlüğüne girmez, gömülü gölge 0 çıkar).
 - **Hazır avatarlar** (kullanıcı istedi, 2026-11-01): Sigma'ya ek Gece Kuşu (`gecekusu`),
   Sokak Stili (`sokak`), Astronot Rabi (`astronot`). Lock In (`odak`) ve Oyuncu (`oyuncu`) kullanıcı
   kaldırttı (2026-11-03; geri getirme; görselleri silindi, eski kayıt sessizce düşer). Hepsi tek

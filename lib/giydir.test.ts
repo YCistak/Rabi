@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   CIPLAK_RABI,
   ESYALAR,
+  aileUyeleri,
+  esyaKutulari,
+  kutuyaDokun,
   cikar,
   dokun,
   giy,
@@ -25,6 +28,10 @@ describe('katalog', () => {
       ['atki', 'boyun'],
       ['kolye', 'boyun'],
       ['lafza', 'boyun'],
+      ['madalya', 'boyun'],
+      ['ayakkabi', 'ayak'],
+      ['ayakkabi-mavi', 'ayak'],
+      ['ayakkabi-siyah', 'ayak'],
       ['sigma', 'boyun'],
       ['gecekusu', 'boyun'],
       ['sokak', 'boyun'],
@@ -45,6 +52,40 @@ describe('katalog', () => {
       expect(e.gorsel).toBe(`/giydir/${e.id}.png`)
       expect(e.ikon).toBe(`/giydir/${e.id}-ikon.png`)
     }
+  })
+})
+
+describe('renk ailesi (spor ayakkabı)', () => {
+  const liste = ESYALAR.filter((e) => !e.hazir)
+
+  it('listede aile başına tek kutucuk, yüzü ilk renk', () => {
+    const kutular = esyaKutulari(liste)
+    expect(kutular.filter((e) => e.aile === 'ayakkabi').map((e) => e.id)).toEqual(['ayakkabi'])
+    expect(kutular.length).toBe(liste.length - 2)
+  })
+
+  it('giyili renk kutucuğun yüzü olur', () => {
+    const kutular = esyaKutulari(liste, { ayak: 'ayakkabi-mavi' })
+    expect(kutular.filter((e) => e.aile === 'ayakkabi').map((e) => e.id)).toEqual(['ayakkabi-mavi'])
+  })
+
+  it('kutuya dokunuş: varsayılan turuncu, son renk, ikinci dokunuş çıkarır', () => {
+    const kutu = aileUyeleri('ayakkabi')[0]
+    const bir = kutuyaDokun({}, kutu)
+    expect(bir).toEqual({ ayak: 'ayakkabi' })
+    expect(kutuyaDokun({}, kutu, 'ayakkabi-siyah')).toEqual({ ayak: 'ayakkabi-siyah' })
+    expect(kutuyaDokun({ ayak: 'ayakkabi-mavi' }, kutu)).toEqual({})
+  })
+
+  it('renk değişince aynı yuvada öteki renk çıkar; katman en altta', () => {
+    const g = giy(giy({ kafa: 'kep' }, 'ayakkabi'), 'ayakkabi-mavi')
+    expect(g).toEqual({ kafa: 'kep', ayak: 'ayakkabi-mavi' })
+    expect(katmanlar(g)).toEqual(['/giydir/rabi-kep.png', '/giydir/ayakkabi-mavi.png', '/giydir/kep.png'])
+  })
+
+  it('madalya boyna giyilir, ayakkabı ve kafa eşyasıyla birlikte', () => {
+    const g = giy(giy(giy({}, 'madalya'), 'ayakkabi'), 'bere')
+    expect(katmanlar(g)).toEqual(['/giydir/rabi-bere.png', '/giydir/ayakkabi.png', '/giydir/madalya.png', '/giydir/bere.png'])
   })
 })
 
