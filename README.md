@@ -4,8 +4,8 @@
 
 # Rabi
 
-**Lise öğrencileri için YKS çalışma asistanı.**
-Hesap yok. Çalışma verilerin telefonunda kalır.
+**Lise öğrencileri için çevrimdışı, reklamsız YKS çalışma asistanı.**
+Hesap yok. Çalışma verilerin ve fotoğrafların yalnızca telefonunda kalır.
 
 <p align="center">
   <a href="https://apps.apple.com/tr/app/rabi-yks-asistan%C4%B1/id6818211715" target="_blank">
@@ -17,6 +17,8 @@ Hesap yok. Çalışma verilerin telefonunda kalır.
   </a>
 </p>
 
+![Sürüm](https://img.shields.io/badge/sürüm-1.0.6-emerald)
+![Platform](https://img.shields.io/badge/platform-Android_%7C_iOS-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
 ![Capacitor](https://img.shields.io/badge/Capacitor-8-119eff?logo=capacitor&logoColor=white)
@@ -26,29 +28,38 @@ Hesap yok. Çalışma verilerin telefonunda kalır.
 
 </div>
 
-Rabi, YKS'ye hazırlanan lise öğrencisinin deneme netlerini, günlük çalışmasını ve
-hedefini tek yerde toplar. Kayıt olman gerekmez; ilk açılışta sınıfını ve hedefini
-seçersin, geri kalanı telefonunda çalışır. Rehberliği tavşan maskotu Rabi yapar.
+---
+
+### Neden Rabi?
+
+- 🔒 **Sıfır Veri Toplama:** Kayıt olma zorunluluğu yok. Denemelerin, yanlış soru fotoğrafların ve notların yalnızca telefonunda kalır.
+- 🚫 **Tamamen Reklamsız:** Sınav senesinde dikkatini dağıtacak hiçbir reklam veya abonelik baskısı bulunmaz.
+- ⚡ **Cihaz İçi OCR (Yapay Zekâ):** Deneme karnesi netlerini kamera ile okuturken görüntü sunucuya gitmez; okuma doğrudan telefonunda (ONNX) yapılır.
+- 🌙 **Koyu Tema Desteği:** Sistem temasına uyumlu; gece çalışmalarında gözü yormayan koyu mod.
+
+---
+
+## Ekranlar
+
+| Ana Sayfa | Deneme Takibi & OCR | Pomodoro & Odak Kilidi |
+| :---: | :---: | :---: |
+| <img src="docs/ekranlar/ana-sayfa.webp" width="220" alt="Ana Sayfa"> | <img src="docs/ekranlar/denemeler.webp" width="220" alt="Denemeler"> | <img src="docs/ekranlar/pomodoro.webp" width="220" alt="Pomodoro"> |
+| Hedef bölüm, kalan gün ve günlük özet | Kamera ile net okuma, ders dağılımı ve tahmin | Gerçek sınav provası ve odak kilidi |
+
+| Soru & Yanlış Bankası | Konu Haritası | Mini Oyunlar |
+| :---: | :---: | :---: |
+| <img src="docs/ekranlar/soru-takibi.webp" width="220" alt="Soru Takibi"> | <img src="docs/ekranlar/konu-haritasi.webp" width="220" alt="Konu Haritası"> | <img src="docs/ekranlar/oyunlar.webp" width="220" alt="Oyunlar"> |
+| Günlük soru takibi ve fotoğraflı soru havuzu | Maarif müfredatına göre bilgi kartları | Eğlenceli pratik ve Oyun Bankası tekrarı |
 
 ## Neler var
 
-| | |
-| --- | --- |
-| <img src="docs/ekranlar/denemeler.webp" width="180" alt="Denemeler ekranı"> | **Deneme takibi.** TYT, AYT ve YDT denemelerini gir; netlerini ve önceki denemeye göre değişimi gör, ders ders dökümüne bak. Deneme kâğıdının fotoğrafından sayıları okutabilirsin (**Okut, beta**); okuma telefonda yapılır, sonuç sen kontrol edip onaylayınca forma geçer. |
-| <img src="docs/ekranlar/pomodoro.webp" width="180" alt="Pomodoro ekranı"> | **Pomodoro.** Ders seçip süre ve mola ayarlayabilir, **Deneme provası** sekmesiyle gerçek sınav süresine göre (TYT 165 · AYT 180 · YDT 120 dk) çalışabilirsin. Kilit ekranında sayaç ve Android'de odak kilidi var. |
-| <img src="docs/ekranlar/soru-takibi.webp" width="180" alt="Soru Takibi ekranı"> | **Soru takibi ve yanlış soru bankası.** Günlük çözdüğün soruyu ders ders doğru, yanlış, boş olarak kaydet; hedefine ne kadar kaldığını gör. Yanlış sorularının fotoğrafını çekip üstüne çizebilirsin. |
-| <img src="docs/ekranlar/konu-haritasi.webp" width="180" alt="Konu haritası ekranı"> | **Konu haritası.** Maarif müfredatına göre sınıf ve derse ayrılmış yol; her bölümde bilgi kartları ve ardından doğru/yanlış yoklaması. |
-| <img src="docs/ekranlar/oyunlar.webp" width="180" alt="Oyunlar ekranı"> | **Mini oyunlar.** Türk Dili ve Edebiyatı, Matematik, Coğrafya, Tarih, Biyoloji ve Kimya gibi derslere göre mini oyunlar. Oyunda yanlış bildiğin sorular **Oyun Bankası**'nda biriktirilir, oradan tekrar edersin. |
-| <img src="docs/ekranlar/ana-sayfa.webp" width="180" alt="Ana sayfa"> | **Ana sayfa.** YKS'ye kalan gün, hedef bölümün ve bugünkü soru hedefin tek bakışta. |
-
-Bunların yanında:
-
-- **Sıralama tahmini.** Netlerinden puan, puandan tahmini başarı sırası; hedef bölümün
-  ÖSYM kılavuzundaki başarı sırasıyla karşılaştırma. Yöntem aşağıda ([bak](#sıralama-tahmini-nasıl-hesaplanıyor)).
-- **Konu takibi.** Konuları aşama aşama işaretle: haritada çalıştım, okulda öğrendim,
-  soru çözdüm, bitirdim. Ekran sınıfa (9, 10, 11, 12) göre ayrılır.
-- **Yapılacaklar**, MEB yönetmeliğine göre **devamsızlık** hakkı takibi, **başarımlar**
-  ve **aylık özet**.
+- **Deneme Takibi & Tahminî Sıralama:** TYT, AYT ve YDT denemelerini gir; netlerini, önceki denemeye göre gelişimini ve ders ders dökümünü gör. Deneme kâğıdının fotoğrafından doğru/yanlış sayılarını doğrudan okutabilirsin (**Okut, beta**). ÖSYM verilerine dayalı başarı sırası aralığını incele ([bak](#sıralama-tahmini-nasıl-hesaplanıyor)).
+- **Pomodoro & Odak Kilidi:** Ders çalışma ve mola sürelerini ayarla; gerçek sınav sürelerine göre (TYT 165 · AYT 180 · YDT 120 dk) **Deneme provası** sekmesiyle çalış. Kilit ekranında sayaç; Android ve iOS'ta çalışma boyunca dikkat dağıtan uygulamaları kilitleme.
+- **Kaynak Takibi:** Test kitaplarını ekle; kitap kitap, ders ders çözdüğün konuları ve ilerlemeni takip et.
+- **Soru Takibi ve Fotoğraflı Yanlış Bankası:** Günlük çözdüğün soruları ders ders doğru, yanlış, boş olarak kaydet. Yanlış sorularının fotoğrafını çekip üzerine çizim yapabilir, eksiklerini biriktirebilirsin.
+- **Konu Haritası & Mini Oyunlar:** MEB Maarif müfredatına göre sınıf sınıf (9–12) ayrılmış yolda bilgi kartları ve doğru/yanlış yoklamalarıyla ilerle. Türk Dili ve Edebiyatı, Matematik, Tarih, Coğrafya vb. derslerde mini oyunlarla pratik yap; yanlışlar **Oyun Bankası**'nda biriksin.
+- **Rabi'yi Giydir & Başarımlar:** Hedeflerine ulaştıkça başarımlar aç, rehber tavşan maskotu Rabi'yi farklı kostümlerle (Gece Kuşu, Astronot vb.) kişiselleştir.
+- **Okul Araçları:** MEB yönetmeliğine uygun devamsızlık hakkı takibi, yapılacaklar listesi ve ders notları.
 
 > Puan ve sıralama sonuçları **tahmindir**; uygulama bunları her zaman böyle sunar.
 
