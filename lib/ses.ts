@@ -21,12 +21,21 @@ const ONIZLEME_SANIYE = 20
 const KISILMA_MS = 500
 const KISILMA_ADIMI_MS = 50
 
+const POMODORO_SESLERI = {
+  tik: './ses/tik.mp3',
+  seansBitti: './ses/seans-bitti.mp3',
+  molaBitti: './ses/mola-bitti.mp3',
+} as const
+
+type PomodoroSesi = keyof typeof POMODORO_SESLERI
+
 /**
- * Tek bir ses kaynağını yöneten çalar. Hem üretilen sesleri hem `public/ses/`
- * altındaki mp3 döngülerini çalar.
+ * Tek bir ses kaynağını yöneten çalar. Hem `public/ses/` altındaki ses
+ * dosyalarını (`decodeAudioData` ile bellekte çözerek) hem mp3/ogg döngülerini
+ * çalar.
  *
  * AudioContext kullanıcı etkileşimi olmadan başlatılamaz (tarayıcı kuralı), bu
- * yüzden ilk `cal()` çağrısına kadar hiçbir şey kurulmaz.
+ * yüzden ilk çağrıya kadar hiçbir şey kurulmaz.
  */
 export class SesCalar {
   private ctx: AudioContext | null = null
@@ -36,6 +45,8 @@ export class SesCalar {
   private seviye = 0.5
   /** Önizlemeyi kendiliğinden bitiren sayaç; `durdur` onu da siliyor. */
   private onizlemeSayaci: number | null = null
+  private tamponlar = new Map<PomodoroSesi, AudioBuffer>()
+  private yuklemeler = new Map<PomodoroSesi, Promise<void>>()
 
   private baglamAl(): AudioContext {
     if (!this.ctx) {
@@ -48,6 +59,51 @@ export class SesCalar {
       this.kazanc.connect(this.ctx.destination)
     }
     return this.ctx
+  }
+
+  /**
+   * Tur başlarken ses dosyalarını belleğe çözer; böylece son 3 saniyedeki
+   * tikler ve aşama bitiş zili sıfır gecikmeyle çalar.
+   */
+  hazirla() {
+    for (const tur of Object.keys(POMODORO_SESLERI) as PomodoroSesi[]) {
+      void this.tamponYukle(tur)
+    }
+  }
+
+  private tamponYukle(tur: PomodoroSesi): Promise<void> {
+    const mevcut = this.yuklemeler.get(tur)
+    if (mevcut) return mevcut
+
+    const is = (async () => {
+      const ctx = this.baglamAl()
+      try {
+        const cevap = await fetch(POMODORO_SESLERI[tur])
+        const veri = await cevap.arrayBuffer()
+        this.tamponlar.set(tur, await ctx.decodeAudioData(veri))
+      } catch {
+        this.yuklemeler.delete(tur)
+      }
+    })()
+
+    this.yuklemeler.set(tur, is)
+    return is
+  }
+
+  private tamponCal(tur: PomodoroSesi, kazancSeviyesi: number): boolean {
+    const ctx = this.baglamAl()
+    const tampon = this.tamponlar.get(tur)
+    if (!tampon) return false
+
+    void ctx.resume().catch(() => {})
+    const kaynak = ctx.createBufferSource()
+    const kazanc = ctx.createGain()
+    kaynak.buffer = tampon
+    kazanc.gain.value = kazancSeviyesi
+    kaynak.connect(kazanc)
+    kazanc.connect(ctx.destination)
+    kaynak.start()
+    return true
   }
 
   sesSeviyesi(deger: number) {
@@ -179,35 +235,33 @@ export class SesCalar {
   }
 
   /**
-   * Seans bitiş zili: iki notalık kısa bir çıngırak. Bildirimden bağımsız çalar
-   * çünkü uygulama öndeyken bildirim gösterilmiyor.
+   * Aşamanın son 3 saniyesinde saniyede bir çalan sıcak ahşap kalimba tiki.
+   *
+   * Masada derse dalmış ya da molada ekrana bakmayan öğrencinin sürenin
+   * bitmek üzere olduğunu fark etmesi için `public/ses/tik.mp3` dosyasını
+   * çalar.
    */
-  zilCal() {
-    const ctx = this.baglamAl()
-    void ctx.resume()
+  geriSayimTiki() {
+    if (this.tamponCal('tik', 0.55)) return
+    void this.tamponYukle('tik').then(() => {
+      this.tamponCal('tik', 0.55)
+    })
+  }
 
-    // Do–Sol beşlisi: dikkat çeker ama tiz ve rahatsız değil.
-    const notalar = [
-      { frekans: 784, gecikme: 0 },
-      { frekans: 1046, gecikme: 0.16 },
-    ]
-
-    for (const nota of notalar) {
-      const osilator = ctx.createOscillator()
-      const zarf = ctx.createGain()
-      const baslangic = ctx.currentTime + nota.gecikme
-
-      osilator.type = 'sine'
-      osilator.frequency.value = nota.frekans
-      zarf.gain.setValueAtTime(0, baslangic)
-      zarf.gain.linearRampToValueAtTime(0.35, baslangic + 0.01)
-      zarf.gain.exponentialRampToValueAtTime(0.0001, baslangic + 1.1)
-
-      osilator.connect(zarf)
-      zarf.connect(ctx.destination)
-      osilator.start(baslangic)
-      osilator.stop(baslangic + 1.2)
-    }
+  /**
+   * Aşama bitiş zili: sıcak ahşap marimba kaydı (`seans-bitti.mp3` /
+   * `mola-bitti.mp3`).
+   *
+   * Yalnızca **bir kez** çalar. Çalışma bittiğinde (`molaBasliyor = true`)
+   * organik ve dinlendirici bir Sol majör marimba ezgisi, mola bittiğinde ise
+   * derse dönüşü haber veren ritmik bir Do majör marimba yürüyüşü duyulur.
+   */
+  zilCal(molaBasliyor = true) {
+    const tur: PomodoroSesi = molaBasliyor ? 'seansBitti' : 'molaBitti'
+    if (this.tamponCal(tur, 0.85)) return
+    void this.tamponYukle(tur).then(() => {
+      this.tamponCal(tur, 0.85)
+    })
   }
 
   /** Sekme kapanırken / bileşen sökülürken çağrılır. */

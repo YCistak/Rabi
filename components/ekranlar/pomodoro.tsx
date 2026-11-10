@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 import {
   ChevronLeft,
   Clock,
@@ -186,7 +187,8 @@ export function PomodoroEkrani({
   const asamayiBitir = useCallback(() => {
     const calar = calarAl()
     calar.durdur()
-    calar.zilCal()
+    calar.zilCal(asama === 'calisma')
+    void Haptics.notification({ type: NotificationType.Success }).catch(() => {})
     void pomodoroIptal()
     void odakKilidiniBitir()
 
@@ -249,6 +251,7 @@ export function PomodoroEkrani({
       yazılıyor, molada tur sayacı iki artıyordu.
     */
     let bitti = false
+    let sonTikSaniye = -1
     const guncelle = () => {
       if (bitti) return
       const yeni = kalanSaniye(bitisZamani)
@@ -256,6 +259,15 @@ export function PomodoroEkrani({
       if (yeni <= 0) {
         bitti = true
         asamayiBitir()
+        return
+      }
+      // Aşamanın son 3 saniyesinde saniyede bir kez nazik bir geri sayım tiki:
+      // derse dalmış ya da molada ekrana bakmayan öğrenci sürenin dolmak
+      // üzere olduğunu fark etsin.
+      if (yeni <= 3 && yeni !== sonTikSaniye) {
+        sonTikSaniye = yeni
+        calarAl().geriSayimTiki()
+        void Haptics.impact({ style: ImpactStyle.Light }).catch(() => {})
       }
     }
 
@@ -270,7 +282,7 @@ export function PomodoroEkrani({
       window.clearInterval(zamanlayici)
       document.removeEventListener('visibilitychange', gorunurluk)
     }
-  }, [bitisZamani, asamayiBitir])
+  }, [bitisZamani, asamayiBitir, calarAl])
 
   const baslat = () => turuBaslat(kalan, asama, prova)
 
@@ -290,7 +302,9 @@ export function PomodoroEkrani({
     // turun ilk başlatıldığı an kalmalı, "Devam et"e basılan an değil.
     if (baslangicRef.current === null) baslangicRef.current = new Date().toISOString()
 
-    calarAl().sesSeviyesi(ayar.sesSeviyesi)
+    const calar = calarAl()
+    calar.sesSeviyesi(ayar.sesSeviyesi)
+    calar.hazirla()
 
     /*
       İzin turu başlatırken isteniyor, ayarlarda değil.
@@ -481,7 +495,9 @@ export function PomodoroEkrani({
     if (veri.komut === 'devam') {
       setBitisZamani(veri.bitisZamani)
       setDokunulmadi(false)
-      calarAl().sesSeviyesi(ayar.sesSeviyesi)
+      const calar = calarAl()
+    calar.sesSeviyesi(ayar.sesSeviyesi)
+    calar.hazirla()
       void pomodoroPlanla(veri.bitisZamani, asama !== 'calisma')
       if (ayar.ekraniAcikTut && Capacitor.isNativePlatform()) {
         void KeepAwake.keepAwake().catch(() => {})
