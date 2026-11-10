@@ -6,11 +6,15 @@ import { BaslikSatiri, Kart, kartGirisi } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import {
   ESYALAR,
-  dokun,
-  giyiliMi,
+  aileUyeleri,
+  esyaKutulari,
+  giy,
+  giyiliUye,
   katmanlar,
+  kutuyaDokun,
   tumTabanlar,
   type Esya,
+  type EsyaId,
   type Giyilenler,
   type Yuva,
 } from '@/lib/giydir'
@@ -39,6 +43,9 @@ export function RabiGiydirEkrani({
 }) {
   const katmanListesi = katmanlar(giyilenler)
   const hazir = useGorselleriOnYukle()
+  // Renk ailesinde (ayakkabı) en son seçilen renk: çıkarıp yeniden giyince o renk gelir.
+  const [sonRenk, setSonRenk] = useState<EsyaId | undefined>(undefined)
+  const ayakkabi = giyiliUye(giyilenler, ESYALAR.find((e) => e.aile === 'ayakkabi') as Esya)
 
   return (
     <div>
@@ -64,18 +71,50 @@ export function RabiGiydirEkrani({
         </div>
       </Kart>
 
+      {/* Renk düğmeleri yalnız ayakkabı giyiliyken: üç renk ayrı eşya kimliği, listede tek kutucuk. */}
+      {ayakkabi?.aile && (
+        <Kart className="mb-4 flex items-center justify-between gap-3 px-4 py-2.5">
+          <span className="font-display text-sm font-extrabold tracking-tight">Ayakkabı rengi</span>
+          <div className="flex gap-3" role="group" aria-label="Ayakkabı rengi">
+            {aileUyeleri(ayakkabi.aile).map((uye) => {
+              const secili = uye.id === ayakkabi.id
+              return (
+                <button
+                  key={uye.id}
+                  type="button"
+                  aria-label={uye.renkAdi}
+                  aria-pressed={secili}
+                  onClick={() => {
+                    setSonRenk(uye.id)
+                    setGiyilenler((onceki) => giy(onceki, uye.id))
+                  }}
+                  className={cn(
+                    // Dolgu rengi elle yazılmaz: düğmenin yüzü o rengin ikonu.
+                    'grid size-11 place-items-center rounded-full border-2 bg-muted transition active:brightness-[0.97] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                    secili ? 'border-primary-parlak ring-2 ring-primary-parlak/30' : 'border-transparent',
+                  )}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={uye.ikon} alt="" aria-hidden draggable={false} className="size-[80%] object-contain" />
+                </button>
+              )
+            })}
+          </div>
+        </Kart>
+      )}
+
       {/* Hazır avatar ayrı başlıkta: eşyalarla birlikte giyilmiyor, seçince öbürleri çıkıyor. */}
       {BOLUMLER.map(({ baslik, esyalar, ilkSira }) => (
         <section key={baslik} className="mb-4">
           <h2 className="mb-2 px-1 font-display text-base font-extrabold tracking-tight">{baslik}</h2>
           <ul className="grid grid-cols-3 gap-2.5">
-            {esyalar.map((esya, sira) => (
-              <li key={esya.id}>
+            {esyaKutulari(esyalar, giyilenler).map((esya, sira) => (
+              <li key={esya.aile ?? esya.id}>
                 <EsyaKarti
                   esya={esya}
-                  secili={giyiliMi(giyilenler, esya.id)}
+                  secili={giyiliUye(giyilenler, esya) !== undefined}
                   sira={ilkSira + sira}
-                  onSec={() => setGiyilenler((onceki) => dokun(onceki, esya.id))}
+                  onSec={() => setGiyilenler((onceki) => kutuyaDokun(onceki, esya, sonRenk))}
                 />
               </li>
             ))}
