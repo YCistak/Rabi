@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yeni Deneme — Test Blokları</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  /* ---------------------------------------------------------------------------
+     Tema Değişkenleri (app/globals.css ile birebir)
+     --------------------------------------------------------------------------- */
+  :root {
+    color-scheme: light;
+    --background: #f8f8f7;
+    --foreground: #1b1a19;
+    --card: #ffffff;
+    --card-foreground: #1b1a19;
+    --muted: #efeeeb;
+    --secili: #ffffff;
+    --secili-kenar: transparent;
+    --muted-foreground: #6b6764;
+    --border: #eae9e6;
+    --input: #eae9e6;
+    --primary: #b3491f;
+    --primary-parlak: #d9622f;
+    --primary-soft: #fbeee7;
+    --ikincil: #a8432b;
+    --ikincil-soft: #f8e7e0;
+    --success: #4f7a4a;
+    --success-soft: #e9f0e4;
+    --danger: #b23b2b;
+    --danger-soft: #f7e5e2;
+    --shadow-kart: 0 4px 14px rgba(90, 60, 35, 0.05);
+    --phone-border: rgba(0, 0, 0, 0.12);
+    --phone-shadow: 0 16px 40px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .koyu {
+    color-scheme: dark;
+    --background: #1a1612;
+    --foreground: #f2ebe4;
+    --card: #25201b;
+    --card-foreground: #f2ebe4;
+    --muted: #312a24;
+    --secili: #433930;
+    --secili-kenar: rgb(255 240 225 / 0.1);
+    --muted-foreground: #ab9f94;
+    --border: #3a322b;
+    --input: #3a322b;
+    --primary: #f08b5c;
+    --primary-parlak: #d9622f;
+    --primary-soft: #3b2519;
+    --ikincil: #e2806a;
+    --ikincil-soft: #3a221c;
+    --success: #8fc07f;
+    --success-soft: #233020;
+    --danger: #ea7a66;
+    --danger-soft: #3b201b;
+    --shadow-kart: 0 4px 14px rgba(0, 0, 0, 0.28);
+    --phone-border: rgba(255, 255, 255, 0.08);
+    --phone-shadow: 0 20px 48px rgba(0, 0, 0, 0.35), 0 4px 10px rgba(0, 0, 0, 0.18);
+  }
+
+  /* ---------------------------------------------------------------------------
+     Tuval & Genel Düzen (Tam 880 × 1000 px, #ECEAE6 zemin)
+     --------------------------------------------------------------------------- */
+  * {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    margin: 0;
+    padding: 24px 36px 20px;
+    width: 880px;
+    height: 1000px;
+    background: #ECEAE6;
+    font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    color: #1b1a19;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .rakam {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Üst Başlık & Özet */
+  .sayfa-baslik {
+    margin-bottom: 16px;
+  }
+
+  .yon-adi {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: #1b1a19;
+  }
+
+  .yon-ozet {
+    margin: 3px 0 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #6b6764;
+    line-height: 1.3;
+  }
+
+  /* Telefon Çerçeveleri */
+  .telefonlar-kapsayici {
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+  }
+
+  .telefon-sutun {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .telefon {
+    position: relative;
+    width: 390px;
+    height: 844px;
+    border-radius: 44px;
+    background: var(--background);
+    color: var(--foreground);
+    border: 1px solid var(--phone-border);
+    box-shadow: var(--phone-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .telefon-etiket {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b6764;
+    letter-spacing: -0.01em;
+  }
+
+  /* ---------------------------------------------------------------------------
+     Telefon İçi Ekran Arayüzü
+     --------------------------------------------------------------------------- */
+  /* Durum Çubuğu */
+  .durum-cubugu {
+    height: 38px;
+    padding: 10px 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .durum-simgeler {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Ekran Üst Başlığı (Kısaltılmış) */
+  .ekran-ust {
+    padding: 4px 18px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .ekran-baslik-metin {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .ekran-alt-bilgi {
+    margin: 2px 0 0;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted-foreground);
+  }
+
+  .kapat-dugme {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 0;
+    background: var(--muted);
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.85;
+  }
+
+  /* Elle Gir Bölüm Başlığı & Sütun İsimleri */
+  .bolum-seridi {
+    padding: 6px 18px 4px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .bolum-etiketi {
+    font-size: 11.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted-foreground);
+  }
+
+  .sutun-basliklari {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sutun-baslik {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .sutun-d {
+    width: 50px;
+    text-align: center;
+    color: var(--success);
+  }
+
+  .sutun-y {
+    width: 50px;
+    text-align: center;
+    color: var(--danger);
+  }
+
+  .sutun-net {
+    width: 46px;
+    text-align: right;
+    color: var(--muted-foreground);
+    padding-right: 2px;
+  }
+
+  /* ---------------------------------------------------------------------------
+     Test Blokları (ÖSYM Sırasıyla 4 Blok)
+     --------------------------------------------------------------------------- */
+  .bloklar-listesi {
+    padding: 2px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .bloklar-listesi::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 8 px Köşeli Kart Bloğu */
+  .test-blok {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    box-shadow: var(--shadow-kart);
+    overflow: hidden;
+  }
+
+  /* Grup Bloğu Başlığı */
+  .blok-baslik {
+    padding: 8px 12px;
+    background: var(--muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .blok-baslik-sol {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .blok-adi {
+    font-size: 13.5px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+    white-space: nowrap;
+  }
+
+  .blok-soru-ozet {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    white-space: nowrap;
+  }
+
+  /* Bilgi (i) Butonu */
+  .bilgi-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    border: 0;
+    background: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.15s;
+  }
+
+  .bilgi-btn.aktif {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  /* Sağdaki Küçük Metin Düğmesi (Segment değil!) */
+  .metin-dugme {
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    transition: background 0.15s;
+  }
+
+  .metin-dugme:active {
+    background: var(--primary-soft);
+  }
+
+  /* Açık Bilgi / Uyarı Balonu (Dokununca açılan) */
+  .bilgi-balonu {
+    margin: 8px 10px 4px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: var(--primary-soft);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--foreground);
+  }
+
+  .bilgi-balonu-ikon {
+    flex-shrink: 0;
+    color: var(--primary);
+  }
+
+  /* ---------------------------------------------------------------------------
+     Ders Satırları & Sayı Kutuları (6 px köşe, SayiKutusu dili)
+     --------------------------------------------------------------------------- */
+  .ders-satiri {
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .ders-satiri + .ders-satiri {
+    border-top: 1px solid var(--border);
+  }
+
+  .ders-bilgi {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .ders-adi {
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+    line-height: 1.25;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tekil-blok-adi {
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .ders-alt {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    margin: 1px 0 0;
+    white-space: nowrap;
+  }
+
+  .toplu-etiket {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* Kutular ve Net Alanı */
+  .sayi-alani {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* 6 px Köşeli Sayı Kutusu (Soru Takibi SayiKutusu dilinde) */
+  .sayi-kutu {
+    width: 50px;
+    height: 38px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+    padding: 0;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .sayi-kutu.dogru {
+    color: var(--foreground);
+    border-color: rgba(79, 122, 74, 0.35);
+  }
+
+  .sayi-kutu.yanlis {
+    color: var(--foreground);
+    border-color: rgba(178, 59, 43, 0.35);
+  }
+
+  .sayi-kutu:focus {
+    border-color: var(--primary-parlak);
+  }
+
+  .net-kutusu {
+    width: 46px;
+    text-align: right;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: var(--foreground);
+    letter-spacing: -0.02em;
+    padding-right: 2px;
+  }
+
+  /* ---------------------------------------------------------------------------
+     Alt Özet & Eylem Düğmeleri
+     --------------------------------------------------------------------------- */
+  .alt-bolum {
+    padding: 6px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  /* Net Özet Hapı */
+  .net-ozet-hapi {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .net-ozet-sol {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--muted-foreground);
+  }
+
+  .net-ozet-rakam {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+
+  /* Alt Butonlar */
+  .buton-yanlis-soru {
+    height: 40px;
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .buton-satiri {
+    display: flex;
+    gap: 8px;
+  }
+
+  .buton-vazgec {
+    flex: 1;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--muted);
+    color: var(--foreground);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .buton-kaydet {
+    flex: 1;
+    height: 42px;
+    border-radius: 10px;
+    border: 0;
+    background: var(--primary-parlak);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(217, 98, 47, 0.3);
+  }
+</style>
+</head>
+<body>
+
+  <!-- Sol Üst: Yön Adı ve Özet -->
+  <header class="sayfa-baslik">
+    <h1 class="yon-adi">Test Blokları</h1>
+    <p class="yon-ozet">ÖSYM test sırasıyla 8 px kartlar, sade metin düğmesi ve başlıktaki bilgi simgesiyle yalınlaştırıldı.</p>
+  </header>
+
+  <!-- İki Telefon Yan Yana (Koyu · toplu ve Açık · ders ders) -->
+  <main class="telefonlar-kapsayici">
+
+    <!-- 1. TELEFON: Koyu Tema · Toplu Giriş -->
+    <div class="telefon-sutun">
+      <div class="telefon koyu">
+
+        <!-- Durum Çubuğu -->
+        <div class="durum-cubugu">
+          <span class="rakam">09:41</span>
+          <div class="durum-simgeler">
+            <svg width="15" height="11" viewBox="0 0 15 11" fill="none"><rect x="0.5" y="7.5" width="2" height="3" rx="0.5" fill="currentColor"/><rect x="4" y="5" width="2" height="5.5" rx="0.5" fill="currentColor"/><rect x="7.5" y="2.5" width="2" height="8" rx="0.5" fill="currentColor"/><rect x="11" y="0.5" width="2" height="10" rx="0.5" fill="currentColor"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M7 10.5a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z" fill="currentColor"/><path d="M3.7 6.3a4.7 4.7 0 0 1 6.6 0 .8.8 0 0 0 1.1-1.1 6.3 6.3 0 0 0-8.8 0 .8.8 0 0 0 1.1 1.1z" fill="currentColor"/><path d="M1 3.5a8.5 8.5 0 0 1 12 0 .8.8 0 0 0 1.1-1.1A10.1 10.1 0 0 0 0 2.4a.8.8 0 0 0 1 1.1z" fill="currentColor"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x="1" y="1" width="18" height="9" rx="2.5" stroke="currentColor" stroke-width="1.2"/><rect x="2.5" y="2.5" width="11" height="6" rx="1.5" fill="currentColor"/><path d="M20.5 4v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+
+        <!-- Başlık Satırı -->
+        <div class="ekran-ust">
+          <div>
+            <h2 class="ekran-baslik-metin">Yeni Deneme · TYT</h2>
+            <p class="ekran-alt-bilgi">120 soru · 4 yanlış 1 doğru</p>
+          </div>
+          <button class="kapat-dugme" aria-label="Kapat">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Bölüm Seridi & Sütun İsimleri -->
+        <div class="bolum-seridi">
+          <span class="bolum-etiketi">Elle Gir</span>
+          <div class="sutun-basliklari">
+            <span class="sutun-baslik sutun-d">Doğru</span>
+            <span class="sutun-baslik sutun-y">Yanlış</span>
+            <span class="sutun-baslik sutun-net">Net</span>
+          </div>
+        </div>
+
+        <!-- 4 Test Bloğu (ÖSYM Sırası) -->
+        <div class="bloklar-listesi">
+
+          <!-- 1. BLOK: Türkçe (40 Soru) -->
+          <div class="test-blok">
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi tekil-blok-adi">Türkçe</p>
+                <p class="ders-alt">40 soru · 5 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="30" readonly aria-label="Türkçe Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="5" readonly aria-label="Türkçe Yanlış">
+                <span class="net-kutusu rakam">28,75</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. BLOK: Sosyal Bilimler (Toplu, Uyarı Açık Gösterilmiş) -->
+          <div class="test-blok">
+            <div class="blok-baslik">
+              <div class="blok-baslik-sol">
+                <span class="blok-adi">Sosyal Bilimler</span>
+                <button class="bilgi-btn aktif" aria-label="Toplu giriş uyarısı">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                </button>
+                <span class="blok-soru-ozet">· 20 soru</span>
+              </div>
+              <button class="metin-dugme" type="button">
+                Ders ders
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <!-- Kısa Açıklama Balonu (Çizimde açık) -->
+            <div class="bilgi-balonu">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" class="bilgi-balonu-ikon" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span>Toplu girince istatistiklerde bu derslerin ayrı analizi olmaz.</span>
+            </div>
+
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi">Sosyal <span class="toplu-etiket">(Toplu)</span></p>
+                <p class="ders-alt">Tarih, Coğ, Fel, Din · 3 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="15" readonly aria-label="Sosyal Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="2" readonly aria-label="Sosyal Yanlış">
+                <span class="net-kutusu rakam">14,50</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. BLOK: Temel Matematik (40 Soru) -->
+          <div class="test-blok">
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi tekil-blok-adi">Temel Matematik</p>
+                <p class="ders-alt">40 soru · 10 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="25" readonly aria-label="Matematik Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="5" readonly aria-label="Matematik Yanlış">
+                <span class="net-kutusu rakam">23,75</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. BLOK: Fen Bilimleri (Toplu) -->
+          <div class="test-blok">
+            <div class="blok-baslik">
+              <div class="blok-baslik-sol">
+                <span class="blok-adi">Fen Bilimleri</span>
+                <button class="bilgi-btn" aria-label="Toplu giriş uyarısı">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                </button>
+                <span class="blok-soru-ozet">· 20 soru</span>
+              </div>
+              <button class="metin-dugme" type="button">
+                Ders ders
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi">Fen <span class="toplu-etiket">(Toplu)</span></p>
+                <p class="ders-alt">Fizik, Kimya, Biyo · 5 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="12" readonly aria-label="Fen Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="3" readonly aria-label="Fen Yanlış">
+                <span class="net-kutusu rakam">11,25</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Alt Bölüm: Özet & Aksiyonlar -->
+        <div class="alt-bolum">
+          <div class="net-ozet-hapi">
+            <div class="net-ozet-sol">
+              <span>Toplam: 82 D · 15 Y · 23 B</span>
+            </div>
+            <div class="net-ozet-rakam rakam">78,25 Net</div>
+          </div>
+          <button class="buton-yanlis-soru" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Yanlış soru ekle
+          </button>
+          <div class="buton-satiri">
+            <button class="buton-vazgec" type="button">Vazgeç</button>
+            <button class="buton-kaydet" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+              Kaydet
+            </button>
+          </div>
+        </div>
+
+      </div>
+      <span class="telefon-etiket">Koyu · toplu</span>
+    </div>
+
+
+    <!-- 2. TELEFON: Açık Tema · Sosyal Ders Ders Açık -->
+    <div class="telefon-sutun">
+      <div class="telefon">
+
+        <!-- Durum Çubuğu -->
+        <div class="durum-cubugu">
+          <span class="rakam">09:41</span>
+          <div class="durum-simgeler">
+            <svg width="15" height="11" viewBox="0 0 15 11" fill="none"><rect x="0.5" y="7.5" width="2" height="3" rx="0.5" fill="currentColor"/><rect x="4" y="5" width="2" height="5.5" rx="0.5" fill="currentColor"/><rect x="7.5" y="2.5" width="2" height="8" rx="0.5" fill="currentColor"/><rect x="11" y="0.5" width="2" height="10" rx="0.5" fill="currentColor"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M7 10.5a1.2 1.2 0 1 0 0-2.4 1.2 1.2 0 0 0 0 2.4z" fill="currentColor"/><path d="M3.7 6.3a4.7 4.7 0 0 1 6.6 0 .8.8 0 0 0 1.1-1.1 6.3 6.3 0 0 0-8.8 0 .8.8 0 0 0 1.1 1.1z" fill="currentColor"/><path d="M1 3.5a8.5 8.5 0 0 1 12 0 .8.8 0 0 0 1.1-1.1A10.1 10.1 0 0 0 0 2.4a.8.8 0 0 0 1 1.1z" fill="currentColor"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11" fill="none"><rect x="1" y="1" width="18" height="9" rx="2.5" stroke="currentColor" stroke-width="1.2"/><rect x="2.5" y="2.5" width="11" height="6" rx="1.5" fill="currentColor"/><path d="M20.5 4v3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+
+        <!-- Başlık Satırı -->
+        <div class="ekran-ust">
+          <div>
+            <h2 class="ekran-baslik-metin">Yeni Deneme · TYT</h2>
+            <p class="ekran-alt-bilgi">120 soru · 4 yanlış 1 doğru</p>
+          </div>
+          <button class="kapat-dugme" aria-label="Kapat">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <!-- Bölüm Seridi & Sütun İsimleri -->
+        <div class="bolum-seridi">
+          <span class="bolum-etiketi">Elle Gir</span>
+          <div class="sutun-basliklari">
+            <span class="sutun-baslik sutun-d">Doğru</span>
+            <span class="sutun-baslik sutun-y">Yanlış</span>
+            <span class="sutun-baslik sutun-net">Net</span>
+          </div>
+        </div>
+
+        <!-- 4 Test Bloğu (ÖSYM Sırası) -->
+        <div class="bloklar-listesi">
+
+          <!-- 1. BLOK: Türkçe (40 Soru) -->
+          <div class="test-blok">
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi tekil-blok-adi">Türkçe</p>
+                <p class="ders-alt">40 soru · 5 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="30" readonly aria-label="Türkçe Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="5" readonly aria-label="Türkçe Yanlış">
+                <span class="net-kutusu rakam">28,75</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. BLOK: Sosyal Bilimler (Ders Ders Açık) -->
+          <div class="test-blok">
+            <div class="blok-baslik">
+              <div class="blok-baslik-sol">
+                <span class="blok-adi">Sosyal Bilimler</span>
+                <span class="blok-soru-ozet">· 20 soru · 2 boş</span>
+              </div>
+              <button class="metin-dugme" type="button">
+                Toplu
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <!-- Tarih -->
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi">Tarih</p>
+                <p class="ders-alt">5 soru · 0 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="4" readonly aria-label="Tarih Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="1" readonly aria-label="Tarih Yanlış">
+                <span class="net-kutusu rakam">3,75</span>
+              </div>
+            </div>
+
+            <!-- Coğrafya -->
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi">Coğrafya</p>
+                <p class="ders-alt">5 soru · 1 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="4" readonly aria-label="Coğrafya Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="0" readonly aria-label="Coğrafya Yanlış">
+                <span class="net-kutusu rakam">4,00</span>
+              </div>
+            </div>
+
+            <!-- Felsefe -->
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi">Felsefe</p>
+                <p class="ders-alt">5 soru · 1 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="3" readonly aria-label="Felsefe Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="1" readonly aria-label="Felsefe Yanlış">
+                <span class="net-kutusu rakam">2,75</span>
+              </div>
+            </div>
+
+            <!-- Din Kültürü -->
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi">Din Kültürü</p>
+                <p class="ders-alt">5 soru · 0 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="5" readonly aria-label="Din Kültürü Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="0" readonly aria-label="Din Kültürü Yanlış">
+                <span class="net-kutusu rakam">5,00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. BLOK: Temel Matematik (40 Soru) -->
+          <div class="test-blok">
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi tekil-blok-adi">Temel Matematik</p>
+                <p class="ders-alt">40 soru · 10 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="25" readonly aria-label="Matematik Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="5" readonly aria-label="Matematik Yanlış">
+                <span class="net-kutusu rakam">23,75</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. BLOK: Fen Bilimleri (Toplu) -->
+          <div class="test-blok">
+            <div class="blok-baslik">
+              <div class="blok-baslik-sol">
+                <span class="blok-adi">Fen Bilimleri</span>
+                <button class="bilgi-btn" aria-label="Toplu giriş uyarısı">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                </button>
+                <span class="blok-soru-ozet">· 20 soru</span>
+              </div>
+              <button class="metin-dugme" type="button">
+                Ders ders
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+
+            <div class="ders-satiri">
+              <div class="ders-bilgi">
+                <p class="ders-adi">Fen <span class="toplu-etiket">(Toplu)</span></p>
+                <p class="ders-alt">Fizik, Kimya, Biyo · 5 boş</p>
+              </div>
+              <div class="sayi-alani">
+                <input type="text" class="sayi-kutu dogru rakam" value="12" readonly aria-label="Fen Doğru">
+                <input type="text" class="sayi-kutu yanlis rakam" value="3" readonly aria-label="Fen Yanlış">
+                <span class="net-kutusu rakam">11,25</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Alt Bölüm: Özet & Aksiyonlar -->
+        <div class="alt-bolum">
+          <div class="net-ozet-hapi">
+            <div class="net-ozet-sol">
+              <span>Toplam: 83 D · 15 Y · 22 B</span>
+            </div>
+            <div class="net-ozet-rakam rakam">79,25 Net</div>
+          </div>
+          <button class="buton-yanlis-soru" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Yanlış soru ekle
+          </button>
+          <div class="buton-satiri">
+            <button class="buton-vazgec" type="button">Vazgeç</button>
+            <button class="buton-kaydet" type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>
+              Kaydet
+            </button>
+          </div>
+        </div>
+
+      </div>
+      <span class="telefon-etiket">Açık · ders ders</span>
+    </div>
+
+  </main>
+
+</body>
+</html>

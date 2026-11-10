@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <title>Katlanır Satır — Yeni Deneme Elle Giriş Tasarımı</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* -------------------------------------------------------------------------
+       Rabi Renk Değişkenleri (globals.css ile birebir eş)
+       Açık tema (:root) ve Koyu tema (.koyu)
+    ------------------------------------------------------------------------- */
+    :root {
+      --background: #f8f8f7;
+      --foreground: #1b1a19;
+      --card: #ffffff;
+      --card-foreground: #1b1a19;
+      --muted: #efeeeb;
+      --secili: #ffffff;
+      --secili-kenar: transparent;
+      --muted-foreground: #6b6764;
+      --border: #eae9e6;
+      --input: #eae9e6;
+      --grid: #e4e2de;
+      --radius: 0.8rem;
+
+      --primary: #b3491f;
+      --primary-parlak: #d9622f;
+      --primary-soft: #fbeee7;
+      --primary-foreground: #ffffff;
+      --primary-dolu: #d9622f;
+      --primary-derin: #b3491f;
+
+      --ikincil: #a8432b;
+      --ikincil-soft: #f8e7e0;
+      --ikincil-dolu: #a8432b;
+
+      --success: #4f7a4a;
+      --success-soft: #e9f0e4;
+      --success-dolu: #4f7a4a;
+
+      --danger: #b23b2b;
+      --danger-soft: #f7e5e2;
+      --danger-dolu: #b23b2b;
+
+      --warning: #a87c24;
+      --warning-soft: #f9f0d9;
+      --warning-dolu: #a87c24;
+
+      --shadow-kart: 0 6px 20px rgba(90, 60, 35, 0.07);
+    }
+
+    .koyu {
+      --background: #1a1612;
+      --foreground: #f2ebe4;
+      --card: #25201b;
+      --card-foreground: #f2ebe4;
+      --muted: #312a24;
+      --secili: #433930;
+      --secili-kenar: rgb(255 240 225 / 0.1);
+      --muted-foreground: #ab9f94;
+      --border: #3a322b;
+      --input: #3a322b;
+      --grid: #3a322b;
+
+      --primary: #f08b5c;
+      --primary-parlak: #d9622f;
+      --primary-soft: #3b2519;
+      --primary-foreground: #ffffff;
+      --primary-dolu: #d9622f;
+      --primary-derin: #bb5019;
+
+      --ikincil: #e2806a;
+      --ikincil-soft: #3a221c;
+      --ikincil-dolu: #b8503a;
+
+      --success: #8fc07f;
+      --success-soft: #233020;
+      --success-dolu: #4f7d47;
+
+      --danger: #ea7a66;
+      --danger-soft: #3b201b;
+      --danger-dolu: #b8473a;
+
+      --warning: #dcb25e;
+      --warning-soft: #352b17;
+      --warning-dolu: #9c7420;
+
+      --shadow-kart: 0 6px 20px rgba(0, 0, 0, 0.32);
+    }
+
+    /* -------------------------------------------------------------------------
+       Genel Sayfa Düzeni (Tam 880 x 1000 px tuval)
+    ------------------------------------------------------------------------- */
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 880px;
+      height: 1000px;
+      background: #ECEAE6;
+      color: #1b1a19;
+      font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .tuval {
+      width: 880px;
+      height: 1000px;
+      padding: 24px 36px 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Üst Başlık Bölümü */
+    .ust-baslik {
+      margin-bottom: 16px;
+    }
+    .ust-baslik-satir {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .yon-adi {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #1b1a19;
+      line-height: 1.15;
+    }
+    .yon-rozet {
+      font-size: 12px;
+      font-weight: 700;
+      color: #6b6764;
+      background: #dedad4;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .yon-ozet {
+      margin: 4px 0 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #6b6764;
+      line-height: 1.35;
+    }
+
+    /* Telefonlar Yan Yana */
+    .telefonlar-alani {
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      align-items: flex-start;
+    }
+
+    .telefon-kapsayici {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Telefon Gövdesi: 390 x 844 px, 44px köşe, yumuşak gölge */
+    .telefon {
+      width: 390px;
+      height: 844px;
+      border-radius: 44px;
+      overflow: hidden;
+      position: relative;
+      background: var(--background);
+      color: var(--foreground);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .telefon.acik {
+      border: 1px solid rgba(0, 0, 0, 0.14);
+    }
+    .telefon.koyu {
+      border: 1px solid #352e27;
+    }
+
+    .telefon-etiket {
+      margin-top: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #6b6764;
+      letter-spacing: 0.01em;
+    }
+
+    /* Durum Çubuğu (Status Bar) */
+    .durum-cubugu {
+      height: 42px;
+      padding: 10px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .dinamik-ada {
+      width: 102px;
+      height: 24px;
+      background: #000;
+      border-radius: 20px;
+      margin: 0 auto;
+    }
+    .durum-simgeleri {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Telefon İçi İçerik */
+    .telefon-icerik {
+      flex: 1;
+      padding: 8px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Ekran Başlığı */
+    .ekran-baslik {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .ekran-baslik-metin h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .ekran-baslik-metin p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+    }
+    .kapat-dugmesi {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--muted-foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .bolum-etiketi {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted-foreground);
+      margin: 0 0 6px 2px;
+    }
+
+    /* Kart Tablosu */
+    .tablo-kart {
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-kart);
+      overflow: hidden;
+    }
+
+    .tablo-baslik {
+      display: grid;
+      grid-template-columns: 1fr 54px 54px 58px;
+      gap: 6px;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted-foreground);
+    }
+    .tablo-baslik span:nth-child(2),
+    .tablo-baslik span:nth-child(3) {
+      text-align: center;
+    }
+    .tablo-baslik span:nth-child(4) {
+      text-align: right;
+    }
+
+    /* Satır Yapısı */
+    .ders-satiri {
+      display: grid;
+      grid-template-columns: 1fr 54px 54px 58px;
+      gap: 6px;
+      align-items: center;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      transition: background-color 0.15s ease;
+    }
+    .ders-satiri.son {
+      border-bottom: none;
+    }
+
+    /* Ders Bilgisi */
+    .ders-bilgi {
+      min-width: 0;
+    }
+    .ders-ad-satir {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .ders-ad {
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .grup-satiri .ders-ad {
+      font-weight: 800;
+    }
+    .ders-soru {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      margin-top: 1px;
+    }
+
+    /* Aç/Kapa Chevron Butonu */
+    .chevron-dugme {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 19px;
+      height: 19px;
+      padding: 0;
+      border-radius: 5px;
+      border: none;
+      background: var(--muted);
+      color: var(--muted-foreground);
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s;
+      flex-shrink: 0;
+    }
+    .chevron-dugme:hover {
+      background: var(--border);
+      color: var(--foreground);
+    }
+    .chevron-dugme svg {
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .grup-acik .chevron-dugme svg {
+      transform: rotate(90deg);
+    }
+
+    /* Sayı Giriş Kutuları: Emre Kuralı Köşe En Çok 6-8 px */
+    .sayi-kutusu {
+      width: 54px;
+      height: 36px;
+      border-radius: 7px;
+      border: 1px solid var(--input);
+      background: var(--background);
+      color: var(--foreground);
+      font-family: inherit;
+      font-size: 14.5px;
+      font-weight: 800;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      outline: none;
+      padding: 0;
+      transition: border-color 0.15s;
+    }
+    .sayi-kutusu:focus {
+      border-color: var(--primary);
+    }
+
+    /* Net Değeri */
+    .net-deger {
+      font-size: 14.5px;
+      font-weight: 800;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--foreground);
+      padding-right: 2px;
+    }
+
+    /* Grup Açıkken: Özet Satırı (Kutusuz Toplam) */
+    .grup-satiri.grup-acik {
+      background: rgba(125, 125, 125, 0.05);
+    }
+    .ozet-sayi {
+      display: inline-block;
+      width: 54px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--muted-foreground);
+    }
+
+    /* Girintili Alt Ders Satırları */
+    .alt-dersler-kapsayici {
+      display: flex;
+      flex-direction: column;
+      background: rgba(125, 125, 125, 0.02);
+    }
+    .alt-ders-satiri {
+      display: grid;
+      grid-template-columns: 1fr 54px 54px 58px;
+      gap: 6px;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .alt-ders-satiri .ders-bilgi {
+      padding-left: 20px;
+      position: relative;
+    }
+    /* Ağaç / Dal Kılavuz Çizgisi */
+    .alt-ders-satiri .ders-bilgi::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: -8px;
+      bottom: 50%;
+      width: 1.5px;
+      background: var(--border);
+    }
+    .alt-ders-satiri .ders-bilgi::after {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      width: 9px;
+      height: 1.5px;
+      background: var(--border);
+    }
+    .alt-ders-satiri.ilk .ders-bilgi::before {
+      top: 0;
+    }
+    .alt-ders-satiri:not(.son) .ders-bilgi::before {
+      bottom: -8px;
+    }
+
+    .alt-ders-satiri .ders-ad {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .alt-ders-satiri .ders-soru {
+      font-size: 10.5px;
+    }
+    .alt-ders-satiri .sayi-kutusu {
+      height: 34px;
+      font-size: 14px;
+    }
+    .alt-ders-satiri .net-deger {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    /* Listenin En Altındaki Tek İstatistik Uyarısı Dipnotu */
+    .tablo-dipnot {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      background: var(--card);
+      border-top: 1px solid var(--border);
+    }
+    .tablo-dipnot svg {
+      flex-shrink: 0;
+      color: var(--muted-foreground);
+    }
+
+    /* Alt Düğmeler */
+    .alt-eylemler {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .yanlis-soru-dugme {
+      width: 100%;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: var(--muted);
+      color: var(--foreground);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      cursor: pointer;
+    }
+    .ana-dugmeler {
+      display: flex;
+      gap: 8px;
+    }
+    .dugme-vazgec {
+      flex: 1;
+      height: 42px;
+      border-radius: 12px;
+      border: none;
+      background: var(--muted);
+      color: var(--foreground);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .dugme-kaydet {
+      flex: 1;
+      height: 42px;
+      border-radius: 12px;
+      border: none;
+      background: var(--primary-dolu);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    /* iOS Ana Ekran Çubuğu (Home Indicator) */
+    .ana-ekran-cubugu {
+      width: 134px;
+      height: 5px;
+      background: var(--foreground);
+      opacity: 0.22;
+      border-radius: 10px;
+      margin: auto auto 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tuval">
+    <!-- Sol Üst Başlık ve Özet -->
+    <header class="ust-baslik">
+      <div class="ust-baslik-satir">
+        <h1 class="yon-adi">Katlanır Satır</h1>
+        <span class="yon-rozet">Tasarım Yönü · Görev 12</span>
+      </div>
+      <p class="yon-ozet">
+        Grup kendisi bir ders satırıdır; chevron ile açılınca altına ders satırları girintilenir, grup kutusuz toplama dönüşür.
+      </p>
+    </header>
+
+    <!-- Yan Yana İki Telefon -->
+    <main class="telefonlar-alani">
+
+      <!-- 1. TELEFON: Koyu Tema · Sosyal ve Fen Toplu -->
+      <div class="telefon-kapsayici">
+        <div class="telefon koyu" id="tel-koyu">
+          <!-- Durum Çubuğu -->
+          <div class="durum-cubugu">
+            <span>09:41</span>
+            <div class="dinamik-ada"></div>
+            <div class="durum-simgeleri">
+              <svg width="15" height="11" viewBox="0 0 17 11" fill="none"><path d="M1 9.5h2.5M5.5 7h2.5M10 4.5h2.5M14.5 1.5h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <svg width="14" height="10" viewBox="0 0 16 12" fill="none"><path d="M8 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM4.9 7.2a4.4 4.4 0 016.2 0M2.1 4.4a8.4 8.4 0 0111.8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <svg width="22" height="11" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="19" height="10" rx="3" stroke="currentColor" stroke-width="1.8"/><rect x="2.5" y="2.5" width="13" height="7" rx="1.5" fill="currentColor"/><path d="M22 4.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Telefon İçeriği -->
+          <div class="telefon-icerik">
+            <!-- Ekran Başlığı -->
+            <div class="ekran-baslik">
+              <div class="ekran-baslik-metin">
+                <h2>Yeni Deneme · TYT</h2>
+                <p>120 soru · 4 yanlış 1 doğru</p>
+              </div>
+              <button type="button" class="kapat-dugmesi" aria-label="Vazgeç">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+
+            <!-- "Elle gir" Bölümü -->
+            <p class="bolum-etiketi">Elle gir</p>
+            <div class="tablo-kart">
+              <!-- Tablo Başlığı -->
+              <div class="tablo-baslik">
+                <span>Ders</span>
+                <span>Doğru</span>
+                <span>Yanlış</span>
+                <span>Net</span>
+              </div>
+
+              <!-- 1. Türkçe (Tek Ders) -->
+              <div class="ders-satiri">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Türkçe</span>
+                  </div>
+                  <div class="ders-soru">40 soru · 5 boş</div>
+                </div>
+                <input type="text" class="sayi-kutusu" value="30" readonly aria-label="Türkçe Doğru">
+                <input type="text" class="sayi-kutusu" value="5" readonly aria-label="Türkçe Yanlış">
+                <span class="net-deger">28,75</span>
+              </div>
+
+              <!-- 2. Sosyal (Toplu Satır) -->
+              <div class="ders-satiri grup-satiri" id="sosyal-satir-koyu">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Sosyal</span>
+                    <button type="button" class="chevron-dugme" title="Alt dersleri aç / kapat" aria-label="Sosyal alt derslerini aç">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                  <div class="ders-soru">20 soru · 3 boş</div>
+                </div>
+                <input type="text" class="sayi-kutusu" value="15" readonly aria-label="Sosyal Doğru">
+                <input type="text" class="sayi-kutusu" value="2" readonly aria-label="Sosyal Yanlış">
+                <span class="net-deger">14,50</span>
+              </div>
+
+              <!-- 3. Temel Matematik (Tek Ders) -->
+              <div class="ders-satiri">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Temel Matematik</span>
+                  </div>
+                  <div class="ders-soru">40 soru · 10 boş</div>
+                </div>
+                <input type="text" class="sayi-kutusu" value="25" readonly aria-label="Temel Matematik Doğru">
+                <input type="text" class="sayi-kutusu" value="5" readonly aria-label="Temel Matematik Yanlış">
+                <span class="net-deger">23,75</span>
+              </div>
+
+              <!-- 4. Fen (Toplu Satır) -->
+              <div class="ders-satiri grup-satiri son" id="fen-satir-koyu">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Fen</span>
+                    <button type="button" class="chevron-dugme" title="Alt dersleri aç / kapat" aria-label="Fen alt derslerini aç">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                  <div class="ders-soru">20 soru · 5 boş</div>
+                </div>
+                <input type="text" class="sayi-kutusu" value="12" readonly aria-label="Fen Doğru">
+                <input type="text" class="sayi-kutusu" value="3" readonly aria-label="Fen Yanlış">
+                <span class="net-deger">11,25</span>
+              </div>
+
+              <!-- Tek İstatistik Uyarısı Dipnotu (Yalnız Toplu Grup Varken) -->
+              <div class="tablo-dipnot" id="dipnot-koyu">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>Toplu girince istatistiklerde bu derslerin ayrı analizi olmaz.</span>
+              </div>
+            </div>
+
+            <!-- Alt Eylemler -->
+            <div class="alt-eylemler">
+              <button type="button" class="yanlis-soru-dugme">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                Yanlış soru ekle
+              </button>
+              <div class="ana-dugmeler">
+                <button type="button" class="dugme-vazgec">Vazgeç</button>
+                <button type="button" class="dugme-kaydet">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  Kaydet
+                </button>
+              </div>
+            </div>
+
+            <!-- Home Bar -->
+            <div class="ana-ekran-cubugu"></div>
+          </div>
+        </div>
+        <span class="telefon-etiket">Koyu · toplu</span>
+      </div>
+
+      <!-- 2. TELEFON: Açık Tema · Sosyal Ders Ders Açık, Fen Toplu -->
+      <div class="telefon-kapsayici">
+        <div class="telefon acik" id="tel-acik">
+          <!-- Durum Çubuğu -->
+          <div class="durum-cubugu">
+            <span>09:41</span>
+            <div class="dinamik-ada"></div>
+            <div class="durum-simgeleri">
+              <svg width="15" height="11" viewBox="0 0 17 11" fill="none"><path d="M1 9.5h2.5M5.5 7h2.5M10 4.5h2.5M14.5 1.5h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <svg width="14" height="10" viewBox="0 0 16 12" fill="none"><path d="M8 11.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM4.9 7.2a4.4 4.4 0 016.2 0M2.1 4.4a8.4 8.4 0 0111.8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <svg width="22" height="11" viewBox="0 0 24 12" fill="none"><rect x="1" y="1" width="19" height="10" rx="3" stroke="currentColor" stroke-width="1.8"/><rect x="2.5" y="2.5" width="13" height="7" rx="1.5" fill="currentColor"/><path d="M22 4.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+
+          <!-- Telefon İçeriği -->
+          <div class="telefon-icerik">
+            <!-- Ekran Başlığı -->
+            <div class="ekran-baslik">
+              <div class="ekran-baslik-metin">
+                <h2>Yeni Deneme · TYT</h2>
+                <p>120 soru · 4 yanlış 1 doğru</p>
+              </div>
+              <button type="button" class="kapat-dugmesi" aria-label="Vazgeç">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+
+            <!-- "Elle gir" Bölümü -->
+            <p class="bolum-etiketi">Elle gir</p>
+            <div class="tablo-kart">
+              <!-- Tablo Başlığı -->
+              <div class="tablo-baslik">
+                <span>Ders</span>
+                <span>Doğru</span>
+                <span>Yanlış</span>
+                <span>Net</span>
+              </div>
+
+              <!-- 1. Türkçe (Tek Ders) -->
+              <div class="ders-satiri">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Türkçe</span>
+                  </div>
+                  <div class="ders-soru">40 soru · 5 boş</div>
+                </div>
+                <input type="text" class="sayi-kutusu" value="30" readonly aria-label="Türkçe Doğru">
+                <input type="text" class="sayi-kutusu" value="5" readonly aria-label="Türkçe Yanlış">
+                <span class="net-deger">28,75</span>
+              </div>
+
+              <!-- 2. Sosyal (Açık Grup — Kutusuz Özet Satırı) -->
+              <div class="ders-satiri grup-satiri grup-acik" id="sosyal-satir-acik">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Sosyal</span>
+                    <button type="button" class="chevron-dugme" title="Alt dersleri aç / kapat" aria-label="Sosyal alt derslerini kapat">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                  <div class="ders-soru">20 soru · 2 boş</div>
+                </div>
+                <!-- Kutusuz özet rakamları -->
+                <span class="ozet-sayi" title="Toplam Doğru">16</span>
+                <span class="ozet-sayi" title="Toplam Yanlış">2</span>
+                <span class="net-deger">15,50</span>
+              </div>
+
+              <!-- Sosyal'in Girintili Alt Dersleri -->
+              <div class="alt-dersler-kapsayici" id="sosyal-alt-dersler-acik">
+                <!-- Tarih -->
+                <div class="alt-ders-satiri ilk">
+                  <div class="ders-bilgi">
+                    <div class="ders-ad-satir">
+                      <span class="ders-ad">Tarih</span>
+                    </div>
+                    <div class="ders-soru">5 soru · 0 boş</div>
+                  </div>
+                  <input type="text" class="sayi-kutusu" value="4" readonly aria-label="Tarih Doğru">
+                  <input type="text" class="sayi-kutusu" value="1" readonly aria-label="Tarih Yanlış">
+                  <span class="net-deger">3,75</span>
+                </div>
+
+                <!-- Coğrafya -->
+                <div class="alt-ders-satiri">
+                  <div class="ders-bilgi">
+                    <div class="ders-ad-satir">
+                      <span class="ders-ad">Coğrafya</span>
+                    </div>
+                    <div class="ders-soru">5 soru · 1 boş</div>
+                  </div>
+                  <input type="text" class="sayi-kutusu" value="4" readonly aria-label="Coğrafya Doğru">
+                  <input type="text" class="sayi-kutusu" value="0" readonly aria-label="Coğrafya Yanlış">
+                  <span class="net-deger">4,00</span>
+                </div>
+
+                <!-- Felsefe -->
+                <div class="alt-ders-satiri">
+                  <div class="ders-bilgi">
+                    <div class="ders-ad-satir">
+                      <span class="ders-ad">Felsefe</span>
+                    </div>
+                    <div class="ders-soru">5 soru · 1 boş</div>
+                  </div>
+                  <input type="text" class="sayi-kutusu" value="3" readonly aria-label="Felsefe Doğru">
+                  <input type="text" class="sayi-kutusu" value="1" readonly aria-label="Felsefe Yanlış">
+                  <span class="net-deger">2,75</span>
+                </div>
+
+                <!-- Din Kültürü -->
+                <div class="alt-ders-satiri son">
+                  <div class="ders-bilgi">
+                    <div class="ders-ad-satir">
+                      <span class="ders-ad">Din Kültürü</span>
+                    </div>
+                    <div class="ders-soru">5 soru · 0 boş</div>
+                  </div>
+                  <input type="text" class="sayi-kutusu" value="5" readonly aria-label="Din Kültürü Doğru">
+                  <input type="text" class="sayi-kutusu" value="0" readonly aria-label="Din Kültürü Yanlış">
+                  <span class="net-deger">5,00</span>
+                </div>
+              </div>
+
+              <!-- 3. Temel Matematik (Tek Ders) -->
+              <div class="ders-satiri">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Temel Matematik</span>
+                  </div>
+                  <div class="ders-soru">40 soru · 10 boş</div>
+                </div>
+                <input type="text" class="sayi-kutusu" value="25" readonly aria-label="Temel Matematik Doğru">
+                <input type="text" class="sayi-kutusu" value="5" readonly aria-label="Temel Matematik Yanlış">
+                <span class="net-deger">23,75</span>
+              </div>
+
+              <!-- 4. Fen (Toplu Satır) -->
+              <div class="ders-satiri grup-satiri son" id="fen-satir-acik">
+                <div class="ders-bilgi">
+                  <div class="ders-ad-satir">
+                    <span class="ders-ad">Fen</span>
+                    <button type="button" class="chevron-dugme" title="Alt dersleri aç / kapat" aria-label="Fen alt derslerini aç">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                  <div class="ders-soru">20 soru · 5 boş</div>
+                </div>
+                <input type="text" class="sayi-kutusu" value="12" readonly aria-label="Fen Doğru">
+                <input type="text" class="sayi-kutusu" value="3" readonly aria-label="Fen Yanlış">
+                <span class="net-deger">11,25</span>
+              </div>
+
+              <!-- Tek İstatistik Uyarısı Dipnotu (Fen Hâlâ Toplu Olduğu İçin Görünür) -->
+              <div class="tablo-dipnot" id="dipnot-acik">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <span>Toplu girince istatistiklerde bu derslerin ayrı analizi olmaz.</span>
+              </div>
+            </div>
+
+            <!-- Alt Eylemler -->
+            <div class="alt-eylemler">
+              <button type="button" class="yanlis-soru-dugme">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                Yanlış soru ekle
+              </button>
+              <div class="ana-dugmeler">
+                <button type="button" class="dugme-vazgec">Vazgeç</button>
+                <button type="button" class="dugme-kaydet">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                  Kaydet
+                </button>
+              </div>
+            </div>
+
+            <!-- Home Bar -->
+            <div class="ana-ekran-cubugu"></div>
+          </div>
+        </div>
+        <span class="telefon-etiket">Açık · ders ders</span>
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

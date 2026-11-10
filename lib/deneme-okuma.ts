@@ -81,7 +81,7 @@ export type OkumaSonucu = {
  * **En az üç harf.** İki harflik kısaltma ("tm", "fk") satırın içinde başka bir
  * kelimenin parçası olarak yakalanıyor ve yanlış derse yazıyor.
  */
-const ESANLAMLI: Record<string, readonly string[]> = {
+export const ESANLAMLI: Record<string, readonly string[]> = {
   turkce: ['turkce', 'turk'],
   matematik: ['matematik', 'temel matematik', 'mat'],
   edebiyat: ['edebiyat', 'turk dili', 'edb', 'tdb', 'tde'],
@@ -95,7 +95,7 @@ const ESANLAMLI: Record<string, readonly string[]> = {
   din: ['din', 'din kulturu', 'dkab'],
   fizik: ['fizik', 'fzk', 'fiz'],
   kimya: ['kimya', 'kmy', 'kim'],
-  biyoloji: ['biyoloji', 'byoloji', 'biyo', 'byl', 'biy'],
+  biyoloji: ['biyoloji', 'byoloji', 'biyo', 'bio', 'byl', 'biy'],
   ingilizce: ['ingilizce', 'ing', 'yds', 'ydt'],
 }
 
@@ -107,7 +107,7 @@ const ESANLAMLI: Record<string, readonly string[]> = {
  * "tarih 10d 2y" satırında **"tarih 1"** olarak eşleşiyor, geriye "0d 2y"
  * kalıyor ve 10 doğru, 0 doğru diye okunuyordu.
  */
-function sozSiniriMi(satir: string, bas: number, uzunluk: number): boolean {
+export function sozSiniriMi(satir: string, bas: number, uzunluk: number): boolean {
   const alfanumerik = /[a-z0-9]/
   const onceki = satir[bas - 1]
   const sonraki = satir[bas + uzunluk]
@@ -194,7 +194,7 @@ function uzaklikBirMi(a: string, b: string): boolean {
  * ama kimse kâğıda onu yazmıyor. Kısa kelimeler ("ve", "dil") atılıyor —
  * satırın içinde başka yerlerde de geçiyorlar.
  */
-function anahtarlar(ders: SablonDers): string[] {
+export function anahtarlar(ders: SablonDers): string[] {
   const ad = sadelestir(ders.ad)
   const kume = new Set<string>([ad])
   for (const esanlamli of ESANLAMLI[ders.id] ?? []) kume.add(esanlamli)

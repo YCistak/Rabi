@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   ANAHTARLAR,
   ayarlariNormalize,
+  denemeleriNormalize,
   elenenSoruSayisi,
   tumVeriyiSil,
   yedegiDogrula,
@@ -300,5 +301,60 @@ describe('tumVeriyiSil', () => {
     tumVeriyiSil()
     vi.unstubAllGlobals()
     expect(depo.size).toBe(0)
+  })
+})
+
+describe('denemeleriNormalize — toplu grup', () => {
+  const taban = { id: 'd', sablonId: 'tyt', ad: 'TYT', tarih: '2026-05-01' }
+
+  it('alanı olmayan eski kayıt aynen kalır', () => {
+    const eski = { ...taban, sonuclar: [{ dersId: 'turkce', dogru: 30, yanlis: 2 }] }
+    expect(denemeleriNormalize([eski], [])[0]).toBe(eski)
+  })
+
+  it('geçerli toplu satır kalır, grubun ders satırları çıkar', () => {
+    const [d] = denemeleriNormalize(
+      [
+        {
+          ...taban,
+          sonuclar: [
+            { dersId: 'turkce', dogru: 30, yanlis: 2 },
+            { dersId: 'tarih', dogru: 3, yanlis: 0 },
+          ],
+          toplu: [{ grup: 'sosyal', dogru: 15, yanlis: 3 }],
+        },
+      ],
+      [],
+    )
+    expect(d.toplu).toEqual([{ grup: 'sosyal', dogru: 15, yanlis: 3 }])
+    expect(d.sonuclar.map((s) => s.dersId)).toEqual(['turkce'])
+  })
+
+  it('bozuk satırlar atılır, hiçbiri kalmazsa alan silinir', () => {
+    const [d] = denemeleriNormalize(
+      [
+        {
+          ...taban,
+          sonuclar: [],
+          toplu: [
+            { grup: 'sosyal', dogru: 18, yanlis: 5 },
+            { grup: 'fen', dogru: -1, yanlis: 0 },
+            { grup: 'edebiyat' as never, dogru: 1, yanlis: 0 },
+          ],
+        },
+      ],
+      [],
+    )
+    expect('toplu' in d).toBe(false)
+  })
+
+  it('yedekten geri yüklemede toplu alan kaybolmaz', () => {
+    const deneme = {
+      ...taban,
+      sonuclar: [{ dersId: 'turkce', dogru: 30, yanlis: 2 }],
+      toplu: [{ grup: 'fen' as const, dogru: 12, yanlis: 4 }],
+    }
+    const yedek = coz({ ...yedekOlustur({ ...bos, denemeler: [deneme] }) })
+    expect(yedek.denemeler[0]).toEqual(deneme)
   })
 })

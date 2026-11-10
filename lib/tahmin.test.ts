@@ -173,3 +173,22 @@ describe('aday listeleri', () => {
     expect(enYeni([])).toBeUndefined()
   })
 })
+
+describe('tahminUret — toplu grup', () => {
+  it('toplu TYT sosyal, aynı netli ders ders girişle aynı tahmini verir', () => {
+    // Ders ders: 5 + 3,75 + 3,75 + 5 = 17,5 net; toplu: 18 D 2 Y = 17,5 net.
+    const topluDenemesi: Deneme = {
+      ...tytDenemesi,
+      id: 'tyt-toplu',
+      sonuclar: tytDenemesi.sonuclar.filter(
+        (s) => !['tarih', 'cografya', 'felsefe', 'din'].includes(s.dersId),
+      ),
+      toplu: [{ grup: 'sosyal', dogru: 18, yanlis: 2 }],
+    }
+    const dersDers = tahminUret({ ...temel, tytDenemesi, aytDenemesi: undefined })!
+    const toplu = tahminUret({ ...temel, tytDenemesi: topluDenemesi, aytDenemesi: undefined })!
+    expect(toplu.netler['tyt-sosyal']).toBe(17.5)
+    expect(toplu.netler).toEqual(dersDers.netler)
+    expect(toplu.sinavPuani).toBe(dersDers.sinavPuani)
+  })
+})

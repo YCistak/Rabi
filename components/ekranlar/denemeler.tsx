@@ -5,6 +5,7 @@ import {
   ArrowUpDown,
   Check,
   ChevronDown,
+  MessageCircle,
   Pencil,
   Plus,
   Trash2,
@@ -25,24 +26,30 @@ import {
   type DenemeSiralamasi,
   type DenemeSuzgeci,
 } from '@/lib/deneme-liste'
+import { gecerliToplu, sablonGruplari, TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
 import { cn } from '@/lib/utils'
-import type { Deneme, Sablon, SablonTuru } from '@/lib/types'
+import type { Ayarlar, Deneme, Sablon, SablonTuru } from '@/lib/types'
+import { SesliGirisSayfasi, type DenemeBaslangici } from '@/components/sesli-giris'
 
 export function DenemelerEkrani({
   denemeler,
   sablonlar,
+  ayarlar,
   hazir,
   onSil,
   onDuzenle,
   onYeniyeGit,
+  onDenemeAc,
   tanitim,
 }: {
   denemeler: Deneme[]
   sablonlar: Sablon[]
+  ayarlar: Ayarlar
   hazir: boolean
   onSil: (id: string) => void
   onDuzenle: (deneme: Deneme) => void
   onYeniyeGit: () => void
+  onDenemeAc?: (baslangic: DenemeBaslangici) => void
   /**
    * Ana tur: listedeki ilk (örnek) denemenin kartı tura bağlı. Dokunuş tura
    * bildiriliyor, kart adım `deneme-detay`dayken açık; öteki kartlar o
@@ -50,6 +57,7 @@ export function DenemelerEkrani({
    */
   tanitim?: { ornekAcik: boolean; ornegeDokun: () => void }
 }) {
+  const [sesliAcik, setSesliAcik] = useState(false)
   const [acikId, setAcikId] = useState<string | null>(null)
   const [silinecek, setSilinecek] = useState<Deneme | null>(null)
   const [suzgec, setSuzgec] = useState<DenemeSuzgeci>('hepsi')
@@ -74,10 +82,23 @@ export function DenemelerEkrani({
       {/* İlk kayıtta düğme boş durumun içinde, ekranın ortasında duruyor; liste
           doluyken oraya ulaşmak kaydırmak demek, o yüzden başlığın altına geçiyor. */}
       {satirlar.length > 0 && (
-        <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit} className="mb-3 w-full">
-          <Plus size={18} />
-          Deneme ekle
-        </Buton>
+        <div className="mb-3 flex gap-2.5">
+          <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit} className="flex-1">
+            <Plus size={18} />
+            Deneme ekle
+          </Buton>
+          {!tanitim && (
+            <Buton
+              bicim="ikincil"
+              onClick={() => setSesliAcik(true)}
+              aria-label="Rabi'ye anlat"
+              className="shrink-0"
+            >
+              <MessageCircle size={18} strokeWidth={2.3} aria-hidden />
+              Rabi&apos;ye anlat
+            </Buton>
+          )}
+        </div>
       )}
 
       {satirlar.length > 0 && (
@@ -105,10 +126,22 @@ export function DenemelerEkrani({
           baslik="Kayıtlı deneme yok"
           aciklama="İlk denemeni ekle. Girdiğin doğru ve yanlışlardan netini hesaplar, sonrakilerle karşılaştırır."
           eylem={
-            <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit}>
-              <Plus size={18} />
-              Deneme ekle
-            </Buton>
+            <div className="flex gap-2.5">
+              <Buton data-tanitim="deneme-ekle" onClick={onYeniyeGit}>
+                <Plus size={18} />
+                Deneme ekle
+              </Buton>
+              {!tanitim && (
+                <Buton
+                  bicim="ikincil"
+                  onClick={() => setSesliAcik(true)}
+                  aria-label="Rabi'ye anlat"
+                >
+                  <MessageCircle size={18} strokeWidth={2.3} aria-hidden />
+                  Rabi&apos;ye anlat
+                </Buton>
+              )}
+            </div>
           }
         />
       ) : (
@@ -214,14 +247,28 @@ export function DenemelerEkrani({
                             ))}
                           </div>
                           {sablon.dersler.map((ders) => {
-                            const sonuc = deneme.sonuclar.find((s) => s.dersId === ders.id)
+                            // Toplu girilen grup tek satır: "Sosyal (toplu)", ilk
+                            // dersinin yerinde; öteki dersleri çizilmiyor.
+                            const grup = sablonGruplari(sablon).find((g) =>
+                              g.dersIdleri.includes(ders.id),
+                            )
+                            const topluSonuc = grup
+                              ? gecerliToplu(deneme, sablon).find((t) => t.grup === grup.grup)
+                              : undefined
+                            if (grup && topluSonuc && grup.dersIdleri[0] !== ders.id) return null
+                            const sonuc = topluSonuc ?? deneme.sonuclar.find((s) => s.dersId === ders.id)
                             const dogru = sonuc?.dogru ?? 0
                             const yanlis = sonuc?.yanlis ?? 0
+                            const soruSayisi = grup && topluSonuc ? grup.soruSayisi : ders.soruSayisi
+                            const satirNeti =
+                              grup && topluSonuc
+                                ? (ozet.topluNetleri[grup.grup] ?? 0)
+                                : (ozet.dersNetleri[ders.id] ?? 0)
                             const hucre = 'border-t border-border/70 py-[9px]'
                             return (
                               <div key={ders.id} role="row" className="contents">
                                 <div role="cell" className={cn(hucre, 'truncate pl-2.5 font-bold')}>
-                                  {ders.ad}
+                                  {grup && topluSonuc ? `${TOPLU_GRUP_ADI[grup.grup]} (Toplu)` : ders.ad}
                                 </div>
                                 <div role="cell" className={cn(hucre, 'text-right font-extrabold text-success')}>
                                   {dogru}
@@ -230,10 +277,10 @@ export function DenemelerEkrani({
                                   {yanlis}
                                 </div>
                                 <div role="cell" className={cn(hucre, 'text-right font-semibold text-muted-foreground')}>
-                                  {ders.soruSayisi - dogru - yanlis}
+                                  {soruSayisi - dogru - yanlis}
                                 </div>
                                 <div role="cell" className={cn(hucre, 'pr-2.5 text-right font-extrabold')}>
-                                  {netYaz(ozet.dersNetleri[ders.id] ?? 0)}
+                                  {netYaz(satirNeti)}
                                 </div>
                               </div>
                             )
@@ -298,6 +345,19 @@ export function DenemelerEkrani({
         onOnayla={() => silinecek && onSil(silinecek.id)}
         onIptal={() => setSilinecek(null)}
       />
+
+      {sesliAcik && !tanitim && (
+        <SesliGirisSayfasi
+          kip="deneme"
+          sablonlar={sablonlar}
+          ayarlar={ayarlar}
+          onKapat={() => setSesliAcik(false)}
+          onDenemeAc={(baslangic) => {
+            setSesliAcik(false)
+            onDenemeAc?.(baslangic)
+          }}
+        />
+      )}
     </div>
   )
 }

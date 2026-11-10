@@ -13,6 +13,7 @@ import {
   secimGuncelle,
   yon,
   type DersDegisimi,
+  type TopluNotu,
   type Yon,
 } from '@/lib/istatistik'
 import { useGeriKatmani } from '@/lib/geri'
@@ -239,6 +240,11 @@ export function IstatistikEkrani({
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[15px] font-extrabold tracking-[-0.01em]">
                   {d.ad}
+                  {d.toplu && (
+                    <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                      Toplu
+                    </span>
+                  )}
                 </span>
                 <span className="mt-1.5 block h-1.5 overflow-hidden rounded-[3px] bg-muted">
                   <span
@@ -280,8 +286,9 @@ export function IstatistikEkrani({
 
       {dersSayfasi && (
         <DersSayfasi
-          degisimler={ozet.degisimler}
-          altYazi={`${ozet.degisimler.length} ders · ${sablon.ad} · ${ozet.denemeSayisi} deneme`}
+          degisimler={ozet.dersIlerleyisleri}
+          altYazi={`${ozet.dersIlerleyisleri.length} ders · ${sablon.ad} · ${ozet.denemeSayisi} deneme`}
+          topluNotlari={ozet.topluNotlari}
           onKapat={() => setDersSayfasi(false)}
         />
       )}
@@ -439,13 +446,28 @@ function Tutamak() {
   return <div className="mx-auto mb-3.5 h-1 w-10 rounded-sm bg-grid" />
 }
 
+/**
+ * Toplu girilen grubun notu: o denemeler grubun derslerinin serisinde boş
+ * (sıfır sayılmıyor, derslere bölünmüyor). Tek satır, sönük.
+ */
+function TopluNotuSatiri({ notlar }: { notlar: TopluNotu[] }) {
+  if (notlar.length === 0) return null
+  return (
+    <p className="mt-1 text-[11.5px] font-semibold text-muted-foreground/70">
+      {notlar.map((n) => `${n.ad}: ${n.denemeSayisi} denemede toplu girildi`).join(' · ')}
+    </p>
+  )
+}
+
 function DersSayfasi({
   degisimler,
   altYazi,
+  topluNotlari,
   onKapat,
 }: {
   degisimler: DersDegisimi[]
   altYazi: string
+  topluNotlari: TopluNotu[]
   onKapat: () => void
 }) {
   const sirali = [...degisimler].sort((a, b) => b.fark - a.fark)
@@ -459,6 +481,7 @@ function DersSayfasi({
           <KapatDugmesi onClick={onKapat} />
         </div>
         <p className="mt-1.5 text-[12.5px] font-bold text-muted-foreground">{altYazi}</p>
+        <TopluNotuSatiri notlar={topluNotlari} />
       </div>
       <div className="min-h-0 flex-1 overflow-auto px-[18px] pt-1 pb-[calc(1.25rem+var(--guvenli-alt))]">
         <div className="golge-kart overflow-hidden rounded-[18px] bg-card">
@@ -470,6 +493,11 @@ function DersSayfasi({
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[14.5px] font-extrabold tracking-[-0.01em]">
                   {d.ad}
+                  {d.toplu && (
+                    <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                      Toplu
+                    </span>
+                  )}
                 </span>
                 <span className="mt-1.5 block h-1.5 overflow-hidden rounded-[3px] bg-muted">
                   <span
@@ -679,6 +707,11 @@ function KarsilastirmaKatmani({
                 >
                   <span className="min-w-0 flex-1 truncate text-[13.5px] font-extrabold tracking-[-0.01em]">
                     {s.ad}
+                    {s.toplu && (
+                      <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                        Toplu
+                      </span>
+                    )}
                   </span>
                   <span className="rakam shrink-0 whitespace-nowrap text-xs font-extrabold text-muted-foreground/70">
                     {netYaz(s.son)} net
@@ -760,6 +793,11 @@ function DegisimKutusu({
           >
             <span className="min-w-0 flex-1 truncate text-[13.5px] font-extrabold tracking-[-0.01em]">
               {s.ad}
+              {s.toplu && (
+                <span className="ml-1.5 inline-block rounded-full bg-muted px-1.5 py-0.5 text-[10.5px] font-bold text-muted-foreground">
+                  Toplu
+                </span>
+              )}
             </span>
             <span className="rakam flex shrink-0 items-baseline gap-[5px] whitespace-nowrap text-xs font-extrabold">
               <span className="text-muted-foreground/70">{netYaz(s.onceki)}</span>

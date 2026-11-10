@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rabi Defteri — Dinleme Ekranı Tasarım Yönü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --background: #f8f8f7;
+      --foreground: #1b1a19;
+      --card: #ffffff;
+      --card-foreground: #1b1a19;
+      --muted: #efeeeb;
+      --muted-foreground: #6b6764;
+      --border: #eae9e6;
+      --primary: #b3491f;
+      --primary-parlak: #d9622f;
+      --primary-soft: #fbeee7;
+      --defter-cizgi: rgba(217, 98, 47, 0.12);
+      --defter-zemin: #fffdf9;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      margin: 0;
+      padding: 16px 32px 0 32px;
+      width: 880px;
+      height: 960px;
+      background-color: #ECEAE6;
+      font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+      color: var(--foreground);
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* Üst Başlık Bölümü */
+    .ust-baslik {
+      margin-bottom: 10px;
+    }
+
+    .yon-adi {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--foreground);
+    }
+
+    .yon-ozet {
+      margin: 3px 0 0 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      line-height: 1.25;
+    }
+
+    /* Telefonlar Düzeni */
+    .telefonlar-kapsayici {
+      display: flex;
+      justify-content: center;
+      gap: 36px;
+      align-items: flex-start;
+    }
+
+    .telefon-sutun {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .telefon-cerceve {
+      width: 390px;
+      height: 844px;
+      background-color: var(--background);
+      border-radius: 44px;
+      border: 1px solid rgba(27, 26, 25, 0.12);
+      box-shadow: 0 18px 42px -10px rgba(27, 26, 25, 0.2);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .telefon-etiket {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+    }
+
+    /* Durum Çubuğu */
+    .durum-cubugu {
+      height: 48px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 10;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--foreground);
+    }
+
+    .ada-hap {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 32px;
+      background-color: #000000;
+      border-radius: 20px;
+      z-index: 20;
+    }
+
+    .durum-ikonlar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Arka Plan — Soru Takibi Ekranı Silüeti */
+    .soru-takibi-arkaplan {
+      flex: 1;
+      padding: 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0.45;
+      filter: blur(0.4px);
+      pointer-events: none;
+    }
+
+    .arkaplan-ust {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .arkaplan-baslik {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--foreground);
+    }
+
+    .arkaplan-tarih {
+      padding: 4px 10px;
+      background: var(--muted);
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted-foreground);
+    }
+
+    .arkaplan-hedef-kart {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .arkaplan-cizgi-blok {
+      height: 8px;
+      background: var(--muted);
+      border-radius: 4px;
+    }
+
+    .arkaplan-ders-listesi {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .arkaplan-ders-kart {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-left: 4px solid var(--border);
+    }
+
+    .arkaplan-ders-kart.mat { border-left-color: #2563eb; }
+    .arkaplan-ders-kart.turk { border-left-color: #d97706; }
+    .arkaplan-ders-kart.fiz { border-left-color: #7c3aed; }
+
+    /* Karartma Katmanı */
+    .karartma-katmani {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(27, 26, 25, 0.42);
+      z-index: 25;
+    }
+
+    /* Alt Pencere (Bottom Sheet) */
+    .alt-pencere {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--card);
+      border-radius: 26px 26px 0 0;
+      padding: 10px 20px 20px 20px;
+      box-shadow: 0 -12px 36px rgba(27, 26, 25, 0.18);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .alt-tutamac {
+      width: 42px;
+      height: 4px;
+      background-color: var(--border);
+      border-radius: 999px;
+      margin: 0 auto 12px auto;
+    }
+
+    .pencere-baslik-satiri {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .pencere-baslik {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--foreground);
+    }
+
+    .kapat-dugmesi {
+      width: 32px;
+      height: 32px;
+      border-radius: 11px;
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Rabi Maskot Alanı */
+    .maskot-alani {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      margin-bottom: -10px;
+      position: relative;
+      z-index: 35;
+    }
+
+    .rabi-gorsel {
+      height: 84px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 12px rgba(90, 60, 35, 0.14));
+      transform-origin: bottom center;
+    }
+
+    .konusuyor .rabi-gorsel {
+      animation: rabiYazis 2.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes rabiYazis {
+      0% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-1.5px) rotate(-0.8deg); }
+      100% { transform: translateY(0.5px) rotate(0.6deg); }
+    }
+
+    /* Çizgili Defter Kartı */
+    .defter-kart {
+      position: relative;
+      z-index: 32;
+      background-color: var(--defter-zemin);
+      border: 1px solid #EAE5DC;
+      border-left: 3.5px solid var(--primary-parlak);
+      border-radius: 16px;
+      padding: 6px 16px 12px 18px;
+      min-height: 116px;
+      box-shadow: 0 4px 14px rgba(90, 60, 35, 0.05);
+      background-image: linear-gradient(to bottom, transparent 27px, var(--defter-cizgi) 27px);
+      background-size: 100% 28px;
+      background-position: 0 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .defter-yazi {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 28px;
+      color: var(--foreground);
+      word-break: break-word;
+      letter-spacing: -0.01em;
+    }
+
+    /* İmleç */
+    .yazi-imleci {
+      display: inline-block;
+      width: 2.2px;
+      height: 17px;
+      background-color: var(--primary-parlak);
+      margin-left: 2px;
+      vertical-align: -2px;
+      border-radius: 1px;
+      animation: imlecYanipSonme 1s ease-in-out infinite;
+    }
+
+    @keyframes imlecYanipSonme {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Başlangıç Ekranındaki Minik İpuçları */
+    .baslangic-icerik {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .imlec-satiri {
+      height: 28px;
+      display: flex;
+      align-items: center;
+    }
+
+    .ipucu-seridi {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .ipucu-cip {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
+      background-color: var(--primary-soft);
+      color: var(--primary);
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    /* Alt Eylem Çubuğu */
+    .alt-eylem-alani {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    /* Sol Gösterge (Mikrofon / Dalga) */
+    .sol-gosterge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .mikrofon-kapsul {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .baslangic .mikrofon-kapsul {
+      background-color: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .konusuyor .mikrofon-kapsul {
+      background-color: var(--primary-parlak);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(217, 98, 47, 0.35);
+    }
+
+    .ses-nabiz-halka {
+      position: absolute;
+      inset: -4px;
+      border-radius: 19px;
+      background-color: var(--primary-parlak);
+      opacity: 0.35;
+      animation: sesNabizAnim 1.8s cubic-bezier(0.2, 0.8, 0.4, 1) infinite;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    @keyframes sesNabizAnim {
+      0% { transform: scale(0.96); opacity: 0.45; }
+      70% { transform: scale(1.22); opacity: 0; }
+      100% { transform: scale(1.22); opacity: 0; }
+    }
+
+    /* Canlı Ses Dalga Çubukları */
+    .dalga-kapsayici {
+      display: flex;
+      align-items: center;
+      gap: 3.5px;
+      height: 28px;
+      padding: 0 4px;
+    }
+
+    .dalga-cubuk {
+      width: 3.5px;
+      background-color: var(--primary-parlak);
+      border-radius: 999px;
+      transform-origin: center;
+    }
+
+    .dalga-cubuk:nth-child(1) { height: 8px; animation: dalgaOyna1 0.85s ease-in-out infinite alternate; }
+    .dalga-cubuk:nth-child(2) { height: 20px; animation: dalgaOyna2 0.75s ease-in-out infinite alternate 0.15s; }
+    .dalga-cubuk:nth-child(3) { height: 14px; animation: dalgaOyna3 0.9s ease-in-out infinite alternate 0.3s; }
+    .dalga-cubuk:nth-child(4) { height: 22px; animation: dalgaOyna4 0.8s ease-in-out infinite alternate 0.2s; }
+
+    @keyframes dalgaOyna1 {
+      0% { height: 6px; }
+      100% { height: 18px; }
+    }
+    @keyframes dalgaOyna2 {
+      0% { height: 12px; }
+      100% { height: 26px; }
+    }
+    @keyframes dalgaOyna3 {
+      0% { height: 8px; }
+      100% { height: 20px; }
+    }
+    @keyframes dalgaOyna4 {
+      0% { height: 10px; }
+      100% { height: 24px; }
+    }
+
+    /* Sağ Geniş Bitir Düğmesi */
+    .bitir-dugmesi {
+      flex: 1;
+      height: 48px;
+      background-color: var(--primary-parlak);
+      color: #ffffff;
+      border: none;
+      border-radius: 16px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(217, 98, 47, 0.28);
+      cursor: pointer;
+    }
+
+    /* iPhone Alt Çizgi */
+    .home-cubuk {
+      width: 134px;
+      height: 5px;
+      background-color: #1b1a19;
+      opacity: 0.18;
+      border-radius: 999px;
+      margin: 14px auto 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Üst Başlık ve 1 Satırlık Özet -->
+  <header class="ust-baslik">
+    <h1 class="yon-adi">Rabi Defteri</h1>
+    <p class="yon-ozet">Rabi söylediklerini çizgili deftere not alıyor; canlı metin kâğıtta satır satır beliriyor.</p>
+  </header>
+
+  <!-- İki Telefon Yan Yana -->
+  <main class="telefonlar-kapsayici">
+
+    <!-- 1. Telefon: Başlangıç -->
+    <div class="telefon-sutun">
+      <div class="telefon-cerceve baslangic">
+        <!-- Durum Çubuğu & Dynamic Island -->
+        <div class="durum-cubugu">
+          <span>09:41</span>
+          <div class="ada-hap"></div>
+          <div class="durum-ikonlar">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+              <rect x="0" y="7" width="3" height="4" rx="0.8" fill="currentColor" />
+              <rect x="4.5" y="4.5" width="3" height="6.5" rx="0.8" fill="currentColor" />
+              <rect x="9" y="2.5" width="3" height="8.5" rx="0.8" fill="currentColor" />
+              <rect x="13.5" y="0" width="3" height="11" rx="0.8" fill="currentColor" />
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M8 10.5C8.82843 10.5 9.5 9.82843 9.5 9C9.5 8.17157 8.82843 7.5 8 7.5C7.17157 7.5 6.5 8.17157 6.5 9C6.5 9.82843 7.17157 10.5 8 10.5Z" fill="currentColor" />
+              <path d="M4.8 5.7C6.7 4.1 9.3 4.1 11.2 5.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M2.2 3.1C5.7 0.3 10.3 0.3 13.8 3.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="19" height="10" rx="3" stroke="currentColor" stroke-width="1.4" />
+              <rect x="2.5" y="2.5" width="13" height="7" rx="1.6" fill="currentColor" />
+              <path d="M21.5 4.5V7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Soluk Soru Takibi Ekranı Silüeti -->
+        <div class="soru-takibi-arkaplan">
+          <div class="arkaplan-ust">
+            <span class="arkaplan-baslik">Soru Takibi</span>
+            <span class="arkaplan-tarih">Bugün, 7 Kasım</span>
+          </div>
+          <div class="arkaplan-hedef-kart">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="arkaplan-cizgi-blok" style="width: 70px;"></div>
+              <div class="arkaplan-cizgi-blok" style="width: 44px; background: #e2ded9;"></div>
+            </div>
+            <div class="arkaplan-cizgi-blok" style="width: 100%; height: 10px; background: var(--primary-soft);"></div>
+          </div>
+          <div class="arkaplan-ders-listesi">
+            <div class="arkaplan-ders-kart mat">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="arkaplan-cizgi-blok" style="width: 80px; height: 10px;"></div>
+                <div class="arkaplan-cizgi-blok" style="width: 50px;"></div>
+              </div>
+              <div class="arkaplan-cizgi-blok" style="width: 32px; height: 14px;"></div>
+            </div>
+            <div class="arkaplan-ders-kart turk">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="arkaplan-cizgi-blok" style="width: 72px; height: 10px;"></div>
+                <div class="arkaplan-cizgi-blok" style="width: 46px;"></div>
+              </div>
+              <div class="arkaplan-cizgi-blok" style="width: 32px; height: 14px;"></div>
+            </div>
+            <div class="arkaplan-ders-kart fiz">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="arkaplan-cizgi-blok" style="width: 65px; height: 10px;"></div>
+                <div class="arkaplan-cizgi-blok" style="width: 40px;"></div>
+              </div>
+              <div class="arkaplan-cizgi-blok" style="width: 32px; height: 14px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Karartma Katmanı -->
+        <div class="karartma-katmani"></div>
+
+        <!-- Alt Pencere -->
+        <div class="alt-pencere">
+          <div class="alt-tutamac"></div>
+          
+          <div class="pencere-baslik-satiri">
+            <h2 class="pencere-baslik">Bugün ne çözdün?</h2>
+            <button type="button" class="kapat-dugmesi" aria-label="Kapat">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Üstte Küçük Boyda Rabi Maskotu -->
+          <div class="maskot-alani">
+            <img src="../../public/tavsan-yazan.png" alt="Rabi deftere yazıyor" class="rabi-gorsel" />
+          </div>
+
+          <!-- Canlı Yazı: Açık Çizgili Kâğıt Kartı -->
+          <div class="defter-kart">
+            <div class="baslangic-icerik">
+              <div class="imlec-satiri">
+                <span class="yazi-imleci"></span>
+              </div>
+              <div class="ipucu-seridi">
+                <span class="ipucu-cip">80 matematik</span>
+                <span class="ipucu-cip">TYT Türkçe 33 doğru</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alt Kontrol Çubuğu -->
+          <div class="alt-eylem-alani">
+            <div class="sol-gosterge">
+              <div class="mikrofon-kapsul">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="22"></line>
+                </svg>
+              </div>
+            </div>
+            <button type="button" class="bitir-dugmesi">Bitir</button>
+          </div>
+
+          <div class="home-cubuk"></div>
+        </div>
+      </div>
+      <span class="telefon-etiket">Başlangıç</span>
+    </div>
+
+    <!-- 2. Telefon: Konuşuyor -->
+    <div class="telefon-sutun">
+      <div class="telefon-cerceve konusuyor">
+        <!-- Durum Çubuğu & Dynamic Island -->
+        <div class="durum-cubugu">
+          <span>09:41</span>
+          <div class="ada-hap"></div>
+          <div class="durum-ikonlar">
+            <svg width="17" height="11" viewBox="0 0 17 11" fill="none" aria-hidden="true">
+              <rect x="0" y="7" width="3" height="4" rx="0.8" fill="currentColor" />
+              <rect x="4.5" y="4.5" width="3" height="6.5" rx="0.8" fill="currentColor" />
+              <rect x="9" y="2.5" width="3" height="8.5" rx="0.8" fill="currentColor" />
+              <rect x="13.5" y="0" width="3" height="11" rx="0.8" fill="currentColor" />
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+              <path d="M8 10.5C8.82843 10.5 9.5 9.82843 9.5 9C9.5 8.17157 8.82843 7.5 8 7.5C7.17157 7.5 6.5 8.17157 6.5 9C6.5 9.82843 7.17157 10.5 8 10.5Z" fill="currentColor" />
+              <path d="M4.8 5.7C6.7 4.1 9.3 4.1 11.2 5.7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+              <path d="M2.2 3.1C5.7 0.3 10.3 0.3 13.8 3.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+            </svg>
+            <svg width="24" height="12" viewBox="0 0 24 12" fill="none" aria-hidden="true">
+              <rect x="1" y="1" width="19" height="10" rx="3" stroke="currentColor" stroke-width="1.4" />
+              <rect x="2.5" y="2.5" width="13" height="7" rx="1.6" fill="currentColor" />
+              <path d="M21.5 4.5V7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Soluk Soru Takibi Ekranı Silüeti -->
+        <div class="soru-takibi-arkaplan">
+          <div class="arkaplan-ust">
+            <span class="arkaplan-baslik">Soru Takibi</span>
+            <span class="arkaplan-tarih">Bugün, 7 Kasım</span>
+          </div>
+          <div class="arkaplan-hedef-kart">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="arkaplan-cizgi-blok" style="width: 70px;"></div>
+              <div class="arkaplan-cizgi-blok" style="width: 44px; background: #e2ded9;"></div>
+            </div>
+            <div class="arkaplan-cizgi-blok" style="width: 100%; height: 10px; background: var(--primary-soft);"></div>
+          </div>
+          <div class="arkaplan-ders-listesi">
+            <div class="arkaplan-ders-kart mat">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="arkaplan-cizgi-blok" style="width: 80px; height: 10px;"></div>
+                <div class="arkaplan-cizgi-blok" style="width: 50px;"></div>
+              </div>
+              <div class="arkaplan-cizgi-blok" style="width: 32px; height: 14px;"></div>
+            </div>
+            <div class="arkaplan-ders-kart turk">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="arkaplan-cizgi-blok" style="width: 72px; height: 10px;"></div>
+                <div class="arkaplan-cizgi-blok" style="width: 46px;"></div>
+              </div>
+              <div class="arkaplan-cizgi-blok" style="width: 32px; height: 14px;"></div>
+            </div>
+            <div class="arkaplan-ders-kart fiz">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div class="arkaplan-cizgi-blok" style="width: 65px; height: 10px;"></div>
+                <div class="arkaplan-cizgi-blok" style="width: 40px;"></div>
+              </div>
+              <div class="arkaplan-cizgi-blok" style="width: 32px; height: 14px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Karartma Katmanı -->
+        <div class="karartma-katmani"></div>
+
+        <!-- Alt Pencere -->
+        <div class="alt-pencere">
+          <div class="alt-tutamac"></div>
+          
+          <div class="pencere-baslik-satiri">
+            <h2 class="pencere-baslik">Bugün ne çözdün?</h2>
+            <button type="button" class="kapat-dugmesi" aria-label="Kapat">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Üstte Küçük Boyda Rabi Maskotu -->
+          <div class="maskot-alani">
+            <img src="../../public/tavsan-yazan.png" alt="Rabi deftere yazıyor" class="rabi-gorsel" />
+          </div>
+
+          <!-- Canlı Yazı: Açık Çizgili Kâğıt Kartı -->
+          <div class="defter-kart">
+            <p class="defter-yazi">Bugün TYT denemesi çözdüm Türkçe 33 doğru 4 yanlış bir de 80 matematik çözdüm<span class="yazi-imleci"></span></p>
+          </div>
+
+          <!-- Alt Kontrol Çubuğu -->
+          <div class="alt-eylem-alani">
+            <div class="sol-gosterge">
+              <div class="mikrofon-kapsul">
+                <span class="ses-nabiz-halka"></span>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  <line x1="12" y1="19" x2="12" y2="22"></line>
+                </svg>
+              </div>
+              <div class="dalga-kapsayici" aria-hidden="true">
+                <div class="dalga-cubuk"></div>
+                <div class="dalga-cubuk"></div>
+                <div class="dalga-cubuk"></div>
+                <div class="dalga-cubuk"></div>
+              </div>
+            </div>
+            <button type="button" class="bitir-dugmesi">Bitir</button>
+          </div>
+
+          <div class="home-cubuk"></div>
+        </div>
+      </div>
+      <span class="telefon-etiket">Konuşuyor</span>
+    </div>
+
+  </main>
+
+</body>
+</html>
