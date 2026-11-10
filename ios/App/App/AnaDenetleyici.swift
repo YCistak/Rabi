@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import StoreKit
 
 /// Capacitor'ın köprü denetleyicisi, üstüne iOS'un iki alışkanlığı.
 ///
@@ -27,6 +28,7 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
         bridge?.registerPluginInstance(EkranSuresiEklentisi())
         bridge?.registerPluginInstance(CanliSayacEklentisi())
         bridge?.registerPluginInstance(TemaEklentisi())
+        bridge?.registerPluginInstance(DegerlendirmeEklentisi())
 
         guard let webView = webView else { return }
 
@@ -111,6 +113,39 @@ class AnaDenetleyici: CAPBridgeViewController, UIGestureRecognizerDelegate {
         super.viewDidAppear(animated)
         // Pencere ancak burada var; kayıtlı tema JS yüklenmeden uygulansın.
         TemaEklentisi.uygula(TemaEklentisi.kayitli(), pencere: view.window)
+    }
+}
+
+/// Mağazanın kendi değerlendirme penceresini isteyen köprü.
+///
+/// Apple pencereyi gösterip göstermemeye kendi kotasına göre karar verir;
+/// uygulama kullanıcının verdiği puanı ya da yorumu görmez. Bu yüzden sonuç
+/// ne olursa olsun web tarafına başarılı dönülür, yan hizmet uygulamayı bozmaz.
+public class DegerlendirmeEklentisi: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "DegerlendirmeEklentisi"
+    public let jsName = "Degerlendirme"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "iste", returnType: CAPPluginReturnPromise),
+    ]
+
+    @objc func iste(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            let etkinSahne = self.bridge?.viewController?.view.window?.windowScene
+                ?? UIApplication.shared.connectedScenes
+                    .compactMap { $0 as? UIWindowScene }
+                    .first { $0.activationState == .foregroundActive }
+
+            if let sahne = etkinSahne {
+                // Uygulamanın hedefi iOS 15; yeni API 16'da geldi, eskisi 18'de
+                // kullanımdan kalktı ama 15'te tek yol o.
+                if #available(iOS 16.0, *) {
+                    AppStore.requestReview(in: sahne)
+                } else {
+                    SKStoreReviewController.requestReview(in: sahne)
+                }
+            }
+            call.resolve()
+        }
     }
 }
 

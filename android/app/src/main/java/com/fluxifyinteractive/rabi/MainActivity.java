@@ -17,6 +17,7 @@ import com.getcapacitor.BridgeActivity;
 import com.fluxifyinteractive.rabi.cokme.CokmeEklentisi;
 import com.fluxifyinteractive.rabi.cokme.RaporlayanWebChromeClient;
 import com.fluxifyinteractive.rabi.cokme.RaporlayanWebViewClient;
+import com.fluxifyinteractive.rabi.degerlendirme.DegerlendirmeEklentisi;
 import com.fluxifyinteractive.rabi.guncelleme.GuncellemeEklentisi;
 import com.fluxifyinteractive.rabi.odak.OdakKilidiEklentisi;
 import com.fluxifyinteractive.rabi.tema.TemaEklentisi;
@@ -40,6 +41,7 @@ public class MainActivity extends BridgeActivity {
         registerPlugin(OdakKilidiEklentisi.class);
         registerPlugin(CokmeEklentisi.class);
         registerPlugin(GuncellemeEklentisi.class);
+        registerPlugin(DegerlendirmeEklentisi.class);
         registerPlugin(TemaEklentisi.class);
         SplashScreen.installSplashScreen(this);
         // Android 15'te zorunlu olan uçtan uca görünümü eski sürümlerde de
