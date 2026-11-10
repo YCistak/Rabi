@@ -7,7 +7,15 @@
 **Lise öğrencileri için YKS çalışma asistanı.**
 Hesap yok. Çalışma verilerin telefonunda kalır.
 
-Yakında App Store ve Google Play'de.
+<p align="center">
+  <a href="https://apps.apple.com/tr/app/rabi-yks-asistan%C4%B1/id6818211715" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" height="40" alt="Download on the App Store">
+  </a>
+  &nbsp;
+  <a href="https://play.google.com/store/apps/details?id=com.fluxifyinteractive.rabi" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" height="40" alt="Get it on Google Play">
+  </a>
+</p>
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)
