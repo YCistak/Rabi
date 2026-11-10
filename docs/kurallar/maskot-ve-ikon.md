@@ -121,11 +121,15 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Gözlük camı yalnız kenarda yansır: beyaz dünyayı yansıtan cam gözlerin üstünde
   süt gibi bir tabaka bırakıyordu. Gözün koyu yerinde gömülü gölge sönümlenir:
   oran orada gürültüye boğulup camın altında hayalet leke bırakıyordu.
-- Paletli PNG (maskot pozlarıyla aynı). Yeni eşya = Blender'da kemiğe bağlı nesne +
+- Paletli PNG (maskot pozlarıyla aynı). **İstisna:** Doktor, Hukukçu, Şef, Gitarist, Ninja tam renk
+  (görsel başına ≈650 KB; kullanıcı doku hatalarını geri çevirdi, 2026-11-05): palet titreşimle bordo
+  şeritte labirent deseni, titreşimsiz tencerede bant bırakıyordu. Sharp'ta `effort` verme, paleti açar.
+  Yeni eşya = Blender'da kemiğe bağlı nesne +
   aynı kamerayla katman + `ESYALAR`a satır; aynı yuvaya ikinci eşya ötekini çıkarır.
 - **Eşyalar ve yuvalar** (2026-10-31): kafa (kep, bere, taç, kulaklık), yüz (güneş
   gözlüğü), boyun (papyon, atkı, altın kolye, Allah yazılı kolye); kulak ve ayak
-  yuvaları boş; ayrıca hazır avatarlar (Sigma, Gece Kuşu, Sokak Stili, Astronot). Kulakta kalem
+  yuvaları boş; ayrıca hazır avatarlar (Sigma, Gece Kuşu, Sokak Stili, Astronot, Doktor, Hukukçu,
+  Şef, Gitarist, Ninja). Kulakta kalem
   kullanıcı kaldırttı; geri getirme. Dördüncü tur eşyaları `kur4.py` kurar
   (`rabi_giydir5.blend`; ortak yardımcılar `ortak.py`, kulak pozları `sarkik.py`),
   `katman4.py` çizer; verilen eşyalar sahneden silinip yeniden kurulur.
@@ -176,6 +180,31 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
     çizgi). Göz `gecekusu_doku.py`de çevre tenle silinip yeniden çizilir; göz/kaş örgüsü
     `gk_goz_duz` şekil anahtarıyla düzlenir (örgüdeki eski göz hattı gri yay bırakıyordu).
     Sıkıştırma `gecekusu_sikistir.mjs`.
+  - **Tutan kol** (kullanıcı beş avatar istedi, 2026-11-04: `doktor`, `hukukcu`, `sef`, `gitarist`,
+    `ninja`; her biri `<id>_kur.py`, `<id>_poz.py`, `<id>_katman.py`, `<id>_sikistir.mjs`): kol kısa
+    (toplam 0.39) ve kalın. Nesne önce konur, pati ona IK ile uzanır; yakın hedefte kol katlanıp yen
+    patiyi deliyor. Dirsek 90° bükülmez, burgu tek eklemde verilmez: ikisi de yen ağzını yırtıyor.
+  - **Kumaş altındaki gövde** kol kalkınca kumaşı delip krem leke yapıyor; `tuy_yog` = 0 çözmez,
+    gövde şekil anahtarıyla içeri alınır ya da maskeyle gizlenir.
+  - **Kumaş son pozda kurulur** (kullanıcı ilk hâli doku hatası diye geri çevirdi, 2026-11-05):
+    gövdeden kesilen örgü bükülünce çamur gibi buruşuyor, kenarı yırtılıyordu; temiz yüzey ve
+    ızgara bant kullanılır, ince doku bump değil renk ve pürüzde. Render ≥256 örnek, albedo +
+    normal geçişli OIDN. Teslimden önce 2 kat büyütülmüş kırpımla bakılır: tam boyda görünmüyor.
+  - **Beyaz ve siyah kumaş:** kıvrım yalnız geometriyle okunmuyor. Siyah cüppede kıvrım yüksekliği
+    renge de işlenir (`hukukcu_kur.py`, `kat_f`), pürüz 0.72 (0.5 plastik gibi parlıyordu). Beyaz
+    ceket sheen 0.12 (zeminde kaybolmasın diye biye ve fular kontrast verir).
+  - Şef: kulak iç kenarı arasında şapkalık yer yok; şapka tabanı D biçimli, kulakların önünde kalır,
+    kulaklar 17° dışa açılır (24° fazla yayıktı). Yalnız önden görünür.
+  - Gitar: askı çerçevesi paralel taşınır (yüzey normalinden hesaplanınca şerit burulup
+    dalgalanıyordu); kot üst sınırı 0.385 (0.44 tişörtü delip mavi şerit gösteriyordu).
+  - Ninja: silah yok (öğrenci uygulaması); kol kameraya uzatılmaz, yana açılır (yen ağzı boş boru gibi
+    görünüyordu); sargı patinin şişkinliğinden önce biter.
+  - **Doktor'da dosya panosu, Hukukçu'da kitap yok** (kullanıcı kaldırttı, 2026-11-05; geri getirme).
+  - **Pati ayrı örgüdür** (Doktor, Hukukçu, Ninja): gövde patisi bükülünce yırtılıyor ya da küt, tek
+    kıvrımlı, uygunsuz bir şekil gibi okunuyordu. Kısa geniş avuç + dört yumuşak boğum, gövde patisi
+    gizli (`doktor_temizle.py` → `pati_kur`, `ninja_kur.py` → `Ninja_Pati`).
+  - Gitar kemeri düz iner, boynun arkasına geçer, gitara düğmeyle bağlanır (kullanıcı "yakada bozuk"
+    dedi: ortada S kırığı vardı, üst ucu çene altında kesik bitiyordu).
 - **Sigma Rabi hazır avatar** (kullanıcı istedi, 2026-10-31): **özelleştirilemez**;
   seçilince öbür eşyalar çıkar, eşya seçilince avatar çıkar (`hazir: true`, `giy`).
   Tek görsel `sigma.png` (Rabi + takım + yer gölgesi, `katman_takim.py`); altında
