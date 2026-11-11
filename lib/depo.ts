@@ -43,6 +43,8 @@ import { kaynaklariCoz } from './kaynak-takibi/kaynak'
 import type { AylikOzetArsivi } from './ozet'
 import { okumaGecmisiniCoz, type OkumaSeansi } from './konu/okuma-suresi'
 import { giyilenleriCoz } from './giydir'
+import { kaydiCoz } from './soru-bankasi/mantik'
+import type { SoruBankasiKaydi } from './soru-bankasi/tip'
 
 export const ANAHTARLAR = {
   denemeler: 'rabi-denemeler',
@@ -85,6 +87,8 @@ export const ANAHTARLAR = {
    * giriyor.
    */
   kaynakTakibi: 'rabi-kaynak-takibi',
+  /** Soru Bankası: konu kimliği → sıra temelli doğru/yanlış dizisi. */
+  soruBankasi: 'rabi-soru-bankasi',
   /**
    * Rabi'yi Giydir: yuva → giyilen eşya (`lib/giydir.ts`). Okurken
    * `giyilenleriCoz` süzüyor. Yedeğe giriyor: kullanıcının kendi seçimi.
@@ -588,6 +592,7 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut kaynaklarına dokunulmuyor.
       kaynakTakibi: nesne.kaynakTakibi === undefined ? undefined : kaynaklariCoz(nesne.kaynakTakibi),
+      soruBankasi: nesne.soruBankasi === undefined ? undefined : kaydiCoz(nesne.soruBankasi),
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // Rabi'nin üstündekilere dokunulmuyor.
       giydir: nesne.giydir === undefined ? undefined : giyilenleriCoz(nesne.giydir),
@@ -825,6 +830,7 @@ export function yedegiUygula(yedek: Yedek) {
   if (yedek.yksKonuTakibi) yaz(ANAHTARLAR.yksKonuTakibi, yedek.yksKonuTakibi)
   // Eski yedeklerde kaynak yok; boş yazmak eklenmiş kitapları silerdi.
   if (yedek.kaynakTakibi) yaz(ANAHTARLAR.kaynakTakibi, yedek.kaynakTakibi)
+  if (yedek.soruBankasi) yaz(ANAHTARLAR.soruBankasi, yedek.soruBankasi)
   // Eski yedeklerde alan yok; boş yazmak giydirilenleri çıkarırdı.
   if (yedek.giydir) yaz(ANAHTARLAR.giydir, yedek.giydir)
   // Eski yedeklerde tahta yok; boş dizi yazmak kullanıcının kâğıtlarını silerdi.

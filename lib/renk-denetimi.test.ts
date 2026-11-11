@@ -30,6 +30,11 @@ const MUAF_DOSYALAR = new Set([
   'components/ekranlar/aylik-ozet.tsx',
   // Fotoğrafın üstüne çizim: siyah zeminli düzenleyici, kalem paleti fotoğrafa göre.
   'components/soru-cizimi.tsx',
+  // Oturumluk karalama: mürekkep rengi SVG'de vektör çizgi olarak kalıyor.
+  'components/karalama/karalama-alani.tsx',
+  // Soru Bankası yüzeyi de aynı nedenle mürekkep renklerini tuvalde saklar.
+  'components/soru-bankasi/arac-cubugu.tsx',
+  'components/soru-bankasi/karalama-katmani.tsx',
   // Tanıtım deneme sayfası, uygulamaya girmiyor.
   'app/tanitim-deneyi/page.tsx',
 ])

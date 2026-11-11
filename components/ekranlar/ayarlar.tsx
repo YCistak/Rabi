@@ -58,6 +58,7 @@ import { bugun, cn, yeniId } from '@/lib/utils'
 import { dosyayiPaylas } from '@/lib/paylas'
 import { useGeriKatmani } from '@/lib/geri'
 import type { Giyilenler } from '@/lib/giydir'
+import type { SoruBankasiKaydi } from '@/lib/soru-bankasi/tip'
 import type {
   Ayarlar,
   Deneme,
@@ -160,6 +161,7 @@ export function AyarlarEkrani({
     yksKonuTakibi?: YksTakip
     /** Kaynak Takibi — test kitapları ve bitirilen konular. */
     kaynakTakibi?: Kaynak[]
+    soruBankasi?: SoruBankasiKaydi
     /** Rabi'yi Giydir — giyilen eşyalar. */
     giydir?: Giyilenler
     /** Aylık özet arşivi — yıllık özetin dayanağı. */

@@ -172,3 +172,37 @@ export function yakinlikAyarla(y: Yakinlik, olcek: number): Yakinlik {
 export function yakinlikKaydir(y: Yakinlik, dx: number, dy: number): Yakinlik {
   return yakinlikSinirla({ ...y, x: y.x + dx, y: y.y + dy })
 }
+
+export type ParmakCifti = { ilk: [number, number]; ikinci: [number, number] }
+
+export const DOKUNUS_HAREKET_ESIGI = 8
+export const DOKUNUS_SURE_ESIGI = 300
+
+/** Kısa, hareketsiz dokunuş çizim değil alttaki denetimin tıklamasıdır. */
+export function tikMi(
+  baslangic: { x: number; y: number; zaman: number },
+  bitis: { x: number; y: number; zaman: number },
+): boolean {
+  return Math.hypot(bitis.x - baslangic.x, bitis.y - baslangic.y) <= DOKUNUS_HAREKET_ESIGI
+    && bitis.zaman - baslangic.zaman <= DOKUNUS_SURE_ESIGI
+}
+
+function uzaklik([x1, y1]: [number, number], [x2, y2]: [number, number]): number {
+  return Math.hypot(x2 - x1, y2 - y1)
+}
+
+function orta(noktalar: ParmakCifti): [number, number] {
+  return [(noktalar.ilk[0] + noktalar.ikinci[0]) / 2, (noktalar.ilk[1] + noktalar.ikinci[1]) / 2]
+}
+
+/** İki parmağın orta noktasındaki içerik yerinde kalacak biçimde ölçekler. */
+export function pinchYakinligi(y: Yakinlik, onceki: ParmakCifti, sonraki: ParmakCifti): Yakinlik {
+  const oncekiUzaklik = uzaklik(onceki.ilk, onceki.ikinci)
+  const sonrakiUzaklik = uzaklik(sonraki.ilk, sonraki.ikinci)
+  if (oncekiUzaklik === 0) return y
+  const hedefOlcek = Math.min(YAKINLIK_EN_COK, Math.max(1, y.olcek * (sonrakiUzaklik / oncekiUzaklik)))
+  const [oncekiX, oncekiY] = orta(onceki)
+  const [sonrakiX, sonrakiY] = orta(sonraki)
+  const oran = hedefOlcek / y.olcek
+  return yakinlikSinirla({ olcek: hedefOlcek, x: sonrakiX - (oncekiX - y.x) * oran, y: sonrakiY - (oncekiY - y.y) * oran })
+}

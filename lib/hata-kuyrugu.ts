@@ -36,7 +36,7 @@ import {
   type HataSebebi,
 } from './hata-bildirimi'
 import { bildirimleriGonder } from './hata-gonder'
-import type { BankaSorusu } from './oyunlar/banka'
+import type { BildirilebilirSoru } from './hata-bildirimi'
 import type { BildirimKolu } from '@/components/hata-bildir'
 
 /**
@@ -89,7 +89,7 @@ export function useHataBildirimi(): BildirimKolu {
    * olduğunu, bozuksa nesinin bozuk olduğunu ayırt ettiren tek alan sebep.
    */
   const onBildir = useCallback(
-    (soru: BankaSorusu, sebep: HataSebebi, not?: string) => {
+    (soru: BildirilebilirSoru, sebep: HataSebebi, not?: string) => {
       setBildirimler((l) => bildirimEkle(l, soru, sebep, new Date(), not))
     },
     [setBildirimler],

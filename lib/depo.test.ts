@@ -52,6 +52,9 @@ function coz(veri: unknown) {
 }
 
 describe('yedegiDogrula', () => {
+  it('Soru Bankası kaydındaki bozuk dizileri atar', () => {
+    expect(coz({ ...yedekOlustur(bos), soruBankasi: { iyi: 'dy-', bozuk: 'dx' } }).soruBankasi).toEqual({ iyi: 'dy-' })
+  })
   it('Rabi yedeği olmayan dosyayı reddeder', () => {
     expect(yedegiDogrula(JSON.stringify({ uygulama: 'ortala' }))).toEqual({
       hata: 'Bu dosya Rabi yedeği değil.',

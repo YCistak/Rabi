@@ -100,6 +100,9 @@ import { BOS_TAKIP, takibiCoz, type YksTakip } from '@/lib/konu-takibi/kayit'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { KaynakTakibiEkrani } from '@/components/ekranlar/kaynak-takibi'
 import { kaynaklariCoz, type Kaynak } from '@/lib/kaynak-takibi/kaynak'
+import { kaydiCoz } from '@/lib/soru-bankasi/mantik'
+import type { SoruBankasiKaydi } from '@/lib/soru-bankasi/tip'
+import { SoruBankasiEkrani } from '@/components/ekranlar/soru-bankasi'
 import { BOS_GIYILENLER, giyilenleriCoz, type Giyilenler } from '@/lib/giydir'
 import { RabiGiydirEkrani } from '@/components/ekranlar/rabi-giydir'
 import { AylikOzetEkrani } from '@/components/ekranlar/aylik-ozet'
@@ -361,6 +364,9 @@ function RabiUygulamasi() {
     (guncelle: (onceki: Kaynak[]) => Kaynak[]) => setKaynaklarHam((onceki) => guncelle(kaynaklariCoz(onceki))),
     [setKaynaklarHam],
   )
+  const [soruBankasiHam, setSoruBankasiHam] = useYerelDepo<SoruBankasiKaydi>(ANAHTARLAR.soruBankasi, {})
+  const soruBankasi = useMemo(() => kaydiCoz(soruBankasiHam), [soruBankasiHam])
+  const setSoruBankasi = useCallback((guncelle: (onceki: SoruBankasiKaydi) => SoruBankasiKaydi) => setSoruBankasiHam((onceki) => guncelle(kaydiCoz(onceki))), [setSoruBankasiHam])
   /*
     Konu Takibi'nden "Haritaya git" isteği: harita sekmesi açılınca bu konunun
     kartını açıp isteği tüketiyor (`onKonuAcildi`). Prop doğrudan okunsaydı
@@ -1382,6 +1388,7 @@ function RabiUygulamasi() {
             {ekran === 'kaynak-takibi' && (
               <KaynakTakibiEkrani kaynaklar={kaynaklar} setKaynaklar={setKaynaklar} sinif={ayarlar.buYilSinif} />
             )}
+            {ekran === 'soru-bankasi' && <SoruBankasiEkrani kayit={soruBankasi} setKayit={setSoruBankasi} sinif={ayarlar.buYilSinif} hataBildirimi={hataBildirimi} />}
             {ekran === 'yasal' && <YasalEkrani />}
             {ekran === 'geri-bildirim' && <GeriBildirimEkrani kol={geriBildirim} />}
             {ekran === 'rabi-giydir' && (
@@ -1503,6 +1510,7 @@ function RabiUygulamasi() {
                   bilinmeyenKartlar,
                   yksKonuTakibi: yksTakip,
                   kaynakTakibi: kaynaklar,
+                  soruBankasi,
                   giydir: giyilenler,
                   aylikOzetler,
                   okumaGecmisi,

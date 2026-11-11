@@ -11,6 +11,7 @@ import type { YksTakip } from './konu-takibi/kayit'
 import type { Kaynak } from './kaynak-takibi/kaynak'
 import type { TemaTercihi } from './tema'
 import type { Giyilenler } from './giydir'
+import type { SoruBankasiKaydi } from './soru-bankasi/tip'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -473,6 +474,8 @@ export type Yedek = {
    * yüklemede yazılmıyor, kullanıcının mevcut kaydına dokunulmuyor.
    */
   kaynakTakibi?: Kaynak[]
+  /** Soru Bankası'nda soru sırasına göre tutulan doğru/yanlış dizileri. */
+  soruBankasi?: SoruBankasiKaydi
   /**
    * Rabi'yi Giydir: yuva → eşya. Eski yedeklerde yok — geri yüklemede
    * yazılmıyor, Rabi'nin üstündekilere dokunulmuyor.
