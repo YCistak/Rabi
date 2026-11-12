@@ -25,7 +25,7 @@ type AcikTest = {
 }
 
 /** Bu cihazdaki tercih (yedeğe girmez): son mod, sayacın gizliliği, eleme ipucu görüldü mü. */
-type Tercih = { mod: CalismaModu; sureGizli: boolean; elemeOgrenildi: boolean }
+type Tercih = { mod: CalismaModu; sureGizli: boolean; elemeOgrenildi: boolean; yarimSureler?: Record<string, number> }
 const VARSAYILAN_TERCIH: Tercih = {
   mod: 'alistirma',
   sureGizli: false,
@@ -97,6 +97,7 @@ export function SoruBankasiEkrani({
       kimlik: Date.now(),
     })
   }
+  const yarimSureAnahtari = (konuId: string, test: number) => `${konuId}:${test}`
 
   if (konu && !sorular) {
     return <main className="sayfa-girisi mx-auto max-w-md px-4 py-8 text-muted-foreground">Sorular hazırlanıyor…</main>
@@ -114,6 +115,7 @@ export function SoruBankasiEkrani({
         tekrar={acikTest.tekrar}
         mod={acikTest.mod}
         devam={acikTest.devam}
+        oncekiSure={tercih.yarimSureler?.[yarimSureAnahtari(konu.id, acikTest.test)] ?? 0}
         kayit={kayit}
         setKayit={setKayit}
         setTestler={setTestler}
@@ -128,6 +130,23 @@ export function SoruBankasiEkrani({
             ...eski,
             elemeOgrenildi: true,
           }))
+        }
+        onYarimSure={(sure) =>
+          setTercih((eski) => ({
+            ...VARSAYILAN_TERCIH,
+            ...eski,
+            yarimSureler: {
+              ...eski.yarimSureler,
+              [yarimSureAnahtari(konu.id, acikTest.test)]: Math.max(0, Math.round(sure)),
+            },
+          }))
+        }
+        onYarimSureSil={() =>
+          setTercih((eski) => {
+            const yarimSureler = { ...eski.yarimSureler }
+            delete yarimSureler[yarimSureAnahtari(konu.id, acikTest.test)]
+            return { ...VARSAYILAN_TERCIH, ...eski, yarimSureler }
+          })
         }
         onCik={() => setAcikTest(null)}
         onSonrakiTest={() => testiAc(acikTest.test + 1)}

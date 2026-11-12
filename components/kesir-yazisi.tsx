@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { kesirParcala } from '@/lib/kesir'
+import { kesirParcalariSec } from '@/lib/soru-bankasi/metin'
 
 /**
  * "3/5" metnini üst üste duran bir kesir olarak çizer.
@@ -11,7 +11,7 @@ import { kesirParcala } from '@/lib/kesir'
  * Ekran okuyucu için "bölü" ile okunuyor; çizgi yalnızca görsel.
  */
 export function KesirYazisi({ metin, className }: { metin: string; className?: string }) {
-  const parcalar = kesirParcala(metin)
+  const parcalar = kesirParcalariSec(metin)
 
   return (
     <span className={cn('rakam', className)}>

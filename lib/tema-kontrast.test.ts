@@ -77,6 +77,7 @@ const CIFTLER: [string, string, number][] = [
   ...AYARLAR.map((a): [string, string, number] => [`--ayar-${a}-koyu`, `--ayar-${a}`, 4.5]),
   ...GOREVLER.map((g): [string, string, number] => [`--gorev-${g}`, '--card', 4.5]),
   // Soru Bankası karalaması: mürekkep sayfa zemininde ve kartta (şık) okunmalı.
+  // Vurgulayıcı yazı değil, yazının arkasındaki yarı saydam zemin: aşağıda ayrı ölçülür.
   ...['kursun', 'kirmizi', 'mavi', 'yesil'].flatMap((m): [string, string, number][] => [
     [`--murekkep-${m}`, '--background', 3],
     [`--murekkep-${m}`, '--card', 3],
@@ -101,4 +102,34 @@ describe.each([
     })
     expect(dusukler).toEqual([])
   })
+
+  // Vurgulayıcı `VURGU_SAYDAMLIK` (karalama-katmani.tsx) ile zemine karışır;
+  // karışık renk üstünde yazı okunmalı, karışık renk de zeminden seçilmeli.
+  it('vurgulayıcı zemine karışınca yazı okunuyor ve vurgu seçiliyor', () => {
+    const dusukler = ['--background', '--card'].flatMap((zemin) => {
+      const alt = renk(takimi, zemin)
+      const karisik = karistir(renk(takimi, '--murekkep-vurgu'), alt, VURGU_SAYDAMLIK)
+      const yazi = kontrast(renk(takimi, '--foreground'), karisik)
+      const ayrim = kontrast(karisik, alt)
+      return [
+        ...(yazi < 4.5 ? [`--foreground / vurgu+${zemin}: ${yazi.toFixed(2)} < 4.5`] : []),
+        ...(ayrim < 1.15 ? [`vurgu+${zemin} / ${zemin}: ${ayrim.toFixed(2)} < 1.15`] : []),
+      ]
+    })
+    expect(dusukler).toEqual([])
+  })
 })
+
+/** components/soru-bankasi/karalama-katmani.tsx → VURGU_SAYDAMLIK ile aynı tutulmalı. */
+const VURGU_SAYDAMLIK = 0.38
+
+/** `ust` rengini `saydamlik` ile `alt` üstüne bindirir (sRGB'de alfa karışımı, tuval gibi). */
+function karistir(ust: string, alt: string, saydamlik: number): string {
+  const kanal = (hex: string, i: number) => parseInt(hex.slice(i, i + 2), 16)
+  return (
+    '#' +
+    [1, 3, 5]
+      .map((i) => Math.round(kanal(ust, i) * saydamlik + kanal(alt, i) * (1 - saydamlik)).toString(16).padStart(2, '0'))
+      .join('')
+  )
+}

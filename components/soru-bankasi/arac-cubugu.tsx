@@ -1,7 +1,7 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, Eraser, Hand, Highlighter, PenLine, Redo2, Trash2, Undo2 } from 'lucide-react'
-import { useState } from 'react'
+import { ChevronLeft, ChevronRight, Eraser, Hand, Highlighter, Minus, PenLine, Plus, Redo2, Trash2, Undo2 } from 'lucide-react'
+import { useReducer, useState } from 'react'
 import type { Murekkep } from '@/lib/cizim'
 import type { KaralamaAraci } from './karalama-katmani'
 
@@ -30,11 +30,23 @@ const ARACLAR: {
 
 type Balon = 'renk' | 'kalinlik' | 'ayar' | null
 
+/** Sayfa yakınlığının dışarıdan sürülmesi (fareyle; dokunmatikte kıstırma var). */
+export type YakinlikKolu = {
+  /** 1 = %100. */
+  al: () => number
+  degistir: (fark: number) => void
+  sifirla: () => void
+}
+
 /**
  * Karalama araçları — gezinme çubuğunun üstünde tek satır. Dar ekranda renk,
  * kalınlık ve temizle tek "kalem ayarı" balonunda toplanır: dokuz düğme 375
  * px'e 44 px'lik dokunma hedefiyle sığmıyor. Tutamakla küçülünce yalnız
  * etkin aracın simgesi kalır ve sayfanın sol altında yüzer.
+ *
+ * Yakınlık − / + düğmeleri de çubukta yer kalmadığı için balonda: dar ekranda
+ * "kalem ayarı", genişte "kalınlık" balonunun altında. Sayfanın üstünde yüzen
+ * kalıcı bir balon soru kökünü örtüyordu.
  */
 export function AracCubugu({
   arac,
@@ -51,6 +63,7 @@ export function AracCubugu({
   onIleriAl,
   onTemizle,
   onKatla,
+  yakinlik,
 }: {
   arac: KaralamaAraci
   renk: Murekkep
@@ -66,8 +79,12 @@ export function AracCubugu({
   onIleriAl: () => void
   onTemizle: () => void
   onKatla: () => void
+  yakinlik: YakinlikKolu
 }) {
   const [balon, setBalon] = useState<Balon>(null)
+  // Yakınlık ana bileşenin state'inde değil (kıstırmada her kare yeniden
+  // çizerdi); balon açıkken düğmeye basınca okunup yeniden çizilir.
+  const [, yenile] = useReducer((n: number) => n + 1, 0)
   const ac = (hedef: Balon) => setBalon((onceki) => (onceki === hedef ? null : hedef))
   const etkin = ARACLAR.find((deger) => deger.arac === arac)!
 
@@ -152,6 +169,34 @@ export function AracCubugu({
     </button>
   )
 
+  const olcek = balon === 'ayar' || balon === 'kalinlik' ? yakinlik.al() : 1
+  const yakinlikDugmesi = (etiket: string, devreDisi: boolean, islev: () => void, icerik: React.ReactNode) => (
+    <button
+      type="button"
+      aria-label={etiket}
+      disabled={devreDisi}
+      onClick={() => {
+        islev()
+        yenile()
+      }}
+      className="grid size-11 place-items-center rounded-xl text-foreground active:bg-muted disabled:opacity-30"
+    >
+      {icerik}
+    </button>
+  )
+  const yakinlikSecimi = (
+    <div className="flex w-full items-center justify-between gap-1 border-t border-border pt-1">
+      {yakinlikDugmesi('Uzaklaştır', olcek <= 1, () => yakinlik.degistir(-0.5), <Minus size={18} />)}
+      {yakinlikDugmesi(
+        'Yakınlığı sıfırla',
+        olcek === 1,
+        yakinlik.sifirla,
+        <span className="rakam text-[13px] font-extrabold">%{Math.round(olcek * 100)}</span>,
+      )}
+      {yakinlikDugmesi('Yakınlaştır', olcek >= 4, () => yakinlik.degistir(0.5), <Plus size={18} />)}
+    </div>
+  )
+
   const dugme = (
     etiket: string,
     secili: boolean,
@@ -179,11 +224,12 @@ export function AracCubugu({
       {balon && (
         <div
           role="dialog"
-          aria-label={balon === 'renk' ? 'Mürekkep rengi' : balon === 'kalinlik' ? 'Kalınlık' : 'Kalem ayarı'}
+          aria-label={balon === 'renk' ? 'Mürekkep rengi' : balon === 'kalinlik' ? 'Kalınlık ve yakınlık' : 'Kalem ayarı'}
           className="acilir-giris golge-kart absolute right-2 bottom-full z-40 mb-1 flex flex-col items-center gap-1 rounded-2xl border border-border bg-card p-1.5"
         >
           {(balon === 'renk' || balon === 'ayar') && arac !== 'vurgu' && renkSecimi}
           {(balon === 'kalinlik' || balon === 'ayar') && kalinlikSecimi}
+          {(balon === 'kalinlik' || balon === 'ayar') && yakinlikSecimi}
           {balon === 'ayar' && <div className="w-full border-t border-border pt-1">{temizle}</div>}
         </div>
       )}

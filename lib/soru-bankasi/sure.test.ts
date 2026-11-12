@@ -35,6 +35,12 @@ describe('test süresi', () => {
     expect(anlikSoruSureleri(sayac, 9000)).toEqual([1000, 0])
   })
 
+  it('yarım testten gelen süreyi yeni oturuma ekler', () => {
+    const sayac = sayacKur(3, 1000, 2, 42000)
+    expect(anlikSoruSureleri(sayac, 4000)).toEqual([0, 0, 45000])
+    expect(toplamSure(sayac, 4000)).toBe(45000)
+  })
+
   it('saat geri giderse eksiye düşmez', () => {
     expect(toplamSure(sayacKur(1, 5000), 1000)).toBe(0)
   })

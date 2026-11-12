@@ -50,7 +50,7 @@ export function SoruGovdesi({
         <span className="rakam">Soru {numara}</span>
         {isaretli && <Star size={13} aria-label="işaretli" className="fill-warning-dolu text-warning-dolu" />}
       </p>
-      <div className="text-[17px] leading-[1.65] font-semibold text-foreground">
+      <div data-soru-koku className="text-[17px] leading-[1.65] font-semibold text-foreground">
         <SoruMetni metin={soru.soru} />
       </div>
       {soru.onculler && (

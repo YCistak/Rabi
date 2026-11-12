@@ -30,7 +30,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   **Deneme**: seçim değişir/boşa döner, doğruluk gösterilmez; kayda "Bitir"de toplu yazılır
   (`denemeyiKaydet`). Denemede cevap varken geri, `useKapatmaOnayi` ile sorar; alıştırma sormaz.
 - Yarım kalan alıştırma testi konu ekranında "Kaldığın yerden devam et": önceki cevaplar sayılır
-  (şık bilinmez, yalnız d/y), ilk boş sorudan açılır. Bitirilmiş test kartı son sonucu ve süresini gösterir.
+  (şık bilinmez, yalnız d/y), ilk boş sorudan ve biriken süresiyle açılır. Bitirilmiş test kartı son sonucu ve süresini gösterir.
 - Şık düzeni `sikDuzeni` (`lib/soru-bankasi/duzen.ts`): görünür uzunluk ≤ 5 beş sütun, ≤ 12 iki
   sütun, değilse liste. Eleme: listede sağdaki ✕, her düzende uzun basış ya da sağ tık; elenmiş şıkka
   dokunmak geri getirir, seçmez. Eleme, işaret, çizim ve süre oturumluk.
@@ -55,8 +55,10 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   sol tuş araca göre, orta tuş kaydırır, sağ tık menü açmaz (şıkta eler). Kısa ve hareketsiz dokunuş
   (≤ 8 px, ≤ 300 ms) alttaki düğmeye gider; düğmedeki hareketsiz dokunuş nokta bırakmaz; sürükleme
   başlayınca işaretçi yakalanır, ardından gelen tıklama yutulur (şık üstünde başlayan çizgi şık seçmez).
-- Yakınlık %100–%400, odak parmak/imleç altında; El'de çift dokunma %100 ↔ 2x; yakınken sağ üstte
-  "%180 ✕" sıfırlar. Soru değişince en üst ve %100; 180 ms yatay kayma (`soru-gecis-*`, azaltılmış
+- Yakınlık %100–%400, odak parmak/imleç altında; El'de çift dokunma %100 ↔ 2x. Fare için
+  − / yüzde-sıfırla / + (0,5x adım) araç çubuğunun balonunda: dar ekranda "Kalem ayarı", genişte "Kalınlık".
+  %100'de sayfanın üstünde yüzen balon yok (soru kökünü örtüyordu); yakınken sağ üstte yalnız küçük, opak
+  "%… ✕" sıfırla hapı (görünür 28 px, dokunma hedefi 44 px). Soru değişince en üst ve %100; 180 ms yatay kayma (`soru-gecis-*`, azaltılmış
   harekette yok). Üst ve alt çubuklar yakınlaşmaz.
 - Silgi çizgiyi bütün siler (`silgiDegiyorMu`); bir sürüş tek geri al adımı. Geri al / ileri al /
   hepsini temizle (geri alınabilir) `KaralamaGecmisi` ile, soru başına, oturumluk; depoya yazılmaz.

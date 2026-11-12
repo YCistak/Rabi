@@ -13,8 +13,12 @@ export type SureSayaci = {
   baslangic: number | null
 }
 
-export function sayacKur(soruSayisi: number, simdi: number, aktif = 0): SureSayaci {
-  return { soruSureleri: Array.from({ length: soruSayisi }, () => 0), aktif, baslangic: simdi }
+export function sayacKur(soruSayisi: number, simdi: number, aktif = 0, birikmisSure = 0): SureSayaci {
+  const soruSureleri = Array.from({ length: soruSayisi }, () => 0)
+  // Yarım testte yalnız toplam süre kalıcıdır; ayrıntılı soru dağılımı
+  // oturumluk olduğu için birikeni devam edilen ilk soruda taşırız.
+  soruSureleri[aktif] = Math.max(0, birikmisSure)
+  return { soruSureleri, aktif, baslangic: simdi }
 }
 
 /** Çalışan sayacın o ana kadar geçenini aktif soruya yazar. */

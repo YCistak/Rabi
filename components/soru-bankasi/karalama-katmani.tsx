@@ -1,5 +1,6 @@
 'use client'
 
+import { X } from 'lucide-react'
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { geriKaydirmayiKilitle } from '@/lib/geri-kaydirma'
 import {
@@ -42,6 +43,9 @@ export type KaralamaKolu = {
   kaydir: (dy: number) => void
   sayfaKaydir: (yon: 1 | -1) => void
   yakinligiSifirla: () => void
+  yakinligiDegistir: (fark: number) => void
+  /** Geçerli yakınlık (1 = %100). */
+  yakinlik: () => number
   /** Öğe görüş alanının altında kaldıysa, üstü görünür kalacak kadar yumuşakça kaydırır. */
   gorunurYap: (oge: Element) => void
 }
@@ -170,6 +174,11 @@ export const KaralamaKatmani = forwardRef<
     sayfaKaydir: (yon) =>
       islevler.current?.uygula(gorunumKaydir(gorunum.current, 0, -yon * olcu.current.yukseklik * 0.85, olcu.current)),
     yakinligiSifirla,
+    yakinligiDegistir: (fark) =>
+      islevler.current?.uygula(
+        gorunumOlcekle(gorunum.current, Math.min(4, Math.max(1, gorunum.current.olcek + fark)), [olcu.current.genislik / 2, olcu.current.yukseklik / 2], olcu.current),
+      ),
+    yakinlik: () => gorunum.current.olcek,
     gorunurYap: (oge) => islevler.current?.gorunurYap(oge),
   }))
 
@@ -660,7 +669,9 @@ export const KaralamaKatmani = forwardRef<
           break
         case 'cizim':
           // Düğmeye yapılan hareketsiz dokunuş tıklamadır, nokta bırakmaz.
-          cizimiBitir(isaretci.hareketli || (!etkilesimli && !iptal))
+          // Farede çift tık iki nokta bırakmasın; çizgi ancak gerçekten
+          // sürüklenmişse kayda geçer. Hareketsiz dokunuş düğmeye aittir.
+          cizimiBitir(isaretci.hareketli && !iptal && !etkilesimli)
           break
         case 'silgi':
           silgiyiBitir()
@@ -779,7 +790,13 @@ export const KaralamaKatmani = forwardRef<
       const alt = (dikdortgen.bottom - kutu.top) / kutu.oran
       const yukseklik = olcu.current.yukseklik
       if (alt <= yukseklik - 12) return
-      const dy = Math.min(alt - yukseklik + 16, ust - 12)
+      const gereken = alt - yukseklik + 16
+      const kok = icerik.querySelector('[data-soru-koku]')
+      const kokUst = kok ? (kok.getBoundingClientRect().top - kutu.top) / kutu.oran : Infinity
+      // Çözümü görünür yaparken soru kökünün ilk satırını üst kenarın dışına
+      // sürükleme. Kök zaten görünüyorsa yalnız gereken kadar ilerle.
+      const kokSiniri = Math.max(0, kokUst - 8)
+      const dy = Math.min(gereken, ust - 12, kokSiniri)
       if (dy > 4) yumusakKaydir(dy)
     }
 
@@ -859,16 +876,19 @@ export const KaralamaKatmani = forwardRef<
         aria-hidden
         className="pointer-events-none absolute top-0 right-0.5 w-1 rounded-full bg-muted-foreground/45 opacity-0 transition-opacity duration-300"
       />
-      {olcek > 1.01 && (
+      {/* %100'de yüzen balon yok (soru kökünü örtüyordu); − / + araç çubuğunun
+          ayar balonunda. Yakınken yalnız küçük, opak bir sıfırla hapı kalır:
+          görünür kısmı 28 px, dokunma hedefi 44 px. */}
+      {olcek !== 1 && (
         <button
           type="button"
           onClick={yakinligiSifirla}
           aria-label="Yakınlığı sıfırla"
-          className="golge-kart absolute top-2 right-2 z-10 flex h-11 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-[13px] font-extrabold text-foreground active:scale-95"
+          className="group absolute top-0 right-0 z-10 grid h-11 min-w-11 place-items-center px-1"
         >
-          <span className="rakam">%{Math.round(olcek * 100)}</span>
-          <span aria-hidden className="text-muted-foreground">
-            ✕
+          <span className="golge-kart rakam flex h-7 items-center gap-1 rounded-full border border-border bg-card pr-1.5 pl-2 text-[12px] font-extrabold text-foreground group-active:bg-muted">
+            %{Math.round(olcek * 100)}
+            <X size={13} className="text-muted-foreground" />
           </span>
         </button>
       )}

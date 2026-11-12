@@ -61,6 +61,7 @@ export function TestOturumu({
   tekrar,
   mod,
   devam,
+  oncekiSure,
   kayit,
   setKayit,
   setTestler,
@@ -70,6 +71,8 @@ export function TestOturumu({
   elemeIpucu,
   onSureGizli,
   onElemeOgrenildi,
+  onYarimSure,
+  onYarimSureSil,
   onCik,
   onSonrakiTest,
   onTekrar,
@@ -82,6 +85,8 @@ export function TestOturumu({
   mod: CalismaModu
   /** Yarım kalan testi kaldığı yerden aç: önceki cevaplar sayılır, ilk boş sorudan başlar. */
   devam: boolean
+  /** Yarım testten gelen, saniye cinsinden toplam süre. */
+  oncekiSure: number
   kayit: SoruBankasiKaydi
   setKayit: KayitYaz
   setTestler: TestlerYaz
@@ -91,6 +96,8 @@ export function TestOturumu({
   elemeIpucu: boolean
   onSureGizli: (gizli: boolean) => void
   onElemeOgrenildi: () => void
+  onYarimSure: (sure: number) => void
+  onYarimSureSil: () => void
   onCik: () => void
   onSonrakiTest: () => void
   onTekrar: (siralar: number[]) => void
@@ -117,8 +124,22 @@ export function TestOturumu({
   const [kademe, setKademe] = useState<KalinlikKademesi>(1)
   const [katli, setKatli] = useState(false)
   const [soruSureleri, setSoruSureleri] = useState<number[]>([])
-  const sayac = useRef<SureSayaci>(sayacKur(sorular.length, simdi(), sira))
+  const sayac = useRef<SureSayaci>(null!)
+  if (!sayac.current) {
+    const yeni = sayacKur(sorular.length, simdi(), sira, Math.max(0, oncekiSure) * 1000)
+    // Eski sürümler yalnız cevabı saklıyordu. Süre yoksa sıfırdan, varsa
+    // toplamı koruyarak devam eder; soru dağılımı bu cihazlık ayrıntıdır.
+    sayac.current = yeni
+  }
   const katman = useRef<KaralamaKolu>(null)
+  const yakinlikKolu = useMemo(
+    () => ({
+      al: () => katman.current?.yakinlik() ?? 1,
+      degistir: (fark: number) => katman.current?.yakinligiDegistir(fark),
+      sifirla: () => katman.current?.yakinligiSifirla(),
+    }),
+    [],
+  )
   const cikisOnayi = useKapatmaOnayi({
     baslik: 'Testten çıkılsın mı?',
     aciklama: 'Testi bitirmeden çıkarsan cevapların kaydedilmez.',
@@ -145,6 +166,7 @@ export function TestOturumu({
     return () => document.removeEventListener('visibilitychange', gorunurluk)
   }, [bitti])
   const sureAl = useCallback(() => toplamSure(sayac.current, simdi()), [])
+  const yarimSureyiKaydet = () => onYarimSure(toplamSure(sayac.current, simdi()) / 1000)
 
   // ── Gezinme ─────────────────────────────────────────────────────────────
   const git = useCallback(
@@ -180,6 +202,7 @@ export function TestOturumu({
         }),
       )
     }
+    onYarimSureSil()
     setIzgaraAcik(false)
     setBitti(true)
     setGorunum('sonuc')
@@ -194,7 +217,10 @@ export function TestOturumu({
   const geri = () => {
     if (bitti && gorunum === 'soru') setGorunum('sonuc')
     else if (!bitti && deneme && Object.keys(secimler).length > 0) cikisOnayi.sor(onCik)
-    else onCik()
+    else {
+      if (!bitti && !deneme) yarimSureyiKaydet()
+      onCik()
+    }
   }
   useGeriKatmani(true, geri)
 
@@ -444,6 +470,7 @@ export function TestOturumu({
             onIleriAl={ileriAl}
             onTemizle={temizle}
             onKatla={() => setKatli((k) => !k)}
+            yakinlik={yakinlikKolu}
           />
           <GezinmeCubugu
             sira={sira}

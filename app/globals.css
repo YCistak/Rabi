@@ -298,7 +298,7 @@ body {
   --murekkep-kirmizi: #d23a2a;
   --murekkep-mavi: #2563c9;
   --murekkep-yesil: #2f8a4a;
-  --murekkep-vurgu: #ffd23d;
+  --murekkep-vurgu: #ffc61a;
   /* Pencere arkasındaki karartma ve tanıtım turunun perdesi — iki temada da koyu. */
   --perde: rgb(27 26 25 / 0.35);
   --karartma: #1b1a19;
@@ -579,7 +579,7 @@ body {
   --murekkep-kirmizi: #ff7a66;
   --murekkep-mavi: #7fb0ff;
   --murekkep-yesil: #7fd08f;
-  --murekkep-vurgu: #e8c547;
+  --murekkep-vurgu: #ffdc4a;
   --perde: rgb(0 0 0 / 0.5);
   --karartma: #000000;
   --nokta-pasif: #5a524b;

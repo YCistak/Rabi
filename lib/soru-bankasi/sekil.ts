@@ -1,6 +1,5 @@
 import type { KoordinatGorseli } from '../konu/tip'
-import { kesirParcala } from '../kesir'
-import { simgeleriParcala } from './metin'
+import { kesirParcalariSec as kesirSec, simgeleriParcala } from './metin'
 
 /**
  * Soru Bankası şekillerinin yerleşim hesabı (saf; React'e bağlı değil).
@@ -113,15 +112,8 @@ export type YaziDuzeni = {
  * tablo başlığında "TL bölü m" üst üste çiziliyordu. Birimde rakam yok;
  * matematik kesrinde (12/x, π/2, 3/5) hemen her zaman var.
  */
-export function kesirParcalariSec(metin: string): ReturnType<typeof kesirParcala> {
-  const cikti: ReturnType<typeof kesirParcala> = []
-  for (const k of kesirParcala(metin)) {
-    const parca = k.tur === 'kesir' && !/[0-9√π]/.test(k.pay + k.payda) ? { tur: 'metin' as const, metin: `${k.pay}/${k.payda}` } : k
-    const son = cikti[cikti.length - 1]
-    if (parca.tur === 'metin' && son?.tur === 'metin') son.metin += parca.metin
-    else cikti.push(parca.tur === 'metin' ? { ...parca } : parca)
-  }
-  return cikti
+export function kesirParcalariSec(metin: string): ReturnType<typeof kesirSec> {
+  return kesirSec(metin)
 }
 
 /** Üst/alt simgeli ve kesirli yazının parçalarını ve kaba ölçüsünü çıkarır. */

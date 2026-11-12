@@ -1,6 +1,6 @@
 import { useId, useMemo } from 'react'
 import { KartGorseli } from '@/components/konu/kart-gorseli'
-import type { Gorsel, KoordinatGorseli, SayiDogrusuGorseli, TabloGorseli, VennGorseli } from '@/lib/konu/tip'
+import type { AkisGorseli, Gorsel, KoordinatGorseli, SayiDogrusuGorseli, TabloGorseli, VennGorseli } from '@/lib/konu/tip'
 import { simgeleriParcala } from '@/lib/soru-bankasi/metin'
 import {
   kesirParcalariSec,
@@ -34,9 +34,49 @@ export function SoruSekli({ gorsel }: { gorsel: Gorsel }) {
       return <SayiDogrusuSekli g={gorsel} />
     case 'venn':
       return <VennSekli g={gorsel} />
+    case 'akis':
+      return <AkisSekli g={gorsel} />
     default:
       return <KartGorseli gorsel={gorsel} etiket="Soru görseli" />
   }
+}
+
+/** Süreç adımları soru kitabında renksiz ve yapısal çizilir; konu kartının renkli kutuları kullanılmaz. */
+function AkisSekli({ g }: { g: AkisGorseli }) {
+  const dikey = g.dikey || g.adimlar.length > 3
+  const kutuGen = 132
+  const kutuYuk = 52
+  const bosluk = 38
+  const gen = dikey ? 220 : Math.max(220, g.adimlar.length * kutuGen + Math.max(0, g.adimlar.length - 1) * bosluk + 24)
+  const yuk = dikey ? g.adimlar.length * kutuYuk + Math.max(0, g.adimlar.length - 1) * bosluk + 28 : 104
+  const konum = (sira: number) =>
+    dikey ? { x: gen / 2, y: 14 + kutuYuk / 2 + sira * (kutuYuk + bosluk) } : { x: 12 + kutuGen / 2 + sira * (kutuGen + bosluk), y: yuk / 2 }
+  const sekil = (ad: string, sira: number) => (sira === 0 || sira === g.adimlar.length - 1 ? 'basla' : /\?|karar|doğru mu|yanlış mı/i.test(ad) ? 'karar' : 'islem')
+  const ok = (a: number, b: number) => {
+    const ilk = konum(a)
+    const son = konum(b)
+    if (dikey) return `M ${ilk.x} ${ilk.y + kutuYuk / 2} L ${son.x} ${son.y - kutuYuk / 2 - 7}`
+    return `M ${ilk.x + kutuGen / 2} ${ilk.y} L ${son.x - kutuGen / 2 - 7} ${son.y}`
+  }
+  const etiket = `Akış şeması: ${g.adimlar.map((a) => a.ad).join(', ')}`
+  return (
+    <figure role="img" aria-label={etiket} className="my-3 overflow-x-auto rounded-2xl border border-border bg-card p-2 text-foreground">
+      <svg viewBox={`0 0 ${gen} ${yuk}`} className="mx-auto block h-auto min-w-max" style={{ width: dikey ? 220 : gen }} fontFamily="inherit">
+        <defs><marker id="akis-ok" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M 0 0 L 7 3.5 L 0 7 Z" fill="currentColor" /></marker></defs>
+        {g.adimlar.slice(0, -1).map((_, sira) => <path key={sira} d={ok(sira, sira + 1)} fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#akis-ok)" />)}
+        {g.donguSel && g.adimlar.length > 1 && <path d={dikey ? `M ${gen / 2 + 72} ${yuk - 40} H ${gen - 12} V 14 H ${gen / 2 + 72}` : `M ${gen - 20} ${yuk / 2 + 36} V ${yuk - 10} H 18 V ${yuk / 2 + 36}`} fill="none" stroke="currentColor" strokeWidth="1.35" markerEnd="url(#akis-ok)" />}
+        {g.adimlar.map((adim, sira) => {
+          const p = konum(sira)
+          const tur = sekil(adim.ad, sira)
+          return <g key={sira}>
+            {tur === 'basla' ? <rect x={p.x - kutuGen / 2} y={p.y - kutuYuk / 2} width={kutuGen} height={kutuYuk} rx={26} fill="var(--card)" stroke="currentColor" strokeWidth="1.5" /> : tur === 'karar' ? <path d={`M ${p.x} ${p.y - 31} L ${p.x + 62} ${p.y} L ${p.x} ${p.y + 31} L ${p.x - 62} ${p.y} Z`} fill="var(--card)" stroke="currentColor" strokeWidth="1.5" /> : <rect x={p.x - kutuGen / 2} y={p.y - kutuYuk / 2} width={kutuGen} height={kutuYuk} rx={4} fill="var(--card)" stroke="currentColor" strokeWidth="1.5" />}
+            <text x={p.x} y={p.y - (adim.alt ? 3 : -5)} textAnchor="middle" fontSize="14" fontWeight="700">{adim.ad.length > 20 ? `${adim.ad.slice(0, 19)}…` : adim.ad}</text>
+            {adim.alt && <text x={p.x} y={p.y + 15} textAnchor="middle" fontSize="12" fontWeight="600">{adim.alt.length > 22 ? `${adim.alt.slice(0, 21)}…` : adim.alt}</text>}
+          </g>
+        })}
+      </svg>
+    </figure>
+  )
 }
 
 const RENK: Record<CizgiRengi, string> = {
