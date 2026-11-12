@@ -14,3 +14,19 @@ export type BankaSorusu = {
 
 export type SoruDurumu = '-' | 'd' | 'y'
 export type SoruBankasiKaydi = Record<string, string>
+
+/**
+ * Bitirilen bir testin son çözüşü. `sure` saniye; `tarih` ISO zaman damgası.
+ * Soru sırasına bağlı `SoruBankasiKaydi`ndan ayrı: o ilk cevabı tutar, bu son
+ * çözüşün süresini ve sonucunu.
+ */
+export type TestSonucKaydi = { sure: number; dogru: number; yanlis: number; bos: number; tarih: string }
+
+/** Konu kimliği → test numarası (1'den başlar, ekranda görünen "Test 3") → son sonuç. */
+export type SoruBankasiTestleri = Record<string, Record<string, TestSonucKaydi>>
+
+/**
+ * Alıştırma: şık seçilince doğru/yanlış ve çözüm hemen görünür.
+ * Deneme: cevaplar test bitince toplu değerlendirilir ve kayda o zaman yazılır.
+ */
+export type CalismaModu = 'alistirma' | 'deneme'

@@ -101,7 +101,8 @@ import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { KaynakTakibiEkrani } from '@/components/ekranlar/kaynak-takibi'
 import { kaynaklariCoz, type Kaynak } from '@/lib/kaynak-takibi/kaynak'
 import { kaydiCoz } from '@/lib/soru-bankasi/mantik'
-import type { SoruBankasiKaydi } from '@/lib/soru-bankasi/tip'
+import { testleriCoz } from '@/lib/soru-bankasi/testler'
+import type { SoruBankasiKaydi, SoruBankasiTestleri } from '@/lib/soru-bankasi/tip'
 import { SoruBankasiEkrani } from '@/components/ekranlar/soru-bankasi'
 import { BOS_GIYILENLER, giyilenleriCoz, type Giyilenler } from '@/lib/giydir'
 import { RabiGiydirEkrani } from '@/components/ekranlar/rabi-giydir'
@@ -367,6 +368,12 @@ function RabiUygulamasi() {
   const [soruBankasiHam, setSoruBankasiHam] = useYerelDepo<SoruBankasiKaydi>(ANAHTARLAR.soruBankasi, {})
   const soruBankasi = useMemo(() => kaydiCoz(soruBankasiHam), [soruBankasiHam])
   const setSoruBankasi = useCallback((guncelle: (onceki: SoruBankasiKaydi) => SoruBankasiKaydi) => setSoruBankasiHam((onceki) => guncelle(kaydiCoz(onceki))), [setSoruBankasiHam])
+  const [soruBankasiTestleriHam, setSoruBankasiTestleriHam] = useYerelDepo<SoruBankasiTestleri>(ANAHTARLAR.soruBankasiTestleri, {})
+  const soruBankasiTestleri = useMemo(() => testleriCoz(soruBankasiTestleriHam), [soruBankasiTestleriHam])
+  const setSoruBankasiTestleri = useCallback(
+    (guncelle: (onceki: SoruBankasiTestleri) => SoruBankasiTestleri) => setSoruBankasiTestleriHam((onceki) => guncelle(testleriCoz(onceki))),
+    [setSoruBankasiTestleriHam],
+  )
   /*
     Konu Takibi'nden "Haritaya git" isteği: harita sekmesi açılınca bu konunun
     kartını açıp isteği tüketiyor (`onKonuAcildi`). Prop doğrudan okunsaydı
@@ -1388,7 +1395,16 @@ function RabiUygulamasi() {
             {ekran === 'kaynak-takibi' && (
               <KaynakTakibiEkrani kaynaklar={kaynaklar} setKaynaklar={setKaynaklar} sinif={ayarlar.buYilSinif} />
             )}
-            {ekran === 'soru-bankasi' && <SoruBankasiEkrani kayit={soruBankasi} setKayit={setSoruBankasi} sinif={ayarlar.buYilSinif} hataBildirimi={hataBildirimi} />}
+            {ekran === 'soru-bankasi' && (
+              <SoruBankasiEkrani
+                kayit={soruBankasi}
+                setKayit={setSoruBankasi}
+                testler={soruBankasiTestleri}
+                setTestler={setSoruBankasiTestleri}
+                sinif={ayarlar.buYilSinif}
+                hataBildirimi={hataBildirimi}
+              />
+            )}
             {ekran === 'yasal' && <YasalEkrani />}
             {ekran === 'geri-bildirim' && <GeriBildirimEkrani kol={geriBildirim} />}
             {ekran === 'rabi-giydir' && (
@@ -1511,6 +1527,7 @@ function RabiUygulamasi() {
                   yksKonuTakibi: yksTakip,
                   kaynakTakibi: kaynaklar,
                   soruBankasi,
+                  soruBankasiTestleri,
                   giydir: giyilenler,
                   aylikOzetler,
                   okumaGecmisi,

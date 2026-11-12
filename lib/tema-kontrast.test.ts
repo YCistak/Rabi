@@ -76,6 +76,11 @@ const CIFTLER: [string, string, number][] = [
   ...AILELER.map((a): [string, string, number] => [`--${a}-koyu`, `--${a}`, 3]),
   ...AYARLAR.map((a): [string, string, number] => [`--ayar-${a}-koyu`, `--ayar-${a}`, 4.5]),
   ...GOREVLER.map((g): [string, string, number] => [`--gorev-${g}`, '--card', 4.5]),
+  // Soru Bankası karalaması: mürekkep sayfa zemininde ve kartta (şık) okunmalı.
+  ...['kursun', 'kirmizi', 'mavi', 'yesil'].flatMap((m): [string, string, number][] => [
+    [`--murekkep-${m}`, '--background', 3],
+    [`--murekkep-${m}`, '--card', 3],
+  ]),
 ]
 
 function renk(takimi: Record<string, string>, ad: string): string {

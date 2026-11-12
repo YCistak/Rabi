@@ -1,210 +1,156 @@
 'use client'
 
-import { useCallback, useState } from 'react'
-import { useGeriKatmani } from '@/lib/geri'
-import { BANKA_DIZINI, type BankaKonusu } from '@/lib/soru-bankasi/dizin'
-import { testlereBol } from '@/lib/soru-bankasi/mantik'
-import { durumAl } from '@/lib/soru-bankasi/mantik'
-import type { BankaSorusu, SoruBankasiKaydi } from '@/lib/soru-bankasi/tip'
+import { useCallback, useEffect, useState } from 'react'
 import type { BildirimKolu } from '@/components/hata-bildir'
 import { SoruBankasiGiris } from '@/components/soru-bankasi/giris'
 import { KonuSayfasi } from '@/components/soru-bankasi/konu'
-import { SoruSayfasi } from '@/components/soru-bankasi/soru-sayfasi'
-import { TestSonu } from '@/components/soru-bankasi/test-sonu'
+import { TestOturumu } from '@/components/soru-bankasi/soru-sayfasi'
+import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
+import { useGeriKatmani } from '@/lib/geri'
+import type { BankaKonusu } from '@/lib/soru-bankasi/dizin'
+import { TEST_BOYUTU, testlereBol } from '@/lib/soru-bankasi/mantik'
+import type { BankaSorusu, CalismaModu, SoruBankasiKaydi, SoruBankasiTestleri } from '@/lib/soru-bankasi/tip'
 
 type KayitYaz = (guncelle: (onceki: SoruBankasiKaydi) => SoruBankasiKaydi) => void
+type TestlerYaz = (guncelle: (onceki: SoruBankasiTestleri) => SoruBankasiTestleri) => void
 
 type AcikTest = {
-  konu: BankaKonusu
   test: number
   siralar: number[]
   tekrar: boolean
+  mod: CalismaModu
+  devam: boolean
+  /** Aynı test yeniden açılınca oturum sıfırdan kurulsun. */
+  kimlik: number
 }
 
-/** Araç ekranı yalnız gezinme katmanlarının sahibidir; her görünüm kendi parçasında çizilir. */
+/** Bu cihazdaki tercih (yedeğe girmez): son mod, sayacın gizliliği, eleme ipucu görüldü mü. */
+type Tercih = { mod: CalismaModu; sureGizli: boolean; elemeOgrenildi: boolean }
+const VARSAYILAN_TERCIH: Tercih = {
+  mod: 'alistirma',
+  sureGizli: false,
+  elemeOgrenildi: false,
+}
+
+/** Konunun sorularını bir kez yükler (dinamik içe aktarma önbellekte kalır). */
+function useSorular(konu: BankaKonusu | null): BankaSorusu[] | null {
+  const [yuklenen, setYuklenen] = useState<{
+    id: string
+    sorular: BankaSorusu[]
+  } | null>(null)
+  useEffect(() => {
+    if (!konu?.yukle) return
+    let iptal = false
+    void konu.yukle().then((veri) => {
+      if (!iptal) setYuklenen({ id: konu.id, sorular: veri.default })
+    })
+    return () => {
+      iptal = true
+    }
+  }, [konu])
+  return konu && yuklenen?.id === konu.id ? yuklenen.sorular : null
+}
+
+/** Araç ekranı gezinme katmanlarının sahibidir; her görünüm kendi parçasında çizilir. */
 export function SoruBankasiEkrani({
   kayit,
   setKayit,
+  testler,
+  setTestler,
   sinif,
   hataBildirimi,
 }: {
   kayit: SoruBankasiKaydi
   setKayit: KayitYaz
+  testler: SoruBankasiTestleri
+  setTestler: TestlerYaz
   sinif: number
   hataBildirimi: BildirimKolu
 }) {
   const [seciliSinif, setSeciliSinif] = useState<9 | 10 | 11>(sinif === 10 || sinif === 11 ? sinif : 9)
   const [konu, setKonu] = useState<BankaKonusu | null>(null)
   const [acikTest, setAcikTest] = useState<AcikTest | null>(null)
-  const [testBitti, setTestBitti] = useState(false)
-  const [sonucSorusu, setSonucSorusu] = useState<number | null>(null)
+  const [tercihHam, setTercih] = useYerelDepo<Tercih>(ANAHTARLAR.soruBankasiTercihi, VARSAYILAN_TERCIH)
+  const tercih: Tercih = {
+    ...VARSAYILAN_TERCIH,
+    ...tercihHam,
+    mod: tercihHam?.mod === 'deneme' ? 'deneme' : 'alistirma',
+  }
+  const sorular = useSorular(konu)
 
   const konuyuKapat = useCallback(() => {
     setAcikTest(null)
-    setTestBitti(false)
-    setSonucSorusu(null)
     setKonu(null)
   }, [])
-  const testiKapat = useCallback(() => {
-    setAcikTest(null)
-    setTestBitti(false)
-    setSonucSorusu(null)
-  }, [])
-
   useGeriKatmani(konu !== null && acikTest === null, konuyuKapat)
-  useGeriKatmani(acikTest !== null && !testBitti, testiKapat)
-  useGeriKatmani(testBitti, testiKapat)
 
-  const testiAc = async (hedef: BankaKonusu, test: number, siralar?: number[]) => {
-    if (!hedef.yukle) return
-    const sorular = (await hedef.yukle()).default
-    const varsayilanSiralar = testlereBol(sorular)[test].map((_, sira) => test * 12 + sira)
-    setKonu(hedef)
+  const testiAc = (test: number, secenek: { siralar?: number[]; devam?: boolean } = {}) => {
+    if (!sorular) return
+    const varsayilan = (testlereBol(sorular)[test] ?? []).map((_, sira) => test * TEST_BOYUTU + sira)
     setAcikTest({
-      konu: hedef,
       test,
-      siralar: siralar ?? varsayilanSiralar,
-      tekrar: siralar !== undefined,
+      siralar: secenek.siralar ?? varsayilan,
+      tekrar: secenek.siralar !== undefined,
+      // Yarım test yalnız alıştırmada oluşur (deneme bitmeden kayda yazmaz).
+      mod: secenek.devam ? 'alistirma' : tercih.mod,
+      devam: secenek.devam ?? false,
+      kimlik: Date.now(),
     })
   }
 
-  const sonrakiTestiAc = async (hedef: BankaKonusu, test: number) => {
-    // Sonuç katmanı aynı `SoruYuku` içinde kalır. Önce kapatılmazsa yeni
-    // testin soruları yerine eski sonucun yeniden çizilmesine neden olur.
-    setTestBitti(false)
-    setSonucSorusu(null)
-    await testiAc(hedef, test)
+  if (konu && !sorular) {
+    return <main className="sayfa-girisi mx-auto max-w-md px-4 py-8 text-muted-foreground">Sorular hazırlanıyor…</main>
   }
 
-  if (acikTest && konu?.yukle) {
+  if (konu && sorular && acikTest) {
+    const testSorulari = acikTest.siralar.map((sira) => sorular[sira]).filter((soru): soru is BankaSorusu => soru !== undefined)
     return (
-      <SoruYuku
-        acikTest={acikTest}
+      <TestOturumu
+        key={acikTest.kimlik}
+        konu={konu}
+        test={acikTest.test}
+        sorular={testSorulari}
+        kaynakSiralari={acikTest.siralar}
+        tekrar={acikTest.tekrar}
+        mod={acikTest.mod}
+        devam={acikTest.devam}
         kayit={kayit}
         setKayit={setKayit}
+        setTestler={setTestler}
         hataBildirimi={hataBildirimi}
-        bitti={testBitti}
-        sonucSorusu={sonucSorusu}
-        onBitir={() => setTestBitti(true)}
-        onSonucSoruAc={(sira) => {
-          setSonucSorusu(sira)
-          setTestBitti(false)
-        }}
-        onGeri={testiKapat}
-        onSonrakiTest={() => sonrakiTestiAc(acikTest.konu, acikTest.test + 1)}
-        onTekrar={(siralar) => {
-          setAcikTest({ ...acikTest, siralar, tekrar: true })
-          setTestBitti(false)
-          setSonucSorusu(null)
-        }}
+        sonrakiTestVar={testlereBol(sorular)[acikTest.test + 1] !== undefined}
+        sureGizli={tercih.sureGizli}
+        elemeIpucu={!tercih.elemeOgrenildi}
+        onSureGizli={(sureGizli) => setTercih((eski) => ({ ...VARSAYILAN_TERCIH, ...eski, sureGizli }))}
+        onElemeOgrenildi={() =>
+          setTercih((eski) => ({
+            ...VARSAYILAN_TERCIH,
+            ...eski,
+            elemeOgrenildi: true,
+          }))
+        }
+        onCik={() => setAcikTest(null)}
+        onSonrakiTest={() => testiAc(acikTest.test + 1)}
+        onTekrar={(siralar) => siralar.length > 0 && testiAc(acikTest.test, { siralar })}
       />
     )
   }
 
-  if (konu?.yukle) {
+  if (konu && sorular) {
     return (
-      <KonuYuku
+      <KonuSayfasi
         konu={konu}
+        sorular={sorular}
         kayit={kayit}
-        onTestAc={(test) => testiAc(konu, test)}
-        onTekrar={(siralar) => testiAc(konu, 0, siralar)}
+        testler={testler}
+        mod={tercih.mod}
+        onMod={(mod) => setTercih((eski) => ({ ...VARSAYILAN_TERCIH, ...eski, mod }))}
+        onAc={(test) => testiAc(test)}
+        onDevam={(test) => testiAc(test, { devam: true })}
+        onTekrar={(siralar) => testiAc(0, { siralar })}
       />
     )
   }
 
   return <SoruBankasiGiris sinif={seciliSinif} kayit={kayit} onSinif={setSeciliSinif} onKonu={setKonu} />
-}
-
-function KonuYuku({
-  konu,
-  kayit,
-  onTestAc,
-  onTekrar,
-}: {
-  konu: BankaKonusu
-  kayit: SoruBankasiKaydi
-  onTestAc: (test: number) => void
-  onTekrar: (siralar: number[]) => void
-}) {
-  const [sorular, setSorular] = useState<BankaSorusu[] | null>(null)
-
-  if (!sorular) {
-    void konu.yukle?.().then((veri) => setSorular(veri.default))
-    return <main className="sayfa-girisi mx-auto max-w-md px-4 py-8 text-muted-foreground">Sorular hazırlanıyor…</main>
-  }
-
-  return <KonuSayfasi konu={konu} sorular={sorular} kayit={kayit} onAc={onTestAc} onTekrar={onTekrar} />
-}
-
-function SoruYuku({
-  acikTest,
-  kayit,
-  setKayit,
-  hataBildirimi,
-  bitti,
-  sonucSorusu,
-  onBitir,
-  onSonucSoruAc,
-  onGeri,
-  onSonrakiTest,
-  onTekrar,
-}: {
-  acikTest: AcikTest
-  kayit: SoruBankasiKaydi
-  setKayit: KayitYaz
-  hataBildirimi: BildirimKolu
-  bitti: boolean
-  sonucSorusu: number | null
-  onBitir: () => void
-  onSonucSoruAc: (sira: number) => void
-  onGeri: () => void
-  onSonrakiTest: () => void
-  onTekrar: (siralar: number[]) => void
-}) {
-  const [sorular, setSorular] = useState<BankaSorusu[] | null>(null)
-
-  if (!sorular) {
-    void acikTest.konu.yukle?.().then((veri) => setSorular(veri.default))
-    return <main className="sayfa-girisi mx-auto max-w-md px-4 py-8 text-muted-foreground">Sorular hazırlanıyor…</main>
-  }
-
-  const testSorulari = acikTest.siralar.map((sira) => sorular[sira]).filter((soru): soru is BankaSorusu => soru !== undefined)
-  if (bitti) {
-    return (
-      <TestSonu
-        konu={acikTest.konu}
-        sorular={testSorulari}
-        kaynakSiralari={acikTest.siralar}
-        kayit={kayit}
-        tekrar={acikTest.tekrar}
-        sonrakiTestVar={testlereBol(sorular)[acikTest.test + 1] !== undefined}
-        onKonuyaDon={onGeri}
-        onSonrakiTest={onSonrakiTest}
-        onSoruAc={onSonucSoruAc}
-        onYanlislariTekrar={() => {
-          const yanlislar = acikTest.siralar.filter((sira) => durumAl(kayit, acikTest.konu.id, sira) === 'y')
-          if (yanlislar.length > 0) {
-            onTekrar(yanlislar)
-          }
-        }}
-      />
-    )
-  }
-
-  return (
-    <SoruSayfasi
-      key={`${acikTest.konu.id}:${acikTest.test}:${acikTest.siralar.join(',')}:${sonucSorusu ?? 'yeni'}`}
-      konu={acikTest.konu}
-      sorular={testSorulari}
-      kaynakSiralari={acikTest.siralar}
-      kayit={kayit}
-      setKayit={setKayit}
-      tekrar={acikTest.tekrar}
-      hataBildirimi={hataBildirimi}
-      onGeri={onGeri}
-      onBitir={onBitir}
-      baslangicSirasi={sonucSorusu ?? 0}
-      cozumAcik={sonucSorusu !== null}
-    />
-  )
 }

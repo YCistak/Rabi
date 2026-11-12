@@ -1,98 +1,248 @@
-import { Eraser, Hand, PenLine, RotateCcw, Trash2, Undo2 } from 'lucide-react'
+'use client'
+
+import { ChevronLeft, ChevronRight, Eraser, Hand, Highlighter, PenLine, Redo2, Trash2, Undo2 } from 'lucide-react'
 import { useState } from 'react'
+import type { Murekkep } from '@/lib/cizim'
+import type { KaralamaAraci } from './karalama-katmani'
 
-export type KaralamaAraci = 'kalem' | 'silgi' | 'el'
+export const MUREKKEPLER: { ad: Murekkep; etiket: string }[] = [
+  { ad: 'kursun', etiket: 'Kurşun' },
+  { ad: 'kirmizi', etiket: 'Kırmızı' },
+  { ad: 'mavi', etiket: 'Mavi' },
+  { ad: 'yesil', etiket: 'Yeşil' },
+]
 
-const RENKLER = ['#e5484d', '#2f6fde', '#2f9e5b', '#1b1a19'] as const
-const KALINLIKLAR = [0.006, 0.012, 0.024] as const
+/** Kalınlık kademesi → ekran pikseli. Vurgulayıcı satırı kaplayacak kadar kalın. */
+export const KALEM_KALINLIKLARI = [1.6, 2.6, 4.4] as const
+export const VURGU_KALINLIKLARI = [12, 18, 26] as const
+export type KalinlikKademesi = 0 | 1 | 2
 
+const ARACLAR: {
+  arac: KaralamaAraci
+  etiket: string
+  simge: React.ReactNode
+}[] = [
+  { arac: 'kalem', etiket: 'Kalem', simge: <PenLine size={20} /> },
+  { arac: 'vurgu', etiket: 'Vurgulayıcı', simge: <Highlighter size={20} /> },
+  { arac: 'silgi', etiket: 'Silgi', simge: <Eraser size={20} /> },
+  { arac: 'el', etiket: 'El (kaydır)', simge: <Hand size={20} /> },
+]
+
+type Balon = 'renk' | 'kalinlik' | 'ayar' | null
+
+/**
+ * Karalama araçları — gezinme çubuğunun üstünde tek satır. Dar ekranda renk,
+ * kalınlık ve temizle tek "kalem ayarı" balonunda toplanır: dokuz düğme 375
+ * px'e 44 px'lik dokunma hedefiyle sığmıyor. Tutamakla küçülünce yalnız
+ * etkin aracın simgesi kalır ve sayfanın sol altında yüzer.
+ */
 export function AracCubugu({
   arac,
   renk,
-  kalinlik,
-  yakinlik,
+  kademe,
   katli,
+  geriAlinabilir,
+  ileriAlinabilir,
+  cizgiVar,
   onArac,
   onRenk,
-  onKalinlik,
-  onGeri,
+  onKademe,
+  onGeriAl,
+  onIleriAl,
   onTemizle,
-  onSifirla,
   onKatla,
 }: {
   arac: KaralamaAraci
-  renk: string
-  kalinlik: number
-  yakinlik: number
+  renk: Murekkep
+  kademe: KalinlikKademesi
   katli: boolean
+  geriAlinabilir: boolean
+  ileriAlinabilir: boolean
+  cizgiVar: boolean
   onArac: (arac: KaralamaAraci) => void
-  onRenk: (renk: string) => void
-  onKalinlik: (kalinlik: number) => void
-  onGeri: () => void
+  onRenk: (renk: Murekkep) => void
+  onKademe: (kademe: KalinlikKademesi) => void
+  onGeriAl: () => void
+  onIleriAl: () => void
   onTemizle: () => void
-  onSifirla: () => void
   onKatla: () => void
 }) {
-  const [acik, setAcik] = useState<'renk' | 'kalinlik' | null>(null)
-  const dugme = (etiket: string, secili: boolean, islev: () => void, icerik: React.ReactNode) => (
+  const [balon, setBalon] = useState<Balon>(null)
+  const ac = (hedef: Balon) => setBalon((onceki) => (onceki === hedef ? null : hedef))
+  const etkin = ARACLAR.find((deger) => deger.arac === arac)!
+
+  if (katli) {
+    return (
+      <div className="pointer-events-none absolute bottom-full left-2 z-20 mb-2">
+        <button
+          type="button"
+          onClick={onKatla}
+          aria-label={`Araçları aç (seçili: ${etkin.etiket})`}
+          className="golge-kart pointer-events-auto flex h-11 items-center gap-1 rounded-full border border-border bg-card pr-3 pl-1.5 text-primary active:scale-95"
+        >
+          <ChevronRight size={18} className="text-muted-foreground" />
+          {etkin.simge}
+        </button>
+      </div>
+    )
+  }
+
+  const kalinliklar = arac === 'vurgu' ? VURGU_KALINLIKLARI : KALEM_KALINLIKLARI
+  const nokta = (boyut: number, ad: Murekkep | 'vurgu') => (
+    <span
+      className="block rounded-full"
+      style={{
+        width: boyut,
+        height: boyut,
+        backgroundColor: `var(--murekkep-${ad})`,
+      }}
+    />
+  )
+
+  const renkSecimi = (
+    <div className="flex gap-1">
+      {MUREKKEPLER.map((m) => (
+        <button
+          key={m.ad}
+          type="button"
+          aria-label={m.etiket}
+          aria-pressed={renk === m.ad}
+          onClick={() => {
+            onRenk(m.ad)
+            if (arac !== 'kalem') onArac('kalem')
+            setBalon(null)
+          }}
+          className={`grid size-11 place-items-center rounded-full ${renk === m.ad ? 'bg-muted ring-2 ring-primary' : 'active:bg-muted'}`}
+        >
+          {nokta(24, m.ad)}
+        </button>
+      ))}
+    </div>
+  )
+  const kalinlikSecimi = (
+    <div className="flex gap-1">
+      {kalinliklar.map((deger, sira) => (
+        <button
+          key={deger}
+          type="button"
+          aria-label={['İnce', 'Orta', 'Kalın'][sira]}
+          aria-pressed={kademe === sira}
+          onClick={() => {
+            onKademe(sira as KalinlikKademesi)
+            setBalon(null)
+          }}
+          className={`grid size-11 place-items-center rounded-xl ${kademe === sira ? 'bg-muted ring-2 ring-primary' : 'active:bg-muted'}`}
+        >
+          {nokta(arac === 'vurgu' ? 6 + sira * 4 : 4 + sira * 4, arac === 'vurgu' ? 'vurgu' : renk)}
+        </button>
+      ))}
+    </div>
+  )
+  const temizle = (
+    <button
+      type="button"
+      disabled={!cizgiVar}
+      onClick={() => {
+        onTemizle()
+        setBalon(null)
+      }}
+      className="flex h-11 w-full items-center justify-center gap-2 rounded-xl text-[14px] font-extrabold text-danger active:bg-danger-soft disabled:opacity-40"
+    >
+      <Trash2 size={18} /> Hepsini temizle
+    </button>
+  )
+
+  const dugme = (
+    etiket: string,
+    secili: boolean,
+    islev: () => void,
+    icerik: React.ReactNode,
+    devreDisi = false,
+    gorunurluk = 'grid',
+  ) => (
     <button
       type="button"
       aria-label={etiket}
+      title={etiket}
       aria-pressed={secili}
+      disabled={devreDisi}
       onClick={islev}
-      className={`grid size-9 shrink-0 place-items-center rounded-xl transition active:scale-95 ${secili ? 'bg-primary-derin text-white shadow-sm' : 'text-foreground active:bg-muted'}`}
+      className={`${gorunurluk} h-11 w-11 shrink-0 place-items-center rounded-xl transition active:scale-95 disabled:opacity-30 ${secili ? 'bg-primary-derin text-white' : 'text-foreground active:bg-muted'}`}
     >
       {icerik}
     </button>
   )
 
-  if (katli) {
-    return (
-      <aside className="fixed right-0 bottom-[var(--guvenli-alt)] left-0 z-[60] mx-auto flex max-w-md justify-center">
-        <button type="button" aria-label="Araç çubuğunu aç" onClick={onKatla} className="grid h-6 w-14 place-items-center rounded-t-xl border border-border bg-card golge-kart">
-          <span className="h-1 w-8 rounded-full bg-muted-foreground/50" />
-        </button>
-      </aside>
-    )
-  }
-
   return (
-    <aside className="fixed right-0 bottom-[var(--guvenli-alt)] left-0 z-[60] mx-auto max-w-md px-3">
-      <div className="golge-kart rounded-2xl border border-border bg-card px-1.5 py-1.5">
-        <button type="button" aria-label="Araç çubuğunu katla" onClick={onKatla} className="mx-auto mb-1 block h-2 w-10 rounded-full">
-          <span className="block h-1 w-8 rounded-full bg-muted-foreground/50" />
-        </button>
-        <div className="flex items-center justify-between gap-0.5">
-          {dugme('Kalem', arac === 'kalem', () => { onArac('kalem'); setAcik(null) }, <PenLine size={18} />)}
-          {dugme('Silgi', arac === 'silgi', () => { onArac('silgi'); setAcik(null) }, <Eraser size={18} />)}
-          {dugme('El', arac === 'el', () => { onArac('el'); setAcik(null) }, <Hand size={18} />)}
-          {dugme('Geri al', false, onGeri, <Undo2 size={18} />)}
-          {dugme('Temizle', false, onTemizle, <Trash2 size={18} />)}
-          <div className="relative">
-            {dugme('Mürekkep rengi', acik === 'renk', () => setAcik((onceki) => onceki === 'renk' ? null : 'renk'), <span className="size-4 rounded-full border border-foreground/30" style={{ backgroundColor: renk }} />)}
-            {acik === 'renk' && (
-              <div className="absolute bottom-full left-1/2 z-10 mb-2 flex -translate-x-1/2 gap-1 rounded-xl border border-border bg-card p-1.5 golge-kart">
-                {RENKLER.map((deger) => (
-                  <button key={deger} type="button" aria-label="Mürekkep rengi seç" aria-pressed={renk === deger} onClick={() => { onRenk(deger); onArac('kalem'); setAcik(null) }} className={`size-6 rounded-full border border-foreground/25 ${renk === deger ? 'ring-2 ring-primary ring-offset-2 ring-offset-card' : ''}`} style={{ backgroundColor: deger }} />
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="relative">
-            {dugme('Kalınlık', acik === 'kalinlik', () => setAcik((onceki) => onceki === 'kalinlik' ? null : 'kalinlik'), <span className="rounded-full bg-foreground" style={{ width: Math.max(4, kalinlik * 260), height: Math.max(4, kalinlik * 260) }} />)}
-            {acik === 'kalinlik' && (
-              <div className="absolute bottom-full left-1/2 z-10 mb-2 flex -translate-x-1/2 gap-1 rounded-xl border border-border bg-card p-1.5 golge-kart">
-                {KALINLIKLAR.map((deger) => (
-                  <button key={deger} type="button" aria-label="Kalınlık seç" aria-pressed={kalinlik === deger} onClick={() => { onKalinlik(deger); setAcik(null) }} className={`grid size-7 place-items-center rounded-lg ${kalinlik === deger ? 'bg-primary-soft text-primary' : 'text-foreground active:bg-muted'}`}><span className="rounded-full bg-current" style={{ width: Math.max(4, deger * 260), height: Math.max(4, deger * 260) }} /></button>
-                ))}
-              </div>
-            )}
-          </div>
-          <button type="button" aria-label="Yakınlığı sıfırla" onClick={onSifirla} className="grid h-9 shrink-0 place-items-center rounded-xl px-1 text-[10px] font-extrabold text-foreground active:bg-muted">
-            <span className="rakam">%{Math.round(yakinlik * 100)}</span><RotateCcw size={12} />
-          </button>
+    <div className="@container relative px-2 pt-1.5">
+      {balon && <div className="fixed inset-0 z-30" onClick={() => setBalon(null)} aria-hidden />}
+      {balon && (
+        <div
+          role="dialog"
+          aria-label={balon === 'renk' ? 'Mürekkep rengi' : balon === 'kalinlik' ? 'Kalınlık' : 'Kalem ayarı'}
+          className="acilir-giris golge-kart absolute right-2 bottom-full z-40 mb-1 flex flex-col items-center gap-1 rounded-2xl border border-border bg-card p-1.5"
+        >
+          {(balon === 'renk' || balon === 'ayar') && arac !== 'vurgu' && renkSecimi}
+          {(balon === 'kalinlik' || balon === 'ayar') && kalinlikSecimi}
+          {balon === 'ayar' && <div className="w-full border-t border-border pt-1">{temizle}</div>}
         </div>
+      )}
+      <div className="golge-kart flex items-center justify-between rounded-2xl border border-border bg-card px-0.5">
+        <button
+          type="button"
+          onClick={onKatla}
+          aria-label="Araç çubuğunu küçült"
+          className="grid h-11 w-6 shrink-0 place-items-center text-muted-foreground active:text-foreground"
+        >
+          <ChevronLeft size={16} />
+        </button>
+        {ARACLAR.map((deger) => (
+          <span key={deger.arac} className="contents">
+            {dugme(
+              deger.etiket,
+              arac === deger.arac,
+              () => {
+                onArac(deger.arac)
+                setBalon(null)
+              },
+              deger.simge,
+            )}
+          </span>
+        ))}
+        <span className="mx-0.5 h-6 w-px shrink-0 bg-border" aria-hidden />
+        {dugme('Geri al', false, onGeriAl, <Undo2 size={20} />, !geriAlinabilir)}
+        {dugme('İleri al', false, onIleriAl, <Redo2 size={20} />, !ileriAlinabilir)}
+        {/* Dar ekranda tek balon; genişte renk, kalınlık, temizle ayrı. */}
+        {dugme(
+          'Kalem ayarı',
+          balon === 'ayar',
+          () => ac('ayar'),
+          <span className="grid size-7 place-items-center rounded-full ring-1 ring-border">
+            {nokta(arac === 'vurgu' ? 8 + kademe * 3 : 5 + kademe * 3, arac === 'vurgu' ? 'vurgu' : renk)}
+          </span>,
+          false,
+          'grid @min-[25rem]:hidden',
+        )}
+        {dugme(
+          'Mürekkep rengi',
+          balon === 'renk',
+          () => ac('renk'),
+          <span className="grid size-7 place-items-center rounded-full ring-1 ring-border">
+            {nokta(18, arac === 'vurgu' ? 'vurgu' : renk)}
+          </span>,
+          arac === 'vurgu',
+          'hidden @min-[25rem]:grid',
+        )}
+        {dugme(
+          'Kalınlık',
+          balon === 'kalinlik',
+          () => ac('kalinlik'),
+          nokta(arac === 'vurgu' ? 8 + kademe * 3 : 4 + kademe * 3, 'kursun'),
+          false,
+          'hidden @min-[25rem]:grid',
+        )}
+        {dugme('Hepsini temizle', false, onTemizle, <Trash2 size={20} />, !cizgiVar, 'hidden @min-[25rem]:grid')}
       </div>
-    </aside>
+    </div>
   )
 }

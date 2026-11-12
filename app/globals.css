@@ -288,6 +288,17 @@ body {
   */
   --ters: #1b1a19;
   --ters-yazi: #f8f8f7;
+  /*
+    Soru Bankası karalamasının mürekkepleri. Tuval `var()` çözemediği için
+    çizerken bu değerler okunuyor (`--murekkep-<ad>`). Koyu temada kurşun açık
+    bir tona döner; renkliler koyu zeminde okunacak kadar açılır. Vurgulayıcı
+    yarı saydam çizilir (saydamlık tuvalde), değeri burada tam renk.
+  */
+  --murekkep-kursun: #2b2724;
+  --murekkep-kirmizi: #d23a2a;
+  --murekkep-mavi: #2563c9;
+  --murekkep-yesil: #2f8a4a;
+  --murekkep-vurgu: #ffd23d;
   /* Pencere arkasındaki karartma ve tanıtım turunun perdesi — iki temada da koyu. */
   --perde: rgb(27 26 25 / 0.35);
   --karartma: #1b1a19;
@@ -564,6 +575,11 @@ body {
   /* Ters balon koyu zeminde açık: tersine çevrilmiş yüzey yine ters kalır. */
   --ters: #f2ebe4;
   --ters-yazi: #1a1612;
+  --murekkep-kursun: #ece4da;
+  --murekkep-kirmizi: #ff7a66;
+  --murekkep-mavi: #7fb0ff;
+  --murekkep-yesil: #7fd08f;
+  --murekkep-vurgu: #e8c547;
   --perde: rgb(0 0 0 / 0.5);
   --karartma: #000000;
   --nokta-pasif: #5a524b;
@@ -3121,6 +3137,40 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .karo-pop {
+    animation: none;
+  }
+}
+
+/*
+  Soru Bankası: sorular arası geçiş (`components/soru-bankasi/karalama-katmani.tsx`).
+
+  Sonraki soru sağdan, önceki soldan kısa bir kaymayla gelir; `sayfa-girisi`
+  diliyle aynı eğri, daha kısa (180 ms): öğrenci sorular arasında sık gidip
+  geliyor, uzun geçiş bekletir. Sınıf kayan kutuya her geçişte yeniden konur
+  (kutu sökülmez, tuval yeniden kurulmasın). Dolgu `backwards`: bitince
+  transform kalkar.
+*/
+@keyframes soruSagdan {
+  from { opacity: 0.4; transform: translateX(28px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes soruSoldan {
+  from { opacity: 0.4; transform: translateX(-28px); }
+  to { opacity: 1; transform: none; }
+}
+
+.soru-gecis-ileri {
+  animation: soruSagdan 180ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+.soru-gecis-geri {
+  animation: soruSoldan 180ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soru-gecis-ileri,
+  .soru-gecis-geri {
     animation: none;
   }
 }

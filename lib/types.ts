@@ -11,7 +11,7 @@ import type { YksTakip } from './konu-takibi/kayit'
 import type { Kaynak } from './kaynak-takibi/kaynak'
 import type { TemaTercihi } from './tema'
 import type { Giyilenler } from './giydir'
-import type { SoruBankasiKaydi } from './soru-bankasi/tip'
+import type { SoruBankasiKaydi, SoruBankasiTestleri } from './soru-bankasi/tip'
 
 // ---------------------------------------------------------------------------
 // Deneme
@@ -476,6 +476,11 @@ export type Yedek = {
   kaynakTakibi?: Kaynak[]
   /** Soru Bankası'nda soru sırasına göre tutulan doğru/yanlış dizileri. */
   soruBankasi?: SoruBankasiKaydi
+  /**
+   * Soru Bankası'nda bitirilen testlerin süresi ve sonucu. Eski yedeklerde
+   * yok — geri yüklemede yazılmıyor, cihazdaki sonuçlara dokunulmuyor.
+   */
+  soruBankasiTestleri?: SoruBankasiTestleri
   /**
    * Rabi'yi Giydir: yuva → eşya. Eski yedeklerde yok — geri yüklemede
    * yazılmıyor, Rabi'nin üstündekilere dokunulmuyor.
