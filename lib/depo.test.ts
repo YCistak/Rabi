@@ -52,6 +52,14 @@ function coz(veri: unknown) {
 }
 
 describe('yedegiDogrula', () => {
+  it('Soru Bankası kaydındaki bozuk dizileri atar', () => {
+    expect(coz({ ...yedekOlustur(bos), soruBankasi: { iyi: 'dy-', bozuk: 'dx' } }).soruBankasi).toEqual({ iyi: 'dy-' })
+  })
+  it('Soru Bankası test sonuçlarındaki bozuk değeri atar, eski yedekte alan yok kalır', () => {
+    const iyi = { sure: 480, dogru: 10, yanlis: 2, bos: 0, tarih: '2026-11-12T10:00:00.000Z' }
+    expect(coz({ ...yedekOlustur(bos), soruBankasiTestleri: { k: { '1': iyi, '2': { sure: 'x' } } } }).soruBankasiTestleri).toEqual({ k: { '1': iyi } })
+    expect(coz(yedekOlustur(bos)).soruBankasiTestleri).toBeUndefined()
+  })
   it('Rabi yedeği olmayan dosyayı reddeder', () => {
     expect(yedegiDogrula(JSON.stringify({ uygulama: 'ortala' }))).toEqual({
       hata: 'Bu dosya Rabi yedeği değil.',
@@ -244,6 +252,16 @@ describe('yedegiUygula — konu takibi', () => {
     yedegiUygula(yedekOlustur(bos))
     vi.unstubAllGlobals()
     expect(depo.get(ANAHTARLAR.yksKonuTakibi)).toBe('{"surum":1,"konular":{"a":{"okul":"2026-10-01"}}}')
+  })
+
+  it('Soru Bankası test sonuçlarını yazar; eski yedek mevcut sonuçlara dokunmaz', () => {
+    const depo = sahteDepo()
+    const sonuc = { k: { '3': { sure: 480, dogru: 10, yanlis: 2, bos: 0, tarih: '2026-11-12T10:00:00.000Z' } } }
+    yedegiUygula({ ...yedekOlustur(bos), soruBankasiTestleri: sonuc })
+    expect(JSON.parse(depo.get(ANAHTARLAR.soruBankasiTestleri)!)).toEqual(sonuc)
+    yedegiUygula(yedekOlustur(bos))
+    vi.unstubAllGlobals()
+    expect(JSON.parse(depo.get(ANAHTARLAR.soruBankasiTestleri)!)).toEqual(sonuc)
   })
 })
 
