@@ -12,7 +12,7 @@ export const AKTARILAN_KONULAR: Record<string, Pick<BankaKonusu, 'sayi' | 'yukle
   'mat10-asal-carpan': { sayi: 60, yukle: () => import('./veri/mat10-asal-carpan.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-bayes': { sayi: 20, yukle: () => import('./veri/mat10-bayes.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-bolunebilme': { sayi: 76, yukle: () => import('./veri/mat10-bolunebilme.json') as unknown as Promise<{ default: BankaSorusu[] }> },
-  'mat10-denklem-problem': { sayi: 51, yukle: () => import('./veri/mat10-denklem-problem.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'mat10-denklem-problem': { sayi: 57, yukle: () => import('./veri/mat10-denklem-problem.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-dogru': { sayi: 20, yukle: () => import('./veri/mat10-dogru.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-ebob-ekok': { sayi: 80, yukle: () => import('./veri/mat10-ebob-ekok.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-fonksiyon-sart': { sayi: 60, yukle: () => import('./veri/mat10-fonksiyon-sart.json') as unknown as Promise<{ default: BankaSorusu[] }> },
@@ -48,6 +48,8 @@ export const AKTARILAN_KONULAR: Record<string, Pick<BankaKonusu, 'sayi' | 'yukle
   'mat9-benzer-ucgen': { sayi: 60, yukle: () => import('./veri/mat9-benzer-ucgen.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-benzerlik-problem': { sayi: 60, yukle: () => import('./veri/mat9-benzerlik-problem.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-cebirsel-ifade': { sayi: 58, yukle: () => import('./veri/mat9-cebirsel-ifade.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'mat9-dagilim-inceleme': { sayi: 40, yukle: () => import('./veri/mat9-dagilim-inceleme.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'mat9-deneysel': { sayi: 40, yukle: () => import('./veri/mat9-deneysel.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-denklem-esitsizlik': { sayi: 100, yukle: () => import('./veri/mat9-denklem-esitsizlik.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-dogrusal': { sayi: 98, yukle: () => import('./veri/mat9-dogrusal.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-donusum': { sayi: 59, yukle: () => import('./veri/mat9-donusum.json') as unknown as Promise<{ default: BankaSorusu[] }> },
@@ -57,8 +59,10 @@ export const AKTARILAN_KONULAR: Record<string, Pick<BankaKonusu, 'sayi' | 'yukle
   'mat9-mutlak-deger': { sayi: 79, yukle: () => import('./veri/mat9-mutlak-deger.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-sayi-kumeleri': { sayi: 56, yukle: () => import('./veri/mat9-sayi-kumeleri.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-teoremler': { sayi: 99, yukle: () => import('./veri/mat9-teoremler.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'mat9-teorik': { sayi: 77, yukle: () => import('./veri/mat9-teorik.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-ucgen-ozellik': { sayi: 100, yukle: () => import('./veri/mat9-ucgen-ozellik.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat9-uslu-koklu': { sayi: 96, yukle: () => import('./veri/mat9-uslu-koklu.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'mat9-veri-dagilim': { sayi: 48, yukle: () => import('./veri/mat9-veri-dagilim.json') as unknown as Promise<{ default: BankaSorusu[] }> },
 }
 
 export const BANKA_DIZINI: BankaSinifi[] = ([9, 10, 11] as const).map((sinif) => { const program = programBul('matematik', sinif); return { sinif, temalar: (program?.temalar ?? []).map((tema) => ({ id: tema.id, ad: tema.ad, konular: tema.konular.map((konu) => ({ id: konu.id, ad: konu.ad, ...(AKTARILAN_KONULAR[konu.id] ?? { sayi: 0 }) })) })) } })
