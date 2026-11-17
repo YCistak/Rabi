@@ -5,7 +5,8 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - **Altı ortak sınıf** (`globals.css`): `sayfa-girisi`, `katman-zemin`,
   `pencere-girisi`, `alt-pencere-girisi`, `tam-katman-girisi`, `acilir-giris`. Yeni
   pencere/katman bunlardan birini kullanır. Yalnız giriş, çıkış animasyonu yok;
-  160–260 ms.
+  160–260 ms. Tek istisna Soru Bankası'nın `soru-buyume`'si (kitap sayfasındaki
+  soru tam ekrana büyür, clip-path; [soru-bankasi.md](soru-bankasi.md)).
 - **Ekranları saran kutunun dolgusu `backwards`, `both` değil:** transform/opaklık
   animasyonu yürürlükteyken `fixed` katmanların kapsayıcısı ve yığın bağlamı değişir
   (alt menü taştı, onay penceresi menünün arkasında kaldı).

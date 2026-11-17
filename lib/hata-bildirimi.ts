@@ -13,6 +13,24 @@
 import type { OyunId } from './types'
 import { bankaCevabiMetni, bankaKimligi, bankaSorusuMetni, type BankaSorusu } from './oyunlar/banka'
 
+/** Oyun Bankası dışındaki soru kaynaklarının da aynı Firestore kuyruğunu kullanacağı özet. */
+export type BildirilebilirSoru = BankaSorusu | {
+  kimlik: string
+  oyun: 'soru-bankasi'
+  soruMetni: string
+  cevapMetni: string
+}
+
+function soruBilgisi(soru: BildirilebilirSoru): { kimlik: string; oyun: OyunId | 'soru-bankasi'; soruMetni: string; cevapMetni: string } {
+  if ('kimlik' in soru) return soru
+  return {
+    kimlik: bankaKimligi(soru),
+    oyun: soru.oyun,
+    soruMetni: bankaSorusuMetni(soru),
+    cevapMetni: bankaCevabiMetni(soru),
+  }
+}
+
 export type HataSebebi = 'belirtilmedi' | 'cevap-yanlis' | 'anlasilmiyor' | 'yazim' | 'baska'
 
 /** Çiplerde ve gönderilen kayıtta görünen adlar. */
@@ -42,7 +60,7 @@ export const SECILEBILIR_SEBEPLER: HataSebebi[] = [
 export interface HataBildirimi {
   /** `bankaKimligi(soru)` — havuzdaki satırı bulmaya yarayan kararlı kimlik. */
   kimlik: string
-  oyun: OyunId
+  oyun: OyunId | 'soru-bankasi'
   soruMetni: string
   /** Uygulamanın doğru sandığı cevap; bildirimin çoğu zaten buna itiraz. */
   cevapMetni: string
@@ -144,12 +162,13 @@ export function sinirdaMi(liste: HataBildirimi[], simdi: Date): boolean {
  */
 export function bildirimEkle(
   liste: HataBildirimi[],
-  soru: BankaSorusu,
+  soru: BildirilebilirSoru,
   sebep: HataSebebi,
   simdi: Date,
   not?: string,
 ): HataBildirimi[] {
-  const kimlik = bankaKimligi(soru)
+  const bilgi = soruBilgisi(soru)
+  const kimlik = bilgi.kimlik
   const mevcut = liste.find((b) => b.kimlik === kimlik)
   if (mevcut) return sebepGuncelle(liste, kimlik, sebep, not)
   if (sinirdaMi(liste, simdi)) return liste
@@ -157,9 +176,9 @@ export function bildirimEkle(
   const temizNot = sebep === 'baska' ? notuKirp(not) : undefined
   const yeni: HataBildirimi = {
     kimlik,
-    oyun: soru.oyun,
-    soruMetni: bankaSorusuMetni(soru),
-    cevapMetni: bankaCevabiMetni(soru),
+    oyun: bilgi.oyun,
+    soruMetni: bilgi.soruMetni,
+    cevapMetni: bilgi.cevapMetni,
     sebep,
     ...(temizNot ? { not: temizNot } : {}),
     tarih: simdi.toISOString(),

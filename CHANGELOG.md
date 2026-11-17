@@ -5,6 +5,8 @@ başlar, `v1.0.0` mağaza öncesi ilk kararlı sürümdür.
 
 ## Sıradaki sürüm
 
+- Soru Bankası eklendi: 9–11. sınıf Matematik çoktan seçmeli soruları, anlık çözüm ve karalama alanı.
+
 ## 1.0.6 (29 Ekim 2026)
 
 - Koyu tema geldi: Rabi artık telefonunun temasına uyar (telefonun gece modundaysa koyu açılır). Ayarlar → Görünüm → Tema'dan Telefona uy / Açık / Koyu seçilebilir. Önceki sürümden gelenler de "Telefona uy" ile başlar.

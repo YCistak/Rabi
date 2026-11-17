@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { kesirParcalariSec } from '@/lib/soru-bankasi/metin'
 
 /**
  * "3/5" metnini üst üste duran bir kesir olarak çizer.
@@ -10,22 +11,26 @@ import { cn } from '@/lib/utils'
  * Ekran okuyucu için "bölü" ile okunuyor; çizgi yalnızca görsel.
  */
 export function KesirYazisi({ metin, className }: { metin: string; className?: string }) {
-  const [pay, payda] = metin.split('/')
-  if (payda === undefined) return <span className={cn('rakam', className)}>{pay}</span>
+  const parcalar = kesirParcalariSec(metin)
 
   return (
-    <span
-      role="math"
-      aria-label={`${pay} bölü ${payda}`}
-      className={cn('rakam inline-flex flex-col items-stretch text-center align-middle leading-none', className)}
-    >
-      <span className="px-[0.2em]" aria-hidden>
-        {pay}
-      </span>
-      <span className="my-[0.14em] h-[2px] rounded-full bg-current" aria-hidden />
-      <span className="px-[0.2em]" aria-hidden>
-        {payda}
-      </span>
+    <span className={cn('rakam', className)}>
+      {parcalar.map((parca, sira) =>
+        parca.tur === 'metin' ? (
+          <span key={`${sira}-${parca.metin}`}>{parca.metin}</span>
+        ) : (
+          <span
+            key={`${sira}-${parca.pay}-${parca.payda}`}
+            role="math"
+            aria-label={`${parca.pay} bölü ${parca.payda}`}
+            className="inline-flex flex-col items-stretch text-center align-middle leading-none"
+          >
+            <span className="px-[0.2em]" aria-hidden>{parca.pay}</span>
+            <span className="my-[0.14em] h-[2px] rounded-full bg-current" aria-hidden />
+            <span className="px-[0.2em]" aria-hidden>{parca.payda}</span>
+          </span>
+        ),
+      )}
     </span>
   )
 }

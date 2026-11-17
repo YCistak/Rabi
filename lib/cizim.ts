@@ -172,3 +172,209 @@ export function yakinlikAyarla(y: Yakinlik, olcek: number): Yakinlik {
 export function yakinlikKaydir(y: Yakinlik, dx: number, dy: number): Yakinlik {
   return yakinlikSinirla({ ...y, x: y.x + dx, y: y.y + dy })
 }
+
+export type ParmakCifti = { ilk: [number, number]; ikinci: [number, number] }
+
+export const DOKUNUS_HAREKET_ESIGI = 8
+export const DOKUNUS_SURE_ESIGI = 300
+
+/** Kısa, hareketsiz dokunuş çizim değil alttaki denetimin tıklamasıdır. */
+export function tikMi(
+  baslangic: { x: number; y: number; zaman: number },
+  bitis: { x: number; y: number; zaman: number },
+): boolean {
+  return Math.hypot(bitis.x - baslangic.x, bitis.y - baslangic.y) <= DOKUNUS_HAREKET_ESIGI
+    && bitis.zaman - baslangic.zaman <= DOKUNUS_SURE_ESIGI
+}
+
+function uzaklik([x1, y1]: [number, number], [x2, y2]: [number, number]): number {
+  return Math.hypot(x2 - x1, y2 - y1)
+}
+
+function orta(noktalar: ParmakCifti): [number, number] {
+  return [(noktalar.ilk[0] + noktalar.ikinci[0]) / 2, (noktalar.ilk[1] + noktalar.ikinci[1]) / 2]
+}
+
+/** İki parmağın orta noktasındaki içerik yerinde kalacak biçimde ölçekler. */
+export function pinchYakinligi(y: Yakinlik, onceki: ParmakCifti, sonraki: ParmakCifti): Yakinlik {
+  const oncekiUzaklik = uzaklik(onceki.ilk, onceki.ikinci)
+  const sonrakiUzaklik = uzaklik(sonraki.ilk, sonraki.ikinci)
+  if (oncekiUzaklik === 0) return y
+  const hedefOlcek = Math.min(YAKINLIK_EN_COK, Math.max(1, y.olcek * (sonrakiUzaklik / oncekiUzaklik)))
+  const [oncekiX, oncekiY] = orta(onceki)
+  const [sonrakiX, sonrakiY] = orta(sonraki)
+  const oran = hedefOlcek / y.olcek
+  return yakinlikSinirla({ olcek: hedefOlcek, x: sonrakiX - (oncekiX - y.x) * oran, y: sonrakiY - (oncekiY - y.y) * oran })
+}
+
+// ---------------------------------------------------------------------------
+// Soru Bankası sayfa karalaması
+//
+// Fotoğraf çiziminden ayrı bir biçim: noktalar içeriğin %100'deki CSS
+// pikseli (sayfa kayar ve yakınlaşır, oran tutmanın anlamı yok); kalınlık da
+// içerik pikseli. Mürekkep rengi değer değil ad: tuvale çizerken tema
+// değişkeninden (`--murekkep-<ad>`) okunur, koyu temada kurşun açık tona döner.
+// ---------------------------------------------------------------------------
+
+export type SayfaNoktasi = [number, number]
+export type SayfaAraci = 'kalem' | 'vurgu'
+export type Murekkep = 'kursun' | 'kirmizi' | 'mavi' | 'yesil'
+
+export type SayfaCizgisi = {
+  arac: SayfaAraci
+  /** Kalemde mürekkep adı; vurgulayıcı her zaman `vurgu`. */
+  renk: Murekkep | 'vurgu'
+  /** İçerik pikseli. */
+  kalinlik: number
+  noktalar: SayfaNoktasi[]
+}
+
+function noktaParcaUzakligi(p: SayfaNoktasi, a: SayfaNoktasi, b: SayfaNoktasi): number {
+  const dx = b[0] - a[0]
+  const dy = b[1] - a[1]
+  const uzunluk = dx * dx + dy * dy
+  const t = uzunluk === 0 ? 0 : Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / uzunluk))
+  return Math.hypot(p[0] - (a[0] + t * dx), p[1] - (a[1] + t * dy))
+}
+
+/**
+ * Ramer–Douglas–Peucker seyreltmesi: çizgiden `tolerans`tan az sapan ara
+ * noktalar düşer. Kalem saniyede yüzlerce nokta veriyor; seyreltilmeden
+ * tutulan çizgi her yeniden çizimde boşuna pahalı.
+ */
+export function noktalariSeyrelt(noktalar: readonly SayfaNoktasi[], tolerans: number): SayfaNoktasi[] {
+  if (noktalar.length <= 2) return noktalar.slice()
+  const tut = new Uint8Array(noktalar.length)
+  tut[0] = 1
+  tut[noktalar.length - 1] = 1
+  const yigin: [number, number][] = [[0, noktalar.length - 1]]
+  while (yigin.length > 0) {
+    const [bas, son] = yigin.pop()!
+    let enUzak = -1
+    let enUzakSira = -1
+    for (let i = bas + 1; i < son; i++) {
+      const uzak = noktaParcaUzakligi(noktalar[i], noktalar[bas], noktalar[son])
+      if (uzak > enUzak) {
+        enUzak = uzak
+        enUzakSira = i
+      }
+    }
+    if (enUzak > tolerans) {
+      tut[enUzakSira] = 1
+      yigin.push([bas, enUzakSira], [enUzakSira, son])
+    }
+  }
+  return noktalar.filter((_, i) => tut[i] === 1)
+}
+
+export type YolKomutu =
+  | { tur: 'tasi'; x: number; y: number }
+  | { tur: 'cizgi'; x: number; y: number }
+  | { tur: 'egri'; kx: number; ky: number; x: number; y: number }
+
+function ortaNokta(a: SayfaNoktasi, b: SayfaNoktasi): SayfaNoktasi {
+  return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
+}
+
+/**
+ * `sira`ncı nokta gelince çizilecek parça (sira ≥ 1). Yumuşatma orta nokta
+ * yöntemiyle: her ara nokta, komşu orta noktalar arasındaki ikinci dereceden
+ * eğrinin denetim noktası. Canlı çizim parçaları geldikçe ekler, bitmiş çizgi
+ * aynı parçaları baştan sona çizer — çizgi bırakılınca yerinden oynamaz.
+ */
+export function yolParcasi(noktalar: readonly SayfaNoktasi[], sira: number): YolKomutu[] {
+  if (sira < 1 || sira >= noktalar.length) return []
+  const simdi = noktalar[sira]
+  const onceki = noktalar[sira - 1]
+  const hedef = ortaNokta(onceki, simdi)
+  if (sira === 1) return [{ tur: 'tasi', x: onceki[0], y: onceki[1] }, { tur: 'cizgi', x: hedef[0], y: hedef[1] }]
+  const bas = ortaNokta(noktalar[sira - 2], onceki)
+  return [{ tur: 'tasi', x: bas[0], y: bas[1] }, { tur: 'egri', kx: onceki[0], ky: onceki[1], x: hedef[0], y: hedef[1] }]
+}
+
+/** Son orta noktadan son noktaya kapanış parçası. */
+export function yolSonu(noktalar: readonly SayfaNoktasi[]): YolKomutu[] {
+  const n = noktalar.length
+  if (n < 2) return []
+  const bas = ortaNokta(noktalar[n - 2], noktalar[n - 1])
+  return [{ tur: 'tasi', x: bas[0], y: bas[1] }, { tur: 'cizgi', x: noktalar[n - 1][0], y: noktalar[n - 1][1] }]
+}
+
+/** Bitmiş çizginin tek parça yolu (tek nokta için boş: o nokta daire olarak çizilir). */
+export function yumusakYol(noktalar: readonly SayfaNoktasi[]): YolKomutu[] {
+  if (noktalar.length < 2) return []
+  const komutlar: YolKomutu[] = [{ tur: 'tasi', x: noktalar[0][0], y: noktalar[0][1] }]
+  for (let sira = 1; sira < noktalar.length; sira++) {
+    // Parçalar uç uca eklendiği için ara "taşı" komutları atlanır: tek yol,
+    // yarı saydam vurgulayıcıda kesişim yerleri koyulaşmaz.
+    for (const komut of yolParcasi(noktalar, sira)) if (komut.tur !== 'tasi') komutlar.push(komut)
+  }
+  for (const komut of yolSonu(noktalar)) if (komut.tur !== 'tasi') komutlar.push(komut)
+  return komutlar
+}
+
+/** İki doğru parçası arasındaki en kısa uzaklık. */
+export function parcalarArasiUzaklik(a: SayfaNoktasi, b: SayfaNoktasi, c: SayfaNoktasi, d: SayfaNoktasi): number {
+  const yon = (p: SayfaNoktasi, q: SayfaNoktasi, r: SayfaNoktasi) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+  const d1 = yon(a, b, c)
+  const d2 = yon(a, b, d)
+  const d3 = yon(c, d, a)
+  const d4 = yon(c, d, b)
+  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0)) && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) return 0
+  return Math.min(
+    noktaParcaUzakligi(a, c, d),
+    noktaParcaUzakligi(b, c, d),
+    noktaParcaUzakligi(c, a, b),
+    noktaParcaUzakligi(d, a, b),
+  )
+}
+
+/**
+ * Çizgi silgisi: silginin bu hareketteki yolu (`a` → `b`) çizgiye, yarıçap
+ * artı çizginin yarı kalınlığı kadar yaklaştıysa çizgi bütün olarak silinir.
+ * Önce kutu denetimi: çoğu çizgi silgiden uzak, parça parça bakmaya gerek yok.
+ */
+export function silgiDegiyorMu(cizgi: SayfaCizgisi, a: SayfaNoktasi, b: SayfaNoktasi, yaricap: number): boolean {
+  const pay = yaricap + cizgi.kalinlik / 2
+  let enAzX = Infinity
+  let enAzY = Infinity
+  let enCokX = -Infinity
+  let enCokY = -Infinity
+  for (const [x, y] of cizgi.noktalar) {
+    if (x < enAzX) enAzX = x
+    if (y < enAzY) enAzY = y
+    if (x > enCokX) enCokX = x
+    if (y > enCokY) enCokY = y
+  }
+  if (Math.max(a[0], b[0]) < enAzX - pay || Math.min(a[0], b[0]) > enCokX + pay) return false
+  if (Math.max(a[1], b[1]) < enAzY - pay || Math.min(a[1], b[1]) > enCokY + pay) return false
+  if (cizgi.noktalar.length === 1) return noktaParcaUzakligi(cizgi.noktalar[0], a, b) <= pay
+  for (let i = 1; i < cizgi.noktalar.length; i++) {
+    if (parcalarArasiUzaklik(a, b, cizgi.noktalar[i - 1], cizgi.noktalar[i]) <= pay) return true
+  }
+  return false
+}
+
+/**
+ * Geri al / ileri al. Her eylem (çizgi, silgi sürüşü, hepsini temizle) tek
+ * adım; "hepsini temizle" de geri alınabilir.
+ */
+export type KaralamaGecmisi = { cizgiler: SayfaCizgisi[]; geri: SayfaCizgisi[][]; ileri: SayfaCizgisi[][] }
+
+export const BOS_GECMIS: KaralamaGecmisi = { cizgiler: [], geri: [], ileri: [] }
+const GECMIS_EN_COK = 100
+
+export function gecmiseYaz(g: KaralamaGecmisi, cizgiler: SayfaCizgisi[]): KaralamaGecmisi {
+  if (cizgiler === g.cizgiler) return g
+  return { cizgiler, geri: [...g.geri, g.cizgiler].slice(-GECMIS_EN_COK), ileri: [] }
+}
+
+export function gecmisGeriAl(g: KaralamaGecmisi): KaralamaGecmisi {
+  if (g.geri.length === 0) return g
+  return { cizgiler: g.geri[g.geri.length - 1], geri: g.geri.slice(0, -1), ileri: [g.cizgiler, ...g.ileri] }
+}
+
+export function gecmisIleriAl(g: KaralamaGecmisi): KaralamaGecmisi {
+  if (g.ileri.length === 0) return g
+  return { cizgiler: g.ileri[0], geri: [...g.geri, g.cizgiler], ileri: g.ileri.slice(1) }
+}

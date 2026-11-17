@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   cizgiKalinligi,
   cizimAnahtari,
+  tikMi,
   fotografKutusu,
   KALINLIK_EN_AZ,
   KALINLIK_EN_COK,
@@ -14,7 +15,19 @@ import {
   yakinlikOrani,
   YAKINLIK_YOK,
   yakinlikKaydir,
+  pinchYakinligi,
 } from './cizim'
+
+describe('dokunma ayrımı', () => {
+  it('sekiz piksel ve üç yüz milisaniye içindeki dokunuşu tık sayar', () => {
+    expect(tikMi({ x: 10, y: 10, zaman: 0 }, { x: 18, y: 10, zaman: 300 })).toBe(true)
+  })
+
+  it('uzayan ya da kayan dokunuşu çizim sayar', () => {
+    expect(tikMi({ x: 0, y: 0, zaman: 0 }, { x: 9, y: 0, zaman: 100 })).toBe(false)
+    expect(tikMi({ x: 0, y: 0, zaman: 0 }, { x: 0, y: 0, zaman: 301 })).toBe(false)
+  })
+})
 
 describe('fotografKutusu', () => {
   it('dikey fotoğraf geniş kutuda ortalanıyor, yanlarda boşluk kalıyor', () => {
@@ -94,6 +107,16 @@ describe('yakınlaştırma', () => {
   })
   it('kaydırma kutunun dışına taşmıyor', () => {
     expect(yakinlikKaydir({ olcek: 2, x: -0.5, y: -0.5 }, 5, -5)).toEqual({ olcek: 2, x: 0, y: -1 })
+  })
+})
+
+describe('iki parmak yakınlaştırması', () => {
+  it('parmakların ortasındaki içeriği yerinde tutar', () => {
+    const sonuc = pinchYakinligi(YAKINLIK_YOK, { ilk: [0.25, 0.5], ikinci: [0.75, 0.5] }, { ilk: [0, 0.5], ikinci: [1, 0.5] })
+    expect(sonuc).toEqual({ olcek: 2, x: -0.5, y: -0.5 })
+  })
+  it('ölçeği %100 ile %400 arasında sınırlar', () => {
+    expect(pinchYakinligi(YAKINLIK_YOK, { ilk: [0, 0], ikinci: [1, 0] }, { ilk: [-3, 0], ikinci: [4, 0] }).olcek).toBe(4)
   })
 })
 

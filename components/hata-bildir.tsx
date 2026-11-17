@@ -52,8 +52,8 @@ import {
   type HataSebebi,
 } from '@/lib/hata-bildirimi'
 import type { BildirimIzni } from '@/lib/hata-kuyrugu'
-import type { BankaSorusu } from '@/lib/oyunlar/banka'
 import { bankaCevabiMetni, bankaKimligi, bankaSorusuMetni } from '@/lib/oyunlar/banka'
+import type { BildirilebilirSoru } from '@/lib/hata-bildirimi'
 import { useGeriKatmani } from '@/lib/geri'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { useKapatmaOnayi } from '@/components/ui'
@@ -67,7 +67,7 @@ export interface BildirimKolu {
   /** Gönderim izni; `'verildi'` olmadan hiçbir bildirim ağa çıkmıyor. */
   izin: BildirimIzni
   /** Sebep zorunlu: sebepsiz bildirim kaydedilmiyor. Not yalnızca "Başka"da. */
-  onBildir: (soru: BankaSorusu, sebep: HataSebebi, not?: string) => void
+  onBildir: (soru: BildirilebilirSoru, sebep: HataSebebi, not?: string) => void
   onSebep: (kimlik: string, sebep: HataSebebi, not?: string) => void
   onIzin: (karar: BildirimIzni) => void
 }
@@ -97,8 +97,29 @@ const SEBEP_BILGISI: Record<HataSebebi, { simge: LucideIcon; ipucu: string }> = 
   belirtilmedi: { simge: Flag, ipucu: '' },
 }
 
-export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: BildirimKolu }) {
-  const kimlik = bankaKimligi(soru)
+function soruMetni(soru: BildirilebilirSoru): string {
+  return 'kimlik' in soru ? soru.soruMetni : bankaSorusuMetni(soru)
+}
+
+function cevapMetni(soru: BildirilebilirSoru): string {
+  return 'kimlik' in soru ? soru.cevapMetni : bankaCevabiMetni(soru)
+}
+
+function soruKimligi(soru: BildirilebilirSoru): string {
+  return 'kimlik' in soru ? soru.kimlik : bankaKimligi(soru)
+}
+
+export function BildirimDugmesi({
+  soru,
+  kol,
+  kompakt = false,
+}: {
+  soru: BildirilebilirSoru
+  kol: BildirimKolu
+  /** Soru Bankası üst çubuğundaki bayrak yalnız simge olarak yer kaplar. */
+  kompakt?: boolean
+}) {
+  const kimlik = soruKimligi(soru)
   const kayit = kol.bildirimler.find((b) => b.kimlik === kimlik)
   const bildirildi = kayit !== undefined
   const [acik, setAcik] = useState(false)
@@ -114,21 +135,23 @@ export function BildirimDugmesi({ soru, kol }: { soru: BankaSorusu; kol: Bildiri
   }
 
   return (
-    <div className="mt-2 border-t border-border pt-2">
+    <div className={kompakt ? '' : 'mt-2 border-t border-border pt-2'}>
       <button
         type="button"
         onClick={bas}
         aria-pressed={bildirildi}
         aria-haspopup="dialog"
         className={cn(
-          'flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-extrabold transition active:scale-[0.97]',
+          kompakt
+            ? 'grid size-10 place-items-center rounded-xl transition active:scale-[0.97]'
+            : 'flex min-h-9 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-extrabold transition active:scale-[0.97]',
           bildirildi
             ? 'bg-ikincil-soft text-ikincil'
             : 'bg-foreground/[0.06] text-muted-foreground active:bg-foreground/12',
         )}
       >
         <Flag size={14} className="shrink-0" fill={bildirildi ? 'currentColor' : 'none'} aria-hidden />
-        {bildirildi ? `Bildirildi · ${SEBEP_ADI[kayit.sebep]}` : 'Bu soru hatalı'}
+        {!kompakt && (bildirildi ? `Bildirildi · ${SEBEP_ADI[kayit.sebep]}` : 'Bu soru hatalı')}
       </button>
 
       {reddedildi && !bildirildi && (
@@ -148,7 +171,7 @@ function BildirimSayfasi({
   kayit,
   onKapat,
 }: {
-  soru: BankaSorusu
+  soru: BildirilebilirSoru
   kol: BildirimKolu
   kayit: HataBildirimi | undefined
   onKapat: () => void
@@ -222,10 +245,10 @@ function BildirimSayfasi({
             {/* Hangi sorunun bildirildiği sayfada da görünsün: kart altta,
                 sayfanın arkasında kalıyor. */}
             <div className="rounded-2xl bg-muted/60 px-3.5 py-3">
-              <p className="line-clamp-3 text-[14px] font-bold leading-snug">{bankaSorusuMetni(soru)}</p>
+              <p className="line-clamp-3 text-[14px] font-bold leading-snug">{soruMetni(soru)}</p>
               <p className="mt-1.5 text-[12.5px] font-semibold text-muted-foreground">
                 Uygulamanın cevabı:{' '}
-                <span className="font-extrabold text-foreground">{bankaCevabiMetni(soru)}</span>
+                <span className="font-extrabold text-foreground">{cevapMetni(soru)}</span>
               </p>
             </div>
 

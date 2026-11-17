@@ -30,6 +30,7 @@ export type Ekran =
   | 'konu-takibi'
   /** Kaynak Takibi — test kitaplarında bitirilen konular (`lib/kaynak-takibi/`). */
   | 'kaynak-takibi'
+  | 'soru-bankasi'
   /** Gizlilik ve Koşullar — yalnızca Ayarlar'dan açılıyor, kart menüsünde yok. */
   | 'yasal'
   /** Öneri ve hata bildir — o da yalnızca Ayarlar'dan. */
@@ -153,4 +154,5 @@ export const KARTLAR: KartTanimi[] = [
     ikon: '📘',
     renk: 'mavi',
   },
+  { id: 'soru-bankasi', ad: 'Soru Bankası', aciklama: 'Karalayarak çoktan seçmeli soru çöz', ikon: '✍️', renk: 'mavi' },
 ]

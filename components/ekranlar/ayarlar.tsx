@@ -47,6 +47,7 @@ import {
   tumResimleriSil,
 } from '@/lib/resim-depo'
 import { cizimAnahtari } from '@/lib/cizim'
+import { tumSoruCizimleriniSil } from '@/lib/soru-bankasi/cizim-depo'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import type { YksTakip } from '@/lib/konu-takibi/kayit'
@@ -58,6 +59,7 @@ import { bugun, cn, yeniId } from '@/lib/utils'
 import { dosyayiPaylas } from '@/lib/paylas'
 import { useGeriKatmani } from '@/lib/geri'
 import type { Giyilenler } from '@/lib/giydir'
+import type { SoruBankasiKaydi, SoruBankasiTestleri } from '@/lib/soru-bankasi/tip'
 import type {
   Ayarlar,
   Deneme,
@@ -160,6 +162,9 @@ export function AyarlarEkrani({
     yksKonuTakibi?: YksTakip
     /** Kaynak Takibi — test kitapları ve bitirilen konular. */
     kaynakTakibi?: Kaynak[]
+    soruBankasi?: SoruBankasiKaydi
+    /** Soru Bankası — bitirilen testlerin süresi ve sonucu. */
+    soruBankasiTestleri?: SoruBankasiTestleri
     /** Rabi'yi Giydir — giyilen eşyalar. */
     giydir?: Giyilenler
     /** Aylık özet arşivi — yıllık özetin dayanağı. */
