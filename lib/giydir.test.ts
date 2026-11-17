@@ -24,7 +24,6 @@ describe('katalog', () => {
       ['papyon', 'boyun'],
       ['atki', 'boyun'],
       ['kolye', 'boyun'],
-      ['lafza', 'boyun'],
       ['sigma', 'boyun'],
       ['gecekusu', 'boyun'],
       ['sokak', 'boyun'],
@@ -158,8 +157,8 @@ describe('giyilenleriCoz', () => {
     expect(giyilenleriCoz({ boyun: 'sigma', kafa: 'kep', yuz: 'gunes' })).toEqual({ boyun: 'sigma' })
   })
 
-  it('kaldırılan gözlük, bot ve kalemin eski kaydı düşer, kalan seçim korunur', () => {
-    expect(giyilenleriCoz({ kafa: 'kep', yuz: 'gozluk', ayak: 'bot', kulak: 'kalem' })).toEqual({ kafa: 'kep' })
+  it('kaldırılan eşyaların eski kaydı düşer, kalan seçim korunur', () => {
+    expect(giyilenleriCoz({ kafa: 'kep', yuz: 'gozluk', ayak: 'bot', kulak: 'kalem', boyun: 'lafza' })).toEqual({ kafa: 'kep' })
   })
 
   it('kaldırılan Lock In ve Oyuncu avatarının eski kaydı düşer', () => {
