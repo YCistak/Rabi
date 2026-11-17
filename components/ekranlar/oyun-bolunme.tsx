@@ -25,7 +25,8 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { bolunmedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { bankaKimligi, bolunmedenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { yakinlariSonaAt } from '@/lib/oyunlar/gecmis'
 import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
 import { modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useEtkinMod } from '@/components/tur-ayari-baglami'
@@ -139,6 +140,7 @@ export function BolunmeOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -153,6 +155,7 @@ export function BolunmeOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('bolunme')
 
@@ -212,7 +215,8 @@ export function BolunmeOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? karistir(bankaHavuzu) : bolunmeTuruHazirla(TUM_BOLENLER, TUR_SORUSU))
+    const normalTur = bolunmeTuruHazirla(TUM_BOLENLER, TUR_SORUSU)
+    setSorular(bankaTuru ? karistir(bankaHavuzu) : yakinlariSonaAt(normalTur, gorulenler, (s) => bankaKimligi(bolunmedenBanka(s))))
     setSira(0)
     setGirilen('')
     setCevaplar([])
@@ -222,7 +226,7 @@ export function BolunmeOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru])
+  }, [bankaHavuzu, bankaTuru, gorulenler, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
     (verilenler: Cevap<BolunmeSorusu>[], yarim = false) => {

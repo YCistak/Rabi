@@ -1,6 +1,7 @@
 import type { AntlasmaMaddesi, TarihDonemi } from './antlasma-havuzu'
 import { ANTLASMA_HAVUZU } from './antlasma-havuzu'
 import { karistir, sec } from './tur'
+import { yakinlariSonaAt } from './gecmis'
 
 /**
  * Antlaşma eşleştirme oyununun el (hand) kurucusu.
@@ -40,11 +41,12 @@ function tekAntlasmaylaSec(
   esler: readonly AntlasmaMaddesi[],
   adet: number,
   rastgele: () => number,
+  gorulenler: readonly string[],
 ): AntlasmaMaddesi[] {
   const secilen: AntlasmaMaddesi[] = []
   const antlasmalar = new Set<string>()
 
-  for (const es of karistir(esler, rastgele)) {
+  for (const es of yakinlariSonaAt(karistir(esler, rastgele), gorulenler, (e) => `antlasma:${e.madde}`)) {
     if (secilen.length >= adet) break
     if (antlasmalar.has(es.antlasma)) continue
     antlasmalar.add(es.antlasma)
@@ -64,6 +66,7 @@ export function elHazirla(
   kullanilan: ReadonlySet<string> = new Set(),
   havuz: readonly AntlasmaMaddesi[] = ANTLASMA_HAVUZU,
   rastgele: () => number = Math.random,
+  gorulenler: readonly string[] = [],
 ): AntlasmaEli | null {
   const kalan = havuz.filter((e) => !kullanilan.has(e.madde))
   if (farkliAntlasma(kalan) < EL_BOYUTU) return null
@@ -84,7 +87,7 @@ export function elHazirla(
       ? sec(uygunDonemler, rastgele)
       : ([null, kalan] as [null, AntlasmaMaddesi[]])
 
-  const esler = tekAntlasmaylaSec(kaynak, EL_BOYUTU, rastgele)
+  const esler = tekAntlasmaylaSec(kaynak, EL_BOYUTU, rastgele, gorulenler)
   if (esler.length < EL_BOYUTU) return null
 
   return {
