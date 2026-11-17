@@ -5,6 +5,8 @@ başlar, `v1.0.0` mağaza öncesi ilk kararlı sürümdür.
 
 ## Sıradaki sürüm
 
+- Allah Yazılı Kolye, Rabi'yi Giydir'den kaldırıldı.
+
 ## 1.0.6 (29 Ekim 2026)
 
 - Koyu tema geldi: Rabi artık telefonunun temasına uyar (telefonun gece modundaysa koyu açılır). Ayarlar → Görünüm → Tema'dan Telefona uy / Açık / Koyu seçilebilir. Önceki sürümden gelenler de "Telefona uy" ile başlar.

@@ -22,7 +22,6 @@ export type EsyaId =
   | 'papyon'
   | 'atki'
   | 'kolye'
-  | 'lafza'
   | 'sigma'
   | 'gecekusu'
   | 'sokak'
@@ -88,8 +87,6 @@ export const ESYALAR: readonly Esya[] = [
   // İlk Sigma paketinin altın zinciri + "R" ucu; Sigma takım elbiseli avatar olunca
   // kullanıcı ayrı eşya olarak kalmasını istedi (2026-10-31).
   { id: 'kolye', ad: 'Altın Kolye', yuva: 'boyun', gorsel: '/giydir/kolye.png', ikon: '/giydir/kolye-ikon.png', fiyat: 0 },
-  // Taşlı gümüş Küba zinciri + "Allah" lafzı ucu (kullanıcı istedi, 2026-11-01).
-  { id: 'lafza', ad: 'Allah Yazılı Kolye', yuva: 'boyun', gorsel: '/giydir/lafza.png', ikon: '/giydir/lafza-ikon.png', fiyat: 0 },
   // Sigma Rabi hazır avatar (kullanıcı istedi, 2026-10-31): takım elbise, kırmızı
   // kravat, yarı kapalı gözler, eli çene hattında. Yuvası eski kayıtlar (`boyun:
   // 'sigma'`) geçerli kalsın diye boyun; `hazir` olduğu için yuvadan bağımsız
