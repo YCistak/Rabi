@@ -6,6 +6,7 @@ import { SoruBankasiGiris } from '@/components/soru-bankasi/giris'
 import { KonuSayfasi } from '@/components/soru-bankasi/konu'
 import { TestOturumu } from '@/components/soru-bankasi/soru-sayfasi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
+import { bankaDersiCoz, type BankaDersi } from '@/lib/soru-bankasi/ders'
 import { useGeriKatmani } from '@/lib/geri'
 import type { BankaKonusu } from '@/lib/soru-bankasi/dizin'
 import { testCizimleriniSil } from '@/lib/soru-bankasi/cizim-depo'
@@ -38,7 +39,7 @@ type AcikTest = {
 
 /**
  * Bu cihazdaki tercih (yedeğe girmez): son mod, sayacın gizliliği, eleme ipucu
- * görüldü mü, şık düzeni. `yarimSureler` eski sürümün yarım alıştırma süresi:
+ * görüldü mü, şık düzeni, girişte seçili ders. `yarimSureler` eski sürümün yarım alıştırma süresi:
  * yalnız okunur (yeni yarım testler `soruBankasiOturumlari`nda).
  */
 type Tercih = {
@@ -46,6 +47,8 @@ type Tercih = {
   sureGizli: boolean
   elemeOgrenildi: boolean
   sikDuzeni?: SikDuzeniTercihi
+  /** Girişte en son bakılan ders; yoksa matematik (eski kayıt). */
+  ders?: BankaDersi
   yarimSureler?: Record<string, number>
 }
 const VARSAYILAN_TERCIH: Tercih = {
@@ -197,5 +200,5 @@ export function SoruBankasiEkrani({
     )
   }
 
-  return <SoruBankasiGiris sinif={seciliSinif} kayit={kayit} onSinif={setSeciliSinif} onKonu={setKonu} />
+  return <SoruBankasiGiris ders={bankaDersiCoz(tercih.ders)} sinif={seciliSinif} kayit={kayit} onDers={(ders) => tercihYaz({ ders })} onSinif={setSeciliSinif} onKonu={setKonu} />
 }

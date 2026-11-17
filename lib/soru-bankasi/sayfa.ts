@@ -8,9 +8,8 @@
  * dörder, şekilli ya da uzun sorular üçer gelir. Tahmin yalnız gruplamada
  * kullanılır; ekrandaki gerçek yükseklik tarayıcının işidir.
  */
-import type { Gorsel } from '@/lib/konu/tip'
 import { gorunurUzunluk, sikDuzeni } from './duzen'
-import type { BankaSorusu } from './tip'
+import type { BankaGorseli, BankaSorusu } from './tip'
 
 /** 390 px'lik telefonda sayfa metninin genişliği (ekran ve kâğıt kenar boşlukları düşülmüş). */
 export const SAYFA_METIN_GENISLIGI = 326
@@ -47,13 +46,22 @@ function satirSayisi(metin: string, karakter: number): number {
 }
 
 /** Şeklin sayfadaki tahmini yüksekliği; şekil sayfa genişliğine yayılır. */
-export function sekilYuksekligi(gorsel: Gorsel, genislik = SAYFA_METIN_GENISLIGI): number {
+export function sekilYuksekligi(gorsel: BankaGorseli, genislik = SAYFA_METIN_GENISLIGI): number {
   const cerceve = 30
   switch (gorsel.tur) {
-    case 'koordinat': {
+    case 'koordinat':
+    case 'optik':
+    case 'duzenek': {
       const [x1, x2, y1, y2] = gorsel.pencere
       const oran = Math.abs(y2 - y1) / Math.max(1e-6, Math.abs(x2 - x1))
-      return cerceve + Math.min(380, Math.max(150, genislik * oran))
+      return cerceve + Math.min(gorsel.tur === 'koordinat' ? 380 : 300, Math.max(gorsel.tur === 'koordinat' ? 150 : 110, genislik * oran))
+    }
+    case 'devre': {
+      const xs = gorsel.kollar.flatMap((k) => [k.bas[0], k.bit[0]])
+      const ys = gorsel.kollar.flatMap((k) => [k.bas[1], k.bit[1]])
+      const oran = (Math.max(...ys) - Math.min(...ys)) / Math.max(1, Math.max(...xs) - Math.min(...xs))
+      // Devrenin altında ve üstünde eleman yazıları için pay.
+      return cerceve + 50 + Math.min(240, Math.max(60, (genislik - 70) * oran))
     }
     case 'tablo':
       return cerceve + 40 * (gorsel.satirlar.length + 1)

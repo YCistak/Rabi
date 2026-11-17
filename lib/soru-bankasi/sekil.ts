@@ -17,8 +17,8 @@ import { kesirParcalariSec as kesirSec, simgeleriParcala } from './metin'
  */
 
 export const SEKIL_GENISLIGI = 340
-const YUK_SINIRI = 300
-const KENAR = 6
+export const YUK_SINIRI = 300
+export const KENAR = 6
 
 export const YAZI_BOYU = { harf: 15, uzunluk: 14, aci: 13.5, serbest: 13.5, sayi: 12 }
 
@@ -31,12 +31,12 @@ const fark = (a: Nokta, b: Nokta): Nokta => ({ x: a.x - b.x, y: a.y - b.y })
 const uzunluk = (v: Nokta) => Math.hypot(v.x, v.y)
 const uzaklik = (a: Nokta, b: Nokta) => Math.hypot(a.x - b.x, a.y - b.y)
 const ayni = (a: Nokta, b: Nokta, pay = 1.5) => uzaklik(a, b) <= pay
-const yon = (aci: number): Nokta => ({ x: Math.cos(aci), y: Math.sin(aci) })
+export const yon = (aci: number): Nokta => ({ x: Math.cos(aci), y: Math.sin(aci) })
 const ikiPi = Math.PI * 2
 /** Açıyı [0, 2π) aralığına çeker. */
 const aciDuzelt = (a: number) => ((a % ikiPi) + ikiPi) % ikiPi
 const sinirla = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v))
-const yuvarla = (v: number) => Math.round(v * 100) / 100
+export const yuvarla = (v: number) => Math.round(v * 100) / 100
 
 /** Noktanın doğru parçasına uzaklığı ve izdüşümünün parça üstündeki yeri (0–1). */
 export function parcayaUzaklik(p: Nokta, s: Parca): { d: number; t: number } {
@@ -161,15 +161,35 @@ export function yaziDuzeni(metin: string, boy: number): YaziDuzeni {
 /** Çizgi ve yazı rengi: koyu nötr (`currentColor`), mavi vurgu, soluk yardımcı. */
 export type CizgiRengi = 'on' | 'mavi' | 'soluk'
 
+/**
+ * Bölge dolgusu. `sivi`/`sivi2` iki ayrı sıvı (ikincisi noktalı), `cam` ayna ve
+ * mercek camı, prizma ve yoğun ortam; `blok` cisim. Hepsi `currentColor`ın
+ * hafif tonu: kitap şekli iki renkli, sıvıyı renk değil doku ayırıyor.
+ */
+export type SahneDolgusu = 'hafif' | 'mavi' | 'tarali' | 'sivi' | 'sivi2' | 'cam' | 'blok'
+
 export type SahneYolu = {
   d: string
   renk: CizgiRengi
   kalinlik: number
   kesik?: boolean
-  dolgu?: 'hafif' | 'mavi' | 'tarali'
+  dolgu?: SahneDolgusu
+  /** Yalnız dolgu çizilir, kenar çizilmez. */
+  kenarsiz?: boolean
+  /** Pil levhası gibi kesik uçlu kalın çizgi. */
+  kutUc?: boolean
 }
 
-export type SahneEtiketi = { x: number; y: number; duzen: YaziDuzeni; renk: CizgiRengi; kalin?: boolean }
+/**
+ * Manyetik alan simgeleri: ⊗ sayfa düzleminden içe, ⊙ dışa, × içe (çemberliz),
+ * • dışa. Yazı tipinde (Nunito) bu karakterler yok ve yedek yazı tipi her
+ * telefonda başka boyda çiziyordu; çizgiyle çiziliyorlar.
+ */
+export type SimgeTuru = 'ice' | 'disa' | 'carpi' | 'nokta'
+const SIMGELER: Record<string, SimgeTuru> = { '⊗': 'ice', '⊙': 'disa', '×': 'carpi', '•': 'nokta' }
+export const simgeTuru = (ad: string): SimgeTuru | undefined => SIMGELER[ad.trim()]
+
+export type SahneEtiketi = { x: number; y: number; duzen: YaziDuzeni; renk: CizgiRengi; kalin?: boolean; simge?: SimgeTuru }
 
 export type Sahne = {
   viewBox: [number, number, number, number]
@@ -185,7 +205,7 @@ export type Sahne = {
   yaylar?: string
   dikAcilar?: string
   esCentikleri?: string
-  noktalar: { x: number; y: number; bos: boolean; renk: CizgiRengi }[]
+  noktalar: { x: number; y: number; bos: boolean; renk: CizgiRengi; r?: number }[]
   etiketler: SahneEtiketi[]
   aciklama: string
 }
@@ -259,13 +279,14 @@ export function dikMi(aci: number, toleransDerece = 1.5): boolean {
 
 // ── Etiket türleri ───────────────────────────────────────────────────────────
 
-export type EtiketTuru = 'harf' | 'aci' | 'uzunluk' | 'alan' | 'centik' | 'serbest' | 'belirsiz'
+export type EtiketTuru = 'harf' | 'aci' | 'uzunluk' | 'alan' | 'centik' | 'serbest' | 'belirsiz' | 'simge'
 
 const HARF = /^[A-ZÇĞİÖŞÜ](?:['′]|[₀-₉])*(?:\([A-ZÇĞİÖŞÜ](?:['′]|[₀-₉])*\))?$/
 
 /** Etiketin metninden ne olduğunu çıkarır; konumu sonra karar verir (belirsiz). */
 export function etiketTuru(ad: string): EtiketTuru {
   const m = ad.trim()
+  if (simgeTuru(m)) return 'simge'
   if (/^\|+$/.test(m)) return 'centik'
   if (HARF.test(m)) return 'harf'
   if (m.includes('°')) return 'aci'
@@ -384,9 +405,9 @@ export function cakismaSay(etiketler: Kutu[], engeller: Parca[] = []): number {
 
 // ── Yol yardımcıları ─────────────────────────────────────────────────────────
 
-const yaz = (p: Nokta) => `${yuvarla(p.x)} ${yuvarla(p.y)}`
+export const yaz = (p: Nokta) => `${yuvarla(p.x)} ${yuvarla(p.y)}`
 
-function kirikYol(n: Nokta[], kapali: boolean) {
+export function kirikYol(n: Nokta[], kapali: boolean) {
   return `M ${n.map(yaz).join(' L ')}${kapali ? ' Z' : ''}`
 }
 
@@ -394,7 +415,7 @@ function kirikYol(n: Nokta[], kapali: boolean) {
  * Nokta listesinden yumuşak yol (Catmull-Rom → kübik Bézier) ve çakışma
  * sınaması için örneklenmiş kırık çizgi.
  */
-function yumusakYol(n: Nokta[], kapali: boolean): { d: string; ornek: Nokta[] } {
+export function yumusakYol(n: Nokta[], kapali: boolean): { d: string; ornek: Nokta[] } {
   if (n.length < 3) return { d: kirikYol(n, kapali), ornek: n }
   const p = kapali ? [n[n.length - 1], ...n, n[0], n[1]] : [n[0], ...n, n[n.length - 1]]
   let d = `M ${yaz(p[1])}`
@@ -416,20 +437,20 @@ function yumusakYol(n: Nokta[], kapali: boolean): { d: string; ornek: Nokta[] } 
   return { d: kapali ? `${d} Z` : d, ornek }
 }
 
-function okUcu(son: Nokta, onceki: Nokta, boy = 9): string {
+export function okUcu(son: Nokta, onceki: Nokta, boy = 9): string {
   const a = Math.atan2(son.y - onceki.y, son.x - onceki.x)
   const k = (s: number) => ({ x: son.x - boy * Math.cos(a + s), y: son.y - boy * Math.sin(a + s) })
   return `M ${yaz(son)} L ${yaz(k(0.4))} L ${yaz(k(-0.4))} Z`
 }
 
-const cizgilerDen = (n: Nokta[], kapali: boolean): Parca[] => {
+export const cizgilerDen = (n: Nokta[], kapali: boolean): Parca[] => {
   const c: Parca[] = []
   for (let i = 0; i + 1 < n.length; i++) c.push({ a: n[i], b: n[i + 1] })
   if (kapali && n.length > 2) c.push({ a: n[n.length - 1], b: n[0] })
   return c
 }
 
-function cemberParcalari(m: Nokta, r: number, adet = 28): Parca[] {
+export function cemberParcalari(m: Nokta, r: number, adet = 28): Parca[] {
   const c: Parca[] = []
   for (let i = 0; i < adet; i++) {
     c.push({ a: { x: m.x + r * Math.cos((i / adet) * ikiPi), y: m.y + r * Math.sin((i / adet) * ikiPi) }, b: { x: m.x + r * Math.cos(((i + 1) / adet) * ikiPi), y: m.y + r * Math.sin(((i + 1) / adet) * ikiPi) } })
@@ -447,23 +468,27 @@ function noktaIcinde(p: Nokta, cokgen: Nokta[]) {
   return ic
 }
 
-type Sinir = { minX: number; maxX: number; minY: number; maxY: number }
-const bosSinir = (): Sinir => ({ minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity })
-function sinirEkle(s: Sinir, x: number, y: number) {
+export type Sinir = { minX: number; maxX: number; minY: number; maxY: number }
+export const bosSinir = (): Sinir => ({ minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity })
+export function sinirEkle(s: Sinir, x: number, y: number) {
   s.minX = Math.min(s.minX, x)
   s.maxX = Math.max(s.maxX, x)
   s.minY = Math.min(s.minY, y)
   s.maxY = Math.max(s.maxY, y)
 }
 
-function etiketOlustur(metin: string, boy: number, x: number, y: number, hareket: number, renk: CizgiRengi = 'on', kalin = true) {
+export function etiketOlustur(metin: string, boy: number, x: number, y: number, hareket: number, renk: CizgiRengi = 'on', kalin = true) {
   const duzen = yaziDuzeni(metin, boy)
-  return { duzen, renk, kalin, x, y, gen: duzen.gen + 2, yuk: duzen.yuk, hx: x, hy: y, hareket }
+  const simge = simgeTuru(metin)
+  // Simge çizgiyle çiziliyor; kutusu 15 birimlik çember.
+  const gen = simge ? 15 : duzen.gen + 2
+  const yuk = simge ? 15 : duzen.yuk
+  return { duzen, renk, kalin, x, y, gen, yuk, hx: x, hy: y, hareket, simge }
 }
-type IcEtiket = ReturnType<typeof etiketOlustur>
+export type IcEtiket = ReturnType<typeof etiketOlustur>
 
 /** Yazıyı `merkez`den `aci` yönünde, kutusu çizgilere değmeyecek kadar uzağa koyar. */
-function yonaKoy(e: IcEtiket, merkez: Nokta, aci: number, bosluk: number, engeller: Parca[]) {
+export function yonaKoy(e: IcEtiket, merkez: Nokta, aci: number, bosluk: number, engeller: Parca[]) {
   const y = yon(aci)
   let d = bosluk + kutuDestek(e.gen, e.yuk, y)
   for (let i = 0; i < 24; i++) {
@@ -475,7 +500,7 @@ function yonaKoy(e: IcEtiket, merkez: Nokta, aci: number, bosluk: number, engell
   e.y = e.hy = merkez.y + y.y * d
 }
 
-function sahneyiKapat(
+export function sahneyiKapat(
   temel: Omit<Sahne, 'viewBox'>,
   sinir: Sinir,
   etiketler: IcEtiket[],
@@ -493,7 +518,7 @@ function sahneyiKapat(
   return {
     sahne: {
       ...temel,
-      etiketler: etiketler.map((e) => ({ x: yuvarla(e.x), y: yuvarla(e.y), duzen: e.duzen, renk: e.renk, kalin: e.kalin })),
+      etiketler: etiketler.map((e) => ({ x: yuvarla(e.x), y: yuvarla(e.y), duzen: e.duzen, renk: e.renk, kalin: e.kalin, ...(e.simge ? { simge: e.simge } : {}) })),
       viewBox,
     },
     gen,
@@ -522,26 +547,34 @@ function veriSiniri(g: KoordinatGorseli): Sinir {
 }
 
 /** Eksensiz `koordinat`: kitap görünümlü geometri şekli. */
-export function geometriSahnesi(g: KoordinatGorseli): Sahne {
+/**
+ * Çizim seçenekleri. `otomatikDik: false` dik açı karesini yalnız verinin
+ * istediği yere ("90°" yazısı, verinin kendi L işareti) koyar: fizikte
+ * dalga tepesi ya da ip–tavan köşesi gibi dik köşeler geometri sorusu değil,
+ * kare oralarda yanlış bir "dik açı" vurgusu oluyordu.
+ */
+export type SahneSecenegi = { otomatikDik?: boolean }
+
+export function geometriSahnesi(g: KoordinatGorseli, secenek: SahneSecenegi = {}): Sahne {
   const sinir = veriSiniri(g)
   const vg = Math.max(sinir.maxX - sinir.minX, 1e-6)
   const vy = Math.max(sinir.maxY - sinir.minY, 1e-6)
   const izinGen = SEKIL_GENISLIGI - 2 * KENAR
   const izinYuk = YUK_SINIRI - 2 * KENAR
   let olcek = Math.min((izinGen - 64) / vg, (250 - 52) / vy)
-  let sonuc = geometriKur(g, olcek, sinir)
+  let sonuc = geometriKur(g, olcek, sinir, secenek)
   for (let i = 0; i < 4; i++) {
     if (sonuc.gen <= izinGen + 0.5 && sonuc.yuk <= izinYuk + 0.5) break
     const tasGen = sonuc.gen - vg * olcek
     const tasYuk = sonuc.yuk - vy * olcek
     const oran = Math.min((izinGen - tasGen) / (vg * olcek), (izinYuk - tasYuk) / (vy * olcek))
     olcek *= sinirla(oran, 0.3, 0.97)
-    sonuc = geometriKur(g, olcek, sinir)
+    sonuc = geometriKur(g, olcek, sinir, secenek)
   }
   return sonuc.sahne
 }
 
-function geometriKur(g: KoordinatGorseli, olcek: number, veri: Sinir) {
+function geometriKur(g: KoordinatGorseli, olcek: number, veri: Sinir, secenek: SahneSecenegi = {}) {
   const P = (x: number, y: number): Nokta => ({ x: (x - veri.minX) * olcek, y: (veri.maxY - y) * olcek })
   const sinir = bosSinir()
   const yollar: SahneYolu[] = []
@@ -835,7 +868,7 @@ function geometriKur(g: KoordinatGorseli, olcek: number, veri: Sinir) {
   const eksenParalel = (a: number) => Math.abs(Math.sin(2 * a)) < 0.03
   let eksenDikSayisi = 0
   for (const d of dugumler) for (const dl of dilimler(d.yonler)) if (dikMi(dl.aci) && eksenParalel(dl.bas) && eksenParalel(dl.son)) eksenDikSayisi++
-  for (const d of dugumler) {
+  for (const d of secenek.otomatikDik === false ? [] : dugumler) {
     if (aciDilimleri.some((x) => x.d === d)) continue
     for (const dl of dilimler(d.yonler)) {
       if (!dikMi(dl.aci)) continue
@@ -938,6 +971,8 @@ function geometriKur(g: KoordinatGorseli, olcek: number, veri: Sinir) {
   }
 
   // 6) Serbest yazılar (alan, açıklama): verinin koyduğu yerde, çakışırsa itilir.
+  // Alan simgeleri (⊗, ⊙) ızgara gibi dizildiği için yerinden oynamaz.
+  for (const h of hamlar) if (h.tur === 'simge') etiketler.push(etiketOlustur(h.ad, YAZI_BOYU.serbest, h.p.x, h.p.y, 0))
   for (const h of hamlar) {
     if (h.tur !== 'alan' && h.tur !== 'serbest') continue
     const merkezCember = cemberler.find((c) => ayni(c, h.p, 3) && c.r < 26 && c.r >= yaziDuzeni(h.ad, YAZI_BOYU.serbest).gen / 2 + 3)
@@ -1005,17 +1040,17 @@ function geometriKur(g: KoordinatGorseli, olcek: number, veri: Sinir) {
   )
 }
 
-function birim(v: Nokta): Nokta {
+export function birim(v: Nokta): Nokta {
   const u = uzunluk(v) || 1
   return { x: v.x / u, y: v.y / u }
 }
 
-function birimNormal(a: Nokta, b: Nokta): Nokta {
+export function birimNormal(a: Nokta, b: Nokta): Nokta {
   const v = birim(fark(b, a))
   return { x: -v.y, y: v.x }
 }
 
-function yay(m: Nokta, r: number, bas: number, son: number) {
+export function yay(m: Nokta, r: number, bas: number, son: number) {
   const p1 = { x: m.x + r * Math.cos(bas), y: m.y + r * Math.sin(bas) }
   const p2 = { x: m.x + r * Math.cos(son), y: m.y + r * Math.sin(son) }
   const buyuk = son - bas > Math.PI ? 1 : 0
@@ -1315,7 +1350,7 @@ function grafikKur(g: KoordinatGorseli, cizimGen: number, yukCarpani = 1) {
   for (const t of g.etiketler ?? []) {
     const p = P(t.x, t.y)
     const sayi = sayiMi(t.ad)
-    const e = etiketOlustur(t.ad, sayi ? YAZI_BOYU.sayi + 1 : YAZI_BOYU.serbest, p.x, p.y, 0.8)
+    const e = etiketOlustur(t.ad, sayi ? YAZI_BOYU.sayi + 1 : YAZI_BOYU.serbest, p.x, p.y, simgeTuru(t.ad) ? 0 : 0.8)
     etiketler.push(e)
   }
   if (altBaslik) {
@@ -1389,8 +1424,8 @@ export function grafikMi(g: KoordinatGorseli): boolean {
   return !!(g.xAd || g.yAd) && cubukMu(g)
 }
 
-export function koordinatSahnesi(g: KoordinatGorseli): Sahne {
-  return grafikMi(g) ? grafikSahnesi(g) : geometriSahnesi(g)
+export function koordinatSahnesi(g: KoordinatGorseli, secenek: SahneSecenegi = {}): Sahne {
+  return grafikMi(g) ? grafikSahnesi(g) : geometriSahnesi(g, secenek)
 }
 
 // ── Sayı doğrusu ─────────────────────────────────────────────────────────────

@@ -1,7 +1,10 @@
-import { useId, useMemo } from 'react'
+import { useId, useMemo, type CSSProperties } from 'react'
 import { KartGorseli } from '@/components/konu/kart-gorseli'
-import type { AkisGorseli, Gorsel, KoordinatGorseli, SayiDogrusuGorseli, TabloGorseli, VennGorseli } from '@/lib/konu/tip'
+import type { AkisGorseli, KoordinatGorseli, SayiDogrusuGorseli, TabloGorseli, VennGorseli } from '@/lib/konu/tip'
+import type { BankaDersi } from '@/lib/soru-bankasi/ders'
+import { devreSahnesi, duzenekSahnesi, optikSahnesi } from '@/lib/soru-bankasi/fizik-sekil'
 import { simgeleriParcala } from '@/lib/soru-bankasi/metin'
+import type { BankaGorseli } from '@/lib/soru-bankasi/tip'
 import {
   kesirParcalariSec,
   koordinatSahnesi,
@@ -12,6 +15,7 @@ import {
   YAZI_BOYU,
   type CizgiRengi,
   type Sahne,
+  type SahneDolgusu,
   type SahneEtiketi,
 } from '@/lib/soru-bankasi/sekil'
 
@@ -24,10 +28,31 @@ import {
  * yalnızca çizer. Akış ve katman soru verisinde neredeyse yok, onlar konu
  * kartının çizimine düşüyor.
  */
-export function SoruSekli({ gorsel }: { gorsel: Gorsel }) {
+export function SoruSekli({ gorsel, ders }: { gorsel: BankaGorseli; ders?: BankaDersi }) {
+  // Vurgu (ikinci eğri, Venn bölgesi) dersin rengi: renk derse aittir.
+  if (ders && ders !== 'matematik') {
+    return (
+      <div className="contents" style={{ '--sekil-vurgu': DERS_VURGUSU[ders] } as CSSProperties}>
+        <SekilSec gorsel={gorsel} ders={ders} />
+      </div>
+    )
+  }
+  return <SekilSec gorsel={gorsel} />
+}
+
+const DERS_VURGUSU: Record<BankaDersi, string> = {
+  matematik: 'var(--konu-matematik-ok)',
+  fizik: 'var(--konu-fizik-ok)',
+}
+
+function SekilSec({ gorsel, ders }: { gorsel: BankaGorseli; ders?: BankaDersi }) {
   switch (gorsel.tur) {
     case 'koordinat':
-      return <KoordinatSekli g={gorsel} />
+      return <KoordinatSekli g={gorsel} otomatikDik={ders !== 'fizik'} />
+    case 'devre':
+    case 'optik':
+    case 'duzenek':
+      return <FizikSekli g={gorsel} />
     case 'tablo':
       return <TabloSekli g={gorsel} />
     case 'sayiDogrusu':
@@ -79,9 +104,12 @@ function AkisSekli({ g }: { g: AkisGorseli }) {
   )
 }
 
+/** Vurgu rengi; derse göre `--sekil-vurgu` (yoksa matematiğin mavisi). */
+const VURGU = 'var(--sekil-vurgu, var(--konu-matematik-ok))'
+
 const RENK: Record<CizgiRengi, string> = {
   on: 'currentColor',
-  mavi: 'var(--konu-matematik-ok)',
+  mavi: VURGU,
   soluk: 'var(--muted-foreground)',
 }
 
@@ -122,6 +150,7 @@ function Svg({ viewBox, children }: { viewBox: [number, number, number, number];
  * ızgara ya da kesik çizgi bir harfin içinden geçtiğinde harf okunur kalıyor.
  */
 function Yazi({ e }: { e: SahneEtiketi }) {
+  if (e.simge) return <Simge e={e} />
   const { duzen } = e
   const b = duzen.boy
   const ortak = {
@@ -179,15 +208,44 @@ function Yazi({ e }: { e: SahneEtiketi }) {
   )
 }
 
+/**
+ * Manyetik alan simgesi: ⊗ (sayfadan içe), ⊙ (dışa), × ve •. Çizgiyle
+ * çiziliyor; yazı tipinde bu karakterler yok.
+ */
+function Simge({ e }: { e: SahneEtiketi }) {
+  const r = 6.3
+  const k = e.simge === 'carpi' ? 4.6 : 3.6
+  return (
+    <g stroke={RENK[e.renk]} strokeWidth={1.5} fill="none" strokeLinecap="round">
+      {(e.simge === 'ice' || e.simge === 'disa') && <circle cx={e.x} cy={e.y} r={r} fill="var(--card)" />}
+      {(e.simge === 'ice' || e.simge === 'carpi') && <path d={`M ${e.x - k} ${e.y - k} L ${e.x + k} ${e.y + k} M ${e.x - k} ${e.y + k} L ${e.x + k} ${e.y - k}`} />}
+      {(e.simge === 'disa' || e.simge === 'nokta') && <circle cx={e.x} cy={e.y} r={e.simge === 'nokta' ? 2.6 : 1.9} fill={RENK[e.renk]} stroke="none" />}
+    </g>
+  )
+}
+
 // ── Koordinat (geometri ve grafik) ───────────────────────────────────────────
 
-function KoordinatSekli({ g }: { g: KoordinatGorseli }) {
-  const sahne = useMemo<Sahne>(() => koordinatSahnesi(g), [g])
+function KoordinatSekli({ g, otomatikDik = true }: { g: KoordinatGorseli; otomatikDik?: boolean }) {
+  const sahne = useMemo<Sahne>(() => koordinatSahnesi(g, { otomatikDik }), [g, otomatikDik])
+  return <SahneCizimi sahne={sahne} />
+}
+
+/** Devre, optik, düzenek: yerleşim `fizik-sekil.ts`te, çizim geometriyle ortak. */
+function FizikSekli({ g }: { g: Extract<BankaGorseli, { tur: 'devre' | 'optik' | 'duzenek' }> }) {
+  const sahne = useMemo<Sahne>(() => (g.tur === 'devre' ? devreSahnesi(g) : g.tur === 'optik' ? optikSahnesi(g) : duzenekSahnesi(g)), [g])
+  return <SahneCizimi sahne={sahne} />
+}
+
+/** Dolguların saydamlığı: kitap şekli iki renkli, bölgeleri ton ve doku ayırıyor. */
+const DOLGU_SAYDAMLIGI: Partial<Record<SahneDolgusu, number>> = { mavi: 0.16, hafif: 0.07, cam: 0.09, blok: 0.16 }
+
+function SahneCizimi({ sahne }: { sahne: Sahne }) {
   const kimlik = kimlikAl(useId())
   const kirp = sahne.kirpma ? `url(#${kimlik}-kirp)` : undefined
-  const dolgu = (d: Sahne['yollar'][number]['dolgu']) =>
-    d === 'tarali' ? `url(#${kimlik}-tarama)` : d === 'mavi' ? 'var(--konu-matematik-ok)' : d === 'hafif' ? 'currentColor' : 'none'
-  const dolguSaydam = (d: Sahne['yollar'][number]['dolgu']) => (d === 'mavi' ? 0.16 : d === 'hafif' ? 0.07 : undefined)
+  const dolgu = (d: SahneDolgusu | undefined) =>
+    d === 'tarali' ? `url(#${kimlik}-tarama)` : d === 'sivi' ? `url(#${kimlik}-sivi)` : d === 'sivi2' ? `url(#${kimlik}-sivi2)` : d === 'mavi' ? VURGU : d ? 'currentColor' : 'none'
+  const dolguSaydam = (d: SahneDolgusu | undefined) => (d ? DOLGU_SAYDAMLIGI[d] : undefined)
 
   return (
     <Cerceve etiket={sahne.aciklama}>
@@ -197,6 +255,15 @@ function KoordinatSekli({ g }: { g: KoordinatGorseli }) {
           <pattern id={`${kimlik}-tarama`} width={6} height={6} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <rect width={6} height={6} fill="currentColor" fillOpacity={0.05} />
             <line x1={0} y1={0} x2={0} y2={6} stroke="currentColor" strokeWidth={1.1} strokeOpacity={0.45} />
+          </pattern>
+          {/* Sıvı: hafif ton ve kısa yatay su çizgileri; ikinci sıvı daha koyu ve noktalı. */}
+          <pattern id={`${kimlik}-sivi`} width={14} height={8} patternUnits="userSpaceOnUse">
+            <rect width={14} height={8} fill="currentColor" fillOpacity={0.08} />
+            <line x1={2} y1={4} x2={8} y2={4} stroke="currentColor" strokeWidth={1} strokeOpacity={0.3} />
+          </pattern>
+          <pattern id={`${kimlik}-sivi2`} width={6} height={6} patternUnits="userSpaceOnUse">
+            <rect width={6} height={6} fill="currentColor" fillOpacity={0.18} />
+            <circle cx={3} cy={3} r={0.9} fill="currentColor" fillOpacity={0.55} />
           </pattern>
           {sahne.kirpma && (
             <clipPath id={`${kimlik}-kirp`}>
@@ -223,16 +290,18 @@ function KoordinatSekli({ g }: { g: KoordinatGorseli }) {
         )}
 
         <g clipPath={kirp} fill="none" strokeLinecap="round" strokeLinejoin="round">
-          {sahne.yollar.map((y, i) => (
-            <path
-              key={i}
-              d={y.d}
-              stroke={RENK[y.renk]}
-              strokeWidth={y.kalinlik}
-              strokeDasharray={y.kesik ? '5 4' : undefined}
-              strokeLinecap={y.kesik ? 'butt' : 'round'}
-            />
-          ))}
+          {sahne.yollar.map((y, i) =>
+            y.kenarsiz ? null : (
+              <path
+                key={i}
+                d={y.d}
+                stroke={RENK[y.renk]}
+                strokeWidth={y.kalinlik}
+                strokeDasharray={y.kesik ? '5 4' : undefined}
+                strokeLinecap={y.kesik || y.kutUc ? 'butt' : 'round'}
+              />
+            ),
+          )}
           {sahne.cemberler.map((c, i) => (
             <circle key={i} cx={c.x} cy={c.y} r={c.r} stroke={RENK[c.renk]} strokeWidth={1.8} fill={c.dolu ? 'var(--card)' : 'none'} />
           ))}
@@ -252,7 +321,7 @@ function KoordinatSekli({ g }: { g: KoordinatGorseli }) {
             key={i}
             cx={n.x}
             cy={n.y}
-            r={3.1}
+            r={n.r ?? 3.1}
             fill={n.bos ? 'var(--card)' : RENK[n.renk]}
             stroke={RENK[n.renk]}
             strokeWidth={n.bos ? 1.6 : 0}
@@ -465,7 +534,7 @@ function VennSekli({ g }: { g: VennGorseli }) {
   const altY = oy + r + (ayriSatir ? 22 : 10)
   const yuk = altY + (ayriSatir ? 8 : 0)
   const vurgu = g.vurgu ?? (g.kesisim ? 'kesisim' : 'yok')
-  const dolgu = 'var(--konu-matematik-ok)'
+  const dolgu = VURGU
   const etiket = `Küme şeması: ${g.sol}, ${g.sag}${g.kesisim ? `; ortak bölge: ${g.kesisim}` : ''}${g.disi ? `; dışarıda: ${g.disi}` : ''}`
 
   if (g.tumleyen) {

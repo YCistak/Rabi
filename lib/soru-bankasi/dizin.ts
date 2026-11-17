@@ -1,5 +1,6 @@
 /* Bu dosya soru-bankasi-aktar.mjs tarafından veri eşlemesiyle güncellenir. */
 import { programBul } from '../konu'
+import type { BankaDersi } from './ders'
 import type { BankaSorusu } from './tip'
 
 export type BankaKonusu = { id: string; ad: string; sayi: number; yukle?: () => Promise<{ default: BankaSorusu[] }> }
@@ -65,5 +66,7 @@ export const AKTARILAN_KONULAR: Record<string, Pick<BankaKonusu, 'sayi' | 'yukle
   'mat9-veri-dagilim': { sayi: 48, yukle: () => import('./veri/mat9-veri-dagilim.json') as unknown as Promise<{ default: BankaSorusu[] }> },
 }
 
-export const BANKA_DIZINI: BankaSinifi[] = ([9, 10, 11] as const).map((sinif) => { const program = programBul('matematik', sinif); return { sinif, temalar: (program?.temalar ?? []).map((tema) => ({ id: tema.id, ad: tema.ad, konular: tema.konular.map((konu) => ({ id: konu.id, ad: konu.ad, ...(AKTARILAN_KONULAR[konu.id] ?? { sayi: 0 }) })) })) } })
-export function bankaKonusuBul(id: string): BankaKonusu | undefined { return BANKA_DIZINI.flatMap((sinif) => sinif.temalar).flatMap((tema) => tema.konular).find((konu) => konu.id === id) }
+/** Bir dersin 9–11 dizini: programdaki her konu; verisi gelmemiş konu `sayi: 0` ("Yakında"). */
+function dizinKur(ders: BankaDersi): BankaSinifi[] { return ([9, 10, 11] as const).map((sinif) => { const program = programBul(ders, sinif); return { sinif, temalar: (program?.temalar ?? []).map((tema) => ({ id: tema.id, ad: tema.ad, konular: tema.konular.map((konu) => ({ id: konu.id, ad: konu.ad, ...(AKTARILAN_KONULAR[konu.id] ?? { sayi: 0 }) })) })) } }) }
+export const BANKA_DIZINLERI: Record<BankaDersi, BankaSinifi[]> = { matematik: dizinKur('matematik'), fizik: dizinKur('fizik') }
+export function bankaKonusuBul(id: string): BankaKonusu | undefined { return Object.values(BANKA_DIZINLERI).flat().flatMap((sinif) => sinif.temalar).flatMap((tema) => tema.konular).find((konu) => konu.id === id) }
