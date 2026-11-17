@@ -69,7 +69,6 @@ import {
   haritaDersAdi,
   sinifDegisimi,
   sinifPasifMi,
-  yonlendirmeMetni,
 } from '@/lib/konu/sinif-sekmesi'
 import { bugun, cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
@@ -288,8 +287,6 @@ export function KonuHaritasiEkrani({
   setIlerlemeler,
   onOkumaSeansi,
   sesAcik,
-  acilacakKonu = null,
-  onKonuAcildi,
 }: {
   secim: { ders: KonuDersId; sinif: HaritaSinifi }
   setSecim: (secim: { ders: KonuDersId; sinif: HaritaSinifi }) => void
@@ -301,13 +298,6 @@ export function KonuHaritasiEkrani({
   onOkumaSeansi: (seans: OkumaSeansi) => void
   /** Ayarlar'daki oyun sesi; destedeki hızlı kontrol de ona uyuyor. */
   sesAcik: boolean
-  /**
-   * Konu Takibi'nden gelen "bu konuyu aç" isteği. Harita o dersin ve sınıfın
-   * programına geçip konunun kartını açıyor, sonra `onKonuAcildi` ile isteği
-   * tüketiyor.
-   */
-  acilacakKonu?: { ders: KonuDersId; sinif: HaritaSinifi; konuId: string } | null
-  onKonuAcildi?: () => void
 }) {
   /** Açık deste; null ise harita görünüyor. */
   const [acikKonu, setAcikKonu] = useState<{
@@ -354,18 +344,11 @@ export function KonuHaritasiEkrani({
    * kısa bir bilgi çıkıyor (`sinifDegisimi`); pasif sınıfa (12) geçilmiyor.
    */
   const [sinifBilgisi, setSinifBilgisi] = useState<string | null>(null)
-  /**
-   * Konu Takibi'nden gelen yönlendirme kullanıcıyı kendi sınıfından başka bir
-   * sınıfa götürdüyse patikanın üstündeki şeridin metni. Kapatılabilir; sınıf
-   * elle değişince de kalkıyor — artık doğru değil.
-   */
-  const [yonlendirme, setYonlendirme] = useState<string | null>(null)
   const sinifSec = (sinif: HaritaSinifi) => {
     const degisim = sinifDegisimi(secim, sinif)
     if (degisim === null) return
     setSecim(degisim.secim)
     setSinifBilgisi(degisim.bilgi)
-    setYonlendirme(null)
   }
   const acilisSinifi = haritaAcilisSinifi(kullaniciSinifi)
 
@@ -378,9 +361,6 @@ export function KonuHaritasiEkrani({
     kayıtta seçim pasif bir sınıfta kalmışsa o da düzeltiliyor.
   */
   useEffect(() => {
-    // Konu Takibi'nden belirli bir konu istendiyse onun sınıfı kazanıyor:
-    // 11. sınıf öğrencisi TYT trigonometrisi için 10. sınıfın haritasına gidiyor.
-    if (acilacakKonu) return
     const hedef = acilisSinifi ?? (sinifPasifMi(secim.sinif) ? haritaAcilisSinifi(12) : null)
     if (hedef !== null && secim.sinif !== hedef) {
       const degisim = sinifDegisimi(secim, hedef)
@@ -435,37 +415,6 @@ export function KonuHaritasiEkrani({
 
   /** Yoldaki ilk yapılabilir basamak — halka ve geçilen yol buna bakıyor. */
   const siradaki = basamaklar.find((b) => basamakDurumu(b) === 'aktif') ?? null
-
-  /*
-    Konu Takibi'nden gelen istek. Seçim önce isteğin programına geçiyor
-    (`AppShell` zaten geçirdi ama ilk çizimde eski seçim olabilir); program
-    tuttuğunda konunun anlatım kitabının kartı açılıyor — öğrenci haritada
-    konuyu aramak zorunda kalmasın. Kart, kitaba basınca açılanın aynısı:
-    kilitliyse "Kilidi aç" diyor, kural burada da geçerli.
-  */
-  useEffect(() => {
-    if (!acilacakKonu) return
-    if (secim.ders !== acilacakKonu.ders || secim.sinif !== acilacakKonu.sinif) {
-      setSecim({ ders: acilacakKonu.ders, sinif: acilacakKonu.sinif })
-      return
-    }
-    const temaSirasi = program?.temalar.findIndex((t) => t.konular.some((k) => k.id === acilacakKonu.konuId)) ?? -1
-    const basamak = basamaklar.find((b) => b.tur === 'kart' && b.konu.id === acilacakKonu.konuId)
-    if (program && basamak && temaSirasi >= 0) {
-      const tema = program.temalar[temaSirasi]
-      setSayfa({
-        basamak,
-        bolum: { sira: temaSirasi + 1, biten: temadaBiten(tema, ilerlemeler), toplam: tema.konular.length },
-      })
-    }
-    // Sınıf kendiliğinden değişti; kendi sınıfından farklıysa şerit bunu söylüyor.
-    setYonlendirme(basamak ? yonlendirmeMetni(basamak.konu.ad, acilacakKonu.sinif, kullaniciSinifi) : null)
-    setSinifBilgisi(null)
-    onKonuAcildi?.()
-    // Yalnızca istek ve seçim değişince; `ilerlemeler` kartın sayısını
-    // belirliyor ama değişmesi isteği yeniden açtırmamalı.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [acilacakKonu, secim, basamaklar])
 
   function desteBitti(acik: { konu: Konu; temaAdi: string }, sonuc: DesteSonucu) {
     setAcikKonu(null)
@@ -583,7 +532,6 @@ export function KonuHaritasiEkrani({
           onKapat={() => setSecimAcik(false)}
           onSec={(yeni) => {
             setSecimAcik(false)
-            if (yeni.sinif !== secim.sinif) setYonlendirme(null)
             setSecim(yeni)
             setSinifBilgisi(null)
           }}
@@ -594,32 +542,6 @@ export function KonuHaritasiEkrani({
         <p role="status" className="-mt-2 px-1 text-[12.5px] font-bold text-muted-foreground">
           {sinifBilgisi}
         </p>
-      )}
-
-      {yonlendirme && acilisSinifi !== null && (
-        <div
-          role="status"
-          className="-mt-1 flex items-center gap-2 rounded-2xl bg-primary-soft py-1 pr-1 pl-3.5 text-[12.5px] font-bold text-primary"
-        >
-          <span className="min-w-0 flex-1">
-            {yonlendirme} ·{' '}
-            <button
-              type="button"
-              onClick={() => sinifSec(acilisSinifi)}
-              className="relative font-extrabold underline underline-offset-2 after:absolute after:-inset-x-1 after:-inset-y-3"
-            >
-              Kendi sınıfıma dön
-            </button>
-          </span>
-          <button
-            type="button"
-            onClick={() => setYonlendirme(null)}
-            aria-label="Şeridi kapat"
-            className="grid size-11 shrink-0 place-items-center rounded-xl active:bg-primary/10"
-          >
-            <X size={16} strokeWidth={2.6} aria-hidden />
-          </button>
-        </div>
       )}
 
       {yapimda ? (

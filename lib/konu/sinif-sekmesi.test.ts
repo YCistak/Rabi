@@ -10,7 +10,6 @@ import {
   sinifPasifMi,
   sinifSekmeleri,
   sinifYuzdesi,
-  yonlendirmeMetni,
 } from './sinif-sekmesi'
 
 /** Bir programın ilk `adet` konusunu bitirilmiş (soruları geçilmiş) yazar. */
@@ -90,15 +89,6 @@ describe('haritanın sınıf sekmesi', () => {
     expect(sinifDegisimi({ ders: 'ingilizce', sinif: 12 }, 10)?.bilgi).toBe('İngilizce 10. sınıfta yok; Matematik açıldı.')
   })
 
-  it('yönlendirme şeridi yalnızca kendi sınıfından farklı bir sınıfa gidilince', () => {
-    expect(yonlendirmeMetni('Trigonometri', 10, 11)).toBe('Trigonometri için 10. sınıfa geçildi')
-    expect(yonlendirmeMetni('Trigonometri', 10, 10)).toBeNull()
-    expect(yonlendirmeMetni('Trigonometri', 10, null)).toBeNull()
-    // 12. sınıf öğrencisinin haritası 12'de açılıyor.
-    expect(yonlendirmeMetni('Türev', 12, 12)).toBeNull()
-    expect(yonlendirmeMetni('Logaritma', 11, 12)).toBe('Logaritma için 11. sınıfa geçildi')
-    expect(yonlendirmeMetni('Kümeler', 9, 12)).toBe('Kümeler için 9. sınıfa geçildi')
-  })
 })
 
 describe('haritanın seçim penceresi', () => {

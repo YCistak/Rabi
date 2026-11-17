@@ -9,7 +9,7 @@ import type { Gorev } from './yapilacaklar'
 
   Ana tur bir süre 46 adımdı ve uygulamanın neredeyse her ekranını gezdiriyordu;
   kullanıcı değerlendirmesinde uzun bulundu. Önce 12 adıma indi (ana sayfa,
-  soru ekleme, Konu Takibi, Harita), deneme ekleme ve İstatistik mini turlara
+  soru ekleme, Harita), deneme ekleme ve İstatistik mini turlara
   taştı; kullanıcı o ikisini mini turda zayıf buldu ve ana tura geri istedi.
   Şimdi 23 adım: soru eklemeden sonra Pomodoro'ya kısa bir değinme, Harita'dan
   sonra örnek denemeler ve İstatistik (deneme ekleme formu kullanıcı isteğiyle
@@ -143,7 +143,7 @@ const ADIM_POZLARI: Record<string, MaskotPozu> = {
   'soru-form': 'defterli', 'soru-kaydedildi': 'sevinen',
   'gorev-form': 'defterli', 'gorev-pomodoro-baslat': 'saatli', 'gorev-menu': 'basparmak',
   'deneme-liste': 'buyutecli', 'deneme-detay': 'okuyan', 'pomodoro-sayac': 'saatli', 'pomodoro-odak': 'elleri-belde',
-  'konu-takibi': 'okuyan', 'harita-ders': 'haritali', 'harita-soru': 'kitapli', 'konu-haritasi': 'haritali',
+  'harita-ders': 'haritali', 'harita-soru': 'kitapli', 'konu-haritasi': 'haritali',
   'istatistik-tur': 'buyutecli', 'istatistik-son': 'tahtali', 'istatistik-ilerleyen': 'ziplayan', 'istatistik-kutular': 'durbunlu', 'istatistik-karsilastir': 'abakuslu',
   zorluk: 'elleri-belde', 'oyun-sayac': 'saatli', 'soru-bir': 'dusunen', sonuc: 'sevinen',
   banka: 'dusunen', 'banka-liste': 'okuyan', 'banka-test': 'defterli', 'banka-ogrendim': 'basparmak',
@@ -157,8 +157,8 @@ export function adimPozu(adim: TanitimAdimi, tur: TanitimTuru | null, sonAdimMi:
 }
 
 /**
- * Ana tur — 23 adım. Sıra: ana sayfa, soru ekleme, Pomodoro (iki adım: sayaç
- * ve odak koruması), Konu Takibi, Harita, sonra örnek denemeler ve İstatistik
+ * Ana tur — 21 adım. Sıra: ana sayfa, soru ekleme, Pomodoro (iki adım: sayaç
+ * ve odak koruması), Harita, sonra örnek denemeler ve İstatistik
  * (kullanıcı ikisini mini turda değil ana turda istedi; sayaç yok). "Turu
  * Bitir" son İstatistik adımında; balondaki ✕ her adımda turdan çıkarır.
  *
@@ -179,8 +179,6 @@ export const TANITIM_ADIMLARI: readonly TanitimAdimi[] = [
   { kimlik: 'pomodoro-ac', hedef: 'arac-pomodoro', baslik: 'Odaklı çalış', aciklama: 'Pomodoro’ya dokun.', tiklamali: true },
   { kimlik: 'pomodoro-sayac', hedef: 'pomodoro-sayaci', baslik: 'Pomodoro', aciklama: 'Sayaç çalışma ve molayı sırayla tutar; dersini seçip başlatırsın.', tiklamali: false },
   { kimlik: 'pomodoro-odak', hedef: 'pomodoro-kilit', baslik: 'Odak koruması', aciklama: 'Açarsan çalışırken dikkat dağıtan uygulamalar engellenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
-  { kimlik: 'konu-takibi-ac', hedef: 'arac-konu-takibi', baslik: 'Konu Takibi', aciklama: 'Konu Takibi’ne dokun.', tiklamali: true },
-  { kimlik: 'konu-takibi', hedef: 'konu-takibi', baslik: 'Konu konu işaretle', aciklama: 'Dersi açınca konuya dokunup kartta Okul, Soru ve Bitti’yi işaretlersin.', tiklamali: false },
   { kimlik: 'harita-ac', hedef: 'harita-ac', baslik: 'Konu haritası', aciklama: 'Alt menüde Harita’ya dokun.', tabletAciklama: 'Sağdaki menüde Harita’ya dokun.', tiklamali: true },
   { kimlik: 'harita-ders', hedef: 'harita-kart', dolgu: 14, baslik: 'Yeşil kitap', aciklama: 'Konuyu kısa kartlarla buradan çalışırsın.', tiklamali: false },
   { kimlik: 'harita-soru', hedef: 'harita-soru', dolgu: 14, baslik: 'Turuncu kitap', aciklama: 'Konunun sorularını çöz; biten konu takipte işaretlenir.', ileriEtiketi: 'Araçlara dön', tiklamali: false },
@@ -454,12 +452,11 @@ export type TanitimKonumu = { sekme: Sekme; ekran: Ekran | null }
 /** Ana turun araç ekranlarında geçen adımları. */
 const ARAC_EKRANLARI: Record<string, Ekran> = {
   'soru-ekle': 'soru', 'soru-form': 'soru', 'soru-kaydedildi': 'soru',
-  'konu-takibi': 'konu-takibi', 'harita-ac': 'konu-takibi',
   'deneme-liste': 'deneme', 'deneme-detay': 'deneme',
   'pomodoro-sayac': 'pomodoro', 'pomodoro-odak': 'pomodoro',
   'istatistik-tur': 'istatistik', 'istatistik-son': 'istatistik', 'istatistik-ilerleyen': 'istatistik', 'istatistik-kutular': 'istatistik', 'istatistik-karsilastir': 'istatistik',
 }
-const ARACLAR_SEKMESI = ['soru-ac', 'pomodoro-ac', 'konu-takibi-ac', 'deneme-ac', 'istatistik-ac']
+const ARACLAR_SEKMESI = ['soru-ac', 'pomodoro-ac', 'harita-ac', 'deneme-ac', 'istatistik-ac']
 /** Ana turun Harita sekmesinde geçen adımları — iki kitap. */
 export const HARITA_TUR_ADIMLARI = ['harita-ders', 'harita-soru']
 

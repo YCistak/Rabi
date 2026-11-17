@@ -12,8 +12,6 @@ import { oyunToplami } from './oyunlar/tanim'
 import { tariheYaz } from './utils'
 import type { KonuIlerlemeleri } from './konu/ilerleme'
 import type { OkumaSeansi } from './konu/okuma-suresi'
-import type { YksTakip } from './konu-takibi/kayit'
-import { BIRLESEN_KONULAR } from './konu-takibi/okul-dersleri'
 
 /**
  * Rozetler — saf mantık.
@@ -78,6 +76,8 @@ export type Rozet = {
   olcut?: number
   kademe: RozetKademesi
   ikon: string
+  /** Kaldırılan araçların eski rozetleri yalnız kazanılmışsa gösterilir. */
+  gizli?: boolean
 }
 
 export const KADEME_ADI: Record<RozetKademesi, string> = {
@@ -181,11 +181,10 @@ export const ROZETLER: Rozet[] = [
   { id: 'harita-50', tur: 'harita-konu', esik: 50, kademe: 'altin', ikon: '🧭', ad: 'Haritada elli konu', aciklama: 'Haritada 50 konunun kartlarını sonuna kadar okudun' },
   { id: 'okuma-10s', tur: 'konu-okuma', esik: 600, kademe: 'gumus', ikon: '📘', ad: '10 saat konu okuma', aciklama: 'Haritada kart okuyarak toplam 10 saat geçirdin' },
 
-  // --- Konu Takibi ---
-  // "Bitirdim" tek dokunuşla işaretleniyor; uydurulabilir bir ölçü olduğu
-  // için kademe gümüşte kalıyor.
-  { id: 'konu-bitti-10', tur: 'konu-bitti', esik: 10, kademe: 'bronz', ikon: '📌', ad: 'On konu bitti', aciklama: 'Konu Takibi’nde 10 konuyu bitirdin' },
-  { id: 'konu-bitti-50', tur: 'konu-bitti', esik: 50, kademe: 'gumus', ikon: '🗃️', ad: 'Elli konu bitti', aciklama: 'Konu Takibi’nde 50 konuyu bitirdin' },
+  // Kimlikler eski kayıtlardaki kazanımları görünür tutar; araç kaldırıldığı
+  // için yenisi hesaplanmaz ve kazanılmamışsa listelenmez.
+  { id: 'konu-bitti-10', tur: 'konu-bitti', esik: 10, kademe: 'bronz', ikon: '📌', ad: 'On konu bitti', aciklama: 'Konu Takibi’nde 10 konuyu bitirdin', gizli: true },
+  { id: 'konu-bitti-50', tur: 'konu-bitti', esik: 50, kademe: 'gumus', ikon: '🗃️', ad: 'Elli konu bitti', aciklama: 'Konu Takibi’nde 50 konuyu bitirdin', gizli: true },
 ]
 
 export const TUR_ADI: Record<RozetTuru, string> = {
@@ -237,28 +236,9 @@ export type RozetDurumu = {
   oyunHatasiz: number
   oyunDogru: number
   oyunSerisi: number
-  konuBitti: number
   haritaKonu: number
   /** Konu kartlarında geçen toplam süre, dakika. */
   konuOkumaDakikasi: number
-}
-
-/**
- * Konu Takibi'nde "Bitti" işaretli konu sayısı.
- *
- * Birleşen satır (`BIRLESEN_KONULAR`, ör. TYT + AYT Fonksiyonlar) iki kimliği
- * birlikte yazıyor; ikisi de bitmişse ekranda tek satır, sayımda da tek konu.
- */
-export function bitenKonuSayisi(takip: YksTakip): number {
-  const bitenler = new Set(
-    Object.entries(takip.konular)
-      .filter(([, kayit]) => kayit.bitti !== undefined)
-      .map(([id]) => id),
-  )
-  for (const [ilk, ikinci] of BIRLESEN_KONULAR) {
-    if (bitenler.has(ilk) && bitenler.has(ikinci)) bitenler.delete(ikinci)
-  }
-  return bitenler.size
 }
 
 export function rozetDurumu({
@@ -272,7 +252,6 @@ export function rozetDurumu({
   oyunlar = {},
   bankaDusen = 0,
   bankaBoyutu = 0,
-  yksTakip,
   haritaIlerleme = {},
   okumaGecmisi = [],
 }: {
@@ -288,8 +267,6 @@ export function rozetDurumu({
   bankaDusen?: number
   /** Bankada şu an duran soru sayısı. */
   bankaBoyutu?: number
-  /** Konu Takibi kaydı (`takibiCoz`dan geçmiş). */
-  yksTakip?: YksTakip
   /** Konu haritasının deste kayıtları. */
   haritaIlerleme?: KonuIlerlemeleri
   okumaGecmisi?: OkumaSeansi[]
@@ -329,7 +306,6 @@ export function rozetDurumu({
     oyunHatasiz: oyun.hatasizTur,
     oyunDogru: oyun.toplamDogru,
     oyunSerisi: oyun.enIyiSeri,
-    konuBitti: yksTakip ? bitenKonuSayisi(yksTakip) : 0,
     // Deste sonuna kadar okunmuş konular. Yoklama oranı içerik dosyası
     // gerektiriyor (`konuTamam`); rozet bu yüzden yalnız desteye bakıyor ve
     // açıklaması da "kartlarını okudun" diyor, "konuyu bitirdin" değil.
@@ -379,8 +355,9 @@ export function rozetDegeri(rozet: Rozet, durum: RozetDurumu): number {
       return durum.oyunDogru
     case 'oyun-seri':
       return durum.oyunSerisi
+    // Kaldırılan Konu Takibi rozetleri eski kayıtta kalır, ama yeniden hesaplanmaz.
     case 'konu-bitti':
-      return durum.konuBitti
+      return 0
     case 'harita-konu':
       return durum.haritaKonu
     case 'konu-okuma':
@@ -389,7 +366,7 @@ export function rozetDegeri(rozet: Rozet, durum: RozetDurumu): number {
 }
 
 export function hakEdildiMi(rozet: Rozet, durum: RozetDurumu): boolean {
-  return rozetDegeri(rozet, durum) >= rozet.esik
+  return !rozet.gizli && rozetDegeri(rozet, durum) >= rozet.esik
 }
 
 /** Duruma göre hak edilen bütün rozetler. */
@@ -460,7 +437,7 @@ export function rozetListesi(
 ): RozetIlerlemesi[] {
   const tarihler = new Map(kazanilmis.map((k) => [k.rozetId, k.tarih]))
 
-  const liste = ROZETLER.map((rozet) => {
+  const liste = ROZETLER.filter((rozet) => !rozet.gizli || tarihler.has(rozet.id)).map((rozet) => {
     const mevcut = rozetDegeri(rozet, durum)
     const tarih = tarihler.get(rozet.id) ?? null
     return {

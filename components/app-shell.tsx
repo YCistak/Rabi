@@ -95,8 +95,6 @@ import { gorevleriNormalize, gorevleriTarihtenItibaren, type Gorev } from '@/lib
 import { OyunlarEkrani } from '@/components/ekranlar/oyunlar'
 import { OyunBankasiEkrani } from '@/components/ekranlar/oyun-bankasi'
 import { KonuHaritasiEkrani } from '@/components/ekranlar/konu-haritasi'
-import { KonuTakibiEkrani } from '@/components/ekranlar/konu-takibi'
-import { BOS_TAKIP, takibiCoz, type YksTakip } from '@/lib/konu-takibi/kayit'
 import { YapilacaklarEkrani } from '@/components/ekranlar/yapilacaklar'
 import { KaynakTakibiEkrani } from '@/components/ekranlar/kaynak-takibi'
 import { kaynaklariCoz, type Kaynak } from '@/lib/kaynak-takibi/kaynak'
@@ -337,16 +335,6 @@ function RabiUygulamasi() {
     ANAHTARLAR.konuSecimi,
     { ders: 'matematik', sinif: 9 },
   )
-  /*
-    Konu Takibi'nin kaydı. Depodan geleni her okumada `takibiCoz` süzüyor:
-    elle kurcalanmış ya da yarım yazılmış bir kayıt ekranı çökertmesin.
-  */
-  const [yksTakipHam, setYksTakipHam] = useYerelDepo<YksTakip>(ANAHTARLAR.yksKonuTakibi, BOS_TAKIP)
-  const yksTakip = useMemo(() => takibiCoz(yksTakipHam), [yksTakipHam])
-  const setYksTakip = useCallback(
-    (guncelle: (onceki: YksTakip) => YksTakip) => setYksTakipHam((onceki) => guncelle(takibiCoz(onceki))),
-    [setYksTakipHam],
-  )
   /* Rabi'yi Giydir: aynı düzen, depodan geleni `giyilenleriCoz` süzüyor. */
   const [giyilenlerHam, setGiyilenlerHam] = useYerelDepo<Giyilenler>(ANAHTARLAR.giydir, BOS_GIYILENLER)
   const giyilenler = useMemo(() => giyilenleriCoz(giyilenlerHam), [giyilenlerHam])
@@ -354,24 +342,13 @@ function RabiUygulamasi() {
     (guncelle: (onceki: Giyilenler) => Giyilenler) => setGiyilenlerHam((onceki) => guncelle(giyilenleriCoz(onceki))),
     [setGiyilenlerHam],
   )
-  /* Kaynak Takibi: Konu Takibi'yle aynı düzen, depodan geleni `kaynaklariCoz` süzüyor. */
+  /* Kaynak Takibi: depodan geleni her okumada `kaynaklariCoz` süzüyor. */
   const [kaynaklarHam, setKaynaklarHam] = useYerelDepo<Kaynak[]>(ANAHTARLAR.kaynakTakibi, [])
   const kaynaklar = useMemo(() => kaynaklariCoz(kaynaklarHam), [kaynaklarHam])
   const setKaynaklar = useCallback(
     (guncelle: (onceki: Kaynak[]) => Kaynak[]) => setKaynaklarHam((onceki) => guncelle(kaynaklariCoz(onceki))),
     [setKaynaklarHam],
   )
-  /*
-    Konu Takibi'nden "Haritaya git" isteği: harita sekmesi açılınca bu konunun
-    kartını açıp isteği tüketiyor (`onKonuAcildi`). Prop doğrudan okunsaydı
-    haritadan çıkıp dönen kullanıcı aynı kartı her seferinde yeniden görürdü —
-    ana sayfadaki ders kutucuğunun `acilacakDers` kalıbı.
-  */
-  const [haritaIstegi, setHaritaIstegi] = useState<{
-    ders: KonuDersId
-    sinif: HaritaSinifi
-    konuId: string
-  } | null>(null)
   /*
     Tanıtım turu Harita'nın yeşil ve turuncu kitabını gösteriyor. Kartı
     yazılmamış bir dersin (12'de Matematik dışındakiler) haritasında kitap yok
@@ -785,7 +762,6 @@ function RabiUygulamasi() {
         oyunlar,
         bankaDusen,
         bankaBoyutu: oyunBankasi.length,
-        yksTakip,
         haritaIlerleme: konuIlerleme,
         okumaGecmisi,
       }),
@@ -800,7 +776,6 @@ function RabiUygulamasi() {
       oyunlar,
       bankaDusen,
       oyunBankasi.length,
-      yksTakip,
       konuIlerleme,
       okumaGecmisi,
     ],
@@ -1222,8 +1197,8 @@ function RabiUygulamasi() {
         {ekran !== null ? (
           <>
             {/*
-              Ekranın içinde açılan bir alt görünüm varsa (Konu Takibi'nde bir
-              ders) "Geri" önce onu kapatıyor — Android'in geri tuşu ve iOS'un
+              Ekranın içinde açılan bir alt görünüm varsa "Geri" önce onu
+              kapatıyor — Android'in geri tuşu ve iOS'un
               kenar kaydırmasıyla aynı sıra. Ekran kendi ikinci geri düğmesini
               çizmek zorunda kalmıyor; üstte iki geri, hangisinin nereye
               götürdüğünü belirsiz bırakıyordu. Pencereler ve tam ekran
@@ -1346,7 +1321,6 @@ function RabiUygulamasi() {
                 oyunlar={oyunlar}
                 bankaDusen={bankaDusen}
                 bankaBoyutu={oyunBankasi.length}
-                yksTakip={yksTakip}
                 haritaIlerleme={konuIlerleme}
                 okumaGecmisi={okumaGecmisi}
                 kazanilmis={rozetler}
@@ -1360,23 +1334,6 @@ function RabiUygulamasi() {
                 denemeler={turIstatistigi ?? gorunenDenemeler}
                 sablonlar={sablonlar}
                 varsayilanSablonId={anaTurda || istatistikTurunda ? (tanitim.demo.denemeler.at(-1)?.sablonId ?? 'tyt') : ayarlar.varsayilanSablonId}
-              />
-            )}
-            {ekran === 'konu-takibi' && (
-              <KonuTakibiEkrani
-                tanitimda={anaTurda}
-                takip={yksTakip}
-                setTakip={setYksTakip}
-                ilerlemeler={konuIlerleme}
-                alan={ayarlar.puanTuru}
-                setAlan={(puanTuru) => setAyarlar((o) => ({ ...o, puanTuru }))}
-                sinif={ayarlar.buYilSinif}
-                onHaritayaGit={({ ders, sinif, konu }) => {
-                  setKonuSecimi({ ders, sinif })
-                  setHaritaIstegi({ ders, sinif, konuId: konu.id })
-                  setEkran(null)
-                  setSekme('harita')
-                }}
               />
             )}
             {ekran === 'kaynak-takibi' && (
@@ -1465,8 +1422,6 @@ function RabiUygulamasi() {
                 kullaniciSinifi={haritaSinifiBul(ayarlar.buYilSinif)}
                 ilerlemeler={konuIlerleme}
                 setIlerlemeler={setKonuIlerleme}
-                acilacakKonu={haritaIstegi}
-                onKonuAcildi={() => setHaritaIstegi(null)}
                 onOkumaSeansi={(seans) => setOkumaGecmisi((onceki) => okumaSeansiEkle(onceki, seans))}
                 sesAcik={ayarlar.oyunSesi}
               />
@@ -1501,7 +1456,6 @@ function RabiUygulamasi() {
                   notlar: gorevler,
                   konuIlerleme,
                   bilinmeyenKartlar,
-                  yksKonuTakibi: yksTakip,
                   kaynakTakibi: kaynaklar,
                   giydir: giyilenler,
                   aylikOzetler,
@@ -1625,8 +1579,6 @@ const GENIS_SAYFALAR: ReadonlySet<string> = new Set([
   'soru',
   'devamsizlik',
   'notlar',
-  // İçerik kendi içinde max-w-3xl; ders listesi tablette iki sütun.
-  'konu-takibi',
 ])
 
 /**

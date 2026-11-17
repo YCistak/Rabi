@@ -38,7 +38,6 @@ import { dakikayiKirp, saatiKirp } from './hatirlatma'
 import { yeniId } from './utils'
 import { gorevleriNormalize, type Gorev } from './yapilacaklar'
 import type { BilinmeyenKart, KonuIlerlemeleri } from './konu/ilerleme'
-import { takibiCoz } from './konu-takibi/kayit'
 import { kaynaklariCoz } from './kaynak-takibi/kaynak'
 import type { AylikOzetArsivi } from './ozet'
 import { okumaGecmisiniCoz, type OkumaSeansi } from './konu/okuma-suresi'
@@ -73,13 +72,6 @@ export const ANAHTARLAR = {
   /** Konu Anlatımı'nda "bilmiyorum" denen kartlar. */
   bilinmeyenKartlar: 'rabi-bilinmeyen-kartlar',
   /**
-   * Konu Takibi: YKS konularında elle işaretlenen aşamalar ve "bitirdim"
-   * (`lib/konu-takibi/takip.ts`). Sürümlü (`{ surum: 2, konular }`); okurken
-   * `takibiCoz` süzüyor. "Haritada çalıştım" burada değil, `konuIlerleme`den
-   * hesaplanıyor. Yedeğe giriyor.
-   */
-  yksKonuTakibi: 'rabi-yks-konu-takibi',
-  /**
    * Kaynak Takibi: öğrencinin test kitapları ve her kitapta bitirdiği konular
    * (`lib/kaynak-takibi/kaynak.ts`). Okurken `kaynaklariCoz` süzüyor. Yedeğe
    * giriyor.
@@ -93,19 +85,6 @@ export const ANAHTARLAR = {
    * havuçla alınan özelleştirmenin kaydıydı; bu kayıtta fiyat ve bakiye yok.
    */
   giydir: 'rabi-giydir',
-  /**
-   * Konu Takibi'nin hızlı başlangıç kartının ("TYT'de neredeyim?")
-   * gösterildiği oturumlar, sürümlü (`{ surum: 1, gosterilen }`, okurken
-   * `hizliBayragiCoz`). Yedeğe **girmiyor**: kart zaten yalnızca oturumda
-   * hiç işaret yokken çıkıyor; yedekteki işaretler onu kendiliğinden
-   * gizliyor.
-   */
-  konuTakibiHizliBaslangic: 'rabi-konu-takibi-hizli-baslangic',
-  /**
-   * Konu Takibi girişindeki açıklama kartı kapatıldı mı (`true` kapalı).
-   * Yedeğe **girmiyor**: veri değil, bu cihazdaki görünüm tercihi.
-   */
-  konuTakibiAciklamaKapali: 'rabi-konu-takibi-aciklama-kapali',
   /**
    * Konu haritasında en son seçili ders ve sınıf.
    *
@@ -222,6 +201,13 @@ export const ANAHTARLAR = {
  * anahtar eski kurulumlarda duruyor olabilir.
  */
 const ESKI_ANAHTARLAR = [
+  // Konu Takibi kullanıcı isteğiyle kaldırıldı (2026-11-17).
+  'rabi-yks-konu-takibi',
+  'rabi-konu-takibi-hizli-baslangic',
+  'rabi-konu-takibi-aciklama-kapali',
+  'rabi-konu-takibi-sekme',
+  'rabi-konu-takibi-ders',
+  'rabi-konu-takibi-kaydirma',
   'rabi-gecmis-yillar',
   'rabi-okul-dersleri',
   // Tavşan özelleştirmesi kaldırıldı; kayıt artık hiçbir yerde okunmuyor.
@@ -582,9 +568,9 @@ export function yedegiDogrula(ham: string): { yedek: Yedek } | { hata: string } 
       konuIlerleme: nesne.konuIlerleme as KonuIlerlemeleri | undefined,
       aylikOzetler: nesne.aylikOzetler as AylikOzetArsivi | undefined,
       okumaGecmisi: Array.isArray(nesne.okumaGecmisi) ? okumaGecmisiniCoz(nesne.okumaGecmisi) : undefined,
-      // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
-      // kullanıcının mevcut takibine dokunulmuyor.
-      yksKonuTakibi: nesne.yksKonuTakibi === undefined ? undefined : takibiCoz(nesne.yksKonuTakibi),
+      // Kaldırılan aracın verisi eski yedekleri bozmamak için taşınır; geri
+      // yüklemede artık localStorage'a yazılmaz.
+      yksKonuTakibi: nesne.yksKonuTakibi,
       // Eski yedeklerde alan yok; undefined kalıyor ve geri yüklemede
       // kullanıcının mevcut kaynaklarına dokunulmuyor.
       kaynakTakibi: nesne.kaynakTakibi === undefined ? undefined : kaynaklariCoz(nesne.kaynakTakibi),
@@ -821,8 +807,6 @@ export function yedegiUygula(yedek: Yedek) {
     yaz(ANAHTARLAR.aylikOzetler, { ...oku<AylikOzetArsivi>(ANAHTARLAR.aylikOzetler, {}), ...yedek.aylikOzetler })
   }
   if (yedek.bilinmeyenKartlar) yaz(ANAHTARLAR.bilinmeyenKartlar, yedek.bilinmeyenKartlar)
-  // Eski yedeklerde konu takibi yok; boş yazmak işaretlenmiş konuları silerdi.
-  if (yedek.yksKonuTakibi) yaz(ANAHTARLAR.yksKonuTakibi, yedek.yksKonuTakibi)
   // Eski yedeklerde kaynak yok; boş yazmak eklenmiş kitapları silerdi.
   if (yedek.kaynakTakibi) yaz(ANAHTARLAR.kaynakTakibi, yedek.kaynakTakibi)
   // Eski yedeklerde alan yok; boş yazmak giydirilenleri çıkarırdı.

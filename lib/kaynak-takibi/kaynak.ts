@@ -1,5 +1,4 @@
 import type { KonuDersId } from '../konu/tip'
-import { varsayilanSinif } from '../konu-takibi/sinif'
 import { DERS_SIRASI, KAYNAK_SINIFLARI, konuKimligi, uniteler, type KaynakSinifi, type Unite } from './konular'
 
 /**
@@ -7,8 +6,7 @@ import { DERS_SIRASI, KAYNAK_SINIFLARI, konuKimligi, uniteler, type KaynakSinifi
  *
  * Kaynak bir sınıfın bir dersine bağlı; konuları o sınıfın listesinden geliyor
  * (`konular.ts`). Tik yalnızca "bitti / bitmedi": kitapta konu bir kez
- * çözülüp geçiliyor, Konu Takibi'ndeki aşamalara (okul, soru) burada gerek
- * yok. Bu yüzden iki takip birbirine bağlanmadı.
+ * çözülüp geçiliyor.
  */
 export type Kaynak = {
   id: string
@@ -32,8 +30,13 @@ export function kaynakAdiKirp(ad: string): string {
   return ad.replace(/\s+/g, ' ').trim().slice(0, EN_UZUN_KAYNAK_ADI).trim()
 }
 
-/** Formun açılacağı sınıf: Konu Takibi'yle aynı kural (mezun 12, bilinmeyen 9). */
-export const varsayilanKaynakSinifi: (buYilSinif: number) => KaynakSinifi = varsayilanSinif
+/** Formun açılacağı sınıf: mezun 12, bilinmeyen 9. */
+export function varsayilanKaynakSinifi(buYilSinif: number): KaynakSinifi {
+  if (!Number.isFinite(buYilSinif)) return 9
+  if (buYilSinif >= 12) return 12
+  if (buYilSinif === 10 || buYilSinif === 11) return buYilSinif
+  return 9
+}
 
 /**
  * Depodan ya da yedekten geleni süzer. Bozuk kayıt atılıyor; bilinmeyen konu

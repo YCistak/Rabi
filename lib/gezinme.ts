@@ -26,8 +26,6 @@ export type Ekran =
   | 'rozetler'
   | 'istatistik'
   | 'oyun-bankasi'
-  /** Konu Takibi — TYT/AYT konularının aşamaları (`lib/konu-takibi/`). */
-  | 'konu-takibi'
   /** Kaynak Takibi — test kitaplarında bitirilen konular (`lib/kaynak-takibi/`). */
   | 'kaynak-takibi'
   /** Gizlilik ve Koşullar — yalnızca Ayarlar'dan açılıyor, kart menüsünde yok. */
@@ -139,13 +137,6 @@ export const KARTLAR: KartTanimi[] = [
     sıradan doluyor ve yeni bir aracın, alışılmış dördün yerini kendiliğinden
     alması gerekmiyor — kullanıldıkça zaten öne geçiyor (`son-kullanilan.ts`).
   */
-  {
-    id: 'konu-takibi',
-    ad: 'Konu Takibi',
-    aciklama: 'TYT ve AYT konularını bitirdikçe işaretle',
-    ikon: '📚',
-    renk: 'nane',
-  },
   {
     id: 'kaynak-takibi',
     ad: 'Kaynak Takibi',

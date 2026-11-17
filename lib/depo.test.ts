@@ -195,7 +195,7 @@ describe('yedegiDogrula', () => {
     expect(coz(yedekOlustur(bos)).resimler).toBeUndefined()
   })
 
-  it('konu takibini taşır ve bozuk alanlarını süzer', () => {
+  it('kaldırılan Konu Takibi verisini eski yedekte olduğu gibi taşır', () => {
     const yedek = coz({
       ...yedekOlustur(bos),
       yksKonuTakibi: {
@@ -207,8 +207,11 @@ describe('yedegiDogrula', () => {
       },
     })
     expect(yedek.yksKonuTakibi).toEqual({
-      surum: 2,
-      konular: { 'tyt-mat-uslu': { okul: '2026-10-01', bitti: '2026-10-04' } },
+      surum: 1,
+      konular: {
+        'tyt-mat-uslu': { okul: '2026-10-01', bitti: '2026-10-04' },
+        'tyt-mat-koklu': { soru: 'bozuk' },
+      },
     })
   })
 
@@ -217,7 +220,7 @@ describe('yedegiDogrula', () => {
   })
 })
 
-describe('yedegiUygula — konu takibi', () => {
+describe('yedegiUygula — kaldırılan Konu Takibi', () => {
   function sahteDepo() {
     const depo = new Map<string, string>()
     vi.stubGlobal('localStorage', {
@@ -230,20 +233,20 @@ describe('yedegiUygula — konu takibi', () => {
     return depo
   }
 
-  it('yedekteki takibi yazar', () => {
+  it('yedekteki takibi yok sayar', () => {
     const depo = sahteDepo()
     const takip = { surum: 2 as const, konular: { 'tyt-mat-uslu': { bitti: '2026-10-04' } } }
     yedegiUygula({ ...yedekOlustur(bos), yksKonuTakibi: takip })
     vi.unstubAllGlobals()
-    expect(JSON.parse(depo.get(ANAHTARLAR.yksKonuTakibi)!)).toEqual(takip)
+    expect(depo.get('rabi-yks-konu-takibi')).toBeUndefined()
   })
 
   it('eski yedek mevcut takibe dokunmaz', () => {
     const depo = sahteDepo()
-    depo.set(ANAHTARLAR.yksKonuTakibi, '{"surum":1,"konular":{"a":{"okul":"2026-10-01"}}}')
+    depo.set('rabi-yks-konu-takibi', '{"surum":1,"konular":{"a":{"okul":"2026-10-01"}}}')
     yedegiUygula(yedekOlustur(bos))
     vi.unstubAllGlobals()
-    expect(depo.get(ANAHTARLAR.yksKonuTakibi)).toBe('{"surum":1,"konular":{"a":{"okul":"2026-10-01"}}}')
+    expect(depo.get('rabi-yks-konu-takibi')).toBe('{"surum":1,"konular":{"a":{"okul":"2026-10-01"}}}')
   })
 })
 

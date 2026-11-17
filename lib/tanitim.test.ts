@@ -51,12 +51,12 @@ function adimaKadar(kimlik: string, turAdi: TanitimTuru = 'ana_tur'): TanitimDur
 const kimlik = (d: TanitimDurumu) => TUR_ADIMLARI[d.aktifTur!][d.aktifAdim!].kimlik
 
 describe('Ana tur kısa ve kritik akışta', () => {
-  it('ana sayfa, soru ekleme, Konu Takibi, Harita; ardından örnek denemeler ve İstatistik', () => {
+  it('ana sayfa, soru ekleme, Harita; ardından örnek denemeler ve İstatistik', () => {
     expect(TANITIM_ADIMLARI.map((a) => a.kimlik)).toEqual([
       'sinav-hedefi', 'hedef', 'araclar-ac',
       'soru-ac', 'soru-ekle', 'soru-form', 'soru-kaydedildi',
       'pomodoro-ac', 'pomodoro-sayac', 'pomodoro-odak',
-      'konu-takibi-ac', 'konu-takibi', 'harita-ac', 'harita-ders', 'harita-soru',
+      'harita-ac', 'harita-ders', 'harita-soru',
       'deneme-ac', 'deneme-liste', 'deneme-detay',
       'istatistik-ac', 'istatistik-tur', 'istatistik-son', 'istatistik-ilerleyen', 'istatistik-kutular', 'istatistik-karsilastir',
     ])
@@ -79,9 +79,7 @@ describe('Ana tur kısa ve kritik akışta', () => {
     for (const k of ['sinav-hedefi', 'hedef', 'araclar-ac']) expect(tanitimKonumu(bul(k)).sekme).toBe('ana')
     expect(tanitimKonumu(bul('soru-ac'))).toEqual({ sekme: 'daha', ekran: null })
     for (const k of ['soru-ekle', 'soru-form', 'soru-kaydedildi']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: 'soru' })
-    expect(tanitimKonumu(bul('konu-takibi-ac'))).toEqual({ sekme: 'daha', ekran: null })
-    expect(tanitimKonumu(bul('konu-takibi'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi' })
-    expect(tanitimKonumu(bul('harita-ac'))).toEqual({ sekme: 'daha', ekran: 'konu-takibi' })
+    expect(tanitimKonumu(bul('harita-ac'))).toEqual({ sekme: 'daha', ekran: null })
     for (const k of HARITA_TUR_ADIMLARI) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'harita', ekran: null })
     for (const k of ['deneme-ac', 'istatistik-ac']) expect(tanitimKonumu(bul(k))).toEqual({ sekme: 'daha', ekran: null })
     expect(tanitimKonumu(bul('pomodoro-ac'))).toEqual({ sekme: 'daha', ekran: null })
@@ -113,21 +111,18 @@ describe('Ana tur kısa ve kritik akışta', () => {
     expect(kimlik(tanitimGecisi(adimaKadar('soru-kaydedildi'), { tur: 'geri' }))).toBe('soru-ekle')
     expect(kimlik(tanitimGecisi(adimaKadar('soru-form'), { tur: 'geri' }))).toBe('soru-ekle')
     expect(kimlik(tanitimGecisi(adimaKadar('pomodoro-ac'), { tur: 'geri' }))).toBe('soru-kaydedildi')
-    expect(kimlik(tanitimGecisi(adimaKadar('konu-takibi-ac'), { tur: 'geri' }))).toBe('pomodoro-odak')
+    expect(kimlik(tanitimGecisi(adimaKadar('harita-ac'), { tur: 'geri' }))).toBe('pomodoro-odak')
   })
 
-  it('soru kaydından sonra Konu Takibi, ardından Harita’nın iki kitabı', () => {
-    const takip = tanitimGecisi(adimaKadar('konu-takibi-ac'), { tur: 'hedefe-dokun', hedef: 'arac-konu-takibi' })
-    expect(kimlik(takip)).toBe('konu-takibi')
-    const harita = tanitimGecisi(takip, { tur: 'ileri' })
+  it('Pomodoro’dan sonra Harita’nın iki kitabı gelir', () => {
+    const harita = tanitimGecisi(adimaKadar('harita-ac'), { tur: 'ileri' })
     expect(kimlik(harita)).toBe('harita-ac')
     expect(tanitimGecisi(harita, { tur: 'ileri' })).toBe(harita)
     expect(kimlik(tanitimGecisi(harita, { tur: 'hedefe-dokun', hedef: 'harita-ac' }))).toBe('harita-ders')
   })
 
-  it('Konu Takibi düğmesi normal "İleri"; harita kitapları dokunuş istemeyen bilgi adımı', () => {
+  it('harita kitapları dokunuş istemeyen bilgi adımı', () => {
     const bul = (k: string) => TANITIM_ADIMLARI.find((a) => a.kimlik === k)!
-    expect(bul('konu-takibi').ileriEtiketi).toBeUndefined()
     for (const k of HARITA_TUR_ADIMLARI) {
       expect(bul(k).tiklamali, k).toBe(false)
       expect(bul(k).aciklama.toLocaleLowerCase('tr'), k).not.toContain('dokun')
@@ -355,14 +350,14 @@ describe('Ana turda Denemeler: örnek deneme açtırılıyor', () => {
 })
 
 describe('Ana turda Pomodoro', () => {
-  it('Araçlar’dan Pomodoro’ya dokunuş, sayaç ve odak koruması, sonra Konu Takibi', () => {
+  it('Araçlar’dan Pomodoro’ya dokunuş, sayaç ve odak koruması, sonra Harita', () => {
     const ac = adimaKadar('pomodoro-ac')
     expect(tanitimGecisi(ac, { tur: 'ileri' })).toBe(ac)
     const sayac = tanitimGecisi(ac, { tur: 'hedefe-dokun', hedef: 'arac-pomodoro' })
     expect(kimlik(sayac)).toBe('pomodoro-sayac')
     const odak = tanitimGecisi(sayac, { tur: 'ileri' })
     expect(kimlik(odak)).toBe('pomodoro-odak')
-    expect(kimlik(tanitimGecisi(odak, { tur: 'ileri' }))).toBe('konu-takibi-ac')
+    expect(kimlik(tanitimGecisi(odak, { tur: 'ileri' }))).toBe('harita-ac')
   })
 })
 

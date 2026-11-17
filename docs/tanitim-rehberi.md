@@ -8,7 +8,7 @@
 4. `components/tanitim/demo-oyun.tsx`: Ders ızgarasındaki Tanıtım oyunu kartı (gerçek `OyunKarti`, `oyunlar.tsx`; yalnız başlık ve simge tanıtıma ait) ve gerçek `IslemOyunuEkrani`. Oyun modu penceresi (`ModPenceresi`, `oyun-tanitim.tsx`), geri sayım, tuş takımı ve sonuç ekranı mevcut oyunlarla aynıdır. Tur ayarları ve sonuç sadece bellekte tutulur.
 5. `components/app-shell.tsx`: Kurulum ve açılış animasyonu bittikten sonra ana turu başlatır; ana turun ekran geçişlerini yönetir. Bir ekran ilk açıldığında `miniTurSec` ile o ekranın mini turunu başlatır.
 
-`data-tanitim` hedefleri ilgili bileşenlerde bulunur: ana sayfa, alt menü, Araçlar satırları, Soru Takibi, Pomodoro, Yapılacaklar, İstatistik, oyun bankası, Denemeler, Konu Takibi ve konu haritası.
+`data-tanitim` hedefleri ilgili bileşenlerde bulunur: ana sayfa, alt menü, Araçlar satırları, Soru Takibi, Pomodoro, Yapılacaklar, İstatistik, oyun bankası, Denemeler ve konu haritası.
 
 ## Başlangıç sorusu
 
@@ -34,18 +34,16 @@ Ana tur **23 adım**. Bir süre ~46 adımdı (her ekranı gezdiriyordu, uzun bul
 7a. Pomodoro satırına dokunuş (`pomodoro-ac`).
 7b. Sayaç (`pomodoro-sayaci`, bilgi adımı): çalışma-mola sayacı.
 7c. Odak koruması (`pomodoro-kilit`, bilgi adımı) → "Araçlara dön". Sayaç turda başlamaz; ekran `demoVeri` ile açılır (odak kilidi tanıtımı çıkmaz, ayar yazılmaz). Pomodoro'nun mini turu (iki mod, ayarlar) ayrıca ilk gerçek ziyarette çıkar.
-8. Konu Takibi satırına dokunuş.
-9. Girişin üstü (sınıf sekmesi ve giriş açıklaması; konu satırları bu adımda görünmez) → "İleri" (özel düğme yazısı yok). Balon bu adımda dokunulacak bir şey göstermez: "Dersi açınca konuya dokunup kartta Okul, Soru ve Bitti’yi işaretlersin."
-10. Aynı ekranda alt menüden Harita'ya dokunuş.
-11. İlk bölümün ilk yeşil kitabı (konu anlatımı) — bilgi adımı, İleri ile geçilir; balon "dokun" demez ("Konuyu kısa kartlarla buradan çalışırsın.").
-12. İlk turuncu kitap (sorular; biten konu takipte işaretlenir) → "Araçlara dön". Bilgi adımı. Kitap kilitli/yazılmamış olsa da bu adımda gerçek turuncu rengiyle çizilir (gri ve soluklaştırma yok, kilit rozeti kalır); yalnızca tur sırasında ve yalnızca bu kitap için (`Dugum`, `konu-haritasi.tsx`).
-13. Denemeler satırına dokunuş (iki örnek deneme hazır).
-14. Örnek denemenin kartına dokunuş (`deneme-ornek`, listedeki ilk kart). Kart turda adıma bağlı açılır (`DenemelerEkrani` → `tanitim.ornekAcik`); öteki kartlar kilitli.
-14a. Ders ders netler (`deneme-detay`, açılan tablo; bilgi adımı): doğru, yanlış, boş, net. Balon "ayrıntılı rapor" demez. Örnekler turun belleğinde (`demoDenemeleri`), cihaz deposuna yazılmaz. → "Araçlara dön".
-15. İstatistik satırına dokunuş.
-16–20. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf (kutuların adıyla "en güçlü / en kötü ders") · Deneme karşılaştır (düğmenin adı) → "Turu Bitir".
+8. Alt menüden Harita'ya dokunuş.
+9. İlk bölümün ilk yeşil kitabı (konu anlatımı) — bilgi adımı, İleri ile geçilir; balon "dokun" demez ("Konuyu kısa kartlarla buradan çalışırsın.").
+10. İlk turuncu kitap (sorular) → "Araçlara dön". Bilgi adımı. Kitap kilitli/yazılmamış olsa da bu adımda gerçek turuncu rengiyle çizilir (gri ve soluklaştırma yok, kilit rozeti kalır); yalnızca tur sırasında ve yalnızca bu kitap için (`Dugum`, `konu-haritasi.tsx`).
+11. Denemeler satırına dokunuş (iki örnek deneme hazır).
+12. Örnek denemenin kartına dokunuş (`deneme-ornek`, listedeki ilk kart). Kart turda adıma bağlı açılır (`DenemelerEkrani` → `tanitim.ornekAcik`); öteki kartlar kilitli.
+12a. Ders ders netler (`deneme-detay`, açılan tablo; bilgi adımı): doğru, yanlış, boş, net. Balon "ayrıntılı rapor" demez. Örnekler turun belleğinde (`demoDenemeleri`), cihaz deposuna yazılmaz. → "Araçlara dön".
+13. İstatistik satırına dokunuş.
+14–18. Deneme türü · Son net · En çok ilerleyenler · Güçlü/zayıf (kutuların adıyla "en güçlü / en kötü ders") · Deneme karşılaştır (düğmenin adı) → "Turu Bitir".
 
-12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz. Konu Takibi kaydına tur hiçbir şey yazmaz.
+12. sınıfın ya da kartı yazılmamış bir dersin haritasında kitap olmadığı için tur sürerken harita kitabı olan ilk programla çizilir (`turHaritaSecimi`, `app-shell.tsx`); seçim kayda yazılmaz.
 
 İstatistik adımları iki örnek denemeden (eşi yoksa geçici bir eşle) çizilir (`istatistikTuruDenemeleri`). Turda Deneme ekle bir şey açmaz.
 
@@ -112,7 +110,7 @@ Depolama yazılamazsa temizlik yine gerçekleşir ve oturum içindeki tamamlanma
 
 ## Maskot (Rabi)
 
-Her balonun üst satırında küçük bir Rabi tavşanı ve turun etiketi (`TUR_ETIKETLERI`) durur (`components/maskot/rabi.tsx`; 48 piksel, kısa balonda ve oyun adımında 36). Poz `lib/tanitim.ts` içindeki `adimPozu` ile seçilir: önce adımın isteğe bağlı `poz` alanı, ana turun son adımında `alkislayan` (kutlama), sonra `ADIM_POZLARI` tablosu (kimliğe göre), tabloda yoksa dokunma adımında `el-sallayan`, değilse `tam`. İlk adım `selamlayan`dır. Örnekler: Pomodoro `saatli`, deneme ekleme `fotografci`, görev `defterli`, konu takibi `okuyan`, harita `haritali`/`kitapli`, istatistik `buyutecli`/`tahtali`/`ziplayan`, oyun sonucu `sevinen`. Tavşan dekoratiftir (`aria-hidden`); balonun yüksekliği ölçülerek yerleştiğinden hedefi örtmez.
+Her balonun üst satırında küçük bir Rabi tavşanı ve turun etiketi (`TUR_ETIKETLERI`) durur (`components/maskot/rabi.tsx`; 48 piksel, kısa balonda ve oyun adımında 36). Poz `lib/tanitim.ts` içindeki `adimPozu` ile seçilir: önce adımın isteğe bağlı `poz` alanı, ana turun son adımında `alkislayan` (kutlama), sonra `ADIM_POZLARI` tablosu (kimliğe göre), tabloda yoksa dokunma adımında `el-sallayan`, değilse `tam`. İlk adım `selamlayan`dır. Örnekler: Pomodoro `saatli`, deneme ekleme `fotografci`, görev `defterli`, harita `haritali`/`kitapli`, istatistik `buyutecli`/`tahtali`/`ziplayan`, oyun sonucu `sevinen`. Tavşan dekoratiftir (`aria-hidden`); balonun yüksekliği ölçülerek yerleştiğinden hedefi örtmez.
 
 ## Yeniden deneme
 

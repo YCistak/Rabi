@@ -7,8 +7,7 @@ import type { KonuDersId } from './tip'
  *
  * Sınıf bir süre "Çalıştığın program" kartında, "Değiştir" ile açılan gizli
  * bir seçicideydi. Kullanıcı değerlendirmesinde başka sınıfın haritasına
- * geçilebildiği hiç fark edilmedi; Konu Takibi'nden gelen yönlendirme sınıfı
- * kendiliğinden değiştirince de nerede olunduğu anlaşılmıyordu. Sekme artık
+ * geçilebildiği hiç fark edilmedi. Sekme artık
  * patikanın hemen üstünde ve her zaman görünüyor; her sekmede seçili dersin o
  * sınıftaki ilerlemesi yazıyor.
  */
@@ -99,24 +98,6 @@ export function sinifDegisimi(
     secim: { ders: yeniDers, sinif: yeniSinif },
     bilgi: `${haritaDersAdi(secim.ders)} ${yeniSinif}. sınıfta yok; ${haritaDersAdi(yeniDers)} açıldı.`,
   }
-}
-
-/**
- * Konu Takibi'nden gelen yönlendirmenin şeridi.
- *
- * Yönlendirme sınıfı kendiliğinden değiştiriyor (11. sınıf öğrencisi TYT
- * trigonometrisi için 10. sınıfa). Kendi sınıfından farklıysa patikanın
- * üstünde bunu söyleyen kapatılabilir ince bir şerit çıkıyor; aynıysa ya da
- * öğrencinin tek bir sınıfı yoksa (mezun) şerit yok.
- */
-export function yonlendirmeMetni(
-  konuAdi: string,
-  hedefSinif: HaritaSinifi,
-  kullaniciSinifi: HaritaSinifi | null,
-): string | null {
-  const kendi = haritaAcilisSinifi(kullaniciSinifi)
-  if (kendi === null || kendi === hedefSinif) return null
-  return `${konuAdi} için ${hedefSinif}. sınıfa geçildi`
 }
 
 /**

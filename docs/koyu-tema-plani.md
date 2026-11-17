@@ -152,7 +152,7 @@ Tailwind sabitleri (`bg-white`, `text-gray-…`, `bg-black/…`, `text-red-…`)
 `oyun-periyodik` 5, `oyun-bolunme` 5, `kaynak-takibi` 5, `takvim` 4,
 `oyun-tanitim` 4, `hata-bildir` 4, `konu-haritasi` 4, `istatistik` 4,
 `ana-sayfa` 4, `oyun-tus-takimi` 3, `oyun-sikki` 3, `oyun-kabuk` 3,
-`konu/konu-ozeti` 3, `oyun-koklu` 3, `konu-takibi` 3, `aylik-ozet` 3, ve 1–2
+`konu/konu-ozeti` 3, `oyun-koklu` 3, `aylik-ozet` 3, ve 1–2
 adetlik ~15 dosya (`oyun-surukle-sirala`, `oyun-kaydirma-karti`, `kurulum-hazir`,
 `kisa-mola`, `kart-destesi`, `harita-secimi`, `oyun-harita`, `oyun-bankasi`,
 `ayarlar`, `tarih-secici`, `tanitim-sorusu`, `oyun-geri-sayim`, `odak-daveti`,
@@ -354,7 +354,7 @@ Her ekran koyuda açılıp bakılır; liste:
 - **Yanlış Banka** + `soru-cizimi`: araç çubuğu temaya uyar, kalem paleti ve
   fotoğraf olduğu gibi kalır.
 - **İstatistik:** grafik çizgileri, ızgara (`--grid`), eksen yazıları.
-- **Konu Takibi**, **Kaynak Takibi** (öneri listesi açılır kutusu).
+- **Kaynak Takibi** (öneri listesi açılır kutusu).
 - **Okul / Devamsızlık**, **Hedef / Sıralama** (tahmin uyarısı görünür).
 - **Rozetler** (kademe renkleri, kilitli rozet, `rozet-bildirimi`, hale).
 - **Aylık özet:** Faz 0 ile gizli, bakılmaz.

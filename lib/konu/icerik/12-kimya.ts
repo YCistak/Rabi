@@ -4,7 +4,7 @@ import { kart, konu, program, tema } from '../tip'
  * 12. sınıf Kimya — **2018 programı** (MEB Ortaöğretim Kimya).
  *
  * Maarif Modeli'nin 12. sınıfı yayımlanmadı; bugünün 12. sınıfları ve
- * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-takibi.md`). Tema
+ * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-anlatimi.md`). Tema
  * adları bu yüzden 2018 programının ünite adlarından: Kimya ve Elektrik,
  * Karbon Kimyasına Giriş, Organik Bileşikler, Enerji Kaynakları ve Bilimsel
  * Gelişmeler. `maarif.test.ts` bu programı denetlemiyor (iskelette 12 yok).
