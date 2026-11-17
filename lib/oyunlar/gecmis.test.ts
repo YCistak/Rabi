@@ -61,6 +61,17 @@ describe('yakinlariSonaAt', () => {
   it('havuzun tamamı görüldüyse en uzun süredir görülmeyen önce', () => {
     expect(yakinlariSonaAt(['c', 'a', 'b'], ['a', 'b', 'c'], anahtar)).toEqual(['a', 'b', 'c'])
   })
+
+  it('ardışık üç turda havuz yeterliyken son turun sorularını başa almaz', () => {
+    const havuz = ['a', 'b', 'c', 'd', 'e', 'f']
+    const ilkTur = ['a', 'b']
+    const ikinciTur = yakinlariSonaAt(havuz, ilkTur, anahtar).slice(0, 2)
+    const gecmis = [...ilkTur, ...ikinciTur]
+    const ucuncuTur = yakinlariSonaAt(havuz, gecmis, anahtar).slice(0, 2)
+
+    expect(ikinciTur).toEqual(['c', 'd'])
+    expect(ucuncuTur).toEqual(['e', 'f'])
+  })
 })
 
 describe('turSirasi + geçmiş', () => {

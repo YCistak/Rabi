@@ -147,6 +147,7 @@ export function KavramOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -162,6 +163,7 @@ export function KavramOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('kavram')
 
@@ -236,11 +238,11 @@ export function KavramOyunuEkrani({
       const seviye = zorlukRef.current
       const suzulmus = zorluktaSuz(KAVRAM_HAVUZU, seviye)
       return (
-        tahtaHazirla(kullanilanRef.current, suzulmus, Math.random, KAVRAM_HAVUZU) ??
-        tahtaHazirla(kullanilanRef.current)
+        tahtaHazirla(kullanilanRef.current, suzulmus, Math.random, KAVRAM_HAVUZU, gorulenler) ??
+        tahtaHazirla(kullanilanRef.current, KAVRAM_HAVUZU, Math.random, KAVRAM_HAVUZU, gorulenler)
       )
     },
-    [bankaHavuzu, bankaTuru, zorlukRef],
+    [bankaHavuzu, bankaTuru, gorulenler, zorlukRef],
   )
 
   const turBaslat = useCallback(() => {

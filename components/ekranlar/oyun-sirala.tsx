@@ -25,7 +25,8 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { siraladanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { bankaKimligi, siraladanBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { yakinlariSonaAt } from '@/lib/oyunlar/gecmis'
 import {
   TUR_SORU_SINIRI,
   akisUret,
@@ -108,6 +109,7 @@ export function SiralaOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -123,6 +125,7 @@ export function SiralaOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('sirala')
 
@@ -194,7 +197,7 @@ export function SiralaOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(bankadanSorular(havuz))
-        : akisUret((seviye) => siralaTuruHazirla(seviye, TUR_SORU_SINIRI)),
+        : akisUret((seviye) => yakinlariSonaAt(siralaTuruHazirla(seviye, TUR_SORU_SINIRI), gorulenler, (s) => bankaKimligi(siraladanBanka(s)))),
     )
     zorluguSifirla()
     setSira(0)
@@ -205,7 +208,7 @@ export function SiralaOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<Yanlis>[], yarim = false) => {

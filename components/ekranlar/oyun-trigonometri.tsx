@@ -28,7 +28,8 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { trigdenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { bankaKimligi, trigdenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { yakinlariSonaAt } from '@/lib/oyunlar/gecmis'
 import {
   TUR_SORU_SINIRI,
   akisUret,
@@ -101,6 +102,7 @@ export function TrigonometriOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -116,6 +118,7 @@ export function TrigonometriOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('trigonometri')
 
@@ -167,7 +170,7 @@ export function TrigonometriOyunuEkrani({
     setSorular(
       bankaTuru
         ? tekAkis(bankaTuruHazirla(havuz))
-        : akisUret((seviye) => trigTuruHazirla(TUR_SORU_SINIRI, seviye)),
+        : akisUret((seviye) => yakinlariSonaAt(trigTuruHazirla(TUR_SORU_SINIRI, seviye), gorulenler, (s) => bankaKimligi(trigdenBanka(s.soru)))),
     )
     zorluguSifirla()
     setSira(0)
@@ -177,7 +180,7 @@ export function TrigonometriOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<TrigSorusu>[], yarim = false) => {

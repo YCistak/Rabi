@@ -1,6 +1,7 @@
 import type { EdebiyatDonemi, EdebiyatEsi } from './edebiyat-havuzu'
 import { EDEBIYAT_HAVUZU } from './edebiyat-havuzu'
 import { karistir, sec } from './tur'
+import { yakinlariSonaAt } from './gecmis'
 
 /**
  * Edebiyat eşleştirme oyununun el (hand) kurucusu.
@@ -38,11 +39,12 @@ function tekYazarlaSec(
   esler: readonly EdebiyatEsi[],
   adet: number,
   rastgele: () => number,
+  gorulenler: readonly string[],
 ): EdebiyatEsi[] {
   const secilen: EdebiyatEsi[] = []
   const yazarlar = new Set<string>()
 
-  for (const es of karistir(esler, rastgele)) {
+  for (const es of yakinlariSonaAt(karistir(esler, rastgele), gorulenler, (e) => `edebiyat:${e.eser}`)) {
     if (secilen.length >= adet) break
     if (yazarlar.has(es.yazar)) continue
     yazarlar.add(es.yazar)
@@ -61,6 +63,7 @@ export function elHazirla(
   kullanilan: ReadonlySet<string> = new Set(),
   havuz: readonly EdebiyatEsi[] = EDEBIYAT_HAVUZU,
   rastgele: () => number = Math.random,
+  gorulenler: readonly string[] = [],
 ): EdebiyatEli | null {
   const kalan = havuz.filter((e) => !kullanilan.has(e.eser))
   if (farkliYazar(kalan) < EL_BOYUTU) return null
@@ -82,7 +85,7 @@ export function elHazirla(
       ? sec(uygunDonemler, rastgele)
       : ([null, kalan] as [null, EdebiyatEsi[]])
 
-  const esler = tekYazarlaSec(kaynak, EL_BOYUTU, rastgele)
+  const esler = tekYazarlaSec(kaynak, EL_BOYUTU, rastgele, gorulenler)
   if (esler.length < EL_BOYUTU) return null
 
   return {

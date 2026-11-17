@@ -24,7 +24,8 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { izohipstenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { bankaKimligi, izohipstenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { yakinlariSonaAt } from '@/lib/oyunlar/gecmis'
 import {
   TUR_SORU_SINIRI,
   elerMi,
@@ -83,8 +84,8 @@ type GeriBildirim = {
  * içinde kayıyor (`lib/oyunlar/uyum.ts`) ve sıradaki sorunun hangi seviyeden
  * geleceği ancak oraya gelindiğinde belli oluyor.
  */
-function turSirasiniKur(): SoruAkisi<IzohipsOyunSorusu> {
-  return akisUret((zorluk) => turHazirla(zorluk, TUR_SORU_SINIRI))
+function turSirasiniKur(gorulenler: readonly string[]): SoruAkisi<IzohipsOyunSorusu> {
+  return akisUret((zorluk) => yakinlariSonaAt(turHazirla(zorluk, TUR_SORU_SINIRI), gorulenler, (s) => bankaKimligi(izohipstenBanka(s.soru))))
 }
 
 /** Banka kayıtlarından soru havuzu; kayıt tohumu taşıyor, harita ondan çiziliyor. */
@@ -104,6 +105,7 @@ export function IzohipsOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -117,6 +119,7 @@ export function IzohipsOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('izohips')
 
@@ -160,7 +163,7 @@ export function IzohipsOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? tekAkis(havuz) : turSirasiniKur())
+    setSorular(bankaTuru ? tekAkis(havuz) : turSirasiniKur(gorulenler))
     zorluguSifirla()
     setSira(0)
     setCevaplar([])
@@ -169,7 +172,7 @@ export function IzohipsOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru, zorluguSifirla])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru, zorluguSifirla])
 
   const turBitir = useCallback(
     (verilenler: Cevap<IzohipsSorusu>[], yarim = false) => {

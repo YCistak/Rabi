@@ -1,6 +1,7 @@
 import type { KavramEsi, KavramKonusu } from './kavram-havuzu'
 import { KAVRAM_HAVUZU } from './kavram-havuzu'
 import { karistir, sec } from './tur'
+import { yakinlariSonaAt } from './gecmis'
 
 /**
  * Kavram eşleştirme oyununun tahta kurucusu.
@@ -60,6 +61,7 @@ export function tahtaHazirla(
    * konu bütünlüğünü kaybederdi — asıl zorluk oradan geliyor.
    */
   celdiriciHavuzu: readonly KavramEsi[] = havuz,
+  gorulenler: readonly string[] = [],
 ): KavramTahtasi | null {
   const kalan = havuz.filter((e) => !kullanilan.has(e.kavram))
   if (kalan.length < KAVRAM_SAYISI || celdiriciHavuzu.length < TANIM_SAYISI) return null
@@ -82,7 +84,7 @@ export function tahtaHazirla(
   const [konu, kaynak] =
     uygunKonular.length > 0 ? sec(uygunKonular, rastgele) : ([null, kalan] as [null, KavramEsi[]])
 
-  const esler = karistir(kaynak, rastgele).slice(0, KAVRAM_SAYISI)
+  const esler = yakinlariSonaAt(karistir(kaynak, rastgele), gorulenler, (e) => `kavram:${e.kavram}`).slice(0, KAVRAM_SAYISI)
   if (esler.length < KAVRAM_SAYISI) return null
 
   // Çeldiriciler: aynı konudan, tahtadaki üç kavramın dışından. Konu tek başına

@@ -162,6 +162,7 @@ export function EdebiyatOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
@@ -178,6 +179,7 @@ export function EdebiyatOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('edebiyat')
 
@@ -252,10 +254,10 @@ export function EdebiyatOyunuEkrani({
       // Seçilen seviyede el kuracak kadar eser kalmadıysa tüm havuza düşülüyor:
       // turun ortasında durmak, bir soru fazla kolay gelmesinden kötü.
       return (
-        elHazirla(kullanilanRef.current, suzulmus) ?? elHazirla(kullanilanRef.current)
+        elHazirla(kullanilanRef.current, suzulmus, Math.random, gorulenler) ?? elHazirla(kullanilanRef.current, EDEBIYAT_HAVUZU, Math.random, gorulenler)
       )
     },
-    [bankaHavuzu, bankaTuru, zorlukRef],
+    [bankaHavuzu, bankaTuru, gorulenler, zorlukRef],
   )
 
   const turBaslat = useCallback(() => {

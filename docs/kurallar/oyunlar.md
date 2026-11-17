@@ -4,6 +4,10 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 ## Ortak kurallar
 
+- Yeni tur hazırlanırken her oyun, banka kimliğiyle tutulan yakın soru geçmişini
+  seçim sırasına uygular: önce karıştırır, sonra yakın görülenleri sona atar.
+  Banka turları bunun dışındadır; amaçları kayıtlı yanlışları yeniden sormaktır.
+
 - **Efektler ortak koddan**, oyun dosyalarına kanca yok: kabuk olayları sayaçtan
   türetir (`dogru`, `yanlis`, `kalan` props). Ses `lib/oyunlar/oyun-sesi.ts`, görsel
   `components/oyun-kabuk.tsx` + `globals.css`.
