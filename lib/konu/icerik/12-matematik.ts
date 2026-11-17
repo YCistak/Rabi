@@ -4,7 +4,7 @@ import { kart, konu, program, tema } from '../tip'
  * 12. sınıf Matematik — **2018 programı** (MEB Ortaöğretim Matematik).
  *
  * Maarif Modeli'nin 12. sınıfı yayımlanmadı; bugünün 12. sınıfları ve
- * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-takibi.md`). Bu
+ * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-anlatimi.md`). Bu
  * yüzden 9–11'in tersine tema adları Maarif'ten değil 2018 programının ünite
  * adlarından: Diziler, Trigonometri, Türev, İntegral, Analitik Geometri.
  * `maarif.test.ts` bu programı denetlemiyor (iskelette 12 yok).

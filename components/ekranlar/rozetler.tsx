@@ -12,7 +12,6 @@ import type {
 } from '@/lib/types'
 import type { KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import type { OkumaSeansi } from '@/lib/konu/okuma-suresi'
-import type { YksTakip } from '@/lib/konu-takibi/kayit'
 import {
   KADEME_ADI,
   ROZETLER,
@@ -130,7 +129,6 @@ export function RozetlerEkrani({
   oyunlar,
   bankaDusen,
   bankaBoyutu,
-  yksTakip,
   haritaIlerleme,
   okumaGecmisi,
   kazanilmis,
@@ -145,7 +143,6 @@ export function RozetlerEkrani({
   oyunlar: OyunKayitlari
   bankaDusen: number
   bankaBoyutu: number
-  yksTakip: YksTakip
   haritaIlerleme: KonuIlerlemeleri
   okumaGecmisi: OkumaSeansi[]
   kazanilmis: KazanilanRozet[]
@@ -165,7 +162,6 @@ export function RozetlerEkrani({
         oyunlar,
         bankaDusen,
         bankaBoyutu,
-        yksTakip,
         haritaIlerleme,
         okumaGecmisi,
       }),
@@ -180,7 +176,6 @@ export function RozetlerEkrani({
       oyunlar,
       bankaDusen,
       bankaBoyutu,
-      yksTakip,
       haritaIlerleme,
       okumaGecmisi,
     ],
@@ -195,7 +190,7 @@ export function RozetlerEkrani({
   const kazanilanlar = useMemo(() => liste.filter((s) => s.kazanildi), [liste])
   const kilitliler = useMemo(() => liste.filter((s) => !s.kazanildi), [liste])
 
-  const toplam = ROZETLER.length
+  const toplam = liste.length
   const oran = toplam > 0 ? kazanilanlar.length / toplam : 0
 
   const bolumler: { ad: string; satirlar: RozetIlerlemesi[] }[] = [

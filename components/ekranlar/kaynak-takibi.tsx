@@ -48,8 +48,7 @@ import { BaslikSatiri, Buton, Kart, Onay, SuzgecKutusu, kartGirisi, useKapatmaOn
  * işaretlenip geri alınıyor.
  *
  * Tek geri: açık kaynak bir geri katmanı; kabuğun "Geri"si, Android geri
- * tuşu ve iOS kenar kaydırması önce kaynağı kapatıyor (Konu Takibi'ndeki
- * ders ekranıyla aynı sıra).
+ * tuşu ve iOS kenar kaydırması önce kaynağı kapatıyor.
  */
 
 /** Toast ekranda ne kadar duruyor. */

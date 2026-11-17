@@ -3,7 +3,6 @@ import {
   KADEME_SIRASI,
   ROZETLER,
   bildirilecekler,
-  bitenKonuSayisi,
   hakEdilenler,
   kademeSayimi,
   rozetDurumu,
@@ -12,7 +11,6 @@ import {
 } from './rozetler'
 import type { Deneme, GunlukKayit, PomodoroSeans, Sablon, YanlisSoru } from './types'
 import type { KonuIlerlemeleri } from './konu/ilerleme'
-import type { YksTakip } from './konu-takibi/kayit'
 
 function denemeler(sayi: number): Deneme[] {
   return Array.from({ length: sayi }, (_, i) => ({
@@ -75,7 +73,6 @@ describe('rozetDurumu', () => {
       yanlisCozulen: 0,
       bankaDusen: 0,
       bankaTemiz: false,
-      konuBitti: 0,
       haritaKonu: 0,
       konuOkumaDakikasi: 0,
       oyunTuru: 0,
@@ -348,8 +345,8 @@ describe('rozetListesi', () => {
     expect(on.mevcut).toBe(3)
   })
 
-  it('bütün rozetleri kapsar', () => {
-    expect(rozetListesi(rozetDurumu({ ...BOS }), [])).toHaveLength(ROZETLER.length)
+  it('gizli olmayan bütün rozetleri kapsar', () => {
+    expect(rozetListesi(rozetDurumu({ ...BOS }), [])).toHaveLength(ROZETLER.filter((r) => !r.gizli).length)
   })
 
   it('kazanılanlar en üstte', () => {
@@ -427,34 +424,15 @@ describe('bildirilecekler', () => {
 })
 
 describe('konu rozetleri', () => {
-  function takip(konular: YksTakip['konular']): YksTakip {
-    return { surum: 2, konular }
-  }
-
-  it('Konu Takibi yalnız "Bitti" işaretli konuları sayar', () => {
-    const t = takip({
-      'tyt-trk-sozcuk': { bitti: '2026-10-01' },
-      'tyt-trk-cumle': { okul: '2026-10-01', soru: '2026-10-02' },
-      'tyt-fiz-kuvvet': { okul: '2026-10-01', bitti: '2026-10-03' },
-    })
-    expect(bitenKonuSayisi(t)).toBe(2)
-  })
-
-  it('birleşen satırın iki kimliği tek konu sayılır', () => {
-    const t = takip({
-      'tyt-mat-fonksiyon': { bitti: '2026-10-01' },
-      'ayt-mat-fonksiyon': { bitti: '2026-10-01' },
-      'tyt-mat-polinom': { bitti: '2026-10-02' },
-    })
-    expect(bitenKonuSayisi(t)).toBe(2)
-  })
-
-  it('on biten konu bronz rozeti verir, elli gümüşü', () => {
-    const konular: YksTakip['konular'] = {}
-    for (let i = 0; i < 10; i++) konular[`k${i}`] = { bitti: '2026-10-01' }
-    const ids = hakEdilenler(rozetDurumu({ ...BOS, yksTakip: takip(konular) })).map((r) => r.id)
-    expect(ids).toContain('konu-bitti-10')
+  it('kaldırılan Konu Takibi rozetleri yeni kazanım olarak gelmez', () => {
+    const ids = hakEdilenler(rozetDurumu(BOS)).map((r) => r.id)
+    expect(ids).not.toContain('konu-bitti-10')
     expect(ids).not.toContain('konu-bitti-50')
+  })
+
+  it('kazanılmış kaldırılan rozeti görünür tutar', () => {
+    const liste = rozetListesi(rozetDurumu(BOS), [{ rozetId: 'konu-bitti-10', tarih: '2026-10-01' }])
+    expect(liste.find((s) => s.rozet.id === 'konu-bitti-10')?.kazanildi).toBe(true)
   })
 
   it('harita yalnız sonuna kadar okunan desteleri sayar', () => {

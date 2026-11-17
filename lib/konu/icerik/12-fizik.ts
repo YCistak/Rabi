@@ -4,7 +4,7 @@ import { kart, konu, program, tema } from '../tip'
  * 12. sınıf Fizik — **2018 programı** (MEB Ortaöğretim Fizik, 12. sınıf).
  *
  * Maarif Modeli'nin 12. sınıfı yayımlanmadı; bugünün 12. sınıfları ve
- * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-takibi.md`). Tema
+ * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-anlatimi.md`). Tema
  * adları 2018 programının ünite adları: Çembersel Hareket, Basit Harmonik
  * Hareket, Dalga Mekaniği, Atom Fiziğine Giriş ve Radyoaktivite, Modern
  * Fizik, Modern Fiziğin Teknolojideki Uygulamaları. `maarif.test.ts` bu

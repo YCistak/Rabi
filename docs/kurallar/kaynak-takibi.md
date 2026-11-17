@@ -19,8 +19,7 @@ Araçlar › Çalışma › **Kaynak Takibi** (`components/ekranlar/kaynak-takib
   bir eşleme ekle. `kaynak.test.ts` her listede kimliklerin tekil olduğunu denetler.
 - **Tik yalnız bitti/bitmedi**, Yapılacaklar'daki görev gibi: bütün satır dokunulur,
   bitince yeşil ve üstü çizili. Ünite başlığındaki yuvarlak üniteyi toplu işaretler,
-  hepsi işaretliyse toplu kaldırır. Konu Takibi'nin aşamalarıyla (okul, soru)
-  **bağlanmaz**.
+  hepsi işaretliyse toplu kaldırır.
 - Renk derse ait (`--konu-<ders>`): kartın simge kutusu, alt satır ve çubuk; kaynağın
   içi `dersVurgusu` ile ders renginde. Bitince çubuk yeşil.
 - **Liste ders ders ayrılır** (kullanıcı istedi, 2026-10; `derseGoreGrupla`): ders

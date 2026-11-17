@@ -8,7 +8,7 @@ import { cografya12Cevre } from './12-cografya-t4'
  * 12. sınıf Coğrafya — **2018 programı** (MEB Ortaöğretim Coğrafya, 12. sınıf).
  *
  * Maarif Modeli'nin 12. sınıfı yayımlanmadı; bugünün 12. sınıfları ve
- * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-takibi.md`).
+ * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-anlatimi.md`).
  * Tema adları 2018 programının dört ünitesinden: Doğal Sistemler, Beşerî
  * Sistemler, Küresel Ortam: Bölgeler ve Ülkeler, Çevre ve Toplum. Kazanım
  * kodları (12.1.1 … 12.4.4) MEB ölçme-değerlendirme tablolarından

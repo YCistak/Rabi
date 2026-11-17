@@ -49,7 +49,6 @@ import {
 import { cizimAnahtari } from '@/lib/cizim'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
-import type { YksTakip } from '@/lib/konu-takibi/kayit'
 import type { Kaynak } from '@/lib/kaynak-takibi/kaynak'
 import { gorevIzniIste, izinIste } from '@/lib/bildirim'
 import { saatYaz } from '@/lib/hatirlatma'
@@ -156,8 +155,8 @@ export function AyarlarEkrani({
     /** Konu Anlatımı kayıtları — okunan konular ve bilinmeyen kartlar. */
     konuIlerleme?: KonuIlerlemeleri
     bilinmeyenKartlar?: BilinmeyenKart[]
-    /** Konu Takibi — YKS konularında işaretlenen aşamalar. */
-    yksKonuTakibi?: YksTakip
+    /** Kaldırılan Konu Takibi'nin eski yedek verisi; uyumluluk için korunur. */
+    yksKonuTakibi?: unknown
     /** Kaynak Takibi — test kitapları ve bitirilen konular. */
     kaynakTakibi?: Kaynak[]
     /** Rabi'yi Giydir — giyilen eşyalar. */

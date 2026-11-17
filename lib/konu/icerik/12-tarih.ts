@@ -10,7 +10,7 @@ import { tarih12Kuresel } from './12-tarih-t7'
  * Atatürkçülük + Çağdaş Türk ve Dünya Tarihi).
  *
  * Maarif Modeli'nin 12. sınıfı yayımlanmadı; bugünün 12. sınıfları ve
- * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-takibi.md`).
+ * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-anlatimi.md`).
  * Tema adları 2018 ünitelerinden: Millî Mücadele, Atatürkçülük ve Türk
  * İnkılabı, İki Savaş Arası, II. Dünya Savaşı, Soğuk Savaş, Yumuşama ve
  * küreselleşme. `maarif.test.ts` bu programı denetlemiyor (iskelette 12 yok).

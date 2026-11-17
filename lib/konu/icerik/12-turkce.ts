@@ -9,7 +9,7 @@ import { denemeSoylevTemalari } from './12-turkce-deneme'
  * Dili ve Edebiyatı, 12. sınıf).
  *
  * Maarif Modeli'nin 12. sınıfı yayımlanmadı; bugünün 12. sınıfları ve
- * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-takibi.md`). Tema
+ * mezunlar 2018 programını görüyor (bkz. `docs/kurallar/konu-anlatimi.md`). Tema
  * adları 2018 programının ünite adlarından: Giriş, Hikâye, Şiir, Roman,
  * Tiyatro, Deneme, Söylev. `maarif.test.ts` bu dersi zaten denetlemiyor.
  *

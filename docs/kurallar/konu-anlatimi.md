@@ -129,10 +129,6 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   yarım özellik gibi duruyordu); dersi yazılınca kendiliğinden görünür. 12, 8 dersle (2018 programı) `KONU_SINIFLARI`na girdi ve
   hücre kendiliğinden açıldı; `HaritaSinifi` artık `KonuSinifi`nin eşi. Kilitli "yapım
   aşamasında" kartı yalnız içeriği boşalan sınıf ya da eski kayıt için duruyor.
-- **Konu Takibi yönlendirmesi şerit bırakır:** "Haritaya git" sınıfı değiştirir; kendi
-  sınıfından farklıysa patikanın üstünde kapatılabilir şerit ("Trigonometri için 10.
-  sınıfa geçildi · Kendi sınıfıma dön", `yonlendirmeMetni`); sınıf elle değişince
-  kalkar.
 - **Patika** (`components/ekranlar/konu-haritasi.tsx`, `tasarim/konu-haritasi.html`):
   yeşil kitap anlatım, turuncu kitap çifti sorular, gri kilitli; sonda `Sandik`.
   Kitap rengi işe ait (`--success`, `--primary-parlak`), derse göre değişmez; derse

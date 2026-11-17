@@ -28,7 +28,6 @@ kuralı oraya yazılır, buraya değil; yeni dosya açarsan aşağıdaki dizine 
 | [denemeler.md](docs/kurallar/denemeler.md) | deneme ekleme, deneme şablonları, seviye tespit sınıfı ve ders düzenleme |
 | [yanlis-soru.md](docs/kurallar/yanlis-soru.md) | yanlış soru ekleme, ders listesi, fotoğrafa çizim |
 | [yapilacaklar-ve-soru-takibi.md](docs/kurallar/yapilacaklar-ve-soru-takibi.md) | Yapılacaklar, Soru Takibi, ortak takvim bileşeni |
-| [konu-takibi.md](docs/kurallar/konu-takibi.md) | YKS Konu Takibi (sınıf → okul dersi işaretleme, haritayla eşleme) |
 | [kaynak-takibi.md](docs/kurallar/kaynak-takibi.md) | Kaynak Takibi (test kitapları, sınıf/ders konu listeleri) |
 | [aylik-ozet.md](docs/kurallar/aylik-ozet.md) | aylık özet, arşiv, paylaşım afişi |
 | [basarimlar.md](docs/kurallar/basarimlar.md) | başarımlar/rozetler, ödül sistemi fikirleri |
@@ -37,6 +36,8 @@ kuralı oraya yazılır, buraya değil; yeni dosya açarsan aşağıdaki dizine 
 | [ios.md](docs/kurallar/ios.md) | iOS'a dokunan her iş (Live Activity, Screen Time, imza, geri/sekme kaydırma) |
 
 ## Dil
+
+Konu Takibi kullanıcı kaldırttı (2026-11-17); geri getirme.
 
 **Kod dahil her şey Türkçe.** Değişken, fonksiyon, tip, dosya ve klasör adları Türkçe;
 yorumlar Türkçe. İstisna: çerçevenin dayattığı adlar (`page.tsx`, `layout.tsx`,
