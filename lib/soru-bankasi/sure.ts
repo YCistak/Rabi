@@ -21,6 +21,31 @@ export function sayacKur(soruSayisi: number, simdi: number, aktif = 0, birikmisS
   return { soruSureleri, aktif, baslangic: simdi }
 }
 
+/**
+ * Kaydedilmiş oturumdan sayaç: soru başına süreler aynen geri gelir (test
+ * sonundaki "en çok vakit alan" yarım bırakılıp dönülen testte de doğru).
+ * Soru sayısı değiştiyse (veri güncellendi) fazlası atılır, eksiği sıfırla
+ * dolar; bozuk değer sıfır sayılır.
+ */
+export function sayacGeriYukle(
+  sureler: readonly number[],
+  soruSayisi: number,
+  simdi: number,
+  aktif = 0,
+  calisiyor = true,
+): SureSayaci {
+  const soruSureleri = Array.from({ length: soruSayisi }, (_, sira) => {
+    const sure = sureler[sira]
+    return typeof sure === 'number' && Number.isFinite(sure) && sure > 0 ? sure : 0
+  })
+  const gecerliAktif = Math.min(Math.max(0, aktif), Math.max(0, soruSayisi - 1))
+  return { soruSureleri, aktif: gecerliAktif, baslangic: calisiyor ? simdi : null }
+}
+
+export function sayacCalisiyor(sayac: SureSayaci): boolean {
+  return sayac.baslangic !== null
+}
+
 /** Çalışan sayacın o ana kadar geçenini aktif soruya yazar. */
 function isle(sayac: SureSayaci, simdi: number): SureSayaci {
   if (sayac.baslangic === null) return sayac

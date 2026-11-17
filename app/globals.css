@@ -3174,3 +3174,32 @@ body {
     animation: none;
   }
 }
+
+/*
+  Soru Bankası: kitap sayfasındaki sorunun "Çöz" ile tam ekrana büyümesi
+  (`components/soru-bankasi/soru-sayfasi.tsx`).
+
+  Tam ekran katman kuralıyla aynı: `transform` değil `clip-path` (içinden
+  onay penceresi gibi `fixed` katmanlar açılıyor). Kırpma, sayfadaki sorunun
+  kutusundan (`--buyume-*`, ekran kenarlarına uzaklık) ekranın tamamına açılır;
+  öğrenci hangi sorunun büyüdüğünü yerinden görür. Yalnız giriş; sayfaya dönüş
+  anında, dönülen soru kısa bir halkayla vurgulanır. Dolgu `backwards`.
+*/
+@keyframes soruBuyume {
+  from {
+    clip-path: inset(var(--buyume-ust, 30%) var(--buyume-sag, 0px) var(--buyume-alt, 30%) var(--buyume-sol, 0px) round 18px);
+  }
+  to {
+    clip-path: inset(0 0 0 0 round 0);
+  }
+}
+
+.soru-buyume {
+  animation: soruBuyume 240ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soru-buyume {
+    animation: none;
+  }
+}

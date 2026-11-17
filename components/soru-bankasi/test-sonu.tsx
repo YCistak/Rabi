@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronRight, RotateCcw, Star, Timer } from 'lucide-react'
+import { ArrowLeft, BookOpen, ChevronRight, CircleX, RotateCcw, SkipForward, Star, Timer } from 'lucide-react'
 import type { TestDegerlendirmesi } from '@/lib/soru-bankasi/oturum'
 import type { SureOzeti } from '@/lib/soru-bankasi/sure'
 import { sureYazisi } from '@/lib/soru-bankasi/sure'
@@ -9,7 +9,12 @@ function sayiYazisi(deger: number): string {
   return Number.isInteger(deger) ? String(deger) : deger.toFixed(2).replace('.', ',').replace(/0$/, '')
 }
 
-/** Test sonu: büyük özet, süre, en çok vakit alan sorular, ızgara ve sonraki adımlar. */
+/**
+ * Test sonu: büyük özet, süre, gözden geçirme (yanlışlar, boş/pas, sonra
+ * bakılacaklar yalnız kendi aralarında gezilir; sayfa sayfa inceleme), en çok
+ * vakit alan sorular, ızgara ve sonraki adımlar. Çizimler oturumda durduğu
+ * için açılan soruda karalaması da görünür.
+ */
 export function TestSonu({
   baslik,
   mod,
@@ -17,8 +22,13 @@ export function TestSonu({
   degerlendirme,
   sure,
   isaretliler,
+  paslar,
+  yanlislar,
+  boslar,
   sonrakiTestVar,
   onSoruAc,
+  onListeAc,
+  onSayfadaIncele,
   onYanlislariTekrar,
   onSonrakiTest,
   onKonuyaDon,
@@ -29,8 +39,14 @@ export function TestSonu({
   degerlendirme: TestDegerlendirmesi
   sure: SureOzeti
   isaretliler: ReadonlySet<number>
+  paslar: ReadonlySet<number>
+  yanlislar: number[]
+  boslar: number[]
   sonrakiTestVar: boolean
-  onSoruAc: (sira: number) => void
+  onSoruAc: (sira: number, liste?: number[]) => void
+  /** Listedeki sorular yalnız kendi aralarında gezilerek açılır. */
+  onListeAc: (liste: number[]) => void
+  onSayfadaIncele: () => void
   onYanlislariTekrar: () => void
   onSonrakiTest: () => void
   onKonuyaDon: () => void
@@ -103,10 +119,57 @@ export function TestSonu({
             </dl>
           </section>
 
+          <section className="golge-kart mt-3 overflow-hidden rounded-2xl bg-card">
+            <h2 className="px-4 pt-4 pb-1 font-display font-extrabold">Gözden geçir</h2>
+            <ul>
+              {(
+                [
+                  ['Yanlışların', yanlislar, <CircleX key="y" size={18} className="text-danger" />],
+                  ['Boş ve pas geçtiklerin', boslar, <SkipForward key="b" size={18} className="text-muted-foreground" />],
+                  [
+                    'Sonra bak dediklerin',
+                    isaretliListe,
+                    <Star key="s" size={18} className="fill-warning-dolu text-warning-dolu" />,
+                  ],
+                ] as const
+              ).map(([ad, liste, simge]) =>
+                liste.length === 0 ? null : (
+                  <li key={ad} className="border-t border-border first:border-t-0">
+                    <button
+                      type="button"
+                      onClick={() => onListeAc([...liste])}
+                      className="flex min-h-12 w-full items-center gap-3 px-4 text-left active:bg-muted"
+                    >
+                      {simge}
+                      <span className="font-extrabold">{ad}</span>
+                      <span className="rakam ml-auto font-bold text-muted-foreground">{liste.length}</span>
+                      <ChevronRight size={17} className="text-muted-foreground" />
+                    </button>
+                  </li>
+                ),
+              )}
+              <li className="border-t border-border first:border-t-0">
+                <button
+                  type="button"
+                  onClick={onSayfadaIncele}
+                  className="flex min-h-12 w-full items-center gap-3 px-4 text-left active:bg-muted"
+                >
+                  <BookOpen size={18} className="text-primary" />
+                  <span className="font-extrabold">Sayfa sayfa incele</span>
+                  <ChevronRight size={17} className="ml-auto text-muted-foreground" />
+                </button>
+              </li>
+            </ul>
+          </section>
+
           <section className="golge-kart mt-3 rounded-2xl bg-card p-4">
             <h2 className="font-display font-extrabold">Sorular</h2>
             <p className="mb-3 text-[12.5px] font-bold text-muted-foreground">Dokun, çözümüyle aç.</p>
-            <IzgaraHucreleri durumlar={sonuclar} isaretliler={isaretliler} onSec={onSoruAc} />
+            <IzgaraHucreleri
+              durumlar={sonuclar.map((d, i) => (d === '-' && paslar.has(i) ? 'pas' : d))}
+              isaretliler={isaretliler}
+              onSec={(sira) => onSoruAc(sira)}
+            />
             <IzgaraAciklamasi deneme={false} />
           </section>
 
@@ -134,26 +197,6 @@ export function TestSonu({
                   </li>
                 ))}
               </ul>
-            </section>
-          )}
-
-          {isaretliListe.length > 0 && (
-            <section className="golge-kart mt-3 rounded-2xl bg-card p-4">
-              <h2 className="flex items-center gap-2 font-display font-extrabold">
-                <Star size={16} className="fill-warning-dolu text-warning-dolu" /> Sonra bakmak için işaretlediklerin
-              </h2>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {isaretliListe.map((sira) => (
-                  <button
-                    key={sira}
-                    type="button"
-                    onClick={() => onSoruAc(sira)}
-                    className="rakam min-h-11 rounded-xl bg-muted px-4 font-extrabold active:brightness-95"
-                  >
-                    Soru {sira + 1}
-                  </button>
-                ))}
-              </div>
             </section>
           )}
 

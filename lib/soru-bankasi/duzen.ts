@@ -31,10 +31,36 @@ export function gorunurUzunluk(metin: string): number {
   return uzunluk
 }
 
-export function sikDuzeni(siklar: readonly string[]): SikDuzeni {
+export type SikSinirlari = { bes: number; iki: number }
+
+export function sikDuzeni(
+  siklar: readonly string[],
+  sinirlar: SikSinirlari = { bes: BES_SUTUN_EN_COK, iki: IKI_SUTUN_EN_COK },
+): SikDuzeni {
   if (siklar.some((sik) => sik.includes('\n'))) return 'liste'
   const enUzun = Math.max(...siklar.map(gorunurUzunluk))
-  if (enUzun <= BES_SUTUN_EN_COK) return 'bes'
-  if (enUzun <= IKI_SUTUN_EN_COK) return 'iki'
+  if (enUzun <= sinirlar.bes) return 'bes'
+  if (enUzun <= sinirlar.iki) return 'iki'
   return 'liste'
+}
+
+/**
+ * Öğrencinin seçtiği şık düzeni (cihaz tercihi). `kitap` uzunluğa göre
+ * kendiliğinden seçer (test kitabındaki gibi); `tek` hep alt alta; `iki`
+ * sığdığı sürece iki sütun — iki sütuna sığmayan uzun şık yine alt alta
+ * gelir, yoksa satır kırılıp okunmaz olurdu.
+ */
+export type SikDuzeniTercihi = 'kitap' | 'tek' | 'iki'
+/** İki sütun zorlandığında bir hücreye (iki satıra kırılarak) sığan en uzun şık. */
+export const IKI_SUTUN_ZORLA_EN_COK = 24
+
+export function sikDuzeniSec(siklar: readonly string[], tercih: SikDuzeniTercihi): SikDuzeni {
+  if (tercih === 'kitap') return sikDuzeni(siklar)
+  if (tercih === 'tek') return 'liste'
+  if (siklar.some((sik) => sik.includes('\n'))) return 'liste'
+  return Math.max(...siklar.map(gorunurUzunluk)) <= IKI_SUTUN_ZORLA_EN_COK ? 'iki' : 'liste'
+}
+
+export function sikDuzeniTercihiCoz(ham: unknown): SikDuzeniTercihi {
+  return ham === 'tek' || ham === 'iki' ? ham : 'kitap'
 }

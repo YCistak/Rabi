@@ -97,3 +97,44 @@ export function yarimTestBul(
   }
   return null
 }
+
+/**
+ * Soru şeridinde/ızgarada bir sorunun görünen hâli. Deneme bitmeden doğruluk
+ * gösterilmez (`cevaplandi`). Pas yalnız cevapsız soruda görünür: pas geçilip
+ * sonra çözülen soru artık cevaplıdır.
+ */
+export type HucreDurumu = 'd' | 'y' | '-' | 'cevaplandi' | 'pas'
+
+export function hucreDurumlari(
+  sonuclar: readonly SoruDurumu[],
+  secimler: Readonly<Record<number, number>>,
+  paslar: ReadonlySet<number>,
+  deneme: boolean,
+  bitti: boolean,
+): HucreDurumu[] {
+  return sonuclar.map((sonuc, sira) => {
+    if (bitti || !deneme) return sonuc !== '-' ? sonuc : paslar.has(sira) ? 'pas' : '-'
+    if (secimler[sira] !== undefined) return 'cevaplandi'
+    return paslar.has(sira) ? 'pas' : '-'
+  })
+}
+
+/**
+ * Önceki/sonraki soru. İnceleme listesi varsa (yalnız yanlışlar, yalnız
+ * pas geçilenler) o listede gezilir; liste dışındaki sorudan listenin en
+ * yakın sıradaki elemanına gidilir. Sınırda null.
+ */
+export function gezinmeHedefi(
+  sira: number,
+  yon: 1 | -1,
+  toplam: number,
+  liste: readonly number[] | null = null,
+): number | null {
+  if (liste && liste.length > 0) {
+    const sirali = [...liste].sort((a, b) => a - b)
+    const hedef = yon === 1 ? sirali.find((s) => s > sira) : [...sirali].reverse().find((s) => s < sira)
+    return hedef ?? null
+  }
+  const hedef = sira + yon
+  return hedef >= 0 && hedef < toplam ? hedef : null
+}

@@ -2,6 +2,7 @@ import { ChevronRight, Play, RotateCcw, Timer } from 'lucide-react'
 import type { BankaKonusu } from '@/lib/soru-bankasi/dizin'
 import { durumAl, ozet, TEST_BOYUTU, testlereBol, zorlukEtiketi } from '@/lib/soru-bankasi/mantik'
 import { yarimTestBul } from '@/lib/soru-bankasi/oturum'
+import { oturumAnahtari, sonOturum, type OturumKayitlari } from '@/lib/soru-bankasi/oturum-kaydi'
 import { kisaSureYazisi } from '@/lib/soru-bankasi/sure'
 import { testSonucuAl } from '@/lib/soru-bankasi/testler'
 import type { BankaSorusu, CalismaModu, SoruBankasiKaydi, SoruBankasiTestleri } from '@/lib/soru-bankasi/tip'
@@ -16,6 +17,7 @@ export function KonuSayfasi({
   sorular,
   kayit,
   testler,
+  oturumlar,
   mod,
   onMod,
   onAc,
@@ -26,6 +28,8 @@ export function KonuSayfasi({
   sorular: BankaSorusu[]
   kayit: SoruBankasiKaydi
   testler: SoruBankasiTestleri
+  /** Yarım bırakılan testler (kaldığın yerden). */
+  oturumlar: OturumKayitlari
   mod: CalismaModu
   onMod: (mod: CalismaModu) => void
   onAc: (test: number) => void
@@ -34,7 +38,20 @@ export function KonuSayfasi({
 }) {
   const konuOzeti = ozet(kayit, konu.id, sorular.length)
   const yanlislar = sorular.map((_, sira) => sira).filter((sira) => durumAl(kayit, konu.id, sira) === 'y')
-  const yarim = yarimTestBul(kayit, testler, konu.id, sorular.length)
+  // Önce yeni kayıt (deneme de yarım kalabilir), yoksa eski sürümün d/y'den bulduğu yarım alıştırma.
+  const kayitli = sonOturum(oturumlar, konu.id)
+  const testBoyu = (test: number) => Math.max(0, Math.min(TEST_BOYUTU, sorular.length - test * TEST_BOYUTU))
+  const yarim = kayitli
+    ? {
+        test: kayitli.test,
+        cozulen: Object.keys(kayitli.kayit.secimler).length,
+        toplam: testBoyu(kayitli.test),
+        mod: kayitli.kayit.mod,
+      }
+    : (() => {
+        const eski = yarimTestBul(kayit, testler, konu.id, sorular.length)
+        return eski && { ...eski, mod: 'alistirma' as CalismaModu }
+      })()
 
   return (
     <main className="sayfa-girisi mx-auto max-w-md px-4 pb-28">
@@ -79,7 +96,7 @@ export function KonuSayfasi({
           <span className="min-w-0 flex-1">
             <span className="block font-extrabold">Kaldığın yerden devam et</span>
             <span className="rakam block text-[12.5px] font-bold text-muted-foreground">
-              Test {yarim.test + 1} · {yarim.cozulen}/{yarim.toplam} · Alıştırma
+              Test {yarim.test + 1} · {yarim.cozulen}/{yarim.toplam} · {yarim.mod === 'deneme' ? 'Deneme' : 'Alıştırma'}
             </span>
           </span>
           <ChevronRight size={18} className="text-muted-foreground" />
@@ -115,7 +132,8 @@ export function KonuSayfasi({
           const bitti = sonuc !== undefined || kayittan.cozulen === test.length
           const dogru = sonuc?.dogru ?? kayittan.dogru
           const yanlis = sonuc?.yanlis ?? kayittan.yanlis
-          const yarimMi = yarim?.test === sira
+          const oturum = oturumlar[oturumAnahtari(konu.id, sira)]
+          const yarimMi = yarim?.test === sira || oturum !== undefined
           return (
             <button
               key={sira}
@@ -130,7 +148,9 @@ export function KonuSayfasi({
                 </span>
               </span>
               <span className="rakam mt-1 block text-[12.5px] font-bold text-muted-foreground">
-                {bitti
+                {oturum
+                  ? `Yarım · ${Object.keys(oturum.secimler).length}/${test.length} işaretli`
+                  : bitti
                   ? `${dogru} doğru · ${yanlis} yanlış`
                   : kayittan.cozulen === 0
                     ? 'Başlanmadı'
@@ -143,7 +163,7 @@ export function KonuSayfasi({
               )}
               <span className="mt-auto pt-3">
                 <span className="flex h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
-                  {bitti ? (
+                  {bitti && !oturum ? (
                     <>
                       <i className="bg-success-dolu" style={{ width: `${(dogru / test.length) * 100}%` }} />
                       <i className="bg-danger-dolu" style={{ width: `${(yanlis / test.length) * 100}%` }} />
@@ -152,7 +172,7 @@ export function KonuSayfasi({
                     <i
                       className="bg-primary-parlak"
                       style={{
-                        width: `${(kayittan.cozulen / test.length) * 100}%`,
+                        width: `${((oturum ? Object.keys(oturum.secimler).length : kayittan.cozulen) / test.length) * 100}%`,
                       }}
                     />
                   )}

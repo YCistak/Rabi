@@ -129,3 +129,28 @@ export function hizOlc(ornekler: readonly { x: number; y: number; zaman: number 
   if (sure <= 0) return [0, 0]
   return [(son.x - ilk.x) / sure, (son.y - ilk.y) / sure]
 }
+
+/**
+ * Yatay kaydırmayla soru geçişi (El aracında, %100'de). Ekseni ilk hareket
+ * belirler: yatay pay dikeyin 1,2 katını aşmadıkça kaydırma dikeydir (sayfa
+ * kayar), soru değişmez. Bırakınca geçiş için ya yeterince uzun (genişliğin
+ * %28'i) ya da yeterince hızlı (≥ 0,45 px/ms, en az 40 px) çekilmiş olmalı.
+ */
+export const YATAY_EKSEN_ORANI = 1.2
+export function yatayEksenMi(dx: number, dy: number): boolean {
+  return Math.abs(dx) > Math.abs(dy) * YATAY_EKSEN_ORANI
+}
+
+/** Bırakılan yatay çekmenin sonucu: 1 sonraki soru, -1 önceki, 0 yerine dön. */
+export function yatayGecis(dx: number, hiz: number, genislik: number): 1 | -1 | 0 {
+  const uzun = Math.abs(dx) >= genislik * 0.28
+  const hizli = Math.abs(dx) >= 40 && Math.abs(hiz) >= 0.45 && Math.sign(hiz) === Math.sign(dx)
+  if (!uzun && !hizli) return 0
+  return dx < 0 ? 1 : -1
+}
+
+/** Sınırdaki soruda (ilk/son) çekme lastik gibi direnir. */
+export function lastikPayi(dx: number, gecilebilir: boolean): number {
+  if (gecilebilir) return dx
+  return Math.sign(dx) * Math.min(64, Math.abs(dx) * 0.25)
+}

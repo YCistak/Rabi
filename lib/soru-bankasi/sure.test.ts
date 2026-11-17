@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest'
 import {
   anlikSoruSureleri,
   kisaSureYazisi,
+  sayacCalisiyor,
   sayacDuraklat,
+  sayacGeriYukle,
   sayacKur,
   sayacSoruDegistir,
   sayacSurdur,
@@ -39,6 +41,21 @@ describe('test süresi', () => {
     const sayac = sayacKur(3, 1000, 2, 42000)
     expect(anlikSoruSureleri(sayac, 4000)).toEqual([0, 0, 45000])
     expect(toplamSure(sayac, 4000)).toBe(45000)
+  })
+
+  it('kayıttan geri yüklenen sayaç soru dağılımını korur', () => {
+    let sayac = sayacGeriYukle([4000, 9000], 2, 100, 1)
+    expect(sayacCalisiyor(sayac)).toBe(true)
+    expect(anlikSoruSureleri(sayac, 1100)).toEqual([4000, 10000])
+    sayac = sayacGeriYukle([4000, 9000], 2, 100, 0, false)
+    expect(sayacCalisiyor(sayac)).toBe(false)
+    expect(toplamSure(sayac, 99999)).toBe(13000)
+  })
+
+  it('geri yüklemede soru sayısı değişmişse uyarlanır, bozuk değer sıfır', () => {
+    const sayac = sayacGeriYukle([1000, Number.NaN, -5, 7000], 3, 0, 9, false)
+    expect(sayac.soruSureleri).toEqual([1000, 0, 0])
+    expect(sayac.aktif).toBe(2)
   })
 
   it('saat geri giderse eksiye düşmez', () => {

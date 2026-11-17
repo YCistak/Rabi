@@ -1,4 +1,5 @@
-import { ChevronDown, CircleCheck, CircleMinus, CircleX, Star } from 'lucide-react'
+import { ChevronDown, CircleCheck, CircleMinus, CircleX, Scissors, SkipForward, Star } from 'lucide-react'
+import type { SikDuzeni } from '@/lib/soru-bankasi/duzen'
 import type { BankaSorusu, SoruDurumu } from '@/lib/soru-bankasi/tip'
 import { Siklar } from './siklar'
 import { SoruMetni } from './soru-metni'
@@ -16,6 +17,7 @@ export function SoruGovdesi({
   soru,
   numara,
   isaretli,
+  pas,
   secim,
   sonuc,
   goster,
@@ -23,6 +25,9 @@ export function SoruGovdesi({
   elenenler,
   elemeIpucu,
   cozumAcik,
+  duzen,
+  elemeModu,
+  onElemeModu,
   onSec,
   onEle,
   onCozum,
@@ -30,6 +35,7 @@ export function SoruGovdesi({
   soru: BankaSorusu
   numara: number
   isaretli: boolean
+  pas: boolean
   secim: number | undefined
   /** Gösterilecekse sorunun sonucu. */
   sonuc: SoruDurumu
@@ -40,16 +46,28 @@ export function SoruGovdesi({
   elenenler: readonly number[]
   elemeIpucu: boolean
   cozumAcik: boolean
+  duzen: SikDuzeni
+  elemeModu: boolean
+  onElemeModu: () => void
   onSec: (sira: number) => void
   onEle: (sira: number) => void
   onCozum: () => void
 }) {
   return (
     <article className="px-4 pt-4 pb-6">
-      <p className="mb-1.5 flex items-center gap-1.5 text-[13px] font-extrabold text-muted-foreground">
+      <div className="mb-1.5 flex min-h-8 items-center gap-1.5 text-[13px] font-extrabold text-muted-foreground">
         <span className="rakam">Soru {numara}</span>
-        {isaretli && <Star size={13} aria-label="işaretli" className="fill-warning-dolu text-warning-dolu" />}
-      </p>
+        {isaretli && (
+          <span className="flex items-center gap-1 rounded-full bg-warning-soft px-2 py-0.5 text-[12px] text-warning">
+            <Star size={12} aria-hidden className="fill-warning-dolu text-warning-dolu" /> Sonra bak
+          </span>
+        )}
+        {pas && secim === undefined && !goster && (
+          <span className="flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-[12px]">
+            <SkipForward size={12} aria-hidden /> Pas geçtin
+          </span>
+        )}
+      </div>
       <div data-soru-koku className="text-[17px] leading-[1.65] font-semibold text-foreground">
         <SoruMetni metin={soru.soru} />
       </div>
@@ -68,8 +86,24 @@ export function SoruGovdesi({
           <SoruSekli gorsel={soru.gorsel} />
         </div>
       )}
+      {!goster && (
+        <div className="mt-4 -mb-3 flex justify-end">
+          <button
+            type="button"
+            onClick={onElemeModu}
+            aria-pressed={elemeModu}
+            className={`flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-extrabold transition active:scale-95 ${
+              elemeModu ? 'bg-primary-derin text-white' : 'bg-muted text-muted-foreground'
+            }`}
+          >
+            <Scissors size={14} aria-hidden /> {elemeModu ? 'Eleme açık' : 'Şık ele'}
+          </button>
+        </div>
+      )}
       <Siklar
         siklar={soru.siklar}
+        duzen={duzen}
+        elemeModu={elemeModu}
         dogru={soru.dogru}
         secim={secim}
         kip={goster ? 'goster' : 'cevapla'}

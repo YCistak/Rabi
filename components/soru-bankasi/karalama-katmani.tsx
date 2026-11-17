@@ -1,7 +1,6 @@
 'use client'
 
-import { X } from 'lucide-react'
-import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef } from 'react'
 import { geriKaydirmayiKilitle } from '@/lib/geri-kaydirma'
 import {
   DOKUNUS_HAREKET_ESIGI,
@@ -26,8 +25,11 @@ import {
   hizOlc,
   icerikNoktasi,
   kistirmaGorunumu,
+  lastikPayi,
   tekerlekFarki,
   tekerlekOlcegi,
+  yatayEksenMi,
+  yatayGecis,
   type Gorunum,
   type GorusOlcusu,
   type Nokta,
@@ -70,6 +72,8 @@ type Isaretci = {
   rol: 'cizim' | 'silgi' | 'kaydir' | 'kistir' | 'bos'
   hareketli: boolean
   ornekler: { x: number; y: number; zaman: number }[]
+  /** El ile kaydırmada ilk hareketin belirlediği eksen: yatay çekme soru değiştirir. */
+  eksen?: 'yatay' | 'dikey'
 }
 
 type Cizilen = { cizgi: SayfaCizgisi; cizilenSira: number; baslangic: number }
@@ -135,6 +139,12 @@ export const KaralamaKatmani = forwardRef<
     onGirdi: (tur: GirdiTuru) => KaralamaAraci
     /** Uzun basış ya da sağ tık; işlendiyse true. */
     onUzunBas: (hedef: Element) => boolean
+    /** Yakınlık (yüzde adımında yuvarlanmış) değişince; − / + düğmelerinin göstergesi için. */
+    onOlcek?: (olcek: number) => void
+    /** O yönde soru var mı (yatay çekme sınırda lastik gibi direnir). */
+    gecilebilir?: (yon: 1 | -1) => boolean
+    /** El aracında %100'de yatay çekme: 1 sonraki soru, -1 önceki. */
+    onYatayGecis?: (yon: 1 | -1) => void
     children: React.ReactNode
   }
 >(function KaralamaKatmani(props, kolRef) {
@@ -155,7 +165,6 @@ export const KaralamaKatmani = forwardRef<
     yukseklik: 1,
     icerikYukseklik: 1,
   })
-  const [olcek, setOlcek] = useState(1)
 
   // Olay ve çizim işlevleri efektin içinde kuruluyor; dışarıdan (kol, prop
   // değişimi) çağrılanlar bu ref'te duruyor.
@@ -168,6 +177,12 @@ export const KaralamaKatmani = forwardRef<
 
   const yakinligiSifirla = () =>
     islevler.current?.uygula(gorunumOlcekle(gorunum.current, 1, [olcu.current.genislik / 2, 0], olcu.current))
+  const kayanSifirla = () => {
+    const kayan = kayanRef.current
+    if (!kayan) return
+    kayan.style.transition = ''
+    kayan.style.transform = ''
+  }
 
   useImperativeHandle(kolRef, () => ({
     kaydir: (dy) => islevler.current?.uygula(gorunumKaydir(gorunum.current, 0, -dy, olcu.current)),
@@ -208,6 +223,7 @@ export const KaralamaKatmani = forwardRef<
     let canliTam = false
     let cubukZamanlayici: number | undefined
     let kutu = { left: 0, top: 0, oran: 1 }
+    let sonOlcek = 1
     let oran = window.devicePixelRatio || 1
 
     const kutuGuncelle = () => {
@@ -379,7 +395,35 @@ export const KaralamaKatmani = forwardRef<
         cubuguGoster()
         cizimIste(true, true)
       }
-      setOlcek(Math.round(g.olcek * 100) / 100)
+      const yuvarlak = Math.round(g.olcek * 100) / 100
+      if (yuvarlak !== sonOlcek) {
+        sonOlcek = yuvarlak
+        propsRef.current.onOlcek?.(yuvarlak)
+      }
+    }
+
+    // ── Yatay çekme (soru geçişi) ─────────────────────────────────────────
+    const kayan = kayanRef.current!
+    const yatayCek = (dx: number) => {
+      const yon = dx < 0 ? 1 : -1
+      const gecilebilir = propsRef.current.gecilebilir?.(yon) ?? false
+      kayan.style.transition = ''
+      kayan.style.transform = `translateX(${lastikPayi(dx, gecilebilir)}px)`
+    }
+    const yatayBirak = (isaretci: Isaretci, zaman: number, iptal: boolean) => {
+      const dx = isaretci.son[0] - isaretci.bas.x
+      const hiz = hizOlc(isaretci.ornekler, zaman)[0]
+      const yon = iptal ? 0 : yatayGecis(dx, hiz, olcu.current.genislik)
+      if (yon !== 0 && propsRef.current.gecilebilir?.(yon)) {
+        // Yeni soru kayan kutuyu sıfırlayıp kendi geçişiyle gelir.
+        propsRef.current.onYatayGecis?.(yon)
+        return
+      }
+      kayan.style.transition = 'transform 180ms cubic-bezier(0.2, 0.7, 0.3, 1)'
+      kayan.style.transform = 'translateX(0px)'
+      window.setTimeout(() => {
+        if (kayan.style.transform === 'translateX(0px)') kayanSifirla()
+      }, 200)
     }
 
     const ataletiDurdur = () => {
@@ -634,7 +678,17 @@ export const KaralamaKatmani = forwardRef<
           cizimIste(false, true)
           break
         case 'kaydir':
-          uygula(gorunumKaydir(gorunum.current, son[0] - isaretci.son[0], son[1] - isaretci.son[1], olcu.current))
+          if (isaretci.hareketli && !isaretci.eksen) {
+            // Eksen bir kez seçilir: %100'de yana çekmek soru değiştirir,
+            // yakınken yana kaydırmak sayfayı gezdirir.
+            const yatay =
+              !!propsRef.current.onYatayGecis &&
+              gorunum.current.olcek <= 1.01 &&
+              yatayEksenMi(son[0] - isaretci.bas.x, son[1] - isaretci.bas.y)
+            isaretci.eksen = yatay ? 'yatay' : 'dikey'
+          }
+          if (isaretci.eksen === 'yatay') yatayCek(son[0] - isaretci.bas.x)
+          else uygula(gorunumKaydir(gorunum.current, son[0] - isaretci.son[0], son[1] - isaretci.son[1], olcu.current))
           isaretci.ornekler.push({
             x: son[0],
             y: son[1],
@@ -679,6 +733,10 @@ export const KaralamaKatmani = forwardRef<
           cizimIste(false, true)
           break
         case 'kaydir':
+          if (isaretci.eksen === 'yatay') {
+            yatayBirak(isaretci, olay.timeStamp, iptal)
+            break
+          }
           if (isaretci.hareketli && !iptal && isaretci.tur !== 'mouse') ataletBaslat(hizOlc(isaretci.ornekler, olay.timeStamp))
           if (tik && !etkilesimli) {
             const [x, y] = isaretci.son
@@ -743,6 +801,17 @@ export const KaralamaKatmani = forwardRef<
     alan.addEventListener('wheel', tekerlek, { passive: false })
     alan.addEventListener('click', tiklama, true)
     alan.addEventListener('contextmenu', sagTik)
+    // Yüzey yerli kaydırmayla kaymaz, ama `overflow: hidden` kutu programla
+    // kayabiliyor: odaklanan düğmeyi (Şık ele, şık) tarayıcı görünür yapmak için
+    // kutuyu kaydırıyor, kayma dönüşümle üst üste binip sonraki soruya da
+    // taşınıyordu. Her yerli kayma anında sıfırlanır.
+    const yerliKayma = () => {
+      if (alan.scrollTop !== 0 || alan.scrollLeft !== 0) {
+        alan.scrollTop = 0
+        alan.scrollLeft = 0
+      }
+    }
+    alan.addEventListener('scroll', yerliKayma)
 
     // ── Ölçü, tema ─────────────────────────────────────────────────────────
     const olcGozlemcisi = new ResizeObserver(() => {
@@ -811,6 +880,7 @@ export const KaralamaKatmani = forwardRef<
         isaretciler.clear()
         kistirmaOnceki = null
         kilidiBirak()
+        kayanSifirla()
         uygula(GORUNUM_BASI)
         cizimIste(true, true)
       },
@@ -825,6 +895,7 @@ export const KaralamaKatmani = forwardRef<
       alan.removeEventListener('wheel', tekerlek)
       alan.removeEventListener('click', tiklama, true)
       alan.removeEventListener('contextmenu', sagTik)
+      alan.removeEventListener('scroll', yerliKayma)
       olcGozlemcisi.disconnect()
       temaGozlemcisi.disconnect()
       ataletiDurdur()
@@ -876,22 +947,6 @@ export const KaralamaKatmani = forwardRef<
         aria-hidden
         className="pointer-events-none absolute top-0 right-0.5 w-1 rounded-full bg-muted-foreground/45 opacity-0 transition-opacity duration-300"
       />
-      {/* %100'de yüzen balon yok (soru kökünü örtüyordu); − / + araç çubuğunun
-          ayar balonunda. Yakınken yalnız küçük, opak bir sıfırla hapı kalır:
-          görünür kısmı 28 px, dokunma hedefi 44 px. */}
-      {olcek !== 1 && (
-        <button
-          type="button"
-          onClick={yakinligiSifirla}
-          aria-label="Yakınlığı sıfırla"
-          className="group absolute top-0 right-0 z-10 grid h-11 min-w-11 place-items-center px-1"
-        >
-          <span className="golge-kart rakam flex h-7 items-center gap-1 rounded-full border border-border bg-card pr-1.5 pl-2 text-[12px] font-extrabold text-foreground group-active:bg-muted">
-            %{Math.round(olcek * 100)}
-            <X size={13} className="text-muted-foreground" />
-          </span>
-        </button>
-      )}
     </div>
   )
 })

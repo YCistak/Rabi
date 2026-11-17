@@ -10,6 +10,9 @@ import {
   kistirmaGorunumu,
   tekerlekFarki,
   tekerlekOlcegi,
+  lastikPayi,
+  yatayEksenMi,
+  yatayGecis,
 } from './gorunum'
 
 const olcu = { genislik: 400, yukseklik: 600, icerikYukseklik: 1500 }
@@ -92,5 +95,29 @@ describe('sayfa görünümü', () => {
       ),
     ).toEqual([0, 0.5])
     expect(hizOlc([{ x: 0, y: 0, zaman: 0 }], 1000)).toEqual([0, 0])
+  })
+})
+
+describe('yatay kaydırmayla soru geçişi', () => {
+  it('ekseni yatay payı belirler', () => {
+    expect(yatayEksenMi(30, 10)).toBe(true)
+    expect(yatayEksenMi(12, 11)).toBe(false)
+  })
+
+  it('uzun çekme geçer, kısa ve yavaş çekme yerine döner', () => {
+    expect(yatayGecis(-130, 0, 390)).toBe(1)
+    expect(yatayGecis(130, 0, 390)).toBe(-1)
+    expect(yatayGecis(-60, 0.1, 390)).toBe(0)
+  })
+
+  it('kısa ama hızlı fiske geçer; ters yöndeki hız geçirmez', () => {
+    expect(yatayGecis(-50, -0.8, 390)).toBe(1)
+    expect(yatayGecis(-50, 0.8, 390)).toBe(0)
+  })
+
+  it('sınırda lastik payı', () => {
+    expect(lastikPayi(-100, true)).toBe(-100)
+    expect(lastikPayi(-100, false)).toBe(-25)
+    expect(lastikPayi(-1000, false)).toBe(-64)
   })
 })

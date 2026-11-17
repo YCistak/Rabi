@@ -102,6 +102,14 @@ export const ANAHTARLAR = {
    */
   soruBankasiTercihi: 'rabi-soru-bankasi-tercih',
   /**
+   * Soru Bankası'nda yarım bırakılan testler: konu#test → seçilen/elenen şıklar,
+   * şüpheli ve pas işaretleri, soru başına süre (`lib/soru-bankasi/oturum-kaydi.ts`,
+   * okurken `oturumlariCoz`). Çizimler burada değil, IndexedDB'de
+   * (`lib/soru-bankasi/cizim-depo.ts`). Yedeğe **girmiyor**: test bitince silinen
+   * geçici bir kaldığın yer kaydı.
+   */
+  soruBankasiOturumlari: 'rabi-soru-bankasi-oturumlar',
+  /**
    * Rabi'yi Giydir: yuva → giyilen eşya (`lib/giydir.ts`). Okurken
    * `giyilenleriCoz` süzüyor. Yedeğe giriyor: kullanıcının kendi seçimi.
    *

@@ -5,15 +5,25 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useAsagiKaydirKapat } from '@/lib/asagi-kaydir'
 import { useGeriKatmani } from '@/lib/geri'
+import type { HucreDurumu } from '@/lib/soru-bankasi/oturum'
 
-/** Izgaradaki bir sorunun görünen hâli. Deneme bitmeden doğruluk gösterilmez: `cevaplandi`. */
-export type HucreDurumu = 'd' | 'y' | '-' | 'cevaplandi'
+export type { HucreDurumu }
 
-const RENK: Record<HucreDurumu, string> = {
+/** Izgara ve şeritte ortak renkler. Pas: kesik kenarlı, içi boş — "dönülecek". */
+export const HUCRE_RENGI: Record<HucreDurumu, string> = {
   d: 'bg-success-dolu text-white',
   y: 'bg-danger-dolu text-white',
   cevaplandi: 'bg-primary-derin text-white',
+  pas: 'border-2 border-dashed border-muted-foreground/70 bg-card text-muted-foreground',
   '-': 'bg-muted text-foreground',
+}
+
+export const HUCRE_ETIKETI: Record<HucreDurumu, string> = {
+  d: 'doğru',
+  y: 'yanlış',
+  cevaplandi: 'cevaplandı',
+  pas: 'pas geçildi',
+  '-': 'boş',
 }
 
 export function IzgaraHucreleri({
@@ -30,12 +40,7 @@ export function IzgaraHucreleri({
   return (
     <div className="grid grid-cols-6 gap-2" role="list" aria-label="Sorular">
       {durumlar.map((durum, sira) => {
-        const etiket = {
-          d: 'doğru',
-          y: 'yanlış',
-          cevaplandi: 'cevaplandı',
-          '-': 'boş',
-        }[durum]
+        const etiket = HUCRE_ETIKETI[durum]
         return (
           <button
             key={sira}
@@ -44,7 +49,7 @@ export function IzgaraHucreleri({
             onClick={() => onSec(sira)}
             aria-current={sira === aktif ? 'step' : undefined}
             aria-label={`Soru ${sira + 1}, ${etiket}${isaretliler.has(sira) ? ', işaretli' : ''}`}
-            className={`rakam relative grid aspect-square min-h-11 place-items-center rounded-xl text-[15px] font-extrabold transition active:scale-95 ${RENK[durum]} ${sira === aktif ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''}`}
+            className={`rakam relative grid aspect-square min-h-11 place-items-center rounded-xl text-[15px] font-extrabold transition active:scale-95 ${HUCRE_RENGI[durum]} ${sira === aktif ? 'ring-2 ring-foreground ring-offset-2 ring-offset-card' : ''}`}
           >
             {sira + 1}
             {isaretliler.has(sira) && (
@@ -66,11 +71,13 @@ export function IzgaraAciklamasi({ deneme }: { deneme: boolean }) {
     ? [
         ['bg-primary-derin', 'Cevaplandı'],
         ['bg-muted ring-1 ring-border', 'Boş'],
+        ['border border-dashed border-muted-foreground bg-card', 'Pas'],
       ]
     : [
         ['bg-success-dolu', 'Doğru'],
         ['bg-danger-dolu', 'Yanlış'],
         ['bg-muted ring-1 ring-border', 'Boş'],
+        ['border border-dashed border-muted-foreground bg-card', 'Pas'],
       ]
   return (
     <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12.5px] font-bold text-muted-foreground">

@@ -8,7 +8,17 @@ import { TestOturumu } from '@/components/soru-bankasi/soru-sayfasi'
 import { ANAHTARLAR, useYerelDepo } from '@/lib/depo'
 import { useGeriKatmani } from '@/lib/geri'
 import type { BankaKonusu } from '@/lib/soru-bankasi/dizin'
+import { testCizimleriniSil } from '@/lib/soru-bankasi/cizim-depo'
+import { sikDuzeniTercihiCoz, type SikDuzeniTercihi } from '@/lib/soru-bankasi/duzen'
 import { TEST_BOYUTU, testlereBol } from '@/lib/soru-bankasi/mantik'
+import {
+  oturumAnahtari,
+  oturumlariCoz,
+  oturumSil,
+  oturumYaz,
+  type OturumKaydi,
+  type OturumKayitlari,
+} from '@/lib/soru-bankasi/oturum-kaydi'
 import type { BankaSorusu, CalismaModu, SoruBankasiKaydi, SoruBankasiTestleri } from '@/lib/soru-bankasi/tip'
 
 type KayitYaz = (guncelle: (onceki: SoruBankasiKaydi) => SoruBankasiKaydi) => void
@@ -20,12 +30,24 @@ type AcikTest = {
   tekrar: boolean
   mod: CalismaModu
   devam: boolean
+  /** Yarım bırakılmış testin kaydı: oradan sürer. */
+  kayitliOturum: OturumKaydi | null
   /** Aynı test yeniden açılınca oturum sıfırdan kurulsun. */
   kimlik: number
 }
 
-/** Bu cihazdaki tercih (yedeğe girmez): son mod, sayacın gizliliği, eleme ipucu görüldü mü. */
-type Tercih = { mod: CalismaModu; sureGizli: boolean; elemeOgrenildi: boolean; yarimSureler?: Record<string, number> }
+/**
+ * Bu cihazdaki tercih (yedeğe girmez): son mod, sayacın gizliliği, eleme ipucu
+ * görüldü mü, şık düzeni. `yarimSureler` eski sürümün yarım alıştırma süresi:
+ * yalnız okunur (yeni yarım testler `soruBankasiOturumlari`nda).
+ */
+type Tercih = {
+  mod: CalismaModu
+  sureGizli: boolean
+  elemeOgrenildi: boolean
+  sikDuzeni?: SikDuzeniTercihi
+  yarimSureler?: Record<string, number>
+}
 const VARSAYILAN_TERCIH: Tercih = {
   mod: 'alistirma',
   sureGizli: false,
@@ -77,6 +99,9 @@ export function SoruBankasiEkrani({
     mod: tercihHam?.mod === 'deneme' ? 'deneme' : 'alistirma',
   }
   const sorular = useSorular(konu)
+  const [oturumlarHam, setOturumlar] = useYerelDepo<OturumKayitlari>(ANAHTARLAR.soruBankasiOturumlari, {})
+  const oturumlar = oturumlariCoz(oturumlarHam)
+  const tercihYaz = (degisim: Partial<Tercih>) => setTercih((eski) => ({ ...VARSAYILAN_TERCIH, ...eski, ...degisim }))
 
   const konuyuKapat = useCallback(() => {
     setAcikTest(null)
@@ -84,16 +109,19 @@ export function SoruBankasiEkrani({
   }, [])
   useGeriKatmani(konu !== null && acikTest === null, konuyuKapat)
 
-  const testiAc = (test: number, secenek: { siralar?: number[]; devam?: boolean } = {}) => {
-    if (!sorular) return
+  const testiAc = (test: number, secenek: { siralar?: number[]; devam?: boolean; sifirdan?: boolean } = {}) => {
+    if (!sorular || !konu) return
     const varsayilan = (testlereBol(sorular)[test] ?? []).map((_, sira) => test * TEST_BOYUTU + sira)
+    const tekrar = secenek.siralar !== undefined
+    const kayitli = tekrar || secenek.sifirdan ? null : (oturumlar[oturumAnahtari(konu.id, test)] ?? null)
     setAcikTest({
       test,
       siralar: secenek.siralar ?? varsayilan,
-      tekrar: secenek.siralar !== undefined,
-      // Yarım test yalnız alıştırmada oluşur (deneme bitmeden kayda yazmaz).
-      mod: secenek.devam ? 'alistirma' : tercih.mod,
-      devam: secenek.devam ?? false,
+      tekrar,
+      // Yarım test kendi modunda sürer; eski sürümün yarım testi yalnız alıştırmadır.
+      mod: kayitli?.mod ?? (secenek.devam ? 'alistirma' : tercih.mod),
+      devam: !kayitli && (secenek.devam ?? false),
+      kayitliOturum: kayitli,
       kimlik: Date.now(),
     })
   }
@@ -116,31 +144,22 @@ export function SoruBankasiEkrani({
         mod={acikTest.mod}
         devam={acikTest.devam}
         oncekiSure={tercih.yarimSureler?.[yarimSureAnahtari(konu.id, acikTest.test)] ?? 0}
+        kayitliOturum={acikTest.kayitliOturum}
         kayit={kayit}
         setKayit={setKayit}
         setTestler={setTestler}
         hataBildirimi={hataBildirimi}
         sonrakiTestVar={testlereBol(sorular)[acikTest.test + 1] !== undefined}
         sureGizli={tercih.sureGizli}
+        sikDuzeni={sikDuzeniTercihiCoz(tercih.sikDuzeni)}
         elemeIpucu={!tercih.elemeOgrenildi}
-        onSureGizli={(sureGizli) => setTercih((eski) => ({ ...VARSAYILAN_TERCIH, ...eski, sureGizli }))}
-        onElemeOgrenildi={() =>
-          setTercih((eski) => ({
-            ...VARSAYILAN_TERCIH,
-            ...eski,
-            elemeOgrenildi: true,
-          }))
+        onSureGizli={(sureGizli) => tercihYaz({ sureGizli })}
+        onSikDuzeni={(sikDuzeni) => tercihYaz({ sikDuzeni })}
+        onElemeOgrenildi={() => tercihYaz({ elemeOgrenildi: true })}
+        onOturumYaz={(oturum) =>
+          setOturumlar((eski) => oturumYaz(oturumlariCoz(eski), oturumAnahtari(konu.id, acikTest.test), oturum))
         }
-        onYarimSure={(sure) =>
-          setTercih((eski) => ({
-            ...VARSAYILAN_TERCIH,
-            ...eski,
-            yarimSureler: {
-              ...eski.yarimSureler,
-              [yarimSureAnahtari(konu.id, acikTest.test)]: Math.max(0, Math.round(sure)),
-            },
-          }))
-        }
+        onOturumSil={() => setOturumlar((eski) => oturumSil(oturumlariCoz(eski), oturumAnahtari(konu.id, acikTest.test)))}
         onYarimSureSil={() =>
           setTercih((eski) => {
             const yarimSureler = { ...eski.yarimSureler }
@@ -151,6 +170,12 @@ export function SoruBankasiEkrani({
         onCik={() => setAcikTest(null)}
         onSonrakiTest={() => testiAc(acikTest.test + 1)}
         onTekrar={(siralar) => siralar.length > 0 && testiAc(acikTest.test, { siralar })}
+        onBastan={() => {
+          const anahtar = oturumAnahtari(konu.id, acikTest.test)
+          setOturumlar((eski) => oturumSil(oturumlariCoz(eski), anahtar))
+          void testCizimleriniSil(anahtar).catch(() => {})
+          testiAc(acikTest.test, { sifirdan: true })
+        }}
       />
     )
   }
@@ -162,8 +187,9 @@ export function SoruBankasiEkrani({
         sorular={sorular}
         kayit={kayit}
         testler={testler}
+        oturumlar={oturumlar}
         mod={tercih.mod}
-        onMod={(mod) => setTercih((eski) => ({ ...VARSAYILAN_TERCIH, ...eski, mod }))}
+        onMod={(mod) => tercihYaz({ mod })}
         onAc={(test) => testiAc(test)}
         onDevam={(test) => testiAc(test, { devam: true })}
         onTekrar={(siralar) => testiAc(0, { siralar })}

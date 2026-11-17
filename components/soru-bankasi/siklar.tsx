@@ -1,5 +1,5 @@
 import { Check, X } from 'lucide-react'
-import { sikDuzeni } from '@/lib/soru-bankasi/duzen'
+import { sikDuzeni, type SikDuzeni } from '@/lib/soru-bankasi/duzen'
 import { SoruMetni } from './soru-metni'
 
 const HARFLER = 'ABCDE'
@@ -10,7 +10,8 @@ const HARFLER = 'ABCDE'
  * doğru yeşil, yanlış seçim kırmızı; dokunulmaz.
  *
  * Eleme: sağdaki ✕, uzun basış ya da sağ tık (`data-uzun-bas`, karalama
- * yüzeyi tetikler). Elenmiş şıkka dokunmak onu geri getirir, seçmez.
+ * yüzeyi tetikler) ya da eleme modu (açıkken dokunuş seçmez, eler). Elenmiş
+ * şıkka dokunmak onu geri getirir, seçmez.
  */
 export function Siklar({
   siklar,
@@ -19,6 +20,8 @@ export function Siklar({
   kip,
   elenenler,
   elemeIpucu,
+  duzen: verilenDuzen,
+  elemeModu = false,
   onSec,
   onEle,
 }: {
@@ -28,10 +31,13 @@ export function Siklar({
   kip: 'cevapla' | 'goster'
   elenenler: readonly number[]
   elemeIpucu: boolean
+  /** Öğrencinin şık düzeni tercihinden; verilmezse uzunluğa göre. */
+  duzen?: SikDuzeni
+  elemeModu?: boolean
   onSec: (sira: number) => void
   onEle: (sira: number) => void
 }) {
-  const duzen = sikDuzeni(siklar)
+  const duzen = verilenDuzen ?? sikDuzeni(siklar)
   const goster = kip === 'goster'
 
   const durum = (sira: number) => {
@@ -76,7 +82,7 @@ export function Siklar({
 
   const dokun = (sira: number) => {
     if (goster) return
-    if (elenenler.includes(sira)) onEle(sira)
+    if (elenenler.includes(sira) || elemeModu) onEle(sira)
     else onSec(sira)
   }
 
@@ -118,7 +124,7 @@ export function Siklar({
             </button>
           ))}
         </div>
-        {elemeIpucu && !goster && (
+        {elemeIpucu && !goster && !elemeModu && (
           <p className="mt-2 text-center text-[12px] font-bold text-muted-foreground">
             Elemek için şıkka basılı tut (farede sağ tık)
           </p>

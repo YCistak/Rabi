@@ -47,6 +47,7 @@ import {
   tumResimleriSil,
 } from '@/lib/resim-depo'
 import { cizimAnahtari } from '@/lib/cizim'
+import { tumSoruCizimleriniSil } from '@/lib/soru-bankasi/cizim-depo'
 import type { BankaKaydi } from '@/lib/oyunlar/banka'
 import type { BilinmeyenKart, KonuIlerlemeleri } from '@/lib/konu/ilerleme'
 import type { YksTakip } from '@/lib/konu-takibi/kayit'
