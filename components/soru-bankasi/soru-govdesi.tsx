@@ -1,4 +1,5 @@
 import { ChevronDown, CircleCheck, CircleMinus, CircleX, Scissors, SkipForward, Star } from 'lucide-react'
+import { konuDersi } from '@/lib/soru-bankasi/ders'
 import type { SikDuzeni } from '@/lib/soru-bankasi/duzen'
 import type { BankaSorusu, SoruDurumu } from '@/lib/soru-bankasi/tip'
 import { Siklar } from './siklar'
@@ -83,7 +84,7 @@ export function SoruGovdesi({
       )}
       {soru.gorsel && (
         <div className="mt-3">
-          <SoruSekli gorsel={soru.gorsel} />
+          <SoruSekli gorsel={soru.gorsel} ders={konuDersi(soru.konu)} />
         </div>
       )}
       {!goster && (

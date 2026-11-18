@@ -2,6 +2,7 @@
 
 import { Check, ChevronLeft, ChevronRight, Maximize2, PenLine, SkipForward, Star, X } from 'lucide-react'
 import { useEffect, useLayoutEffect, useRef } from 'react'
+import { dersAdi, konuDersi } from '@/lib/soru-bankasi/ders'
 import { sikDuzeni, sikDuzeniSec, type SikDuzeni, type SikDuzeniTercihi } from '@/lib/soru-bankasi/duzen'
 import { SAYFA_SIK_SINIRLARI } from '@/lib/soru-bankasi/sayfa'
 import type { BankaSorusu, SoruDurumu } from '@/lib/soru-bankasi/tip'
@@ -208,7 +209,7 @@ function SayfaSorusu({
         <div
           className={`mx-auto mt-2 ${soru.gorsel.tur === 'tablo' || soru.gorsel.tur === 'akis' ? '' : 'max-w-[18rem]'}`}
         >
-          <SoruSekli gorsel={soru.gorsel} />
+          <SoruSekli gorsel={soru.gorsel} ders={konuDersi(soru.konu)} />
         </div>
       )}
 
@@ -334,7 +335,7 @@ export function KitapGorunumu({
               {/* Kitap başlığı: konu solda, test kutusu sağda, altında turuncu çizgi. */}
               <header className="flex items-end gap-3 border-b-2 border-primary-parlak pb-2.5">
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-extrabold tracking-[0.1em] text-muted-foreground uppercase">Matematik</p>
+                  <p className="text-[11px] font-extrabold tracking-[0.1em] text-muted-foreground uppercase">{dersAdi(konuDersi(sorular[0]?.konu))}</p>
                   <p className="truncate font-display text-[15px] leading-tight font-extrabold">{konuAdi}</p>
                 </div>
                 <div className="shrink-0 rounded-lg border-2 border-primary-parlak px-2 py-0.5 text-center leading-none">
