@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harita ders seçimi</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--zemin:#f8f8f7;--kart:#fff;--yazi:#1b1a19;--soluk:#6b6764;--kenar:#eae9e6;--vurgu:#b3491f;--dolgu:#d9622f}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--zemin);color:var(--yazi);font-family:Nunito,system-ui,sans-serif}
+  header{max-width:1400px;margin:0 auto;padding:28px 16px 8px}
+  h1{margin:0;font-size:26px;font-weight:900;letter-spacing:-.02em}
+  header p{margin:6px 0 0;color:var(--soluk);font-weight:600;max-width:760px;line-height:1.5}
+  nav{position:sticky;top:0;z-index:2;background:var(--zemin);border-bottom:1px solid var(--kenar)}
+  nav div{max-width:1400px;margin:0 auto;padding:10px 16px;display:flex;gap:8px;overflow-x:auto}
+  nav button{flex:none;border:1px solid var(--kenar);background:var(--kart);border-radius:8px;padding:10px 14px;font:800 14px Nunito;color:var(--soluk);cursor:pointer}
+  nav button[aria-pressed=true]{background:var(--dolgu);border-color:var(--dolgu);color:#fff}
+  nav a{flex:none;align-self:center;margin-left:auto;font-weight:800;font-size:13px;color:var(--vurgu);text-decoration:none}
+  .arkadas{max-width:1400px;margin:0 auto;padding:12px 16px;display:none}
+  .arkadas img{max-width:100%;transform:rotate(90deg);transform-origin:center;max-height:520px}
+  iframe{display:block;width:100%;height:calc(100vh - 150px);border:0;background:var(--zemin)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Harita · ders seçimi</h1>
+  <p>Arkadaşının sınıf satırı korunarak, üstteki ders seçimi için dört yön. Her sayfada üç telefon var; dokunarak deneyebilirsin. Yeni sekmede açmak için sağdaki bağlantıya bas.</p>
+</header>
+<nav><div id="sekmeler">
+  <button data-d="a-baslik-ders.html" aria-pressed="true">Başlık ders</button>
+  <button data-d="b-kitap-rafi.html" aria-pressed="false">Kitap rafı</button>
+  <button data-d="c-simge-seridi.html" aria-pressed="false">Simge şeridi</button>
+  <button data-d="d-ders-kapagi.html" aria-pressed="false">Ders kapağı</button>
+  <a id="ac" href="a-baslik-ders.html" target="_blank">Yeni sekmede aç ↗</a>
+</div></nav>
+<iframe id="cerceve" src="a-baslik-ders.html" title="Taslak"></iframe>
+<script>
+  const s=document.querySelectorAll('#sekmeler button'),c=document.getElementById('cerceve'),a=document.getElementById('ac');
+  s.forEach(b=>b.addEventListener('click',()=>{s.forEach(x=>x.setAttribute('aria-pressed',x===b));c.src=b.dataset.d;a.href=b.dataset.d;}));
+</script>
+</body>
+</html>
