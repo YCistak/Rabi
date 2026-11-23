@@ -1,0 +1,174 @@
+/*
+  Mağaza görselleri — "Ders renkleri" yönü ortak stilleri.
+  Renk değerleri doğrudan app/globals.css açık tema paletinden alınmıştır:
+  her ekran düz bir ders pasteli zemin üstünde o dersin koyu mürekkebiyle konuşur,
+  turuncu yalnızca sağ alt köşedeki küçük Rabi imzasında görünür.
+*/
+
+:root {
+  /* Genel Rabi sabitleri (app/globals.css) */
+  --background: #f8f8f7;
+  --foreground: #1b1a19;
+  --primary: #b3491f;
+  --primary-parlak: #d9622f;
+
+  /* Matematik mavisi (1-ana-sayfa) */
+  --konu-matematik: #e9f2fc;
+  --konu-matematik-kenar: #cbdff3;
+  --konu-matematik-koyu: #275b91;
+  --konu-matematik-ok: #3574b3;
+
+  /* Biyoloji yeşili (3-sesli-giris) */
+  --konu-biyoloji: #e9f1e4;
+  --konu-biyoloji-kenar: #d6e5cc;
+  --konu-biyoloji-koyu: #446f32;
+  --konu-biyoloji-ok: #527b3d;
+
+  /* Fizik moru (4-denemeler) */
+  --konu-fizik: #f1eafa;
+  --konu-fizik-kenar: #ddcef0;
+  --konu-fizik-koyu: #684394;
+  --konu-fizik-ok: #8054af;
+
+  /* Ortak ölçü sabitleri */
+  --tuval-genislik: 1080px;
+  --tuval-yukseklik: 1920px;
+  --kutu-kose: 7px;
+  --telefon-dis-kose: 56px;
+  --telefon-cerceve-kalinlik: 13px;
+  --telefon-ic-kose: 43px;
+}
+
+.tema-matematik {
+  --ders-zemin: var(--konu-matematik);
+  --ders-kenar: var(--konu-matematik-kenar);
+  --ders-koyu: var(--konu-matematik-koyu);
+  --ders-ok: var(--konu-matematik-ok);
+}
+
+.tema-biyoloji {
+  --ders-zemin: var(--konu-biyoloji);
+  --ders-kenar: var(--konu-biyoloji-kenar);
+  --ders-koyu: var(--konu-biyoloji-koyu);
+  --ders-ok: var(--konu-biyoloji-ok);
+}
+
+.tema-fizik {
+  --ders-zemin: var(--konu-fizik);
+  --ders-kenar: var(--konu-fizik-kenar);
+  --ders-koyu: var(--konu-fizik-koyu);
+  --ders-ok: var(--konu-fizik-ok);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: var(--tuval-genislik);
+  height: var(--tuval-yukseklik);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--ders-zemin);
+  color: var(--ders-koyu);
+}
+
+.tuval {
+  position: relative;
+  width: var(--tuval-genislik);
+  height: var(--tuval-yukseklik);
+  padding: 108px 72px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--ders-zemin);
+  overflow: hidden;
+}
+
+.baslik-grubu {
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.baslik {
+  margin: 0;
+  font-size: 82px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  color: var(--ders-koyu);
+}
+
+.alt-baslik {
+  margin: 22px 0 0;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.008em;
+  color: var(--ders-koyu);
+  color: color-mix(in srgb, var(--ders-koyu) 86%, var(--ders-zemin));
+  white-space: nowrap;
+}
+
+.telefon {
+  margin-top: 56px;
+  padding: var(--telefon-cerceve-kalinlik);
+  border-radius: var(--telefon-dis-kose);
+  background-color: var(--foreground);
+  box-shadow: 0 26px 56px rgba(27, 26, 25, 0.15);
+  flex-shrink: 0;
+}
+
+.telefon-ekran {
+  position: relative;
+  width: 636px;
+  height: 1376px;
+  border-radius: var(--telefon-ic-kose);
+  background-color: var(--background);
+  overflow: hidden;
+}
+
+.telefon-ada {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 108px;
+  height: 25px;
+  border-radius: 999px;
+  background-color: var(--foreground);
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ekran-goruntusu {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* Turuncu yalnızca sağ alt köşede küçük marka imzası olarak yer alır */
+.rabi-imza {
+  position: absolute;
+  right: 52px;
+  bottom: 40px;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--primary);
+}
