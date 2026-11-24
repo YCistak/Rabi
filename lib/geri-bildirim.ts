@@ -19,16 +19,22 @@
 
 import { yeniId } from './utils'
 
+/**
+ * `baska` ekrandan kaldırıldı (kullanıcı geri bildirimi) ama tipte duruyor:
+ * cihazın kuyruğunda bekleyen eski kayıtlar bu değerle yazılmış ve bağlanınca
+ * gitmeye devam etmeli. Firestore kuralı da `Başka`yı hâlâ kabul ediyor.
+ */
 export type GeriBildirimTuru = 'oneri' | 'hata' | 'baska'
 
-/** Çiplerde ve gönderilen kayıtta görünen adlar. */
+/** Çiplerde ve gönderilen kayıtta görünen adlar (`baska` yalnız eski kayıtlar için). */
 export const TUR_ADI: Record<GeriBildirimTuru, string> = {
   oneri: 'Öneri',
   hata: 'Hata',
   baska: 'Başka',
 }
 
-export const TURLER: GeriBildirimTuru[] = ['oneri', 'hata', 'baska']
+/** Ekranda seçilebilen türler; `baska` eski kayıtlar için ayrıldı, seçilemez. */
+export const TURLER: Exclude<GeriBildirimTuru, 'baska'>[] = ['oneri', 'hata']
 
 /**
  * Metin sınırları.
@@ -161,7 +167,8 @@ export function geriBildirimFormVerisi(
   surum: string,
 ): Record<string, string> {
   return {
-    tur: TUR_ADI[b.tur],
+    // Kuyruktaki kayıt bilinmeyen bir türle gelirse bildirim düşmesin.
+    tur: TUR_ADI[b.tur] ?? TUR_ADI.baska,
     metin: b.metin,
     surum,
     cihaz,
