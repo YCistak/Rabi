@@ -182,6 +182,35 @@ describe('elHazirla', () => {
     expect(kolayToplam).toBeGreaterThan(zorToplam)
   })
 
+  it('istenen zorluğun bileşikleri görülmüş olsa da el zorluğu koruyor', () => {
+    // Geçmiş her grubu kendi içinde sıralamalı. İstenen ve öteki bileşikler
+    // birlikte sıralanınca görülmüş istenen-zorluk bileşikler hiç görülmemiş
+    // öteki zorlukların arkasına düşüyor, el zorluğu kaybediyordu.
+    for (const zorluk of ZORLUKLAR) {
+      const gorulen = FORMUL_HAVUZU.filter((e) => e.zorluk === zorluk).map((e) => `formul:${e.formul}`)
+      for (let i = 0; i < 100; i++) {
+        const el = elHazirla(new Set(), zorluk, FORMUL_HAVUZU, Math.random, gorulen)!
+        const turdeIstenen = FORMUL_HAVUZU.filter((e) => e.tur === el.tur && e.zorluk === zorluk).length
+        const eldeIstenen = el.esler.filter((e) => e.zorluk === zorluk).length
+        expect(eldeIstenen, `${zorluk} / ${el.tur}`).toBe(Math.min(EL_BOYUTU, turdeIstenen))
+      }
+    }
+  })
+
+  it('gruplar kendi içinde sıralanıyor: görülmüş istenen, görülmüş ötekinden önce', () => {
+    // İstenen zorluğun bir kısmı görülmüş, bir kısmı görülmemiş; el önce
+    // görülmeyen istenenleri, sonra görülmüş istenenleri almalı.
+    for (let i = 0; i < 100; i++) {
+      const tum = elHazirla(new Set(), 'orta')!
+      const gorulen = [`formul:${tum.esler[0].formul}`]
+      const el = elHazirla(new Set(), 'orta', FORMUL_HAVUZU, Math.random, gorulen)!
+      const turdeOrta = FORMUL_HAVUZU.filter((e) => e.tur === el.tur && e.zorluk === 'orta')
+      if (turdeOrta.length > EL_BOYUTU) {
+        expect(el.esler.every((e) => e.zorluk === 'orta'), String(el.tur)).toBe(true)
+      }
+    }
+  })
+
   it('tek tür yetmezse karışık el kurar', () => {
     // Yapay havuz: hiçbir tür tek başına altıya ulaşmıyor, toplamda yetiyor.
     const havuz: FormulEsi[] = [
