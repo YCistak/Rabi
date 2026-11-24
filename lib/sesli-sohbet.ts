@@ -7,7 +7,7 @@
  */
 
 import type { Sablon } from './types'
-import type { SesliCozum, SesliDeneme, SesliKip, SesliSoru, TopluGrup } from './sesli-giris'
+import type { SesliBaglam, SesliCozum, SesliDeneme, SesliKip, SesliSoru, TopluGrup } from './sesli-giris'
 import { dersinGrubu } from './toplu-grup'
 
 export type SohbetBirikimi = { sorular: SesliSoru[]; deneme: SesliDeneme | null }
@@ -15,6 +15,21 @@ export type SohbetBirikimi = { sorular: SesliSoru[]; deneme: SesliDeneme | null 
 export const BOS_BIRIKIM: SohbetBirikimi = {
   sorular: [],
   deneme: null,
+}
+
+/** Birikimden bağımsız, mesajdan mesaja taşınan sohbet bağlamı. */
+export type SohbetBaglami = Pick<SesliBaglam, 'sonDers' | 'bekleyen'>
+
+export const BOS_BAGLAM: SohbetBaglami = { sonDers: null, bekleyen: null }
+
+/**
+ * Bekleyen soru yalnız bir sonraki mesajla cevaplanabilir. Son ders, "tamam"
+ * gibi verisiz mesajlarda korunur; birden çok ders söylenince belirsizleşir.
+ */
+export function sonrakiBaglam(onceki: SohbetBaglami, cozum: SesliCozum): SohbetBaglami {
+  const sonDers =
+    cozum.sorular.length === 0 ? onceki.sonDers : cozum.sorular.length === 1 ? cozum.sorular[0]!.ders : null
+  return { sonDers: cozum.bekleyen ? null : sonDers, bekleyen: cozum.bekleyen ?? null }
 }
 
 /** Rabi'nin pencere açılınca ilk sorusu. */
@@ -217,7 +232,9 @@ export function birikimeEkle(birikim: SohbetBirikimi, cozum: SesliCozum): Sohbet
 
   for (const soru of cozum.sorular) {
     const indeks = yeniSorular.findIndex((s) => s.ders === soru.ders)
-    if (indeks !== -1) {
+    if (indeks !== -1 && cozum.yerineGecen?.some((y) => y.ders === soru.ders)) {
+      yeniSorular[indeks] = { ...soru }
+    } else if (indeks !== -1) {
       const eski = yeniSorular[indeks]!
       yeniSorular[indeks] = {
         ders: eski.ders,
@@ -304,6 +321,16 @@ export function rabiCevabi(
     if (niyet && yonlendirme) return [`${niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin)} ${yonlendirme}`]
     if (niyet) return [niyetCevabi(niyet, secenek.mesajSirasi, secenek.metin)]
     if (yonlendirme) return [yonlendirme]
+    if (cozum.bekleyen?.tur === 'ders') {
+      return [
+        secenek.kip === 'deneme'
+          ? `${cozum.bekleyen.ad} için doğru ve yanlış sayısını söyler misin?`
+          : `${cozum.bekleyen.ad} için kaç soru çözdün?`,
+      ]
+    }
+    if (cozum.bekleyen?.tur === 'grup') {
+      return [`${cozum.bekleyen.grup === 'sosyal' ? 'Sosyal' : 'Fen'} derslerinden hangisi olduğunu söyler misin?`]
+    }
     if (cozum.anlasilmayan.length > 0) {
       const anlasilmayan = cozum.anlasilmayan[0]!
       if (/(?:sosyal|fen)\w*\s+\d+(?:[.,]\d+)?\s+net/i.test(secenek.metin ?? '')) {
@@ -326,7 +353,9 @@ export function rabiCevabi(
   if (denemedeYokUyarisi) ilkBalon += ` ${denemedeYokUyarisi}`
   if (fazlaSoruUyarisi) ilkBalon += ` ${fazlaSoruUyarisi}`
 
-  const buMesajdakiToplamSoru = cozum.sorular.reduce((toplam, s) => toplam + s.toplam, 0)
+  const buMesajdakiToplamSoru =
+    cozum.sorular.reduce((toplam, s) => toplam + s.toplam, 0) -
+    (cozum.yerineGecen ?? []).reduce((toplam, y) => toplam + y.oncekiToplam, 0)
   if (
     typeof secenek.hedefeKalan === 'number' &&
     secenek.hedefeKalan > 0 &&

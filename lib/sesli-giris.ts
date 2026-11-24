@@ -27,6 +27,23 @@ export type SesliCozum = {
   yanlisYer?: 'deneme' | 'soru'
   denemedeYok?: string[]
   fazlaSoru?: { ad: string; soruSayisi: number }[]
+  /** Birikimdeki kayda eklenmeyip onun yerine geçen dersler (düzeltme ya da sonradan gelen sonuç). */
+  yerineGecen?: { ders: string; oncekiToplam: number }[]
+  /** Rabi'nin sorduğu eksik bilgi; sonraki mesaj bununla tamamlanabilir. */
+  bekleyen?: SesliBekleyen
+}
+
+/** `soz`: sonraki sayılı mesajın önüne konacak ders/grup sözü. `metin`: dersi sorulan grup cümlesi. */
+export type SesliBekleyen =
+  | { tur: 'ders'; ad: string; soz: string }
+  | { tur: 'grup'; grup: TopluGrup; metin: string }
+
+/** Sohbetin önceki mesajlarından kalan, yalnız kesin olan bağlam. */
+export type SesliBaglam = {
+  sorular: readonly SesliSoru[]
+  /** Son mesajda tek başına söylenen ders; birden çok ders söylendiyse `null`. */
+  sonDers: string | null
+  bekleyen: SesliBekleyen | null
 }
 
 const EN_COK_SORU = 500
@@ -305,6 +322,14 @@ const BELIRSIZ_BIR_SONRASI = new Set([
   'türlü', 'turlu', 'ara', 'arada', 'kere', 'kez', 'defa', 'tyt', 'ayt', 'ydt', 'seviye', 'okul', 'sınav', 'sinav',
 ])
 
+/** Yönelme ekli sayılar ("otuz beşe beş"); tek başına "ona", "beşe kadar" sayı sanılmaz. */
+const YONELME_EKLI_SAYILAR: Record<string, readonly [number, string]> = {
+  bire: [1, "'e"], ikiye: [2, "'ye"], üçe: [3, "'e"], uce: [3, "'e"], dörde: [4, "'e"], dorde: [4, "'e"],
+  beşe: [5, "'e"], bese: [5, "'e"], altıya: [6, "'ya"], altiya: [6, "'ya"], yediye: [7, "'ye"], sekize: [8, "'e"],
+  dokuza: [9, "'a"], yirmiye: [20, "'ye"], otuza: [30, "'a"], kırka: [40, "'a"], kirka: [40, "'a"], elliye: [50, "'ye"],
+  altmışa: [60, "'a"], altmisa: [60, "'a"], yetmişe: [70, "'e"], yetmise: [70, "'e"], seksene: [80, "'e"], doksana: [90, "'a"],
+}
+
 type Kelime = { ham: string; kucuk: string; bas: number; son: number }
 
 /** Basamak sırasını (bin → yüz → onlar → birler) koruyarak "otuz beş üç"ü 38 yapmadan okur. */
@@ -318,8 +343,9 @@ function yaziliSayiOku(kelimeler: Kelime[], basIndeks: number, metin: string): {
   let sonEk = ''
 
   const yuzMu = (s: string) => s === 'yüz' || s === 'yuz'
-  const yanYana = (a: Kelime, b?: Kelime): b is Kelime => b !== undefined && /^[ \t]+$/.test(metin.slice(a.son, b.bas))
+  const yanYana = (a: Kelime, b?: Kelime): b is Kelime => b !== undefined && /^[ \t]*$/.test(metin.slice(a.son, b.bas))
   const acik = () => sonEk === '' && imlec < kelimeler.length && (imlec === basIndeks || yanYana(kelimeler[imlec - 1]!, kelimeler[imlec]))
+  const sayiSozuMu = (k: Kelime) => /^\d/.test(k.kucuk) || k.kucuk in BIRLER || k.kucuk in ONLAR || yuzMu(k.kucuk)
   const ardindanSonucEtiketiVarMi = (indeks: number): boolean => {
     const s1 = kelimeler[indeks + 1]
     if (!s1 || !yanYana(kelimeler[indeks]!, s1)) return false
@@ -328,7 +354,10 @@ function yaziliSayiOku(kelimeler: Kelime[], basIndeks: number, metin: string): {
   }
   const ekliOku = (alt: number, ust: number) => {
     const k = kelimeler[imlec]!.kucuk
-    const ekli = SON_EKLI_SAYILAR[k]
+    const yonelme = YONELME_EKLI_SAYILAR[k]
+    const s = kelimeler[imlec + 1]
+    if (yonelme && imlec === basIndeks && !(s && yanYana(kelimeler[imlec]!, s) && sayiSozuMu(s))) return
+    const ekli = SON_EKLI_SAYILAR[k] ?? yonelme
     if (
       !ekli ||
       ekli[0] < alt ||
@@ -381,13 +410,49 @@ function yaziliSayiOku(kelimeler: Kelime[], basIndeks: number, metin: string): {
   return { metin: `${toplam}${sonEk}`, sonIndeks: imlec - 1 }
 }
 
+const BITISIK_KOKLER = ['bin', 'yüz', 'yuz', ...Object.keys(ONLAR), ...Object.keys(BIRLER)].sort((a, b) => b.length - a.length)
+const bitisikBasamak = (k: string): number => {
+  if (k === 'bin') return 4
+  if (k === 'yüz' || k === 'yuz' || SON_EKLI_SAYILAR[k]?.[0] === 100) return 3
+  const deger = ONLAR[k] ?? BIRLER[k] ?? SON_EKLI_SAYILAR[k]?.[0] ?? YONELME_EKLI_SAYILAR[k]?.[0]
+  return deger === undefined ? 0 : deger >= 10 ? 2 : 1
+}
+
+/** "kırkbeş", "yüzelli" gibi bitişik yazımı köklerine böler; sözcük tümüyle sayı değilse `null`. */
+function bitisikSayiyiBol(kucuk: string): string[] | null {
+  const parcalar: string[] = []
+  let kalan = kucuk
+  let ust = 5
+  while (kalan) {
+    const tamBasamak = bitisikBasamak(kalan)
+    const kok: string | undefined = tamBasamak > 0 ? kalan : BITISIK_KOKLER.find((k) => kalan.startsWith(k))
+    if (!kok) return null
+    const basamak = bitisikBasamak(kok)
+    // "ikiyüz": çarpan birler basamağı yalnız yüz/binden önce ve en başta gelebilir.
+    const carpan = basamak === 1 && parcalar.length === 0 && /^(?:y[uü]z|bin)/.test(kalan.slice(kok.length))
+    if (!carpan && basamak >= ust) return null
+    if (!carpan) ust = basamak
+    parcalar.push(kok)
+    kalan = kalan.slice(kok.length)
+  }
+  return parcalar.length >= 2 ? parcalar : null
+}
+
 type DonusumParcasi = { cikti: string; hamBas: number; hamSon: number; degisti: boolean }
 
 /** Sayıları çevirirken ham metin aralıklarını saklar ki `anlasilmayan` ham dilimi gösterebilsin. */
 function rakamaCevirParcali(metin: string): { metin: string; parcalar: DonusumParcasi[] } {
-  const kelimeler = [...metin.matchAll(/[a-zA-ZçğıöşüÇĞİÖŞÜâÂ0-9]+/g)].map((es) => {
+  const kelimeler = [...metin.matchAll(/[a-zA-ZçğıöşüÇĞİÖŞÜâÂ0-9]+/g)].flatMap((es): Kelime[] => {
     const bas = es.index ?? 0
-    return { ham: es[0], kucuk: turkceKucult(es[0]), bas, son: bas + es[0].length }
+    const kucuk = turkceKucult(es[0])
+    const bolunen = kucuk.length === es[0].length ? bitisikSayiyiBol(kucuk) : null
+    if (!bolunen) return [{ ham: es[0], kucuk, bas, son: bas + es[0].length }]
+    let yer = bas
+    return bolunen.map((kok) => {
+      const parca = { ham: metin.slice(yer, yer + kok.length), kucuk: kok, bas: yer, son: yer + kok.length }
+      yer = parca.son
+      return parca
+    })
   })
   const parcalar: DonusumParcasi[] = []
   let imlec = 0
@@ -518,6 +583,12 @@ function denemeAdiOnuMu(metin: string, son: number): boolean {
   return /^\s+(?:dil\s+)?deneme(?:si|sinde|sinden|de|den|ye|yi|nin|ler)?(?![a-z0-9])/.test(metin.slice(son))
 }
 
+/** "tarih 2 doğru"daki 2 ders adının değil sonucun parçasıdır; "tarih 2 5 doğru"da ise ad "tarih 2"dir. */
+function adSonuSayiMi(metin: string, anahtar: AnahtarTanimi, son: number): boolean {
+  // "Tarih-2" yazımı ve "tarih 2 sorularından 5 doğru" adın kendisidir.
+  return / \d$/.test(anahtar.metin) && /\d$/.test(metin.slice(0, son)) && /^\s*(?:'?\s*(?:si|i|u)(?:ni|nu)?\s+)?(?:tane|dogru|yanlis|bos|net|soru[a-z]*(?![a-z]|\s+\d))/.test(metin.slice(son))
+}
+
 const SORU_HEDEFLERI: DersHedefi<string>[] = CALISMA_DERSLERI.map((ders) => ({
   hedef: ders,
   kimlik: ders,
@@ -548,7 +619,7 @@ function dersleriTara<T>(
     for (const anahtar of liste) {
       for (let yer = metin.indexOf(anahtar.metin); yer !== -1; yer = metin.indexOf(anahtar.metin, yer + 1)) {
         const son = dersEslesmeSonu(metin, yer, anahtar)
-        if (son !== -1 && (!denemeOnuHaric || !denemeAdiOnuMu(metin, son))) {
+        if (son !== -1 && !adSonuSayiMi(metin, anahtar, son) && (!denemeOnuHaric || !denemeAdiOnuMu(metin, son))) {
           adaylar.push({ hedef, kimlik, oncelik, bas: yer, son, uzunluk: son - yer })
         }
       }
@@ -608,6 +679,27 @@ function netAyiklaVeMaskele(metin: string): { temizMetin: string; net: number | 
   return { temizMetin, net }
 }
 
+/** Ders ya da grup adına bağlı netleri ("türkçe 35 net") dışarıda tutarak toplam neti bulur. */
+function toplamNetBul(metin: string): number | null {
+  const sinirlar = dersleriTara(metin, SORU_HEDEFLERI, GRUP_ANAHTARLARI).filter((d) => !/^(?:tyt|ayt|ydt)/.test(metin.slice(d.bas, d.son)))
+  for (const es of metin.matchAll(NET_DESENI)) {
+    const bas = es.index ?? 0
+    const deger = netAyiklaVeMaskele(es[0]).net
+    if (deger === null) continue
+    const onceki = sinirlar.filter((d) => d.son <= bas).pop()
+    const ara = metin.slice(onceki?.son ?? 0, bas)
+    if (/(?<![a-z0-9])(?:toplam|genel|deneme|tyt|ayt|ydt)/.test(ara)) return deger
+    if (!onceki) {
+      if (sinirlar.some((d) => d.bas >= bas && /^\s+$/.test(metin.slice(bas + es[0].length, d.bas)))) continue
+      return deger
+    }
+    // Ders sonucundan sonra gelen net, doğru sayısını aşıyorsa o dersin olamaz.
+    const dogru = /\d+/.exec(ara)
+    if (dogru && deger > Number(dogru[0])) return deger
+  }
+  return null
+}
+
 type SayiMaskeTuru = 'net' | 'sure' | 'sira' | 'test' | 'sinif' | 'reddedilen-toplam'
 type SayiMaskesi = { tur: SayiMaskeTuru; bas: number; son: number; anlasilmayanMi: boolean }
 
@@ -651,7 +743,9 @@ const SAYI_ARA_EK_DESENI = `(?:${IYELIK_EK_DESENI}|${TANE_EK_DESENI})`
 // Konuşmada "10 tanesi ise boş"taki "ise" sonuç etiketinden önce girer.
 // Bu bağlaç sayı ile sonucu değiştirmez; etiketi ayırmak için yok sayılır.
 const SONUC_BAGLACI_DESENI = '(?:\\s+ise)?'
-const KALAN_SONUC_DESENI = /(?<![a-z0-9])(?:geri\s+)?kalan(?:i|lari)?\s+(?:ise\s+)?(dogru|yanlis|bos)\w*(?![a-z0-9])/g
+// "hepsi yanlış" da kalandır: öteki sonuç söylenmediyse kalan toplamın kendisidir.
+const KALAN_SONUC_DESENI =
+  /(?<![a-z0-9])(?:(?:(?:geri\s+)?kalan(?:i|lari)?(?:ni)?|gerisi(?:ni)?)\s+(?:ise\s+|d[ea]\s+)?(dogru|yanlis|bos)|(?:hepsi|tamami|tumu)(?:ni|nu)?\s+(?:d[ea]\s+)?(yanlis|bos))\w*(?![a-z0-9])/g
 const SAYI_SON_ETIKETLERI: readonly { tur: SayiOgesi['tur']; desen: RegExp }[] = [
   { tur: 'ulestirme', desen: /^\s*'?\s*(?:ser|sar|er|ar)(?![a-z0-9])/ },
   { tur: 'dogru', desen: new RegExp(`^${SAYI_ARA_EK_DESENI}?${SONUC_BAGLACI_DESENI}(?:\\s+d[ea])?\\s*dogru\\w*|^${IYELIK_EK_DESENI}?\\s*d(?![a-z0-9])`) },
@@ -692,7 +786,7 @@ function araliktakiSayilar(kesit: string, aralikBas: number, aralikSon: number):
   }
   for (const es of aralik.matchAll(KALAN_SONUC_DESENI)) {
     const yer = es.index ?? 0
-    const sonuc = es[1] as 'dogru' | 'yanlis' | 'bos'
+    const sonuc = (es[1] ?? es[2]) as 'dogru' | 'yanlis' | 'bos'
     ekle(`kalan-${sonuc}`, 0, yer, yer + es[0].length)
   }
   return ogeler.sort((a, b) => a.bas - b.bas)
@@ -953,6 +1047,9 @@ function sablonDersHedefleri(sablonDersleri: SablonDers[]): DersHedefi<SablonDer
 
 /** Deneme ders parçasından doğru/yanlış çıkarır; tek ve belirsiz sayılarda uydurmayıp `null` döner. */
 function denemeSayilariCoz(parca: string, soruSayisi: number): { dogru: number; yanlis: number } | null {
+  // "40'ta 30" ilk sayı toplamdır; "2 doğru 5 yanlış 3"te etiketin yönü belli değildir.
+  if (/\d\s*'\s*(?:de|da|te|ta|den|dan|ten|tan)(?![a-z])/.test(parca)) return null
+  if (/(?:dogru|yanlis|bos)[a-z]*\s+\d+\s*$/.test(parca) && /^\s*\d/.test(parca)) return null
   const ogeler = araliktakiSayilar(parca, 0, parca.length)
   if (ogeler.some((o) => o.tur === 'ulestirme')) return null
   const ayrilan = etiketleriAyir(ogeler)
@@ -985,6 +1082,22 @@ function denemeSayilariCoz(parca: string, soruSayisi: number): { dogru: number; 
     return { dogru: yalinar[0]!.deger, yanlis: yalinar[1]!.deger }
   }
   return null
+}
+
+/**
+ * "32 doğru 6 yanlış türkçe, 25 doğru 5 yanlış matematik": ilk addan önce ve
+ * adlar arasında hep etiketli sonuç varsa, son addan sonra ise hiç sayı yoksa
+ * her sonuç kendinden sonraki ada aittir. Başka her dizilişte eski sıra geçerlidir.
+ */
+function sonuclarAdlarinOnundeMi(metin: string, adlar: readonly { bas: number; son: number }[]): boolean {
+  const son = adlar[adlar.length - 1]
+  if (!son || araliktakiSayilar(metin, son.son, metin.length).length > 0) return false
+  // Son addan sonraki çıplak etiket "10 tane Türkçe doğrusu yaptım" kalıbıdır.
+  if (/(?<![a-z0-9])(?:dogru|yanlis|bos)/.test(metin.slice(son.son))) return false
+  return adlar.every((ad, i) => {
+    const ogeler = araliktakiSayilar(metin, i === 0 ? 0 : adlar[i - 1]!.son, ad.bas)
+    return ogeler.some((o) => o.tur === 'dogru' || o.tur === 'yanlis')
+  })
 }
 
 /** Sonuçların ders isminden önce söylendiği "20 doğru Türkçe yaptım" kalıbını ayırt eder. */
@@ -1074,9 +1187,8 @@ function denemeBolumleriniCoz(
 
   for (const bolum of denemeBolumleri) {
     const hamDenemeMetni = hazir.norm.slice(bolum.bas, bolum.son)
-    const { temizMetin, net } = netAyiklaVeMaskele(hamDenemeMetni)
-    const grupNeti = /(?<![a-z0-9])(?:sosyal|fen)\w*\s+\d+(?:[.,]\d+)?\s+net\w*/.test(hamDenemeMetni)
-    if (toplamNet === null && net !== null && !grupNeti) toplamNet = net
+    const { temizMetin } = netAyiklaVeMaskele(hamDenemeMetni)
+    toplamNet ??= toplamNetBul(hamDenemeMetni)
     const bulgular = dersleriTara(temizMetin, hedefler, yedekSinirlar)
     const tumAdHedefleri: DersHedefi<SesliAd>[] = SESLI_AD_TABLOSU.map((ad) => ({
       hedef: ad, kimlik: ad.ad, anahtarlar: anahtarlariGenislet([ad.ad]),
@@ -1117,6 +1229,7 @@ function denemeBolumleriniCoz(
       if (sayilar) kayitEkle(tek, sayilar, hazir.hamKesit(bolum.bas, bolum.son))
       continue
     }
+    const onde = sonuclarAdlarinOnundeMi(temizMetin, bulgular)
     for (let sira = 0; sira < bulgular.length; sira++) {
       const bulgu = bulgular[sira]!
       const sonraki = bulgular[sira + 1]
@@ -1126,6 +1239,11 @@ function denemeBolumleriniCoz(
       const hamParca = hazir.hamKesit(bolum.bas + bulgu.bas, bolum.bas + bulgu.son + parcaAnlamliSonu(parca))
       const oncekiSon = bulgular[sira - 1]?.son ?? 0
       const onParca = temizMetin.slice(oncekiSon, bulgu.bas)
+      if (onde) {
+        const ham = hazir.hamKesit(bolum.bas + oncekiSon, bolum.bas + bulgu.son)
+        kayitEkle(bulgu.hedef, bulgu.hedef ? denemeSayilariCoz(onParca, bulgu.hedef.soruSayisi) : null, ham)
+        continue
+      }
       const onSonuc = bulgu.hedef && sonucDersinOnundeMi(parca)
         ? denemeSayilariCoz(onParca, bulgu.hedef.soruSayisi)
         : bulgu.hedef && dersArasindaSonucMu(parca)
@@ -1153,7 +1271,9 @@ function denemeBolumleriniCoz(
         ...grupBulgulari.filter((grup) => grup.son <= bulgu.bas).map((grup) => grup.son),
       )
       const onParca = temizMetin.slice(oncekiDersSon, bulgu.bas)
-      const sayilar = sonucDersinOnundeMi(parca)
+      const sayilar = onde
+        ? topluSonuclariCoz(onParca, soruSayisi)
+        : sonucDersinOnundeMi(parca)
         ? topluSonuclariCoz(onParca, soruSayisi) ?? topluSonuclariCoz(parca, soruSayisi)
         : dersArasindaSonucMu(parca)
           ? topluSonuclariCoz(`${onParca} ${parca}`, soruSayisi) ?? topluSonuclariCoz(parca, soruSayisi)
@@ -1172,7 +1292,7 @@ function denemeBolumleriniCoz(
 
   if (toplamNet === null) {
     for (const bolum of bolumler) {
-      if (bolum.tur === 'soru') toplamNet = netAyiklaVeMaskele(hazir.norm.slice(bolum.bas, bolum.son)).net
+      if (bolum.tur === 'soru') toplamNet = toplamNetBul(hazir.norm.slice(bolum.bas, bolum.son))
       if (toplamNet !== null) break
     }
   }
@@ -1207,7 +1327,7 @@ function araSayilariBol(solOncedenSayiAldi: boolean, araSayilar: SayiOgesi[], ke
 
   for (let i = 0; i < araSayilar.length; i++) {
     const s = araSayilar[i]!
-    if (s.tur === 'dogru' || s.tur === 'yanlis' || s.tur === 'bos' || s.tur === 'hepsi-dogru') {
+    if (s.tur === 'dogru' || s.tur === 'yanlis' || s.tur === 'bos' || s.tur === 'hepsi-dogru' || s.tur.startsWith('kalan-')) {
       const araMetin = kesit.slice(i === 0 ? aralikBas : araSayilar[i - 1]!.son, s.bas)
       if ((solToplamAldi || solIsaretAldi) && sagSonrasiSayilar.length === 0 && /(?<![a-z0-9])(?:sonra|ardindan|ayrica|bir\s+de)(?![a-z0-9])/.test(araMetin)) return bol(i)
       solIsaretAldi = true
@@ -1263,8 +1383,40 @@ function soruGrubuDegerlendir(grup: DersGrubu, sayilar: SayiOgesi[]): SesliSoru[
   return (grup.dersler as string[]).map((ders) => ({ ders, ...cozum }))
 }
 
+type OncekiKayitlar = { kayitlar: ReadonlyMap<string, SesliSoru>; duzeltme: boolean }
+const BOS_ONCEKI: OncekiKayitlar = { kayitlar: new Map(), duzeltme: false }
+
+/**
+ * Sonradan söylenen sonucu ("30 doğru 10 yanlış") önceki "40 soru çözdüm" kaydına
+ * bağlar. Kaydın sonucu zaten varsa yalnız açık düzeltme sözüyle değişir.
+ */
+function oncekiKaydaBagla(
+  grup: DersGrubu,
+  sayilar: SayiOgesi[],
+  kayit: SesliSoru,
+  duzeltme: boolean,
+  toplamSoylendi: boolean,
+): SesliSoru | null {
+  const sonucVar = kayit.dogru > 0 || kayit.yanlis > 0
+  if (toplamSoylendi) {
+    // "pardon matematik 45": yalnız toplam düzeldiyse söylenmiş sonuç korunur.
+    if (!duzeltme || !sonucVar || sayilar.some((s) => s.tur !== 'toplam')) return null
+    const yeni = soruGrubuDegerlendir(grup, sayilar)?.[0]
+    if (!yeni || kayit.dogru + kayit.yanlis > yeni.toplam) return null
+    return { ...yeni, dogru: kayit.dogru, yanlis: kayit.yanlis }
+  }
+  if (sonucVar && !duzeltme) return null
+  const toplam: SayiOgesi = { tur: 'toplam', deger: kayit.toplam, bas: grup.bas, son: grup.son, toplamEtiketli: false }
+  return soruGrubuDegerlendir(grup, [...sayilar, toplam])?.[0] ?? null
+}
+
 /** Tek bir soru bölümündeki ders gruplarını ve sayılarını eşleştirir. */
-function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[]; anlasilmayan: string[] } {
+function soruBolumunuCoz(
+  bolum: Bolum,
+  hazir: HazirMetin,
+  oncekiKayitlar: OncekiKayitlar = BOS_ONCEKI,
+): { sorular: SesliSoru[]; anlasilmayan: string[]; yerineGecen: Set<string> } {
+  const yerineGecen = new Set<string>()
   const soruDisi = soruDisiSayilariAyir(hazir.norm.slice(bolum.bas, bolum.son))
   const kesit = soruDisi.temizMetin
   const bulgular = dersleriTara(kesit, SORU_HEDEFLERI, GRUP_ANAHTARLARI)
@@ -1274,7 +1426,7 @@ function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[
     // parçayı kullanıcıya geri veriyoruz.
     const soruDiliVar = /\d/.test(kesit) && /(?:soru\w*|coz\w*|dogru\w*|yanlis\w*|bos\w*)/.test(kesit)
     const ham = soruDiliVar ? hazir.hamKesit(bolum.bas, bolum.son) : ''
-    return { sorular: [], anlasilmayan: ham ? [ham] : [] }
+    return { sorular: [], anlasilmayan: ham ? [ham] : [], yerineGecen }
   }
 
   const gruplar = dersGruplariniKur(bulgular, kesit)
@@ -1284,7 +1436,9 @@ function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[
 
   const atanan: SayiOgesi[][] = gruplar.map(() => [])
   atanan[0]!.push(...araliklar[0]!)
-  for (let m = 1; m < gruplar.length; m++) {
+  const onde = gruplar.length > 1 && sonuclarAdlarinOnundeMi(kesit, gruplar)
+  if (onde) for (let m = 1; m < gruplar.length; m++) atanan[m]!.push(...araliklar[m]!)
+  for (let m = 1; m < gruplar.length && !onde; m++) {
     const solAldi = atanan[m - 1]!.some((s) => s.tur !== 'bos' && s.tur !== 'hepsi-dogru')
     const { sola, saga } = araSayilariBol(solAldi, araliklar[m]!, kesit, gruplar[m - 1]!.son, araliklar[m + 1]!)
     atanan[m - 1]!.push(...sola)
@@ -1331,8 +1485,16 @@ function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[
         continue
       }
     }
+    const kayit = tekDers && !onceki ? oncekiKayitlar.kayitlar.get(tekDers) : undefined
+    const baglanan = kayit && ayrilan ? oncekiKaydaBagla(grup, sayilar, kayit, oncekiKayitlar.duzeltme, ayrilan.toplamlar.length > 0) : null
+    if (baglanan) {
+      sorular.push(baglanan)
+      yerineGecen.add(baglanan.ders)
+      continue
+    }
     const cozum = soruGrubuDegerlendir(grup, sayilar)
     if (cozum) {
+      if (kayit && oncekiKayitlar.duzeltme) yerineGecen.add(kayit.ders)
       sorular.push(...cozum)
       continue
     }
@@ -1341,7 +1503,7 @@ function soruBolumunuCoz(bolum: Bolum, hazir: HazirMetin): { sorular: SesliSoru[
     const ham = hazir.hamKesit(bolum.bas + parcaBas, bolum.bas + parcaSon)
     if (ham) anlasilmayan.push(ham)
   }
-  return { sorular, anlasilmayan }
+  return { sorular, anlasilmayan, yerineGecen }
 }
 
 /** Aynı derse ait birden çok kaydı toplar ve `CALISMA_DERSLERI` sırasına dizer. */
@@ -1433,12 +1595,187 @@ function denemeKipiSonucunuTamamla(
   }
 }
 
-/** Konuşma tanıma metnini Soru Takibi ve Deneme kayıtlarına dönüştürür. */
-export function sesliMetniCoz(
-  metin: string,
-  secenek: { sablonlar: Sablon[]; varsayilanSablonId: string; kip?: SesliKip },
-): SesliCozum {
-  const hazir = metniHazirla(duyulaniDuzelt(metin))
+// --- Düzeltme sözleri ve söyleyiş sırası (norm uzunluğunu korur) ---
+
+const DUZELTME_SOZU = '(?:pardon|hayir|yok\\s+yok|yanlis\\s+(?:soyledim|dedim)|duzeltiyorum|ozur\\s+dilerim|oyle\\s+degil)'
+const BASTA_DUZELTME_DESENI = new RegExp(`^(?:(?:ya|yo|ay|aa|e+|sey|rabi)[\\s,]+)*(?:${DUZELTME_SOZU}|yok)(?![a-z0-9])`)
+const CUMLE_ICI_DUZELTME_DESENI = new RegExp(`(?<![a-z0-9])(?:(?:${DUZELTME_SOZU}|yok)[\\s,.]*)+(?![a-z0-9])`, 'g')
+const EKLEME_SOZU_DESENI = /(?<![a-z0-9])(?:daha|ayrica|bir\s+de|ek\s+olarak|ustune)(?![a-z0-9])/
+const ETIKET = '(?:dogru|yanlis|bos)'
+
+/** "doğru 32 yanlış 6" dizisini aynı uzunlukta "32 doğru 6 yanlış"a çevirir. */
+function etiketOndeyiCevir(norm: string): string {
+  const cift = `${ETIKET}[a-z]*\\s+\\d+`
+  const desen = new RegExp(`(?<![a-z0-9])${cift}(?:[\\s,]+(?:ve\\s+)?${cift})+(?!\\d)`, 'g')
+  return norm.replace(desen, (dizi, yer: number) => {
+    const onceki = /([a-z0-9']+)[\s,]*$/.exec(norm.slice(0, yer))?.[1] ?? ''
+    // "32 doğru 6 yanlış 4 boş"ta etiket sayının ardındadır; "hepsi doğru" da kendi başınadır.
+    if (/\d/.test(onceki) || /^(?:hepsi|tamami|tumu|kalan|gerisi|tane)/.test(onceki)) return dizi
+    if (new RegExp(`^\\s*(?:'?[a-z]{0,4}\\s+|tane\\w*\\s+)?${ETIKET}`).test(norm.slice(yer + dizi.length))) return dizi
+    return dizi.replace(new RegExp(`(${ETIKET}[a-z]*)(\\s+)(\\d+)`, 'g'), '$3$2$1')
+  })
+}
+
+/**
+ * "40 pardon 50" → "50". Neyin düzeltildiği kesin değilse `null` döner; o zaman
+ * hiçbir sayı yazılmaz. Metnin uzunluğu korunur ki ham dilimler kaymasın.
+ */
+function cumleIciDuzelt(norm: string): string | null {
+  let metin = norm
+  let arama = 0
+  for (;;) {
+    const desen = new RegExp(CUMLE_ICI_DUZELTME_DESENI.source, 'g')
+    desen.lastIndex = arama
+    const es = desen.exec(metin)
+    if (!es) return metin
+    const bas = es.index
+    const son = bas + es[0].length
+    arama = son
+    const sol = metin.slice(0, bas)
+    const sag = metin.slice(son)
+    if (!/\d/.test(sol) || !/\d/.test(sag)) continue
+    const zayif = /^yok[\s,.]*$/.test(es[0])
+    // "yanlışım yok", "hiç boş yok" düzeltme değil sonuçtur.
+    if (zayif && /(?<![a-z0-9])(?:dogru|yanlis|bos|hic|net)[a-z]*\s*$/.test(sol)) continue
+    if (zayif && EKLEME_SOZU_DESENI.test(sag)) continue
+    const yeni = duzeltmeyiUygula(metin, sol, sag, son)
+    if (yeni !== null) metin = yeni
+    else if (!zayif) return null
+  }
+}
+
+function duzeltmeyiUygula(metin: string, sol: string, sag: string, son: number): string | null {
+  const dersler = dersleriTara(metin, SORU_HEDEFLERI, GRUP_ANAHTARLARI)
+  const solSayi = [...sol.matchAll(/(?<![a-z0-9])\d+/g)].pop()
+  const sagSayi = /^(?:\s*(?:onu|aslinda|yani|sey|ya|tam)(?![a-z0-9]))*[\s,.]*([a-z'\s]*?)(\d+)/.exec(sag)
+  if (solSayi?.index === undefined || !sagSayi) return null
+  const n1Bas = solSayi.index
+  const n1Son = n1Bas + solSayi[0].length
+  const n2Son = son + sagSayi[0].length
+  const n2Bas = n2Son - sagSayi[2]!.length
+
+  // Sol sayıdan düzeltme sözüne kadar yalnız ders adı, etiket ve eylem olabilir.
+  const orta = metin.slice(n1Son, sol.length)
+  const ortaDers = dersler.filter((d) => d.bas >= n1Son && d.son <= sol.length)
+  const ondekiDersler = dersler.filter((d) => d.bas >= son && d.son <= n2Bas)
+  const bosalt = (dilim: string, kayma: number, liste: typeof dersler) =>
+    liste.reduce((m, d) => m.slice(0, d.bas - kayma) + ' '.repeat(d.son - d.bas) + m.slice(d.son - kayma), dilim)
+  const ortaKalan = bosalt(orta, n1Son, ortaDers)
+  if (!/^(?:[\s,.']|(?:s?i|s?u)(?:ni|nu)?(?![a-z])|(?:tane|soru|dogru|yanlis|bos|coz|yap|test)[a-z]*)*$/.test(ortaKalan)) return null
+  const onKalan = bosalt(metin.slice(son, n2Bas), son, ondekiDersler)
+  if (!/^(?:[\s,.']|(?:onu|aslinda|yani|sey|ya|tam|toplam)(?![a-z]))*$/.test(onKalan)) return null
+  if (ortaDers.length > 1 || ondekiDersler.length > 1) return null
+
+  const solDers = ortaDers[0] ?? dersler.filter((d) => d.son <= n1Bas && !/\d/.test(metin.slice(d.son, n1Bas).replace(/\d+\s*(?:'?[a-z]*\s+)?(?:dogru|yanlis|bos)[a-z]*/g, ''))).pop()
+  const sonrakiDers = dersler.find((d) => d.bas >= n2Son && /^\s*(?:tane\s+)?$/.test(metin.slice(n2Son, d.bas)) && !/^\s*\d/.test(metin.slice(d.son)))
+  const sagDers = ondekiDersler[0] ?? sonrakiDers
+  if (solDers && sagDers && (solDers.hedef === null || solDers.hedef !== sagDers.hedef)) return null
+
+  const etiketBul = (m: string) => new RegExp(`^\\s*'?(?:[a-z]{1,3}\\s+)?(?:tane[a-z]*\\s+)?(${ETIKET})`).exec(m)?.[1]
+  const etiket1 = etiketBul(ortaKalan)
+  const etiket2 = etiketBul(metin.slice(n2Son))
+  if (etiket1 && etiket2 && etiket1 !== etiket2) return null
+  // "matematik 40 pardon 32 doğru": toplamın mı sonucun mu düzeldiği belli değil;
+  // "türkçe 32 pardon 33 doğru"da ise yalın sayı yalnız sonucun yarım kalmış hâlidir.
+  if (!etiket1 && etiket2 && /(?:soru|tane|coz|yap)/.test(ortaKalan)) return null
+
+  const ortaDersSozu = ortaDers[0] && !sagDers ? ` ${metin.slice(ortaDers[0].bas, ortaDers[0].son)}` : ''
+  const ondekiSoz = ondekiDersler[0] && !solDers ? `${metin.slice(ondekiDersler[0].bas, ondekiDersler[0].son)} ` : ''
+  const yeni = `${ondekiSoz}${sagSayi[2]}${etiket1 && !etiket2 ? ` ${etiket1}` : ''}${ortaDersSozu}`
+  return metin.slice(0, n1Bas) + yeni.padEnd(n2Son - n1Bas) + metin.slice(n2Son)
+}
+
+const SORU_DERSI_GRUBU: Record<string, TopluGrup> = {
+  Fizik: 'fen', Kimya: 'fen', Biyoloji: 'fen',
+  Tarih: 'sosyal', Coğrafya: 'sosyal', Felsefe: 'sosyal', 'Din Kültürü': 'sosyal',
+}
+const GRUP_GORUNEN_ADI: Record<TopluGrup, string> = { sosyal: 'Sosyal', fen: 'Fen' }
+
+type AdBulgusu = DersBulgu<string> & { grup: TopluGrup | null; soz: string }
+
+function adlariBul(norm: string): AdBulgusu[] {
+  const gruplar = dersleriTara(norm, GRUP_HEDEFLERI)
+  return dersleriTara(norm, SORU_HEDEFLERI, GRUP_ANAHTARLARI).map((ad) => ({
+    ...ad,
+    grup: ad.hedef === null ? gruplar.find((g) => g.bas === ad.bas)?.hedef ?? null : null,
+    soz: norm.slice(ad.bas, ad.son),
+  }))
+}
+
+type CozumSecenegi = { sablonlar: Sablon[]; varsayilanSablonId: string; kip?: SesliKip }
+
+/** Sayısız ya da derssiz mesajı, önceki mesajın kesin bağlamıyla tamamlanmış cümleye çevirir. */
+function baglamlaTamamla(metin: string, baglam: SesliBaglam, kip: SesliKip): string {
+  const { norm } = metniHazirla(duyulaniDuzelt(metin))
+  const adlar = adlariBul(norm)
+  const sayilar = araliktakiSayilar(norm, 0, norm.length)
+  const { bekleyen, sonDers } = baglam
+
+  if (bekleyen?.tur === 'grup' && adlar.length === 1 && sayilar.length === 0) {
+    const ders = adlar[0]!.hedef
+    if (ders === null || SORU_DERSI_GRUBU[ders] !== bekleyen.grup) return metin
+    const eski = metniHazirla(duyulaniDuzelt(bekleyen.metin)).norm
+    const yer = adlariBul(eski).find((ad) => ad.grup === bekleyen.grup)
+    return yer ? `${eski.slice(0, yer.bas)}${adlar[0]!.soz}${eski.slice(yer.son)}` : metin
+  }
+  if (adlar.length > 0 || sayilar.length === 0) return metin
+  if (bekleyen?.tur === 'ders') return `${bekleyen.soz} ${metin}`
+  if (kip !== 'soru' || sonDers === null) return metin
+
+  const kayit = baglam.sorular.find((s) => s.ders === sonDers)
+  if (!kayit) return metin
+  if (BASTA_DUZELTME_DESENI.test(norm) && !EKLEME_SOZU_DESENI.test(norm)) return `${sonDers} ${metin}`
+  const yalnizSonuc = sayilar.every((s) => s.tur !== 'toplam' && s.tur !== 'ulestirme')
+  const sigiyor = sayilar.reduce((t, s) => t + s.deger, 0) <= kayit.toplam
+  return yalnizSonuc && sigiyor && kayit.dogru === 0 && kayit.yanlis === 0 ? `${sonDers} ${metin}` : metin
+}
+
+/** Çözülen mesajda tek eksik kalan bilgiyi Rabi'nin sorabilmesi için ayırır. */
+function bekleyeniBul(metin: string, cozum: SesliCozum, kip: SesliKip): SesliBekleyen | null {
+  if (cozum.sorular.length > 0 || cozum.yanlisYer) return null
+  if (cozum.deneme && (cozum.deneme.dersler.length > 0 || (cozum.deneme.toplu?.length ?? 0) > 0 || cozum.deneme.toplamNet !== null)) return null
+  const { norm } = metniHazirla(duyulaniDuzelt(metin))
+  const adlar = adlariBul(norm)
+  if (adlar.length !== 1 || cozum.denemedeYok || cozum.fazlaSoru) return null
+  const ad = adlar[0]!
+  if (kip === 'soru') {
+    if (ad.grup) return { tur: 'grup', grup: ad.grup, metin }
+    return ad.hedef !== null && !/\d/.test(norm) ? { tur: 'ders', ad: ad.hedef, soz: ad.soz } : null
+  }
+  if (/\d/.test(soruDisiSayilariMaskele(norm))) return null
+  const gorunen = ad.grup ? GRUP_GORUNEN_ADI[ad.grup] : ad.hedef
+  return gorunen === null ? null : { tur: 'ders', ad: gorunen, soz: ad.soz }
+}
+
+/** Konuşma tanıma metnini, varsa sohbetin kesin bağlamıyla birlikte kayıtlara dönüştürür. */
+export function sesliMetniCoz(metin: string, secenek: CozumSecenegi & { baglam?: SesliBaglam }): SesliCozum {
+  const { baglam, kip } = secenek
+  if (!baglam || !kip) return metniCoz(metin, secenek, BOS_ONCEKI)
+
+  const tam = baglamlaTamamla(metin, baglam, kip)
+  const { norm } = metniHazirla(duyulaniDuzelt(metin))
+  const ekleme = EKLEME_SOZU_DESENI.test(norm)
+  const cozum = metniCoz(tam, secenek, {
+    kayitlar: ekleme ? BOS_ONCEKI.kayitlar : new Map(baglam.sorular.map((s) => [s.ders, s])),
+    duzeltme: !ekleme && BASTA_DUZELTME_DESENI.test(norm),
+  })
+  const bekleyen = bekleyeniBul(tam, cozum, kip)
+  if (!bekleyen) return cozum
+  return { ...cozum, anlasilmayan: bekleyen.tur === 'ders' ? [] : cozum.anlasilmayan, bekleyen }
+}
+
+/** Tek mesajı çözer; `oncekiKayitlar` yalnız bağlam verilmiş soru kipinde doludur. */
+function metniCoz(metin: string, secenek: CozumSecenegi, oncekiKayitlar: OncekiKayitlar): SesliCozum {
+  const hamHazir = metniHazirla(duyulaniDuzelt(metin))
+  const duzeltilmis = cumleIciDuzelt(hamHazir.norm)
+  if (duzeltilmis === null) {
+    return {
+      sorular: [],
+      deneme: secenek.kip === 'deneme' ? denemeKipiSonucunuTamamla(null, secenek.varsayilanSablonId) : null,
+      anlasilmayan: [metin.trim()],
+    }
+  }
+  const hazir: HazirMetin = { ...hamHazir, norm: etiketOndeyiCevir(duzeltilmis) }
   if (!hazir.norm) {
     if (secenek.kip === 'deneme') {
       return { sorular: [], deneme: denemeKipiSonucunuTamamla(null, secenek.varsayilanSablonId), anlasilmayan: [] }
@@ -1451,15 +1788,20 @@ export function sesliMetniCoz(
   if (secenek.kip === 'soru') {
     const hamSorular: SesliSoru[] = []
     const anlasilmayan = new Set<string>()
+    const yerineGecen = new Set<string>()
     const denemeVar = bolumler.some((bolum) => bolum.tur === 'deneme')
     for (const bolum of bolumler) {
       if (bolum.tur !== 'soru') continue
-      const sonuc = soruBolumunuCoz(bolum, hazir)
+      const sonuc = soruBolumunuCoz(bolum, hazir, oncekiKayitlar)
       hamSorular.push(...sonuc.sorular)
+      for (const ders of sonuc.yerineGecen) yerineGecen.add(ders)
       for (const parca of sonuc.anlasilmayan) anlasilmayan.add(parca)
     }
     const sonuc: SesliCozum = { sorular: sorulariBirlestir(hamSorular), deneme: null, anlasilmayan: [...anlasilmayan] }
     if (denemeVar) sonuc.yanlisYer = 'deneme'
+    if (yerineGecen.size > 0) {
+      sonuc.yerineGecen = [...yerineGecen].map((ders) => ({ ders, oncekiToplam: oncekiKayitlar.kayitlar.get(ders)?.toplam ?? 0 }))
+    }
     return sonuc
   }
 
