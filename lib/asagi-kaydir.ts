@@ -22,8 +22,11 @@ import { useEffect, useRef, useState } from 'react'
  * Girişi oynatan `alt-pencere-girisi` dolgusu `both`: animasyon bittikten sonra
  * da `transform: none` yazmaya devam ediyor ve satır içi transformu eziyor.
  * Sürükleme başlarken animasyon bu yüzden kaldırılıyor.
+ *
+ * `onKapat` `false` döndürürse sayfa kapanmadı demektir (önce onay soruluyor);
+ * ekran dışına itilen kutu yerine döner, yoksa onaya "Vazgeç" denince boş kalırdı.
  */
-export function useAsagiKaydirKapat(onKapat: () => void) {
+export function useAsagiKaydirKapat(onKapat: () => void | false) {
   const kapatRef = useRef(onKapat)
   kapatRef.current = onKapat
   const [kutu, setKutu] = useState<HTMLElement | null>(null)
@@ -86,7 +89,9 @@ export function useAsagiKaydirKapat(onKapat: () => void) {
       kutu.style.transition = 'transform 220ms cubic-bezier(0.2, 0.7, 0.3, 1)'
       if (kapansin) {
         kutu.style.transform = `translateY(${kutu.offsetHeight + 40}px)`
-        window.setTimeout(() => kapatRef.current(), 200)
+        window.setTimeout(() => {
+          if (kapatRef.current() === false) kutu.style.transform = ''
+        }, 200)
       } else {
         kutu.style.transform = ''
       }

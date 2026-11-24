@@ -344,6 +344,13 @@ describe('cihazda dinleme', () => {
   })
 })
 
+describe('kalıcı hata', () => {
+  it('mikrofonu yalnız izin reddi ve servis/dil yokluğu kaldırır', () => {
+    const kodlar = ['izin', 'servis-yok', 'dil', 'mikrofon-yok', 'ag', 'mesgul', 'baslatilamadi', 'sessizlik'] as const
+    expect(kodlar.filter((k) => modul.sesHatasiKaliciMi(k))).toEqual(['izin', 'servis-yok', 'dil'])
+  })
+})
+
 describe('tarayıcıda dinleme', () => {
   type Sonuc = { m: string; kesin?: boolean; guven?: number }
   class SahteTanima {

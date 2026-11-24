@@ -14,11 +14,12 @@ import {
   varsayilanSeviyeSinifi,
   type SeviyeSinifi,
 } from '@/lib/seviye-tespit'
-import { dinle, sesIzniIste, sesTanimaDurumu } from '@/lib/ses-tanima'
+import { dinle, SesHatasi, sesHatasiKaliciMi, sesIzniIste, sesTanimaDurumu } from '@/lib/ses-tanima'
 import { sesliMetniCoz, type SesliDeneme, type SesliKip } from '@/lib/sesli-giris'
 import { TOPLU_GRUP_ADI } from '@/lib/toplu-grup'
 import {
   ACILIS_SORUSU,
+  BOS_BAGLAM,
   BOS_BIRIKIM,
   DENEME_ACILIS_SORUSU,
   SEVIYE_ALAN_SORUSU,
@@ -26,6 +27,8 @@ import {
   birikimeEkle,
   denemeTuruSecildi,
   rabiCevabi,
+  sonrakiBaglam,
+  type SohbetBaglami,
   type SohbetBirikimi,
 } from '@/lib/sesli-sohbet'
 import { useGeriKatmani } from '@/lib/geri'
@@ -234,6 +237,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
   const kullaniciSirasiRef = useRef(0)
   /** Birikimin anlık kopyası: cevap hesabı aynı tıklamada güncel birikimi okumalı. */
   const birikimRef = useRef<SohbetBirikimi>(BOS_BIRIKIM)
+  const baglamRef = useRef<SohbetBaglami>(BOS_BAGLAM)
   const zamanlayicilarRef = useRef<number[]>([])
   const listeRef = useRef<HTMLDivElement | null>(null)
   const sonaYakinRef = useRef(true)
@@ -301,8 +305,35 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
     onKapat()
   }, [oturumuTemizle, onKapat])
 
-  useGeriKatmani(true, kapat)
-  const kaydir = useAsagiKaydirKapat(kapat)
+  const { sorular, deneme } = durum.birikim
+
+  const denemeDolu =
+    deneme !== null &&
+    (deneme.dersler.length > 0 ||
+      (deneme.toplu !== undefined && deneme.toplu.length > 0) ||
+      deneme.toplamNet !== null)
+
+  const kaydedilecekVar = kip === 'deneme' ? denemeDolu : sorular.length > 0
+
+  // Birikimde okunan satır varken çıkmak emeği sileceği için her yoldan sorar.
+  const kapatmaOnayi = useKapatmaOnayi({
+    aciklama:
+      kip === 'deneme'
+        ? 'Anlatılan deneme bilgileri kaydedilmeden pencere kapanır.'
+        : 'Anlatılan sorular kaydedilmeden pencere kapanır.',
+  })
+
+  /** ✕, boşluk, geri tuşu ve aşağı çekme aynı yoldan geçer; onay sorulduysa `false` döner. */
+  const kapatmayiIste = (): void | false => {
+    if (!kaydedilecekVar) return kapat()
+    kapatmaOnayi.sor(kapat)
+    return false
+  }
+
+  // Geri tuşu katmanı yığından çıkarır; onaya "Vazgeç" denince yeniden kaydolsun
+  // diye katman onay açıkken kapalı sayılır.
+  useGeriKatmani(kapatmaOnayi.pencere === null, () => void kapatmayiIste())
+  const kaydir = useAsagiKaydirKapat(kapatmayiIste)
 
   const birikimiYaz = useCallback((yeni: SohbetBirikimi) => {
     birikimRef.current = yeni
@@ -347,6 +378,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
   const turSec = (yeniId: string, yeniAd: string) => {
     const oncekiId = oncekiTurKimligiRef.current ?? seciliSablonIdRef.current
     oncekiTurKimligiRef.current = yeniId
+    baglamRef.current = BOS_BAGLAM
     seciliSablonIdRef.current = yeniId
     setSeciliSablonId(yeniId)
     setSeciliSeviye(null)
@@ -400,6 +432,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
     const yeniId = hedefSablon.id
 
     oncekiTurKimligiRef.current = yeniId
+    baglamRef.current = BOS_BAGLAM
     seciliSablonIdRef.current = yeniId
     setSeciliSablonId(yeniId)
     setSeciliSeviye({ sinif, ...(alanGerekir(sinif) ? { alan } : {}) })
@@ -548,7 +581,9 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
         sablonlar: cozucuRef.current.sablonlar,
         varsayilanSablonId: seciliSablonIdRef.current ?? cozucuRef.current.varsayilanSablonId,
         kip,
+        baglam: { ...baglamRef.current, sorular: birikimRef.current.sorular },
       })
+      baglamRef.current = sonrakiBaglam(baglamRef.current, cozum)
 
       // Kalan, bu mesajdan önceki birikim düşülerek verilir; bu mesajın payını `rabiCevabi` bilir.
       const oncekiToplam = birikimRef.current.sorular.reduce((t, s) => t + s.toplam, 0)
@@ -609,6 +644,14 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
       return
     }
 
+    if (uygunluk === 'guvensiz-adres') {
+      setSesDurumu('yok')
+      bosaDon()
+      rabiSoylesin(['Bu adreste mikrofon açılamıyor (HTTPS ya da localhost gerekir). Yazarak anlatabilirsin.'])
+      window.requestAnimationFrame(() => yaziKutusuRef.current?.focus())
+      return
+    }
+
     if (uygunluk === 'izin-yok') {
       const verildi = await sesIzniIste()
       if (!gecerli()) return
@@ -622,9 +665,13 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
     }
 
     setSesDurumu('var')
-    setDurum((o) => ({ ...o, dinleme: 'dinliyor', araMetin: '' }))
 
     const oturum = dinle({
+      // "Dinliyor" mikrofon gerçekten açılınca görünür; önce söylenen söz kaybolurdu.
+      onBasladi: () => {
+        if (!gecerli()) return
+        setDurum((o) => (o.dinleme === 'hazirlaniyor' ? { ...o, dinleme: 'dinliyor' } : o))
+      },
       onKismi: (metin) => {
         if (!gecerli()) return
         sonAraMetinRef.current = metin
@@ -639,36 +686,20 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
       oturumRef.current = null
       const birlesik = bitenMetin.trim() || sonAraMetinRef.current.trim()
       bosaDon()
-      mesajGonder(birlesik)
+      if (birlesik) mesajGonder(birlesik)
+      else rabiSoylesin(['Duyamadım. Tekrar söyle ya da yaz.'])
     } catch (yakalanan) {
       if (!gecerli()) return
       oturumRef.current = null
       bosaDon()
-      const mesaj = yakalanan instanceof Error ? yakalanan.message : ''
-      const kucuk = mesaj.toLocaleLowerCase('tr-TR')
-      if (kucuk.includes('izin')) {
+      const hata = yakalanan instanceof SesHatasi ? yakalanan : new SesHatasi('baslatilamadi')
+      rabiSoylesin([hata.message])
+      if (sesHatasiKaliciMi(hata.kod)) {
         setSesDurumu('yok')
-        rabiSoylesin(['Mikrofon izni yok. Yazarak anlatabilirsin.'])
         window.requestAnimationFrame(() => yaziKutusuRef.current?.focus())
-        return
       }
-      if (
-        kucuk.includes('internet') ||
-        kucuk.includes('çalışmıyor') ||
-        kucuk.includes('calismiyor')
-      ) {
-        setSesDurumu('yok')
-        rabiSoylesin([mesaj])
-        window.requestAnimationFrame(() => yaziKutusuRef.current?.focus())
-        return
-      }
-      if (mesaj === '' || kucuk.includes('anlaşılamadı')) {
-        rabiSoylesin(['Duyamadım. Tekrar söyle ya da yaz.'])
-        return
-      }
-      rabiSoylesin([mesaj])
     }
-  }, [oturumuTemizle, mesajGonder, rabiSoylesin])
+  }, [kip, oturumuTemizle, mesajGonder, rabiSoylesin])
 
   // Açılışta dinleme kendiliğinden başlamaz; ses tanıma desteği sessizce sorgulanır.
   useEffect(() => {
@@ -732,6 +763,12 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
   }
 
   const dinlemeyiBitir = () => {
+    if (durum.dinleme === 'hazirlaniyor') {
+      // Henüz hiçbir şey duyulmadı (izin penceresi açık olabilir): vazgeçilir.
+      oturumuTemizle()
+      setDurum((o) => ({ ...o, dinleme: 'bos', araMetin: '' }))
+      return
+    }
     if (durum.dinleme !== 'dinliyor') return
     setDurum((o) => ({ ...o, dinleme: 'bitiriliyor' }))
     oturumRef.current?.durdur()
@@ -760,25 +797,8 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
     birikimiYaz({ ...birikimRef.current, deneme: null })
   }
 
-  const { sorular, deneme } = durum.birikim
-
-  const denemeDolu =
-    deneme !== null &&
-    (deneme.dersler.length > 0 ||
-      (deneme.toplu !== undefined && deneme.toplu.length > 0) ||
-      deneme.toplamNet !== null)
-
-  const kaydedilecekVar = kip === 'deneme' ? denemeDolu : sorular.length > 0
   const soruHatasiVar =
     kip === 'soru' && sorular.some((s) => s.toplam <= 0 || s.dogru + s.yanlis > s.toplam)
-
-  // Birikimde okunan satır varken ✕ ile çıkmak emeği sileceği için sorar.
-  const kapatmaOnayi = useKapatmaOnayi({
-    aciklama:
-      kip === 'deneme'
-        ? 'Anlatılan deneme bilgileri kaydedilmeden pencere kapanır.'
-        : 'Anlatılan sorular kaydedilmeden pencere kapanır.',
-  })
 
   const onaylaVeIlerle = () => {
     if (!kaydedilecekVar || soruHatasiVar) return
@@ -811,7 +831,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
   return (
     <div
       className="katman-zemin tablet-orta-zemin fixed inset-0 z-50 flex items-end justify-center bg-black/40"
-      onClick={kapat}
+      onClick={kapatmayiIste}
     >
       {kapatmaOnayi.pencere}
       <div
@@ -855,7 +875,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
             )}
             <button
               type="button"
-              onClick={() => (kaydedilecekVar ? kapatmaOnayi.sor(kapat) : kapat())}
+              onClick={kapatmayiIste}
               aria-label="Kapat"
               className="ml-auto inline-flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-xl bg-muted/70 text-muted-foreground active:bg-muted"
             >
@@ -1221,7 +1241,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
               <button
                 type="button"
                 onClick={dinlemeyiBitir}
-                disabled={durum.dinleme !== 'dinliyor'}
+                disabled={durum.dinleme === 'bitiriliyor'}
                 className={cn(
                   'inline-flex h-[42px] shrink-0 items-center gap-1.5 rounded-full px-4 text-sm font-extrabold transition-colors disabled:opacity-60',
                   durum.araMetin.trim() !== ''
@@ -1230,7 +1250,7 @@ export function SesliGirisSayfasi(props: SesliGirisSayfasiProps) {
                 )}
               >
                 <Check size={16} strokeWidth={2.6} aria-hidden />
-                Bitir
+                {durum.dinleme === 'hazirlaniyor' ? 'Vazgeç' : 'Bitir'}
               </button>
             </div>
           ) : (

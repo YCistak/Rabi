@@ -42,6 +42,14 @@ export class SesHatasi extends Error {
   }
 }
 
+/**
+ * Mikrofon düğmesi yalnız bunlarda kalkar; gürültü, meşgul servis ya da kopan
+ * internet geçicidir ve yeniden denenebilmelidir.
+ */
+export function sesHatasiKaliciMi(kod: SesHataKodu): boolean {
+  return kod === 'izin' || kod === 'servis-yok' || kod === 'dil'
+}
+
 const SES_HATA_METNI: Record<SesHataKodu, string> = {
   izin: 'Mikrofon izni yok. Yazarak anlatabilirsin.',
   'servis-yok': 'Burada ses tanıma çalışmıyor. Yazarak anlatabilirsin.',
