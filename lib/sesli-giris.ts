@@ -1355,82 +1355,49 @@ function sorulariBirlestir(hamSorular: SesliSoru[]): SesliSoru[] {
   return CALISMA_DERSLERI.map((d) => harita.get(d)).filter((k): k is SesliSoru => k !== undefined)
 }
 
-const TANIDIK_YARDIMCI_KOKLER = new Set(
-  TANIMA_IPUCLARI.map((s) => sadelestir(s)).filter(
-    (s) => s !== 'tyt' && s !== 'ayt' && s !== 'ydt' && !SORU_HEDEFLERI.some((h) => h.anahtarlar.some((a) => a.metin === s)),
-  ),
-)
-
-/** Bir adayın tanıdık sözcük (ders adı, TYT/AYT/YDT, sayı; eşitlikte diğer tanıma ipuçları) puanını hesaplar. */
-function adayTanidikPuani(aday: string): number {
-  if (!aday.trim()) return 0
-  const cevrilmis = sayilariRakamaCevir(aday)
-  const sade = sadelestir(cevrilmis).replace(/[’`]/g, "'")
-  if (!sade) return 0
-
-  const kapaliAraliklar: { bas: number; son: number }[] = []
-  const cakisiyorMu = (bas: number, son: number) => kapaliAraliklar.some((a) => bas < a.son && a.bas < son)
-
-  let anaPuan = 0
+/** Adayda tanınan ders ve sınav adları (sıralı) ile söylenen sayılar. */
+function adayOku(aday: string): { adlar: string[]; sayilar: string; sozcukSayisi: number } {
+  const sade = sadelestir(sayilariRakamaCevir(aday)).replace(/[’`]/g, "'")
+  const adlar: string[] = []
   for (const es of sade.matchAll(/(?<![a-z0-9])(tyt|ayt|ydt)(?:'?([a-z]+))?(?![a-z0-9])/g)) {
-    const bas = es.index ?? 0
-    const tam = es[0]
-    const ek = es[2]
-    if (ek !== undefined && !CEKIM_EKLERI.has(ek) && !SINAV_BITISIK_EKLERI.has(ek)) continue
-    kapaliAraliklar.push({ bas, son: bas + tam.length })
-    anaPuan += 1
+    if (es[2] === undefined || CEKIM_EKLERI.has(es[2]) || SINAV_BITISIK_EKLERI.has(es[2])) adlar.push(es[1]!)
   }
-
   for (const ders of dersleriTara(sade, SORU_HEDEFLERI, [], false)) {
-    if (ders.hedef !== null && !cakisiyorMu(ders.bas, ders.son)) {
-      kapaliAraliklar.push({ bas: ders.bas, son: ders.son })
-      anaPuan += 1
-    }
+    if (ders.hedef !== null) adlar.push(ders.hedef)
   }
-
-  for (const es of sade.matchAll(/(?<![a-z0-9])\d+(?:[.,]\d+)?/g)) {
-    const bas = es.index ?? 0
-    const son = bas + es[0].length
-    if (!cakisiyorMu(bas, son)) {
-      kapaliAraliklar.push({ bas, son })
-      anaPuan += 1
-    }
+  return {
+    adlar,
+    sayilar: (sade.match(/\d+(?:[.,]\d+)?/g) ?? []).join(' '),
+    sozcukSayisi: (sade.match(/[a-z0-9]+/g) ?? []).length,
   }
-
-  let yardimciPuan = 0
-  for (const es of sade.matchAll(/[a-z0-9]+/g)) {
-    const bas = es.index ?? 0
-    const kelime = es[0]
-    const son = bas + kelime.length
-    if (cakisiyorMu(bas, son)) continue
-    if (/^(?:rabi|net(?:im|imiz|le|ten|te|e|i)?|dogru\w*|yanlis\w*|bos(?:luk)?|deneme\w*)$/.test(kelime)) {
-      for (const kok of TANIDIK_YARDIMCI_KOKLER) {
-        if (kelime.startsWith(kok)) {
-          yardimciPuan += 0.01
-          break
-        }
-      }
-    }
-  }
-
-  return anaPuan + yardimciPuan
 }
 
 /**
- * Konuşma tanımanın döndürdüğü alternatiflerden en çok tanıdık sözcük
- * (ders adı, TYT/AYT/YDT, sayı) içereni seçer; eşitlikte ilk adayı korur.
+ * Telefonun ilk adayı esastır. Başka aday yalnız söylenen sayılar birebir
+ * aynıysa ve ilk adayın tanınan adlarını koruyup tanınmayan bir ders/sınav
+ * adını düzeltiyorsa seçilir: "45" yerine "40 5" diyen aday daha çok "tanıdık
+ * sözcük" içerir ama sayıyı bozar.
  */
 export function enIyiAdayiSec(adaylar: string[]): string {
   if (adaylar.length === 0) return ''
+  const ilk = adayOku(adaylar[0]!)
   let enIyi = adaylar[0]!
-  let enIyiPuan = adayTanidikPuani(enIyi)
-  for (let i = 1; i < adaylar.length; i++) {
-    const aday = adaylar[i]!
-    const puan = adayTanidikPuani(aday)
-    if (puan > enIyiPuan) {
-      enIyi = aday
-      enIyiPuan = puan
-    }
+  let enCokAd = ilk.adlar.length
+  for (const metin of adaylar.slice(1)) {
+    const aday = adayOku(metin)
+    if (aday.sayilar !== ilk.sayilar || aday.adlar.length <= enCokAd) continue
+    // Düzeltme sözcük eklemez; fazladan ders adı başka bir cümledir.
+    if (aday.sozcukSayisi > ilk.sozcukSayisi) continue
+    const kalan = [...aday.adlar]
+    const korunuyor = ilk.adlar.every((ad) => {
+      const yer = kalan.indexOf(ad)
+      if (yer === -1) return false
+      kalan.splice(yer, 1)
+      return true
+    })
+    if (!korunuyor) continue
+    enIyi = metin
+    enCokAd = aday.adlar.length
   }
   return enIyi
 }

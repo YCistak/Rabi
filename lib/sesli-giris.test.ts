@@ -569,7 +569,24 @@ describe('çekim ekli dersler, sık konuşma kalıpları ve aday seçimi', () =>
     })
   })
 
-  it('enIyiAdayiSec en çok tanıdık sözcük içereni seçer, eşitlikte ilk adayı korur', () => {
+  it.each([
+    ['matematik 45', 'matematik 40 5'],
+    ['125 matematik', '120 5 matematik'],
+    ['32 doğru', '30 2 doğru'],
+    ['matematik kırk beş', 'matematik 40 5'],
+    ['20 matematik', '20 matematik fizik'],
+    ['20 mantık', '20 matematik'],
+    ['tarih 2 soru', 'coğrafya 2 soru'],
+  ])('enIyiAdayiSec telefonun ilk adayı "%s" yerine "%s" seçmez', (ilk, diger) => {
+    expect(enIyiAdayiSec([ilk, diger])).toBe(ilk)
+  })
+
+  it('enIyiAdayiSec yalnız sayılar aynıysa tanınmayan ders ya da sınav adını düzeltir', () => {
+    expect(enIyiAdayiSec(['20 matem attık sorusu', '20 matematik sorusu'])).toBe('20 matematik sorusu')
+    expect(enIyiAdayiSec(['kimyager 40 soru', 'kimya 40 soru'])).toBe('kimya 40 soru')
+  })
+
+  it('enIyiAdayiSec telefonun ilk adayını esas alır, TYT/AYT adını düzeltir', () => {
     expect(
       enIyiAdayiSec([
         'bugün TT denemesinde 85 net yaptım',
@@ -583,7 +600,7 @@ describe('çekim ekli dersler, sık konuşma kalıpları ve aday seçimi', () =>
         'bugün 40 soru çözdüm',
         'bugün kimyadan 40 soru çözdüm',
       ]),
-    ).toBe('bugün kimyadan 40 soru çözdüm')
+    ).toBe('bugün soru çözdüm')
 
     expect(
       enIyiAdayiSec([
