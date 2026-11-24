@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { yakinlariSonaAt } from './gecmis'
 import {
   KART_SAYISI,
   TAM_BONUS,
@@ -168,5 +169,18 @@ describe('SIRALA_HAVUZU', () => {
   it('olay adları benzersiz', () => {
     const adlar = SIRALA_HAVUZU.map((o) => o.olay)
     expect(new Set(adlar).size).toBe(adlar.length)
+  })
+})
+
+describe('tur listesi + geçmiş', () => {
+  it('tüm sorular görülmüşken ilk sorular yan yana aynı soru olmuyor', () => {
+    // Tur listesi küçük havuzdan tekrarlı üretiliyor; geçmiş uygulanınca aynı
+    // sorunun kopyaları art arda toplanıp turun başına geliyordu.
+    const kimlik = (s: ReturnType<typeof siralaTuruHazirla>[number]) => soruKimligi(s)
+    const liste = siralaTuruHazirla('orta', 200)
+    const gorulen = [...new Set(liste.map(kimlik))]
+    const sonuc = yakinlariSonaAt(liste, gorulen, kimlik).map(kimlik)
+    const ilk = sonuc.slice(0, Math.min(gorulen.length, 20))
+    expect(new Set(ilk).size).toBe(ilk.length)
   })
 })

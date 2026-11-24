@@ -74,6 +74,23 @@ describe('yakinlariSonaAt', () => {
   })
 })
 
+describe('yakinlariSonaAt: tekrarlı liste', () => {
+  const anahtar = (s: string) => s
+  it('görülmüş sorunun kopyaları yan yana toplanmıyor', () => {
+    // 200 soruluk tur küçük havuzdan tekrarlı üretilir; görülenler yakınlığa
+    // göre dizilince aynı sorunun bütün kopyaları art arda geliyordu.
+    const liste = ['a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c']
+    const sonuc = yakinlariSonaAt(liste, ['a', 'b', 'c'], anahtar)
+    expect(sonuc).toEqual(['a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c'])
+  })
+
+  it('görülmeyenler önde, görülenler kopya sırasıyla arkada', () => {
+    const liste = ['a', 'x', 'a', 'b', 'x', 'b', 'a']
+    const sonuc = yakinlariSonaAt(liste, ['b', 'a'], anahtar)
+    expect(sonuc).toEqual(['x', 'x', 'b', 'a', 'b', 'a', 'a'])
+  })
+})
+
 describe('turSirasi + geçmiş', () => {
   type Ornek = { ad: string; zorluk: Zorluk }
   const havuz: Ornek[] = Array.from({ length: 10 }, (_, i) => ({ ad: `k${i}`, zorluk: 'kolay' }))
