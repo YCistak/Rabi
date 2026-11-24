@@ -63,6 +63,22 @@ export const AKTARILAN_KONULAR: Record<string, Pick<BankaKonusu, 'sayi' | 'yukle
   'fzk9-skaler-vektorel': { sayi: 12, yukle: () => import('./veri/fzk9-skaler-vektorel.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'fzk9-temel-kuvvet': { sayi: 12, yukle: () => import('./veri/fzk9-temel-kuvvet.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'fzk9-vektor': { sayi: 36, yukle: () => import('./veri/fzk9-vektor.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-adlandirma': { sayi: 27, yukle: () => import('./veri/kim9-adlandirma.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-altdal': { sayi: 12, yukle: () => import('./veri/kim9-altdal.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-atom-teori': { sayi: 30, yukle: () => import('./veri/kim9-atom-teori.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-gunluk': { sayi: 9, yukle: () => import('./veri/kim9-gunluk.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-guvenlik': { sayi: 14, yukle: () => import('./veri/kim9-guvenlik.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-iyonik': { sayi: 23, yukle: () => import('./veri/kim9-iyonik.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-kariyer': { sayi: 7, yukle: () => import('./veri/kim9-kariyer.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-katilar': { sayi: 21, yukle: () => import('./veri/kim9-katilar.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-kovalent': { sayi: 19, yukle: () => import('./veri/kim9-kovalent.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-metalik': { sayi: 13, yukle: () => import('./veri/kim9-metalik.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-molekuller-arasi': { sayi: 23, yukle: () => import('./veri/kim9-molekuller-arasi.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-nano': { sayi: 19, yukle: () => import('./veri/kim9-nano.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-orbital': { sayi: 43, yukle: () => import('./veri/kim9-orbital.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-periyodik-ozellik': { sayi: 58, yukle: () => import('./veri/kim9-periyodik-ozellik.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-periyodik-yer': { sayi: 36, yukle: () => import('./veri/kim9-periyodik-yer.json') as unknown as Promise<{ default: BankaSorusu[] }> },
+  'kim9-sivilar': { sayi: 85, yukle: () => import('./veri/kim9-sivilar.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-alan': { sayi: 74, yukle: () => import('./veri/mat10-alan.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-algoritmik-yapi': { sayi: 20, yukle: () => import('./veri/mat10-algoritmik-yapi.json') as unknown as Promise<{ default: BankaSorusu[] }> },
   'mat10-asal-carpan': { sayi: 60, yukle: () => import('./veri/mat10-asal-carpan.json') as unknown as Promise<{ default: BankaSorusu[] }> },
@@ -123,5 +139,5 @@ export const AKTARILAN_KONULAR: Record<string, Pick<BankaKonusu, 'sayi' | 'yukle
 
 /** Bir dersin 9–11 dizini: programdaki her konu; verisi gelmemiş konu `sayi: 0` ("Yakında"). */
 function dizinKur(ders: BankaDersi): BankaSinifi[] { return ([9, 10, 11] as const).map((sinif) => { const program = programBul(ders, sinif); return { sinif, temalar: (program?.temalar ?? []).map((tema) => ({ id: tema.id, ad: tema.ad, konular: tema.konular.map((konu) => ({ id: konu.id, ad: konu.ad, ...(AKTARILAN_KONULAR[konu.id] ?? { sayi: 0 }) })) })) } }) }
-export const BANKA_DIZINLERI: Record<BankaDersi, BankaSinifi[]> = { matematik: dizinKur('matematik'), fizik: dizinKur('fizik') }
+export const BANKA_DIZINLERI: Record<BankaDersi, BankaSinifi[]> = { matematik: dizinKur('matematik'), fizik: dizinKur('fizik'), kimya: dizinKur('kimya') }
 export function bankaKonusuBul(id: string): BankaKonusu | undefined { return Object.values(BANKA_DIZINLERI).flat().flatMap((sinif) => sinif.temalar).flatMap((tema) => tema.konular).find((konu) => konu.id === id) }
