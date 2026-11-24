@@ -440,6 +440,7 @@ body {
   --konu-matematik-dolgu: #275b91;
   --konu-turkce-dolgu: #775b12;
   --konu-fizik-dolgu: #684394;
+  --sekil-kagit: #ffffff;
   --konu-kimya-dolgu: #a24e1c;
   --konu-biyoloji-dolgu: #446f32;
   --konu-tarih-dolgu: #7a4f2a;
@@ -662,6 +663,7 @@ body {
   --konu-kimya-koyu: #f3b68c;
   --konu-kimya-cubuk: #573b27;
   --konu-kimya-ok: #cc7840;
+  --sekil-kagit: #ffffff;
   --konu-kimya-dolgu: #a5521f;
   --konu-biyoloji: #202b1c;
   --konu-biyoloji-kenar: #37492f;
@@ -729,6 +731,15 @@ body {
   --gorev-hardal: #dcb25e;
   --gorev-kahve: #d2a587;
   --gorev-gri: #b0b5bd;
+}
+
+/* Soru Bankası'nın hazır SVG şekilleri: renkleri anlamlı (tanecik, uyarı
+   işareti), çevrilmez; koyu temada yalnız parlaklığı kısılır. */
+.sekil-kagidi {
+  background: var(--sekil-kagit);
+}
+:root[data-tema='koyu'] .sekil-kagidi {
+  filter: brightness(0.88);
 }
 
 /*

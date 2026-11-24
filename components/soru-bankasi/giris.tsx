@@ -8,6 +8,7 @@ import type { SoruBankasiKaydi } from '@/lib/soru-bankasi/tip'
 const DERS_NOKTASI: Record<BankaDersi, string> = {
   matematik: 'bg-konu-matematik-dolgu',
   fizik: 'bg-konu-fizik-dolgu',
+  kimya: 'bg-konu-kimya-dolgu',
 }
 
 export function SoruBankasiGiris({ ders, sinif, kayit, onDers, onSinif, onKonu }: { ders: BankaDersi; sinif: 9 | 10 | 11; kayit: SoruBankasiKaydi; onDers: (ders: BankaDersi) => void; onSinif: (sinif: 9 | 10 | 11) => void; onKonu: (konu: BankaKonusu) => void }) {
@@ -22,7 +23,7 @@ export function SoruBankasiGiris({ ders, sinif, kayit, onDers, onSinif, onKonu }
   return <main className="sayfa-girisi mx-auto max-w-md px-4 pb-28">
     <h1 className="font-display text-2xl font-extrabold tracking-tight">Soru Bankası</h1>
     {/* Ders ve sınıf aynı sade sekmeyle seçilir; ders sekmesi biraz alçak, sınıf onun altında. */}
-    <div role="group" aria-label="Ders" className="mt-4 grid grid-cols-2 gap-1 rounded-[18px] bg-muted/70 p-1">
+    <div role="group" aria-label="Ders" className="mt-4 grid grid-cols-3 gap-1 rounded-[18px] bg-muted/70 p-1">
       {BANKA_DERSLERI.map((d) => <button key={d.id} type="button" onClick={() => onDers(d.id)} aria-pressed={ders === d.id} className={`min-h-[44px] rounded-[14px] font-display text-[15px] font-extrabold transition ${ders === d.id ? 'golge-kart bg-secili text-foreground ring-1 ring-secili-kenar' : 'text-muted-foreground active:bg-card/60'}`}>{d.ad}</button>)}
     </div>
     <div role="group" aria-label="Sınıf" className="mt-2 grid grid-cols-3 gap-1 rounded-[18px] bg-muted/70 p-1">

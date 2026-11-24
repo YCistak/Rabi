@@ -207,7 +207,7 @@ function SayfaSorusu({
           Tablo ve akış küçültülmez: sütunları dar ekrana zaten sığmıyor. */}
       {soru.gorsel && (
         <div
-          className={`mx-auto mt-2 ${soru.gorsel.tur === 'tablo' || soru.gorsel.tur === 'akis' ? '' : 'max-w-[18rem]'}`}
+          className={`mx-auto mt-2 ${soru.gorsel.tur === 'tablo' || soru.gorsel.tur === 'akis' || soru.gorsel.tur === 'svg' ? '' : 'max-w-[18rem]'}`}
         >
           <SoruSekli gorsel={soru.gorsel} ders={konuDersi(soru.konu)} />
         </div>

@@ -200,9 +200,20 @@ const MATEMATIK: Record<string, (g: Ham) => boolean> = {
   katman: (g) => Array.isArray(g.katmanlar) && g.katmanlar.every((a) => !!a && typeof (a as Ham).ad === 'string'),
 }
 
+/** Yalnız Soru Bankası'nın kendi klasöründeki dosya; üst klasör, adres ve sorgu geçemez. */
+const SVG_YOLU = /^soru-bankasi\/[a-z]+\/(?:9|10|11)\/[a-z0-9]+(?:-[a-z0-9]+)*\.svg$/
+
+function svgGorselHatasi(g: Ham): string | null {
+  // `$` satır sonunu da kabul edebildiği için boşluk ayrıca elenir.
+  if (typeof g.yol !== 'string' || /\s/.test(g.yol) || !SVG_YOLU.test(g.yol)) return 'svg yolu geçersiz'
+  if (typeof g.aciklama !== 'string' || !g.aciklama.trim()) return 'svg açıklaması (alt metin) yok'
+  if (![g.en, g.boy].every((b) => Number.isInteger(b) && (b as number) > 0 && (b as number) <= 2000)) return 'svg ölçüsü geçersiz'
+  return null
+}
+
 const FIZIK: Record<string, (g: Ham) => string | null> = { devre: devreHatasi, optik: optikHatasi, duzenek: duzenekHatasi }
 
-export const BANKA_GORSEL_TURLERI = [...Object.keys(MATEMATIK), ...Object.keys(FIZIK)]
+export const BANKA_GORSEL_TURLERI = [...Object.keys(MATEMATIK), ...Object.keys(FIZIK), 'svg']
 
 /** Şeklin ilk kusuru (Türkçe, kısa) ya da geçerliyse `null`. */
 export function gorselHatasi(g: unknown): string | null {
@@ -210,6 +221,7 @@ export function gorselHatasi(g: unknown): string | null {
   const tur = String(g.tur)
   if (MATEMATIK[tur]) return MATEMATIK[tur](g) ? null : `${tur} biçimi geçersiz`
   if (FIZIK[tur]) return FIZIK[tur](g)
+  if (tur === 'svg') return svgGorselHatasi(g)
   return `bilinmeyen görsel türü "${tur}"`
 }
 

@@ -8,7 +8,7 @@ const denetle = argumanlar.includes('--denetle')
 const kaynak = argumanlar.find((deger) => deger !== '--denetle')
 if (!kaynak) throw new Error('Kullanım: node scripts/soru-bankasi-aktar.mjs <kaynakKlasör> [--denetle]')
 // Konu kimliğinin öneki dersi söyler (lib/soru-bankasi/ders.ts).
-const ONEKLER = ['mat', 'fzk']
+const ONEKLER = ['mat', 'fzk', 'kim']
 const kok = resolve(kaynak); const hedef = resolve('lib/soru-bankasi/veri'); const hatalar = []; const aktarilan = []
 
 function soruGecerliMi(soru, dosya, sira) {
@@ -47,7 +47,11 @@ for (const sinif of await readdir(kok, { withFileTypes: true })) {
   }
 }
 
-const satirlar = aktarilan.sort((a, b) => a.id.localeCompare(b.id)).map(({ id, sayi }) => `  '${id}': { sayi: ${sayi}, yukle: () => import('./veri/${id}.json') as unknown as Promise<{ default: BankaSorusu[] }> },`).join('\n')
+// Dizin yalnız bu partiyi değil bütün veriyi listeler: tek dersi aktarmak ötekileri dizinden düşürmesin.
+const sayilar = new Map()
+for (const dosya of await readdir(hedef).catch(() => [])) if (dosya.endsWith('.json')) sayilar.set(dosya.slice(0, -5), JSON.parse(await readFile(join(hedef, dosya), 'utf8')).length)
+for (const { id, sayi } of aktarilan) sayilar.set(id, sayi)
+const satirlar = [...sayilar].map(([id, sayi]) => ({ id, sayi })).sort((a, b) => a.id.localeCompare(b.id)).map(({ id, sayi }) => `  '${id}': { sayi: ${sayi}, yukle: () => import('./veri/${id}.json') as unknown as Promise<{ default: BankaSorusu[] }> },`).join('\n')
 const dizin = `/* Bu dosya soru-bankasi-aktar.mjs tarafından veri eşlemesiyle güncellenir. */
 import { programBul } from '../konu'
 import type { BankaDersi } from './ders'
@@ -63,7 +67,7 @@ ${satirlar}
 
 /** Bir dersin 9–11 dizini: programdaki her konu; verisi gelmemiş konu \`sayi: 0\` ("Yakında"). */
 function dizinKur(ders: BankaDersi): BankaSinifi[] { return ([9, 10, 11] as const).map((sinif) => { const program = programBul(ders, sinif); return { sinif, temalar: (program?.temalar ?? []).map((tema) => ({ id: tema.id, ad: tema.ad, konular: tema.konular.map((konu) => ({ id: konu.id, ad: konu.ad, ...(AKTARILAN_KONULAR[konu.id] ?? { sayi: 0 }) })) })) } }) }
-export const BANKA_DIZINLERI: Record<BankaDersi, BankaSinifi[]> = { matematik: dizinKur('matematik'), fizik: dizinKur('fizik') }
+export const BANKA_DIZINLERI: Record<BankaDersi, BankaSinifi[]> = { matematik: dizinKur('matematik'), fizik: dizinKur('fizik'), kimya: dizinKur('kimya') }
 export function bankaKonusuBul(id: string): BankaKonusu | undefined { return Object.values(BANKA_DIZINLERI).flat().flatMap((sinif) => sinif.temalar).flatMap((tema) => tema.konular).find((konu) => konu.id === id) }
 `
 if (!denetle) { await mkdir(hedef, { recursive: true }); for (const { id, sorular } of aktarilan) await writeFile(join(hedef, `${id}.json`), JSON.stringify(sorular), 'utf8'); await writeFile(resolve('lib/soru-bankasi/dizin.ts'), dizin, 'utf8') }

@@ -25,7 +25,8 @@ describe('ders', () => {
     expect(konuDersi('fzk11-mercek')).toBe('fizik')
     expect(konuDersi(undefined)).toBe('matematik')
     expect(bankaDersiCoz('fizik')).toBe('fizik')
-    expect(bankaDersiCoz('kimya')).toBe('matematik')
+    expect(bankaDersiCoz('kimya')).toBe('kimya')
+    expect(bankaDersiCoz('resim')).toBe('matematik')
   })
 })
 

@@ -283,7 +283,7 @@ export const OYUNLAR: OyunTanimi[] = [
     ad: 'Tarihî Antlaşmalar',
     kisaAciklama: 'Bu madde hangi antlaşmadan?',
     ikon: '📜',
-    ozet: `Üstteki maddeyi ait olduğu antlaşmayla eşleştirirsin — sıra fark etmez. El bitince yenisi gelir.`,
+    ozet: `Üstteki maddeyi ait olduğu antlaşmayla eşleştirirsin — sıra fark etmez. El bitince yenisi gelir. Parantezdeki yıl **imza yılıdır**; aynı adlı antlaşmalar (İstanbul, Ankara) ayrıdır, yanlarında taraf yazar.`,
   },
   {
     id: 'kavram',

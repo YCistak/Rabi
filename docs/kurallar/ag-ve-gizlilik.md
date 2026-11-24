@@ -18,7 +18,9 @@ hataları öğrenmenin başka yolu yok.
 - Öneri/hata bildirimi: `lib/geri-bildirim.ts` (saf), `lib/geri-bildirim-kolu.ts`
   (kuyruk), `components/ekranlar/geri-bildirim.tsx`. Beş alan
   `geriBildirimFormVerisi()` içinde; biri serbest metin, ekran kişisel bilgi
-  yazılmamasını söylüyor. İzin kartı yok, liste düğmenin üstünde.
+  yazılmamasını söylüyor. İzin kartı yok; gönderilenleri sayan kısa bir `Not` düğmenin
+  üstünde. Türler Öneri ve Hata; `baska` ekrandan kalktı ama tipte ve `TUR_ADI`'nda durur
+  (kuyruktaki eski kayıtlar ve Firestore kuralı hâlâ `Başka`yı kabul eder).
 - **Alan eklersen birlikte değişir:** Firestore kuralı, ekrandaki liste,
   `public/gizlilik/index.html`, `public/gizlilik/veri-ozeti.html`, Play Data Safety,
   `ios/App/App/PrivacyInfo.xcprivacy`, App Store Connect App Privacy.

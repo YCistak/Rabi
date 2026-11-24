@@ -6,6 +6,7 @@ import {
   type AntlasmaMaddesi,
 } from './antlasma-havuzu'
 import { EL_BOYUTU, antlasmasiniBul, elHazirla, eslesiyorMu } from './antlasma'
+import { bankaCevabiMetni, bankaKimligi } from './banka'
 import { ZORLUKLAR, zorluktaSuz } from './ritim'
 
 /** Sabit sıra üreten sahte rastgele — testler tekrarlanabilir olsun. */
@@ -51,7 +52,7 @@ describe('antlaşma havuzu', () => {
 
   it('antlaşma adları tuşa sığacak kadar kısa', () => {
     for (const es of ANTLASMA_HAVUZU) {
-      expect(es.antlasma.length, es.antlasma).toBeLessThanOrEqual(38)
+      expect(es.antlasma.length, es.antlasma).toBeLessThanOrEqual(40)
     }
   })
 
@@ -59,8 +60,37 @@ describe('antlaşma havuzu', () => {
     // Yıl hem aynı adı taşıyan iki antlaşmayı ayırıyor (İstanbul 1700/1913,
     // Ankara 1921/1926) hem de maddeyle birlikte tarihi öğretiyor.
     for (const es of ANTLASMA_HAVUZU) {
-      expect(es.antlasma, es.antlasma).toMatch(/\(\d{4}\)$/)
+      expect(es.antlasma, es.antlasma).toMatch(/\(\d{4}(, [^)]+)?\)$/)
     }
+  })
+
+  it('aynı adlı antlaşmaların hepsinde yıldan sonra taraf yazıyor', () => {
+    // İstanbul (1479/1533/1700/1913) ve Ankara (1921/1926) ayrı antlaşmalar;
+    // yalnız yıl yazarsa oyuncu aynı adı farklı tarihle görüp hata sanıyor.
+    const adlar = new Map<string, Set<string>>()
+    for (const es of ANTLASMA_HAVUZU) {
+      const ad = es.antlasma.replace(/\s*\(.*\)$/, '')
+      adlar.set(ad, (adlar.get(ad) ?? new Set()).add(es.antlasma))
+    }
+    const ayniAdlilar = [...adlar.entries()].filter(([, kume]) => kume.size > 1)
+    expect(ayniAdlilar.map(([ad]) => ad).sort()).toEqual(['Ankara Antlaşması', 'İstanbul Antlaşması'])
+    for (const [, kume] of ayniAdlilar) {
+      for (const tam of kume) expect(tam, tam).toMatch(/\(\d{4}, [^)]+\)$/)
+      const taraflar = [...kume].map((t) => t.match(/, ([^)]+)\)$/)![1])
+      expect(new Set(taraflar).size).toBe(taraflar.length)
+    }
+    expect(adlar.get('İstanbul Antlaşması')!.size).toBe(4)
+    expect(adlar.get('Ankara Antlaşması')!.size).toBe(2)
+  })
+
+  it('banka listesi eski adlı kaydı güncel adla gösteriyor, bilinmeyeni kayıttaki adla', () => {
+    const madde = 'Azak Kalesi ve çevresi Rusya’ya bırakıldı; Rusya İstanbul’da sürekli elçi bulundurabilecekti.'
+    const eski = { oyun: 'antlasma', madde, antlasma: 'İstanbul Antlaşması (1700)' } as const
+    expect(bankaCevabiMetni(eski)).toBe('İstanbul Antlaşması (1700, Rusya)')
+    const kalkmis = { oyun: 'antlasma', madde: 'havuzda olmayan madde', antlasma: 'Eski (1800)' } as const
+    expect(bankaCevabiMetni(kalkmis)).toBe('Eski (1800)')
+    // Kayıt kimliği madde metninden: ad değişimi eski kaydı öksüz bırakmaz.
+    expect(bankaKimligi(eski)).toBe(bankaKimligi({ ...eski, antlasma: 'İstanbul Antlaşması (1700, Rusya)' }))
   })
 
   it('her dönem tek başına el kurabiliyor', () => {

@@ -25,6 +25,21 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
   programından türetilir, dizin yalnız veri eşlemesini taşır.
 - Yeni soru partisi `scripts/soru-bankasi-aktar.mjs` ile doğrulanarak aktarılır. Her soru kod denetimi ve bağımsız kör çözümden geçmeden yayımlanmaz.
 
+- Aktarma betiğinin dizini bütün `veri/` klasöründen kurulur; tek dersi aktarmak ötekileri düşürmez.
+
+### Kimya ve hazır SVG şekiller
+
+- Kimya önce `scripts/kimya-donustur.mjs <ham> <ara>`, sonra `soru-bankasi-aktar.mjs <ara>`. Konu kimliği ham dosyada
+  yazan kimliktir ve programda birebir bulunmalıdır, tahmin edilmez. Kaynak/kazanım alanları uygulamaya girmez.
+- `scripts/kimya-onay.json`: kör çözüm ve denetimden geçen **hâlin** özeti (kök, şıklar, cevap, çözüm, şekil). Soru ya da
+  şekli değişirse özet tutmaz, dışarıda kalır; yeniden kör çözülmeden özet güncellenmez.
+- Öncüller (I, II, III) kökte kalır, `onculler`e ayrılmaz: soru cümlesi öncüllerden sonra geliyor.
+- Şekil türü `svg` (`{ yol, aciklama, en, boy }`): dosya `public/soru-bankasi/<ders>/<sınıf>/`, ekranda `<img>` (satır içi
+  SVG/`dangerouslySetInnerHTML` yok). Yol deseni `gorsel-denetim.ts`te, dosya içeriği izin listesiyle `svg-denetim.ts`te
+  denetlenir (betik, olay, bağlantı, dış url, varlık kodu yok); sahipsiz dosya testten geçmez.
+- Renkleri anlamlı olduğundan koyu temada çevrilmez: `.sekil-kagidi` açık zemin, koyuda kısılmış parlaklık. Yazı okunsun
+  diye sayfada 18rem sınırı uygulanmaz, soru görünümünde kenar boşluğuna taşar.
+
 ## Test ekranı (`components/soru-bankasi/soru-sayfasi.tsx` → `TestOturumu`)
 
 Kullanıcı isteği (2026-11): önce kitap sayfası, oradan soruyu büyütüp çözmek. Üç görünüm: **sayfa** →

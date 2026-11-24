@@ -3,13 +3,13 @@
 /**
  * Öneri ve hata bildir — Ayarlar'dan açılan ekran.
  *
- * Tek kart: tür çipleri, metin alanı, ne gönderileceğinin listesi ve
- * "Gönder". İzin kartı yok; hatalı soruda kart var çünkü orada bayrak turun
- * içinde tek dokunuşla basılıyor ve kullanıcı ne gönderdiğini düşünmemiş
+ * Tek kart: tür çipleri (Öneri, Hata), metin alanı, ne gönderileceğini
+ * söyleyen kısa bir `Not` ve "Gönder". İzin kartı yok; hatalı soruda kart
+ * var çünkü orada bayrak turun içinde tek dokunuşla basılıyor ve kullanıcı ne gönderdiğini düşünmemiş
  * olabiliyor. Burada kullanıcı bir metin yazıp gönder düğmesine basıyor —
- * ne gönderdiğini biliyor, listesi de düğmenin hemen üstünde.
+ * ne gönderdiğini biliyor, notu da düğmenin hemen üstünde.
  *
- * Gönderilenler listesi `lib/geri-bildirim.ts` içindeki
+ * Gönderilenleri sayan not `lib/geri-bildirim.ts` içindeki
  * `geriBildirimFormVerisi()` ile aynı olmak zorunda; oraya alan eklenirse
  * buraya da eklenmeli, yoksa kullanıcıya söylenenden fazlası gider.
  */
@@ -27,18 +27,10 @@ import {
 import type { GeriBildirimKolu, GonderimDurumu } from '@/lib/geri-bildirim-kolu'
 import { cn } from '@/lib/utils'
 
-const GONDERILENLER = [
-  'seçtiğin tür ve yazdığın metin',
-  'uygulama sürümü',
-  'telefonunun modeli ve ada bağlı olmayan bir cihaz adı',
-  'gönderim tarihi',
-]
-
 /** Türe göre yer tutucu — boş kutu ne yazılacağını söylemiyor. */
-const YER_TUTUCU: Record<GeriBildirimTuru, string> = {
+const YER_TUTUCU: Record<Exclude<GeriBildirimTuru, 'baska'>, string> = {
   oneri: 'Ne olsa daha iyi olurdu? Hangi ekranda, ne yaparken aklına geldi?',
   hata: 'Ne oldu, ne yapınca oldu? Hangi ekrandaydın, ne bekliyordun?',
-  baska: 'Aklındakini yaz.',
 }
 
 const DURUM_METNI: Record<GonderimDurumu, string> = {
@@ -47,7 +39,7 @@ const DURUM_METNI: Record<GonderimDurumu, string> = {
 }
 
 export function GeriBildirimEkrani({ kol }: { kol: GeriBildirimKolu }) {
-  const [tur, setTur] = useState<GeriBildirimTuru>('oneri')
+  const [tur, setTur] = useState<Exclude<GeriBildirimTuru, 'baska'>>('oneri')
   const [metin, setMetin] = useState('')
   const [gonderiliyor, setGonderiliyor] = useState(false)
   const [sonDurum, setSonDurum] = useState<GonderimDurumu | null>(null)
@@ -106,21 +98,14 @@ export function GeriBildirimEkrani({ kol }: { kol: GeriBildirimKolu }) {
           </div>
         </div>
 
-        <div className="rounded-xl bg-foreground/[0.05] p-3">
-          <p className="text-[11.5px] font-medium leading-snug text-muted-foreground">
-            &ldquo;Gönder&rdquo; dediğinde telefonundan çıkanlar:
-          </p>
-          <ul className="mt-1 list-disc pl-4 text-[11.5px] font-medium leading-snug text-muted-foreground">
-            {GONDERILENLER.map((alan) => (
-              <li key={alan}>{alan}</li>
-            ))}
-          </ul>
-          <p className="mt-1.5 text-[11.5px] font-medium leading-snug text-muted-foreground">
-            Adın, netlerin, notların ve fotoğrafların <b>gönderilmez</b>. Yazdığın metin
-            olduğu gibi gider; içine adını, telefonunu ya da başka kişisel bilgi yazma —
-            sana geri dönemeyiz, buradan tek yönlü bir kutu bu.
-          </p>
-        </div>
+        {/* Uygulamanın öteki açıklamaları gibi `Not` (hedef, devamsızlık, odak
+            ayarları): kutu içinde kutu, madde listesi ve küçük punto yok. */}
+        <Not>
+          Gönderilenler: seçtiğin tür, yazdığın metin, uygulama sürümü, telefonunun
+          modeli ve ada bağlı olmayan bir cihaz adı, gönderim tarihi. Adın, netlerin,
+          notların ve fotoğrafların <b>gönderilmez</b>. Metin olduğu gibi gider; içine
+          adını, telefonunu ya da başka kişisel bilgi yazma.
+        </Not>
 
         {kol.sinirda ? (
           <Not tur="uyari">Bugünlük sınıra ulaştın; yarın yeniden yazabilirsin.</Not>
