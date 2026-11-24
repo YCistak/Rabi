@@ -13,9 +13,14 @@
  * bu yüzden yok. Yerine yalnız birinde geçen kararlar yazıldı (Sivas'ta
  * cemiyetlerin birleştirilmesi, Erzurum'da Temsil Heyeti'nin kurulması).
  *
- * Antlaşma adlarında yıl bilerek var: hem aynı adı taşıyan iki antlaşmayı
- * (İstanbul 1700/1913, Ankara 1921/1926) ayırıyor hem de öğrenciye maddeyle
- * birlikte tarihi de ezberletiyor.
+ * Antlaşma adlarında yıl bilerek var (imza yılı): öğrenciye maddeyle birlikte
+ * tarihi de ezberletiyor. Aynı adı taşıyan antlaşmalar (İstanbul 1479/1533/
+ * 1700/1913, Ankara 1921/1926) birbirinin tekrarı ya da hatası değil, ayrı
+ * antlaşmalar; oyuncu hata sanmasın diye adın yanına yıldan sonra **taraf**
+ * yazılıyor: "İstanbul Antlaşması (1700, Rusya)". Yeni bir aynı ad eklenirse
+ * ona da taraf ekle (`antlasma.test.ts` aynı adlıları denetler).
+ * Ad değişince banka kayıtları bozulmaz: kayıt kimliği madde metninden, ekran
+ * adı ise güncel havuzdan okunur (`banka.ts`).
  */
 
 import type { Zorluk } from './ritim'
@@ -135,25 +140,25 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
   ...donem('klasik', 'zor', [
     [
       'Venedik’e Osmanlı sularında serbest ticaret ve İstanbul’da balyoz adıyla elçi bulundurma hakkı verildi.',
-      'İstanbul Antlaşması (1479)',
+      'İstanbul Antlaşması (1479, Venedik)',
     ],
     [
       'Venedik, aldığı ticaret ayrıcalıklarına karşılık her yıl 10.000 duka altın ödemeyi kabul etti.',
-      'İstanbul Antlaşması (1479)',
+      'İstanbul Antlaşması (1479, Venedik)',
     ],
     [
       'Kroya ve İşkodra Osmanlı’da kaldı; on altı yıl süren Osmanlı–Venedik savaşı sona erdi.',
-      'İstanbul Antlaşması (1479)',
+      'İstanbul Antlaşması (1479, Venedik)',
     ],
     // Zitvatorok'ta arşidük **padişaha**, burada **sadrazama** denk sayılıyor;
     // ÖSYM'nin en sevdiği ayrımlardan biri, ikisi de havuzda dursun.
     [
       'Avusturya arşidükü protokol bakımından Osmanlı sadrazamına denk sayıldı.',
-      'İstanbul Antlaşması (1533)',
+      'İstanbul Antlaşması (1533, Avusturya)',
     ],
     [
       'Macaristan’ın kralı olarak Osmanlı’nın desteklediği Zapolya tanındı.',
-      'İstanbul Antlaşması (1533)',
+      'İstanbul Antlaşması (1533, Avusturya)',
     ],
     [
       'Osmanlı Devleti ile İran arasında imzalanan ilk resmî antlaşmadır.',
@@ -236,7 +241,7 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
     [
       'Azak Kalesi ve çevresi Rusya’ya bırakıldı; Rusya İstanbul’da sürekli elçi bulundurabilecekti.',
-      'İstanbul Antlaşması (1700)',
+      'İstanbul Antlaşması (1700, Rusya)',
     ],
     [
       'Azak Kalesi geri alındı; Rusya İstanbul’da daimî elçi bulunduramayacaktı.',
@@ -286,11 +291,11 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
     [
       'Rus hacıların Kudüs’ü serbestçe ziyaret etmesine izin verildi.',
-      'İstanbul Antlaşması (1700)',
+      'İstanbul Antlaşması (1700, Rusya)',
     ],
     [
       'Rusya’nın Kırım Hanlığı’na ödediği yıllık vergi kaldırıldı.',
-      'İstanbul Antlaşması (1700)',
+      'İstanbul Antlaşması (1700, Rusya)',
     ],
     ['Rusya, Lehistan’ın iç işlerine karışmayacaktı.', 'Prut Antlaşması (1711)'],
     [
@@ -391,7 +396,7 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
     [
       'Edirne, Kırklareli ve Dimetoka geri alındı; Meriç Nehri sınır oldu.',
-      'İstanbul Antlaşması (1913)',
+      'İstanbul Antlaşması (1913, Bulgaristan)',
     ],
     [
       'Girit Yunanistan’a bırakıldı; Yunanistan’da kalan Türklerin hakları güvence altına alındı.',
@@ -439,11 +444,11 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
     ],
     [
       'Fransa Güney Anadolu’dan çekildi; Hatay dışında bugünkü Türkiye–Suriye sınırı çizildi.',
-      'Ankara Antlaşması (1921)',
+      'Ankara Antlaşması (1921, Fransa)',
     ],
     [
       'Süleyman Şah’ın türbesinin bulunduğu Caber Kalesi Türk toprağı sayıldı.',
-      'Ankara Antlaşması (1921)',
+      'Ankara Antlaşması (1921, Fransa)',
     ],
     [
       'Ermenistan, Gürcistan ve Azerbaycan ile imzalandı; bugünkü Türkiye–Kafkasya sınırı kesinleşti.',
@@ -570,7 +575,7 @@ export const ANTLASMA_HAVUZU: AntlasmaMaddesi[] = [
   ...donem('cumhuriyet', 'orta', [
     [
       'Musul Irak’a bırakıldı; petrol gelirinin yüzde onu yirmi beş yıl Türkiye’ye verilecekti.',
-      'Ankara Antlaşması (1926)',
+      'Ankara Antlaşması (1926, İngiltere)',
     ],
     [
       'Boğazlar Komisyonu kaldırıldı, Boğazların iki yakasında asker bulundurma hakkı Türkiye’ye geri verildi.',

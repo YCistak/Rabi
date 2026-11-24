@@ -12,6 +12,7 @@
  */
 
 import type { OyunId } from '../types'
+import { ANTLASMA_HAVUZU } from './antlasma-havuzu'
 import { ACI_KURALI_ADI, aciGecmisKimligi, type AciSorusu } from './aci'
 import type { IslemTuru } from './islem'
 import type { NoktalamaIsareti, NoktalamaSorusu } from './noktalama-havuzu'
@@ -580,8 +581,11 @@ export function bankaCevabiMetni(soru: BankaSorusu): string {
     }
     case 'izohips':
       return SEKIL_ADI[soru.izohips.sekil]
+    // Kayıttaki ad eski olabilir (aynı adlı antlaşmalara taraf eklendi);
+    // gösterilen ad güncel havuzdan, madde metniyle bulunuyor. Havuzdan
+    // kalkmış madde kayıttaki adla gösterilir.
     case 'antlasma':
-      return soru.antlasma
+      return ANTLASMA_HAVUZU.find((e) => e.madde === soru.madde)?.antlasma ?? soru.antlasma
     case 'kavram':
       return soru.tanim
     case 'anlatim':
