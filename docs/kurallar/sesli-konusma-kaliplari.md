@@ -73,6 +73,22 @@ tek anlamlıysa kalan sayıyı ifade eder; aksi durumda parça anlaşılmayana
 gider. `boşum yok` boş sayısının sıfır olduğunu söyler ama tek başına doğru
 veya yanlış uydurmaz.
 
+`gerisi doğru-yanlış-boş` ve `hepsi yanlış` da kalandır. Yönelme ekli sayı
+(`otuz beşe beş`) ve bitişik yazım (`kırkbeş`, `yüzelli`) okunur; `ona`, `beşe
+kadar` sayı sayılmaz. `40'ta 30` toplam mı doğru mu belli olmadığından yazılmaz.
+
+Sonuç dersten önce gelebilir (`32 doğru 6 yanlış türkçe, 25 doğru 5 yanlış
+matematik`): yalnız ilk addan önce ve adlar arasında hep etiketli sonuç varsa ve
+son addan sonra sayı yoksa. Etiket sayıdan önce gelebilir (`doğru 32 yanlış 6`):
+en az iki etiket art arda böyle söylenmişse. `tarih 2 doğru`daki 2 sonuçtur,
+`tarih 2 5 doğru`da ders adıdır. `türkçe 35 net` dersin netidir, toplam net olmaz.
+
+### DÜZELTME
+
+`pardon`, `yok`, `hayır`, `yok yok`, `yanlış söyledim`, `düzeltiyorum`. `40 pardon
+50` → 50. Mesaj başındaysa önceki mesajın kaydının yerine geçer. `yanlışım yok`
+düzeltme değil sonuçtur; `matematik 40 pardon fizik 50` belirsizdir, yazılmaz.
+
 ### ÇÖZDÜM ve bağlaçlar
 
 Çalışma eylemleri `çözdüm`, `yaptım`, `baktım`, `bitirdim`, `çözdük`,
@@ -124,7 +140,7 @@ uydurulmaz; soru kaydı oluşturmaz ve anlaşılmayan ya da boş kalır.
   edilir. Yalnız boş sayı doğru/yanlış üretmez.
 - Ders adı olmayan sonuç hiçbir derse eklenmez. Aynı cümledeki çözülemeyen
   ders, güvenle çözülen diğer dersleri veya deneme sonucunu düşürmez.
-- Aynı ders için çelişen iki sonuç, kullanıcı doğrulayana dek kayda yazılmaz.
+- Aynı ders için düzeltme sözü olmadan çelişen iki deneme sonucu, kullanıcı doğrulayana dek kayda yazılmaz.
 
 ## BAĞLAM (kip verilmediğinde eski karma çözüm)
 
