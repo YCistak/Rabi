@@ -35,8 +35,10 @@ export function cevir(s, konu, svg) {
   if (siklar.some((m) => typeof m !== 'string' || !m.trim()) || new Set(siklar).size !== 5) hata('beş farklı şık yok')
   const dogru = HARFLER.indexOf(s.cevap)
   if (dogru === -1) hata('cevap harfi geçersiz')
-  for (const metin of [s.kok, s.cozum, ...siklar, ...(svg ? [s.gorselAciklama, svg.replace(/<[^>]*>/g, ' ')] : [])])
+  for (const metin of [s.kok, s.cozum, ...siklar, ...(svg ? [s.gorselAciklama] : [])])
     if (typeof metin !== 'string' || !metin.trim() || BOZUK.test(metin)) hata(`metin boş ya da bozuk: ${String(metin).slice(0, 60)}`)
+  // Piktogram gibi şekillerde hiç yazı olmayabilir; varsa bozuk olmamalı.
+  if (svg && BOZUK.test(svg.replace(/<[^>]*>/g, ' '))) hata('şekil yazısı bozuk')
   if (svg) { const kusur = svgHatasi(svg); if (kusur) hata(`svg: ${kusur}`) }
   // Öncüller kökte kalır: soru cümlesi öncüllerden sonra geliyor ("…yargılarından
   // hangileri doğrudur?"); ayrı alana alınsa soru cümlesi öncüllerin üstüne çıkardı.
