@@ -223,3 +223,20 @@ describe('eşleştirme', () => {
     expect(antlasmasiniBul(el, 'olmayan madde')).toBeNull()
   })
 })
+
+describe('elHazirla + geçmiş', () => {
+  it('dönem seçerken görülmüş maddeleri çok olan dönemi atlıyor', () => {
+    // Dönem A'da 8 antlaşmadan yalnızca 3'ü görülmemiş (el için yetmiyor), B'nin
+    // hepsi görülmemiş: geçmiş dönem seçimini de etkilemeli.
+    const havuz: AntlasmaMaddesi[] = []
+    for (let i = 0; i < 8; i++) {
+      havuz.push({ madde: `A-m${i}`, antlasma: `A-ant${i}`, donem: 'klasik', zorluk: 'orta' })
+      havuz.push({ madde: `B-m${i}`, antlasma: `B-ant${i}`, donem: 'gerileme', zorluk: 'orta' })
+    }
+    const gorulen = [0, 1, 2, 3, 4].map((i) => `antlasma:A-m${i}`)
+    for (let i = 0; i < 100; i++) {
+      const el = elHazirla(new Set(), havuz, Math.random, gorulen)!
+      expect(el.donem).toBe('gerileme')
+    }
+  })
+})

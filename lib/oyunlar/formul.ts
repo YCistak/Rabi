@@ -11,6 +11,7 @@
 import { FORMUL_HAVUZU, type FormulEsi, type FormulTuru } from './formul-havuzu'
 import type { Zorluk } from './ritim'
 import { karistir, sec } from './tur'
+import { yakinlariSonaAt } from './gecmis'
 
 /** Bir eldeki bileşik sayısı — eşleştirme oyunlarında ortak. */
 export const EL_BOYUTU = 6
@@ -67,6 +68,7 @@ export function elHazirla(
   zorluk: Zorluk | null = null,
   havuz: readonly FormulEsi[] = FORMUL_HAVUZU,
   rastgele: () => number = Math.random,
+  gorulenler: readonly string[] = [],
 ): FormulEli | null {
   const kalan = havuz.filter((e) => !kullanilan.has(e.formul))
   if (kalan.length < EL_BOYUTU) return null
@@ -91,7 +93,14 @@ export function elHazirla(
     zorluk === null ? kaynak : kaynak.filter((e) => e.zorluk !== zorluk),
     rastgele,
   )
-  const esler = [...istenen, ...gerisi].slice(0, EL_BOYUTU)
+  // Geçmiş her grubun kendi içinde uygulanır: birlikte uygulanınca görülmüş
+  // istenen-zorluk bileşikler hiç görülmemiş öteki zorlukların arkasına düşer
+  // ve seçilen zorluk bozulurdu.
+  const anahtar = (e: FormulEsi) => `formul:${e.formul}`
+  const esler = [
+    ...yakinlariSonaAt(istenen, gorulenler, anahtar),
+    ...yakinlariSonaAt(gerisi, gorulenler, anahtar),
+  ].slice(0, EL_BOYUTU)
 
   return {
     tur: turAdi,

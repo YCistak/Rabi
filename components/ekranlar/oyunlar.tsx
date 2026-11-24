@@ -605,6 +605,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('islem', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.islem ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -615,6 +616,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('bolunme', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.bolunme ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -647,6 +649,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('trigonometri', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.trigonometri ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -679,6 +682,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('izohips', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.izohips ?? []}
           onCik={oyunuKapat}
           bildir={bildir}
         />
@@ -689,6 +693,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('antlasma', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.antlasma ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -699,6 +704,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('kavram', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.kavram ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -720,6 +726,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('koklu', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.koklu ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -754,6 +761,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('sirala', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.sirala ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -775,6 +783,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('edebiyat', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.edebiyat ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />
@@ -796,6 +805,7 @@ export function OyunlarEkrani({
           sesAcik={sesAcik}
           bankaSorulari={bankaSorulari}
           onTurBitti={(ozet, cevaplar, saniye, yarim) => turBitti('formul', ozet, cevaplar, saniye, yarim)}
+          gorulenler={soruGecmisi.formul ?? []}
           bildir={bildir}
           onCik={oyunuKapat}
         />

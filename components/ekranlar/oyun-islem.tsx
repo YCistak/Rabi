@@ -22,10 +22,12 @@ import {
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
 import {
+  bankaKimligi,
   islemdenBanka,
   type BankaCevabi,
   type BankaKaydi,
 } from '@/lib/oyunlar/banka'
+import { yakinlariSonaAt } from '@/lib/oyunlar/gecmis'
 import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
 import { modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useEtkinMod } from '@/components/tur-ayari-baglami'
@@ -144,11 +146,13 @@ export function IslemOyunuEkrani({
   onBasladi,
   onSayimBasladi,
   demoDuraklatildi = false,
+  gorulenler = [],
 }: {
   onSayimBasladi?: () => void
   demoDuraklatildi?: boolean
   demoSorulari?: IslemSorusu[]
   onBasladi?: () => void
+  gorulenler?: readonly string[]
   istatistik: OyunIstatistigi
   /** Ses efektleri açık mı (Ayarlar → Mini oyun sesleri). */
   sesAcik: boolean
@@ -226,7 +230,8 @@ export function IslemOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(demoSorulari ?? (bankaTuru ? karistir(bankaHavuzu) : islemTuruHazirla(TUM_ISLEMLER, TUR_SORUSU)))
+    const normalTur = islemTuruHazirla(TUM_ISLEMLER, TUR_SORUSU)
+    setSorular(demoSorulari ?? (bankaTuru ? karistir(bankaHavuzu) : yakinlariSonaAt(normalTur, gorulenler, (s) => bankaKimligi(islemdenBanka(s)))))
     setSira(0)
     setGirilen('')
     setCevaplar([])
@@ -237,7 +242,7 @@ export function IslemOyunuEkrani({
     setDuraklatilan(false)
     setAsama('oynaniyor')
     onBasladi?.()
-  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, demoSorulari, onBasladi])
+  }, [bankaHavuzu, bankaTuru, istatistik.enIyiDogru, demoSorulari, gorulenler, onBasladi])
 
   const turBitir = useCallback(
     (verilenler: Cevap<IslemSorusu>[], yarim = false) => {

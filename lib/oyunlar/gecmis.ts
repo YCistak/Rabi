@@ -100,14 +100,31 @@ export function yakinlariSonaAt<T>(
   }
 
   const gorulmeyenler: T[] = []
-  const gorulenlerSirali: { soru: T; yakinlik: number; sira: number }[] = []
+  const gorulenlerSirali: { soru: T; yakinlik: number; sira: number; tekrarNo: number }[] = []
+  // Tur listesi çoğu oyunda 200 soru ve küçük havuzdan **tekrarlı** üretiliyor
+  // (aynı soru listede birkaç kez var). Görülenleri yalnızca yakınlığa göre
+  // dizmek aynı sorunun bütün kopyalarını yan yana getiriyordu (aynı soru art
+  // arda 15 kez). Bu yüzden görülenler önce "kaçıncı kopya" sonra yakınlık
+  // sırasıyla diziliyor: bütün görülen sorular bir kez gelmeden hiçbiri ikinci
+  // kez gelmiyor.
+  const kopyaSayisi = new Map<string, number>()
   liste.forEach((soru, sira) => {
     const y = yakinlik(soru)
-    if (y < 0) gorulmeyenler.push(soru)
-    else gorulenlerSirali.push({ soru, yakinlik: y, sira })
+    if (y < 0) {
+      gorulmeyenler.push(soru)
+      return
+    }
+    const adaylar = anahtar(soru)
+    const kimlik = typeof adaylar === 'string' ? adaylar : adaylar.join('\u0000')
+    const tekrarNo = kopyaSayisi.get(kimlik) ?? 0
+    kopyaSayisi.set(kimlik, tekrarNo + 1)
+    gorulenlerSirali.push({ soru, yakinlik: y, sira, tekrarNo })
   })
-  // Eşit yakınlıkta (aynı turda görülmüş) karışık sıra korunuyor.
-  gorulenlerSirali.sort((a, b) => a.yakinlik - b.yakinlik || a.sira - b.sira)
+  // Aynı kopya sırasında eşit yakınlıkta (aynı turda görülmüş) karışık sıra
+  // korunuyor.
+  gorulenlerSirali.sort(
+    (a, b) => a.tekrarNo - b.tekrarNo || a.yakinlik - b.yakinlik || a.sira - b.sira,
+  )
 
   return [...gorulmeyenler, ...gorulenlerSirali.map((g) => g.soru)]
 }

@@ -4,6 +4,18 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 ## Ortak kurallar
 
+- Yeni tur hazırlanırken her oyun, banka kimliğiyle tutulan yakın soru geçmişini
+  seçim sırasına uygular: önce karıştırır, sonra yakın görülenleri sona atar.
+  Banka turları bunun dışındadır; amaçları kayıtlı yanlışları yeniden sormaktır.
+  - Geçmiş **her sıralama grubunda ayrı** uygulanır (Formül'de istenen zorluk ve
+    öteki zorluklar ayrı); birlikte uygulanınca görülmüş istenen-zorluk sorular
+    ötekilerin arkasına düşer, zorluk bozulur.
+  - 200 soruluk tur küçük havuzdan tekrarlı üretildiğinden `yakinlariSonaAt`
+    görülenleri önce kopya sırasına, sonra yakınlığa göre dizer; yoksa aynı sorunun
+    kopyaları art arda gelir (sıralama, trigonometri, köklü, işlem).
+  - Edebiyat, Antlaşma, Kavram'da dönem/konu seçimi de geçmişe bakar: eli tümüyle
+    görülmemiş maddelerden kurulabilen dönem varsa seçim onlardan (`taze`).
+
 - **Efektler ortak koddan**, oyun dosyalarına kanca yok: kabuk olayları sayaçtan
   türetir (`dogru`, `yanlis`, `kalan` props). Ses `lib/oyunlar/oyun-sesi.ts`, görsel
   `components/oyun-kabuk.tsx` + `globals.css`.

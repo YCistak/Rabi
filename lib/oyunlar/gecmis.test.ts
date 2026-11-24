@@ -61,6 +61,34 @@ describe('yakinlariSonaAt', () => {
   it('havuzun tamamı görüldüyse en uzun süredir görülmeyen önce', () => {
     expect(yakinlariSonaAt(['c', 'a', 'b'], ['a', 'b', 'c'], anahtar)).toEqual(['a', 'b', 'c'])
   })
+
+  it('ardışık üç turda havuz yeterliyken son turun sorularını başa almaz', () => {
+    const havuz = ['a', 'b', 'c', 'd', 'e', 'f']
+    const ilkTur = ['a', 'b']
+    const ikinciTur = yakinlariSonaAt(havuz, ilkTur, anahtar).slice(0, 2)
+    const gecmis = [...ilkTur, ...ikinciTur]
+    const ucuncuTur = yakinlariSonaAt(havuz, gecmis, anahtar).slice(0, 2)
+
+    expect(ikinciTur).toEqual(['c', 'd'])
+    expect(ucuncuTur).toEqual(['e', 'f'])
+  })
+})
+
+describe('yakinlariSonaAt: tekrarlı liste', () => {
+  const anahtar = (s: string) => s
+  it('görülmüş sorunun kopyaları yan yana toplanmıyor', () => {
+    // 200 soruluk tur küçük havuzdan tekrarlı üretilir; görülenler yakınlığa
+    // göre dizilince aynı sorunun bütün kopyaları art arda geliyordu.
+    const liste = ['a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c']
+    const sonuc = yakinlariSonaAt(liste, ['a', 'b', 'c'], anahtar)
+    expect(sonuc).toEqual(['a', 'b', 'c', 'a', 'b', 'c', 'a', 'b', 'c'])
+  })
+
+  it('görülmeyenler önde, görülenler kopya sırasıyla arkada', () => {
+    const liste = ['a', 'x', 'a', 'b', 'x', 'b', 'a']
+    const sonuc = yakinlariSonaAt(liste, ['b', 'a'], anahtar)
+    expect(sonuc).toEqual(['x', 'x', 'b', 'a', 'b', 'a', 'a'])
+  })
 })
 
 describe('turSirasi + geçmiş', () => {

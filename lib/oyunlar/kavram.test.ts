@@ -220,3 +220,20 @@ describe('eşleştirme', () => {
     expect(taniminiBul(tahta, 'olmayan kavram')).toBeNull()
   })
 })
+
+describe('tahtaHazirla + geçmiş', () => {
+  it('konu seçerken görülmüş kavramları çok olan konuyu atlıyor', () => {
+    // A konusunda 7 kavramdan yalnızca 2'si görülmemiş (tahta için yetmiyor),
+    // B'nin hepsi görülmemiş: geçmiş konu seçimini de etkilemeli.
+    const havuz: KavramEsi[] = []
+    for (let i = 0; i < 7; i++) {
+      havuz.push({ kavram: `A-k${i}`, tanim: `A-t${i}`, konu: 'ilk-turk', zorluk: 'orta' })
+      havuz.push({ kavram: `B-k${i}`, tanim: `B-t${i}`, konu: 'islam-tarihi', zorluk: 'orta' })
+    }
+    const gorulen = [0, 1, 2, 3, 4].map((i) => `kavram:A-k${i}`)
+    for (let i = 0; i < 100; i++) {
+      const tahta = tahtaHazirla(new Set(), havuz, Math.random, havuz, gorulen)!
+      expect(tahta.konu).toBe('islam-tarihi')
+    }
+  })
+})

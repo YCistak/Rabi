@@ -153,6 +153,7 @@ export function AntlasmaOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -168,6 +169,7 @@ export function AntlasmaOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('antlasma')
 
@@ -236,9 +238,9 @@ export function AntlasmaOyunuEkrani({
       const suzulmus = zorluktaSuz(ANTLASMA_HAVUZU, seviye)
       // Seçilen seviyede el kuracak kadar madde kalmadıysa tüm havuza düşülüyor:
       // turun ortasında durmak, bir sorunun fazla kolay gelmesinden kötü.
-      return elHazirla(kullanilanRef.current, suzulmus) ?? elHazirla(kullanilanRef.current)
+      return elHazirla(kullanilanRef.current, suzulmus, Math.random, gorulenler) ?? elHazirla(kullanilanRef.current, ANTLASMA_HAVUZU, Math.random, gorulenler)
     },
-    [bankaHavuzu, bankaTuru, zorlukRef],
+    [bankaHavuzu, bankaTuru, gorulenler, zorlukRef],
   )
 
   const turBaslat = useCallback(() => {
