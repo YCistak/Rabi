@@ -12,6 +12,7 @@ import {
   gonderilecekler,
   metinSorunu,
   sinirdaMi,
+  TURLER,
   type GeriBildirim,
 } from './geri-bildirim'
 
@@ -102,5 +103,30 @@ describe('geriBildirimFormVerisi', () => {
     expect(Object.keys(veri).sort()).toEqual(['cihaz', 'metin', 'surum', 'tarih', 'tur'])
     expect(veri.tur).toBe('Öneri')
     expect(veri.metin).toBe(METIN)
+  })
+})
+
+describe('baska türü kaldırıldı', () => {
+  it('ekranda yalnız öneri ve hata seçilebiliyor', () => {
+    expect(TURLER).toEqual(['oneri', 'hata'])
+  })
+
+  it('kuyruktaki eski baska kaydı hâlâ geçerli forma çevriliyor', () => {
+    const eski: GeriBildirim = {
+      kimlik: 'eski-1',
+      tur: 'baska',
+      metin: METIN,
+      tarih: AN.toISOString(),
+      gonderildi: false,
+      denemeSayisi: 2,
+    }
+    expect(gonderilecekler([eski])).toHaveLength(1)
+    expect(geriBildirimFormVerisi(eski, 'Pixel 7', '1.0.0').tur).toBe('Başka')
+    expect(gonderildiIsaretle([eski], ['eski-1'])[0].gonderildi).toBe(true)
+  })
+
+  it('bilinmeyen türlü kayıt da çökmeden Başka olarak gidiyor', () => {
+    const bozuk = { kimlik: 'x', tur: 'yok', metin: METIN, tarih: AN.toISOString(), gonderildi: false, denemeSayisi: 0 } as unknown as GeriBildirim
+    expect(geriBildirimFormVerisi(bozuk, 'c', 's').tur).toBe('Başka')
   })
 })
