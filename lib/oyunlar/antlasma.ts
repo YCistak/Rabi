@@ -82,9 +82,16 @@ export function elHazirla(
     ([, esler]) => farkliAntlasma(esler) >= EL_BOYUTU,
   )
 
+  // Geçmiş yalnızca dönem içi sırayı değil dönem seçimini de etkiliyor: elin
+  // tamamı görülmemiş maddelerden kurulabilen dönemler varsa seçim onlardan.
+  const gorulen = new Set(gorulenler)
+  const taze = uygunDonemler.filter(
+    ([, esler]) => farkliAntlasma(esler.filter((e) => !gorulen.has(`antlasma:${e.madde}`))) >= EL_BOYUTU,
+  )
+
   const [donem, kaynak] =
     uygunDonemler.length > 0
-      ? sec(uygunDonemler, rastgele)
+      ? sec(taze.length > 0 ? taze : uygunDonemler, rastgele)
       : ([null, kalan] as [null, AntlasmaMaddesi[]])
 
   const esler = tekAntlasmaylaSec(kaynak, EL_BOYUTU, rastgele, gorulenler)

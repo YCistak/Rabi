@@ -81,8 +81,17 @@ export function tahtaHazirla(
       celdiriciHavuzu.filter((e) => e.konu === konu).length >= TANIM_SAYISI,
   )
 
+  // Geçmiş yalnızca konu içi sırayı değil konu seçimini de etkiliyor: tahtanın
+  // tamamı görülmemiş kavramlardan kurulabilen konular varsa seçim onlardan.
+  const gorulen = new Set(gorulenler)
+  const taze = uygunKonular.filter(
+    ([, esler]) => esler.filter((e) => !gorulen.has(`kavram:${e.kavram}`)).length >= KAVRAM_SAYISI,
+  )
+
   const [konu, kaynak] =
-    uygunKonular.length > 0 ? sec(uygunKonular, rastgele) : ([null, kalan] as [null, KavramEsi[]])
+    uygunKonular.length > 0
+      ? sec(taze.length > 0 ? taze : uygunKonular, rastgele)
+      : ([null, kalan] as [null, KavramEsi[]])
 
   const esler = yakinlariSonaAt(karistir(kaynak, rastgele), gorulenler, (e) => `kavram:${e.kavram}`).slice(0, KAVRAM_SAYISI)
   if (esler.length < KAVRAM_SAYISI) return null

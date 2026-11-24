@@ -80,9 +80,16 @@ export function elHazirla(
     ([, esler]) => farkliYazar(esler) >= EL_BOYUTU,
   )
 
+  // Geçmiş yalnızca dönem içi sırayı değil dönem seçimini de etkiliyor: elin
+  // tamamı görülmemiş eserlerden kurulabilen dönemler varsa seçim onlardan.
+  const gorulen = new Set(gorulenler)
+  const taze = uygunDonemler.filter(
+    ([, esler]) => farkliYazar(esler.filter((e) => !gorulen.has(`edebiyat:${e.eser}`))) >= EL_BOYUTU,
+  )
+
   const [donem, kaynak] =
     uygunDonemler.length > 0
-      ? sec(uygunDonemler, rastgele)
+      ? sec(taze.length > 0 ? taze : uygunDonemler, rastgele)
       : ([null, kalan] as [null, EdebiyatEsi[]])
 
   const esler = tekYazarlaSec(kaynak, EL_BOYUTU, rastgele, gorulenler)

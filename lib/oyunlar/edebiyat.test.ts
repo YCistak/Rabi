@@ -149,3 +149,21 @@ describe('eşleştirme', () => {
     expect(yazariniBul(el, 'olmayan eser')).toBeNull()
   })
 })
+
+describe('elHazirla + geçmiş', () => {
+  it('dönem seçerken geçmişte görülmüş eserleri çok olan dönemi atlıyor', () => {
+    // Dönem A'da 8 yazardan yalnızca 3'ü görülmemiş (el için yetmiyor), B'nin
+    // hepsi görülmemiş. Geçmiş yalnızca dönem içi sırayı değil dönem seçimini de
+    // etkilemeli; yoksa A seçilince 6 elin 3'ü görülmüş eserlerden kurulurdu.
+    const havuz: EdebiyatEsi[] = []
+    for (let i = 0; i < 8; i++) {
+      havuz.push({ eser: `A-eser${i}`, yazar: `A-yazar${i}`, donem: 'divan', zorluk: 'orta' })
+      havuz.push({ eser: `B-eser${i}`, yazar: `B-yazar${i}`, donem: 'halk', zorluk: 'orta' })
+    }
+    const gorulen = [0, 1, 2, 3, 4].map((i) => `edebiyat:A-eser${i}`)
+    for (let i = 0; i < 100; i++) {
+      const el = elHazirla(new Set(), havuz, Math.random, gorulen)!
+      expect(el.donem).toBe('halk')
+    }
+  })
+})
