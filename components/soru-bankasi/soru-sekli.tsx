@@ -4,7 +4,7 @@ import type { AkisGorseli, KoordinatGorseli, SayiDogrusuGorseli, TabloGorseli, V
 import type { BankaDersi } from '@/lib/soru-bankasi/ders'
 import { devreSahnesi, duzenekSahnesi, optikSahnesi } from '@/lib/soru-bankasi/fizik-sekil'
 import { simgeleriParcala } from '@/lib/soru-bankasi/metin'
-import type { BankaGorseli } from '@/lib/soru-bankasi/tip'
+import type { BankaGorseli, SvgGorseli } from '@/lib/soru-bankasi/tip'
 import {
   kesirParcalariSec,
   koordinatSahnesi,
@@ -43,6 +43,7 @@ export function SoruSekli({ gorsel, ders }: { gorsel: BankaGorseli; ders?: Banka
 const DERS_VURGUSU: Record<BankaDersi, string> = {
   matematik: 'var(--konu-matematik-ok)',
   fizik: 'var(--konu-fizik-ok)',
+  kimya: 'var(--konu-kimya-ok)',
 }
 
 function SekilSec({ gorsel, ders }: { gorsel: BankaGorseli; ders?: BankaDersi }) {
@@ -53,6 +54,8 @@ function SekilSec({ gorsel, ders }: { gorsel: BankaGorseli; ders?: BankaDersi })
     case 'optik':
     case 'duzenek':
       return <FizikSekli g={gorsel} />
+    case 'svg':
+      return <SvgDosyasi g={gorsel} />
     case 'tablo':
       return <TabloSekli g={gorsel} />
     case 'sayiDogrusu':
@@ -64,6 +67,30 @@ function SekilSec({ gorsel, ders }: { gorsel: BankaGorseli; ders?: BankaDersi })
     default:
       return <KartGorseli gorsel={gorsel} etiket="Soru görseli" />
   }
+}
+
+/**
+ * Hazır SVG dosyası. `<img>` ile: dosyadaki hiçbir şey sayfada çalışmaz. Şekil
+ * renkleri anlam taşıdığı için koyu temada çevrilmez; iki temada da açık kâğıt
+ * üstünde durur (koyuda biraz kısılır). Vektör olduğu için yakınlaştırmada
+ * bulanmaz; dokunuşlar alttaki karalama yüzeyine geçer.
+ */
+function SvgDosyasi({ g }: { g: SvgGorseli }) {
+  return (
+    <figure className="sekil-kagidi my-3 overflow-hidden rounded-2xl border border-border">
+      {/* eslint-disable-next-line @next/next/no-img-element -- statik dışa aktarımda görüntü iyileştirme yok */}
+      <img
+        src={`/${g.yol}`}
+        alt={g.aciklama}
+        width={g.en}
+        height={g.boy}
+        draggable={false}
+        decoding="async"
+        className="pointer-events-none mx-auto block h-auto w-full"
+        style={{ maxWidth: g.en * 1.3 }}
+      />
+    </figure>
+  )
 }
 
 /** Süreç adımları soru kitabında renksiz ve yapısal çizilir; konu kartının renkli kutuları kullanılmaz. */

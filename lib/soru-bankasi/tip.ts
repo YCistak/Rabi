@@ -1,7 +1,7 @@
 import type { Gorsel } from '@/lib/konu/tip'
 
 /*
-  Soru Bankası'na özel şekil türleri (fizik).
+  Soru Bankası'na özel şekil türleri (fizik çizimleri ve hazır SVG).
 
   Biçim, soru yazan modellerin okuduğu şemayla birebir aynı:
   `soru-bankasi-calisma/gorev/tip-fizik.ts`. Alan adları o dosyadan gelir ve
@@ -100,8 +100,23 @@ export type DuzenekGorseli = {
   acilar?: AciYayi[]
 }
 
-/** Soru Bankası'nda çizilebilen her şekil: konu kartı türleri + fizik türleri. */
-export type BankaGorseli = Gorsel | DevreGorseli | OptikGorseli | DuzenekGorseli
+/**
+ * Hazır çizilmiş şekil dosyası (kimya). Veriyle çizilemeyecek kadar çeşitli
+ * (gereç, tanecik modeli, uyarı işareti) olduğu için statik dosya.
+ */
+export type SvgGorseli = {
+  tur: 'svg'
+  /** `public` köküne göre, baştaki eğik çizgi olmadan: `soru-bankasi/kimya/9/….svg`. */
+  yol: string
+  /** Ekran okuyucu metni. */
+  aciklama: string
+  /** Dosyanın viewBox ölçüsü: yüklenmeden yeri ayrılır, sayfa dizilişi hesaplanır. */
+  en: number
+  boy: number
+}
+
+/** Soru Bankası'nda gösterilebilen her şekil: konu kartı türleri + fizik türleri + hazır SVG. */
+export type BankaGorseli = Gorsel | DevreGorseli | OptikGorseli | DuzenekGorseli | SvgGorseli
 
 /** Soru Bankası'nın yayımlanmış, uygulamada kullanılan soru biçimi. */
 export type BankaSorusu = {

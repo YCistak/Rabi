@@ -83,7 +83,8 @@ export function SoruGovdesi({
         </ol>
       )}
       {soru.gorsel && (
-        <div className="mt-3">
+        /* Hazır SVG 600 birim genişlikte çizilmiş; dar ekranda yazısı okunsun diye kenar boşluğuna taşar. */
+        <div className={soru.gorsel.tur === 'svg' ? '-mx-3 mt-3' : 'mt-3'}>
           <SoruSekli gorsel={soru.gorsel} ders={konuDersi(soru.konu)} />
         </div>
       )}

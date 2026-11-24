@@ -63,6 +63,8 @@ export function sekilYuksekligi(gorsel: BankaGorseli, genislik = SAYFA_METIN_GEN
       // Devrenin altında ve üstünde eleman yazıları için pay.
       return cerceve + 50 + Math.min(240, Math.max(60, (genislik - 70) * oran))
     }
+    case 'svg':
+      return cerceve + genislik * (gorsel.boy / gorsel.en)
     case 'tablo':
       return cerceve + 40 * (gorsel.satirlar.length + 1)
     case 'sayiDogrusu':
