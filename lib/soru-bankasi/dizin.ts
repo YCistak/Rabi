@@ -139,5 +139,5 @@ export const AKTARILAN_KONULAR: Record<string, Pick<BankaKonusu, 'sayi' | 'yukle
 
 /** Bir dersin 9–11 dizini: programdaki her konu; verisi gelmemiş konu `sayi: 0` ("Yakında"). */
 function dizinKur(ders: BankaDersi): BankaSinifi[] { return ([9, 10, 11] as const).map((sinif) => { const program = programBul(ders, sinif); return { sinif, temalar: (program?.temalar ?? []).map((tema) => ({ id: tema.id, ad: tema.ad, konular: tema.konular.map((konu) => ({ id: konu.id, ad: konu.ad, ...(AKTARILAN_KONULAR[konu.id] ?? { sayi: 0 }) })) })) } }) }
-export const BANKA_DIZINLERI: Record<BankaDersi, BankaSinifi[]> = { matematik: dizinKur('matematik'), fizik: dizinKur('fizik'), kimya: dizinKur('kimya') }
+export const BANKA_DIZINLERI: Record<BankaDersi, BankaSinifi[]> = { matematik: dizinKur('matematik'), fizik: dizinKur('fizik'), kimya: dizinKur('kimya'), biyoloji: dizinKur('biyoloji') }
 export function bankaKonusuBul(id: string): BankaKonusu | undefined { return Object.values(BANKA_DIZINLERI).flat().flatMap((sinif) => sinif.temalar).flatMap((tema) => tema.konular).find((konu) => konu.id === id) }

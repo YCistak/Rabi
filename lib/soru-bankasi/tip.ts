@@ -101,7 +101,7 @@ export type DuzenekGorseli = {
 }
 
 /**
- * Hazır çizilmiş şekil dosyası (kimya). Veriyle çizilemeyecek kadar çeşitli
+ * Hazır çizilmiş şekil dosyası (kimya, biyoloji). Veriyle çizilemeyecek kadar çeşitli
  * (gereç, tanecik modeli, uyarı işareti) olduğu için statik dosya.
  */
 export type SvgGorseli = {

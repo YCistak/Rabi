@@ -1,6 +1,6 @@
 /*
-  Hazır SVG şekillerinin güvenlik denetimi (saf; `scripts/kimya-donustur.mjs`
-  Node'un tip ayıklamasıyla içe aktarıyor).
+  Hazır SVG şekillerinin güvenlik denetimi (saf; kimya ve biyoloji;
+  `scripts/kimya-donustur.mjs` Node'un tip ayıklamasıyla içe aktarıyor).
 
   Şekiller `<img>` ile gösterildiği için içlerindeki betik zaten çalışmaz; yine
   de dosyalar başka bir yoldan (doğrudan adresle) açılabildiğinden yalnız
