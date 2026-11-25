@@ -169,6 +169,7 @@ export function FormulOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -182,6 +183,7 @@ export function FormulOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('formul')
 
@@ -237,9 +239,9 @@ export function FormulOyunuEkrani({
       if (bankaTuru) return bankaEliHazirla(bankaHavuzu, kullanilanRef.current)
       // Zorluk elin türünü değil içindeki bileşikleri seçiyor; gerekçesi
       // `lib/oyunlar/formul.ts` içinde.
-      return elHazirla(kullanilanRef.current, zorlukRef.current)
+      return elHazirla(kullanilanRef.current, zorlukRef.current, FORMUL_HAVUZU, Math.random, gorulenler)
     },
-    [bankaHavuzu, bankaTuru, zorlukRef],
+    [bankaHavuzu, bankaTuru, gorulenler, zorlukRef],
   )
 
   const turBaslat = useCallback(() => {

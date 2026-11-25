@@ -29,7 +29,8 @@ import {
   type Cevap,
   type TurOzeti,
 } from '@/lib/oyunlar/tur'
-import { kokludenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { bankaKimligi, kokludenBanka, type BankaCevabi, type BankaKaydi } from '@/lib/oyunlar/banka'
+import { yakinlariSonaAt } from '@/lib/oyunlar/gecmis'
 import { TUR_SORU_SINIRI, elerMi, soruSuresi } from '@/lib/oyunlar/ritim'
 import { modKayitliMi, type OyunModu } from '@/lib/oyunlar/mod'
 import { useEtkinMod } from '@/components/tur-ayari-baglami'
@@ -109,6 +110,7 @@ export function KokluOyunuEkrani({
   onTurBitti,
   onCik,
   bildir,
+  gorulenler = [],
 }: {
   istatistik: OyunIstatistigi
   sesAcik: boolean
@@ -124,6 +126,7 @@ export function KokluOyunuEkrani({
   ) => void
   onCik: () => void
   bildir: BildirimKolu
+  gorulenler?: readonly string[]
 }) {
   const oyun = oyunBul('koklu')
 
@@ -188,7 +191,8 @@ export function KokluOyunuEkrani({
     turBasladiRef.current = Date.now()
     bittiRef.current = false
     if (zamanlayiciRef.current) clearTimeout(zamanlayiciRef.current)
-    setSorular(bankaTuru ? karistir(havuz) : kokluTuruHazirla(TUR_SORUSU))
+    const normalTur = kokluTuruHazirla(TUR_SORUSU)
+    setSorular(bankaTuru ? karistir(havuz) : yakinlariSonaAt(normalTur, gorulenler, (s) => bankaKimligi(kokludenBanka(s))))
     setSira(0)
     setEvre('aralik')
     setCevaplar([])
@@ -199,7 +203,7 @@ export function KokluOyunuEkrani({
     setElendi(false)
     setDuraklatilan(false)
     setAsama('oynaniyor')
-  }, [bankaTuru, havuz, istatistik.enIyiDogru])
+  }, [bankaTuru, gorulenler, havuz, istatistik.enIyiDogru])
 
   const turBitir = useCallback(
     (verilenler: Cevap<KokluSorusu>[], yarim = false) => {
