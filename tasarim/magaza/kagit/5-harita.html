@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rabi — Mağaza Görseli 5 (Konu Haritası)</title>
+  <script>
+    if (new URLSearchParams(location.search).get('boyut') === 'appstore') {
+      document.documentElement.classList.add('appstore');
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./ortak.css">
+</head>
+<body>
+  <main class="sayfa">
+    <header class="baslik-alani">
+      <h1 class="baslik">Konular bir<br><span class="vurgu">harita</span> gibi</h1>
+      <p class="alt-baslik">Konu anlatımı ve yoklamalarla adım adım ilerle</p>
+    </header>
+
+    <div class="telefon">
+      <div class="telefon-tuslar" aria-hidden="true">
+        <span class="tus-eylem"></span>
+        <span class="tus-ses-ust"></span>
+        <span class="tus-ses-alt"></span>
+        <span class="tus-guc"></span>
+      </div>
+      <div class="telefon-ekran">
+        <div class="telefon-ada" aria-hidden="true"></div>
+        <div class="durum-cubugu" aria-hidden="true">
+          <span class="durum-saat">9:41</span>
+          <div class="durum-simgeler">
+            <svg class="simge-sinyal" viewBox="0 0 20 13" fill="currentColor">
+              <rect x="0.5" y="8.5" width="3.2" height="4.5" rx="1"/>
+              <rect x="5.6" y="6" width="3.2" height="7" rx="1"/>
+              <rect x="10.7" y="3.2" width="3.2" height="9.8" rx="1"/>
+              <rect x="15.8" y="0.5" width="3.2" height="12.5" rx="1"/>
+            </svg>
+            <svg class="simge-wifi" viewBox="0 0 18 13" fill="none">
+              <path d="M2.3 3.8A10 10 0 0 1 15.7 3.8" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+              <path d="M4.85 6.6A6.2 6.2 0 0 1 13.15 6.6" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"/>
+              <circle cx="9" cy="10.8" r="1.6" fill="currentColor"/>
+            </svg>
+            <svg class="simge-pil" viewBox="0 0 28 13" fill="none">
+              <rect x="0.75" y="0.75" width="23.5" height="11.5" rx="3.2" stroke="currentColor" stroke-width="1.3" opacity="0.42"/>
+              <rect x="2.6" y="2.6" width="19.8" height="7.8" rx="1.8" fill="currentColor"/>
+              <path d="M25.6 4.4C26.6 4.7 27.2 5.5 27.2 6.5C27.2 7.5 26.6 8.3 25.6 8.6Z" fill="currentColor" opacity="0.45"/>
+            </svg>
+          </div>
+        </div>
+        <img
+          class="ekran-goruntusu"
+          src="../../../magaza-cikti/kaynak/5-harita.png"
+          alt="Rabi konu haritası ekran görüntüsü"
+          width="1170"
+          height="2532"
+        >
+      </div>
+    </div>
+  </main>
+</body>
+</html>

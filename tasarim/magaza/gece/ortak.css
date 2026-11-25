@@ -1,0 +1,132 @@
+/* Gece çalışması ('gece') — Rabi mağaza görselleri ortak stili (1080×1920).
+   Uygulamanın koyu tema zeminini (#1A1612) temel alır; telefon ekranı karanlık
+   masada ışıyan tek odak noktası gibi öne çıkar. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  background-color: #1a1612;
+  color: #f2ebe4;
+  font-family: 'Nunito', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.sahne {
+  position: relative;
+  width: 1080px;
+  height: 1920px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 92px 84px 0;
+  /* Telefonun arkasında çok hafif, tek tonlu sıcak aydınlık; gürültü ve bulut yok. */
+  background-color: #1a1612;
+  background-image: radial-gradient(
+    ellipse 780px 1040px at 50% 62%,
+    #2a231c 0%,
+    #211b16 42%,
+    #1a1612 78%
+  );
+}
+
+.ust-alan {
+  width: 100%;
+  min-height: 264px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 52px;
+  flex-shrink: 0;
+}
+
+.vurgu-cizgi {
+  width: 48px;
+  height: 6px;
+  border-radius: 6px;
+  background-color: #d9622f;
+  margin-bottom: 26px;
+  flex-shrink: 0;
+}
+
+.baslik {
+  margin: 0 0 20px;
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #f2ebe4;
+}
+
+.alt-baslik {
+  margin: 0;
+  font-size: 29px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  color: #b5a99e;
+  white-space: nowrap;
+}
+
+/* Telefon kasası: 640×1385 iç ekran (1170×2532 ile birebir oran) + 13px çerçeve + 1.5px kenar. */
+.telefon {
+  position: relative;
+  width: 669px;
+  height: 1414px;
+  padding: 13px;
+  border-radius: 56px;
+  background-color: #100d0b;
+  border: 1.5px solid rgba(242, 235, 228, 0.13);
+  box-shadow: 0 36px 88px rgba(0, 0, 0, 0.65);
+  flex-shrink: 0;
+}
+
+.ekran {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 43px;
+  overflow: hidden;
+  background-color: #25201b;
+}
+
+/* Koyu temalı ekran görüntüsü geldiğinde kasayla birleşmesin diye ince iç cam sınırı. */
+.ekran::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 43px;
+  box-shadow: inset 0 0 0 1px rgba(242, 235, 228, 0.08);
+  pointer-events: none;
+}
+
+.ada {
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 108px;
+  height: 26px;
+  border-radius: 13px;
+  background-color: #0d0b09;
+  z-index: 2;
+}
+
+.ekran-goruntusu {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

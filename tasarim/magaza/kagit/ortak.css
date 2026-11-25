@@ -1,0 +1,362 @@
+:root {
+  --olcek: 1;
+  --telefon-olcek: 1;
+
+  --sayfa-en: 1080px;
+  --sayfa-boy: 1920px;
+  --sayfa-ust-bosluk: 86px;
+  --sayfa-yan-bosluk: 84px;
+  --sayfa-alt-bosluk: 74px;
+
+  --kagit-zemin: #F8F8F7;
+  /* #F8F8F7 zeminden yaklaşık %5,2 koyu, sıcak defter çizgisi */
+  --izgara-cizgi: #EBEAE7;
+  --izgara-boyut: 36px;
+  /* 1080 = 30x36, 1920 = 53x36 + 12; kenarlarda simetrik 18px / 6px pay */
+  --izgara-konum-x: 18px;
+  --izgara-konum-y: 6px;
+
+  --murekkep-baslik: #1A1612;
+  --murekkep-alt: #5C5349;
+  --turuncu-vurgu: #D9622F;
+
+  /* iPhone 16 Pro koyu titanyum çerçeve */
+  --telefon-cerceve: #141312;
+  --telefon-titanyum-dis: #2C2926;
+  --telefon-titanyum-cizgi: #6B655F;
+  --telefon-ada-renk: #0B0A0A;
+  --telefon-tus-renk: #35312E;
+  --telefon-golge: 0 calc(20px * var(--telefon-olcek)) calc(46px * var(--telefon-olcek)) rgba(26, 22, 18, 0.15);
+
+  --durum-yazi: #1B1A19;
+  --kutu-kose: 6px;
+}
+
+/* App Store 6,9" (1290x2796): başlık kâğıtla orantılı, telefon dikey alanı dolduracak biçimde büyür */
+html.appstore {
+  --olcek: 1.194444;
+  --telefon-olcek: 1.5;
+
+  --sayfa-en: 1290px;
+  --sayfa-boy: 2796px;
+  --sayfa-ust-bosluk: 126px;
+  --sayfa-yan-bosluk: 100px;
+  --sayfa-alt-bosluk: 110px;
+
+  /* 1290 = 30x43, 2796 = 64x43 + 44; kenarlarda simetrik 21.5px / 22px pay */
+  --izgara-boyut: 43px;
+  --izgara-konum-x: 21.5px;
+  --izgara-konum-y: 22px;
+}
+
+/* Play Store öne çıkan görsel (1024x500) */
+html.one-cikan-kok {
+  --sayfa-en: 1024px;
+  --sayfa-boy: 500px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: var(--sayfa-en);
+  height: var(--sayfa-boy);
+  overflow: hidden;
+  background-color: var(--kagit-zemin);
+  font-family: 'Nunito', sans-serif;
+  color: var(--murekkep-baslik);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.sayfa {
+  width: var(--sayfa-en);
+  height: var(--sayfa-boy);
+  overflow: hidden;
+  padding: var(--sayfa-ust-bosluk) var(--sayfa-yan-bosluk) var(--sayfa-alt-bosluk);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--kagit-zemin);
+  background-image:
+    linear-gradient(to right, var(--izgara-cizgi) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--izgara-cizgi) 1px, transparent 1px);
+  background-size: var(--izgara-boyut) var(--izgara-boyut);
+  background-position: var(--izgara-konum-x) var(--izgara-konum-y);
+}
+
+.baslik-alani {
+  width: 100%;
+  min-height: calc(248px * var(--olcek));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.baslik {
+  margin: 0;
+  font-size: calc(84px * var(--olcek));
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--murekkep-baslik);
+}
+
+/* Turuncu yalnız tek bir kelimenin alt çizgisi olarak kullanılır */
+.vurgu {
+  text-decoration-line: underline;
+  text-decoration-color: var(--turuncu-vurgu);
+  text-decoration-thickness: calc(7px * var(--olcek));
+  text-underline-offset: calc(10px * var(--olcek));
+  text-decoration-skip-ink: auto;
+}
+
+.alt-baslik {
+  margin: calc(20px * var(--olcek)) 0 0;
+  font-size: calc(30px * var(--olcek));
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--murekkep-alt);
+  white-space: nowrap;
+}
+
+/* iPhone 16 Pro çerçevesi: 632x1368 uygulama ekranı (1170:2532 oranı) + 58px durum çubuğu + 2x14px kenar */
+.telefon {
+  width: calc(660px * var(--telefon-olcek));
+  height: calc(1454px * var(--telefon-olcek));
+  padding: calc(14px * var(--telefon-olcek));
+  border-radius: calc(68px * var(--telefon-olcek));
+  background-color: var(--telefon-cerceve);
+  box-shadow:
+    inset 0 0 0 calc(1px * var(--telefon-olcek)) var(--telefon-titanyum-dis),
+    inset 0 0 0 calc(2.2px * var(--telefon-olcek)) var(--telefon-titanyum-cizgi),
+    var(--telefon-golge);
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Yan tuşlar: solda eylem + ses açma/kısma, sağda güç */
+.telefon-tuslar {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.telefon-tuslar span {
+  position: absolute;
+  width: calc(3px * var(--telefon-olcek));
+  background-color: var(--telefon-tus-renk);
+}
+
+.tus-eylem {
+  left: calc(-3px * var(--telefon-olcek));
+  top: calc(246px * var(--telefon-olcek));
+  height: calc(44px * var(--telefon-olcek));
+  border-radius: calc(2px * var(--telefon-olcek)) 0 0 calc(2px * var(--telefon-olcek));
+}
+
+.tus-ses-ust {
+  left: calc(-3px * var(--telefon-olcek));
+  top: calc(324px * var(--telefon-olcek));
+  height: calc(86px * var(--telefon-olcek));
+  border-radius: calc(2px * var(--telefon-olcek)) 0 0 calc(2px * var(--telefon-olcek));
+}
+
+.tus-ses-alt {
+  left: calc(-3px * var(--telefon-olcek));
+  top: calc(430px * var(--telefon-olcek));
+  height: calc(86px * var(--telefon-olcek));
+  border-radius: calc(2px * var(--telefon-olcek)) 0 0 calc(2px * var(--telefon-olcek));
+}
+
+.tus-guc {
+  right: calc(-3px * var(--telefon-olcek));
+  top: calc(362px * var(--telefon-olcek));
+  height: calc(122px * var(--telefon-olcek));
+  border-radius: 0 calc(2px * var(--telefon-olcek)) calc(2px * var(--telefon-olcek)) 0;
+}
+
+.telefon-ekran {
+  width: 100%;
+  height: 100%;
+  border-radius: calc(56px * var(--telefon-olcek));
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--kagit-zemin);
+}
+
+/* Alt çekmece açıkken (`bg-black/40` perde) durum çubuğu da aynı karartmayı taşır */
+.telefon-ekran--karartma {
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), var(--kagit-zemin);
+}
+
+.telefon-ada {
+  position: absolute;
+  top: calc(11px * var(--telefon-olcek));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(126px * var(--telefon-olcek));
+  height: calc(37px * var(--telefon-olcek));
+  border-radius: 999px;
+  background-color: var(--telefon-ada-renk);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.durum-cubugu {
+  width: 100%;
+  height: calc(58px * var(--telefon-olcek));
+  padding: calc(1px * var(--telefon-olcek)) calc(44px * var(--telefon-olcek)) 0 calc(50px * var(--telefon-olcek));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  color: var(--durum-yazi);
+  position: relative;
+  z-index: 2;
+}
+
+.durum-saat {
+  font-size: calc(23px * var(--telefon-olcek));
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.durum-simgeler {
+  display: flex;
+  align-items: center;
+  gap: calc(8px * var(--telefon-olcek));
+}
+
+.durum-simgeler svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.simge-sinyal {
+  width: calc(22px * var(--telefon-olcek));
+  height: calc(14px * var(--telefon-olcek));
+}
+
+.simge-wifi {
+  width: calc(20px * var(--telefon-olcek));
+  height: calc(14px * var(--telefon-olcek));
+}
+
+.simge-pil {
+  width: calc(32px * var(--telefon-olcek));
+  height: calc(15px * var(--telefon-olcek));
+}
+
+.ekran-goruntusu {
+  display: block;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  object-fit: cover;
+  object-position: top center;
+}
+
+/* Play Store öne çıkan görsel (1024x500) yerleşimi */
+.one-cikan {
+  width: 1024px;
+  height: 500px;
+  overflow: hidden;
+  padding: 0 64px 0 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--kagit-zemin);
+  /* 1024 = 28x36 + 16, 500 = 13x36 + 32; kenarlarda simetrik 8px / 16px pay */
+  background-image:
+    linear-gradient(to right, var(--izgara-cizgi) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--izgara-cizgi) 1px, transparent 1px);
+  background-size: 36px 36px;
+  background-position: 8px 16px;
+}
+
+.one-cikan-metin {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.one-cikan-marka {
+  margin: 0;
+  font-size: 116px;
+  font-weight: 900;
+  line-height: 0.94;
+  letter-spacing: -0.035em;
+  color: var(--murekkep-baslik);
+}
+
+.one-cikan-slogan {
+  margin: 20px 0 0;
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--murekkep-baslik);
+}
+
+.one-cikan-slogan .vurgu {
+  text-decoration-thickness: 5px;
+  text-underline-offset: 7px;
+}
+
+.one-cikan-aciklama {
+  margin: 18px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--murekkep-alt);
+  white-space: nowrap;
+}
+
+.one-cikan-gorsel {
+  width: 336px;
+  height: 368px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.one-cikan-maskot {
+  display: block;
+  width: 328px;
+  height: 328px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+}
+
+.one-cikan-golge {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 144px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: rgba(26, 22, 18, 0.08);
+  filter: blur(6px);
+}
