@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="640" height="280" fill="#ffffff"/>
+
+  <rect x="14" y="14" width="612" height="120" rx="10" fill="#f8f9fb" stroke="#d9e4f2" stroke-width="1.4"/>
+  <text x="64" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">1. Tepkime</text>
+
+  <g>
+    <path d="M 124 78 L 146 78 L 166 102 L 186 78 L 208 78 L 208 118 Q 208 124 202 124 L 130 124 Q 124 124 124 118 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="166" y="117" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">E₁</text>
+    <path d="M 146 28 L 186 28 L 186 44 L 166 68 L 146 44 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="166" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">K</text>
+  </g>
+
+  <line x1="224" y1="84" x2="262" y2="84" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <g>
+    <path d="M 282 78 L 304 78 L 324 102 L 344 78 L 366 78 L 366 118 Q 366 124 360 124 L 288 124 Q 282 124 282 118 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="324" y="117" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">E₁</text>
+    <path d="M 304 60 L 344 60 L 344 76 L 324 100 L 304 76 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="324" y="80" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">K</text>
+  </g>
+
+  <line x1="382" y1="84" x2="420" y2="84" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <g>
+    <path d="M 442 78 L 464 78 L 484 102 L 504 78 L 526 78 L 526 118 Q 526 124 520 124 L 448 124 Q 442 124 442 118 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="484" y="117" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">E₁</text>
+    <path d="M 550 56 L 594 56 L 594 74 A 22 22 0 0 1 550 74 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="572" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">L</text>
+    <line x1="528" y1="74" x2="544" y2="74" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  </g>
+
+  <rect x="14" y="148" width="612" height="120" rx="10" fill="#f8f9fb" stroke="#d9e4f2" stroke-width="1.4"/>
+  <text x="64" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2. Tepkime</text>
+
+  <g>
+    <path d="M 124 212 L 144 212 A 22 22 0 0 0 188 212 L 208 212 L 208 252 Q 208 258 202 258 L 130 258 Q 124 258 124 252 Z" fill="#f3e8ff" stroke="#6d28d9" stroke-width="2"/>
+    <text x="166" y="251" text-anchor="middle" font-size="14" font-weight="700" fill="#6d28d9">E₂</text>
+    <path d="M 144 162 L 188 162 L 188 180 A 22 22 0 0 1 144 180 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="166" y="185" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">L</text>
+  </g>
+
+  <line x1="224" y1="218" x2="262" y2="218" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <g>
+    <path d="M 282 212 L 302 212 A 22 22 0 0 0 346 212 L 366 212 L 366 252 Q 366 258 360 258 L 288 258 Q 282 258 282 252 Z" fill="#f3e8ff" stroke="#6d28d9" stroke-width="2"/>
+    <text x="324" y="251" text-anchor="middle" font-size="14" font-weight="700" fill="#6d28d9">E₂</text>
+    <path d="M 302 192 L 346 192 L 346 210 A 22 22 0 0 1 302 210 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="324" y="215" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">L</text>
+  </g>
+
+  <line x1="382" y1="218" x2="420" y2="218" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <g>
+    <path d="M 442 212 L 462 212 A 22 22 0 0 0 506 212 L 526 212 L 526 252 Q 526 258 520 258 L 448 258 Q 442 258 442 252 Z" fill="#f3e8ff" stroke="#6d28d9" stroke-width="2"/>
+    <text x="484" y="251" text-anchor="middle" font-size="14" font-weight="700" fill="#6d28d9">E₂</text>
+    <polygon points="572,184 596,198 596,222 572,236 548,222 548,198" fill="#fef3c7" stroke="#b45309" stroke-width="1.8"/>
+    <text x="572" y="215" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">M</text>
+    <line x1="528" y1="210" x2="544" y2="210" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  </g>
+</svg>

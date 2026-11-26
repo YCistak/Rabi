@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 280" width="540" height="280" font-family="Nunito, sans-serif">
+  <rect width="540" height="280" fill="#ffffff"/>
+  <g>
+    <text x="30" y="30" font-size="15" font-weight="700" fill="#222222">ATP molekülü</text>
+    <polygon points="46,72 68,58 90,72 90,100 68,114 46,100" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+    <polygon points="90,72 116,64 132,86 116,108 90,100" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="86" y="91" font-size="13" font-weight="700" fill="#222222" text-anchor="middle">Adenin</text>
+    <line x1="132" y1="86" x2="176" y2="86" stroke="#222222" stroke-width="2"/>
+    <polygon points="204,58 234,80 223,114 185,114 174,80" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <text x="204" y="94" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+    <line x1="232" y1="86" x2="274" y2="86" stroke="#222222" stroke-width="2"/>
+    <circle cx="296" cy="86" r="22" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="296" y="92" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">P</text>
+    <path d="M 318 86 Q 327 74 336 86 T 354 86" fill="none" stroke="#c8642a" stroke-width="2.5"/>
+    <circle cx="376" cy="86" r="22" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="376" y="92" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">P</text>
+    <path d="M 398 86 Q 407 74 416 86 T 434 86" fill="none" stroke="#c8642a" stroke-width="2.5"/>
+    <circle cx="456" cy="86" r="22" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="456" y="92" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">P</text>
+  </g>
+  <line x1="24" y1="138" x2="516" y2="138" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <g>
+    <text x="30" y="166" font-size="15" font-weight="700" fill="#222222">DNA'nın adenin nükleotiti</text>
+    <polygon points="46,208 68,194 90,208 90,236 68,250 46,236" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+    <polygon points="90,208 116,200 132,222 116,244 90,236" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="86" y="227" font-size="13" font-weight="700" fill="#222222" text-anchor="middle">Adenin</text>
+    <line x1="132" y1="222" x2="176" y2="222" stroke="#222222" stroke-width="2"/>
+    <polygon points="204,194 234,216 223,250 185,250 174,216" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <text x="204" y="230" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+    <line x1="232" y1="222" x2="274" y2="222" stroke="#222222" stroke-width="2"/>
+    <circle cx="296" cy="222" r="22" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="296" y="228" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">P</text>
+  </g>
+</svg>

@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" width="560" height="300" font-family="Nunito, sans-serif">
+  <rect width="560" height="300" fill="#ffffff"/>
+
+  <rect x="20" y="16" width="276" height="268" rx="10" fill="#f8f9fb" stroke="#d9e4f2" stroke-width="1.4"/>
+  <text x="158" y="42" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">K molekülü</text>
+
+  <rect x="64" y="58" width="16" height="206" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <rect x="236" y="58" width="16" height="206" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+
+  <g>
+    <rect x="80" y="68" width="68" height="24" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="114" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">A</text>
+    <line x1="148" y1="80" x2="168" y2="80" stroke="#6b7480" stroke-width="1.8"/>
+    <rect x="168" y="68" width="68" height="24" rx="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="202" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">T</text>
+  </g>
+
+  <g>
+    <rect x="80" y="100" width="68" height="24" rx="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <text x="114" y="117" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">G</text>
+    <line x1="148" y1="112" x2="168" y2="112" stroke="#6b7480" stroke-width="1.8"/>
+    <rect x="168" y="100" width="68" height="24" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="202" y="117" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">C</text>
+  </g>
+
+  <g>
+    <rect x="80" y="132" width="68" height="24" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="114" y="149" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">C</text>
+    <line x1="148" y1="144" x2="168" y2="144" stroke="#6b7480" stroke-width="1.8"/>
+    <rect x="168" y="132" width="68" height="24" rx="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <text x="202" y="149" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">G</text>
+  </g>
+
+  <g>
+    <rect x="80" y="164" width="68" height="24" rx="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="114" y="181" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">T</text>
+    <line x1="148" y1="176" x2="168" y2="176" stroke="#6b7480" stroke-width="1.8"/>
+    <rect x="168" y="164" width="68" height="24" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="202" y="181" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">A</text>
+  </g>
+
+  <g>
+    <rect x="80" y="196" width="68" height="24" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="114" y="213" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">A</text>
+    <line x1="148" y1="208" x2="168" y2="208" stroke="#6b7480" stroke-width="1.8"/>
+    <rect x="168" y="196" width="68" height="24" rx="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="202" y="213" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">T</text>
+  </g>
+
+  <g>
+    <rect x="80" y="228" width="68" height="24" rx="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <text x="114" y="245" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">G</text>
+    <line x1="148" y1="240" x2="168" y2="240" stroke="#6b7480" stroke-width="1.8"/>
+    <rect x="168" y="228" width="68" height="24" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="202" y="245" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">C</text>
+  </g>
+
+  <rect x="316" y="16" width="224" height="268" rx="10" fill="#f8f9fb" stroke="#d9e4f2" stroke-width="1.4"/>
+  <text x="428" y="42" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">L molekülü</text>
+
+  <rect x="378" y="58" width="16" height="206" rx="6" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+
+  <g>
+    <rect x="394" y="68" width="76" height="24" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="432" y="85" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">A</text>
+  </g>
+
+  <g>
+    <rect x="394" y="100" width="76" height="24" rx="4" fill="#f3e8ff" stroke="#6d28d9" stroke-width="1.5"/>
+    <text x="432" y="117" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">U</text>
+  </g>
+
+  <g>
+    <rect x="394" y="132" width="76" height="24" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="432" y="149" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">A</text>
+  </g>
+
+  <g>
+    <rect x="394" y="164" width="76" height="24" rx="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <text x="432" y="181" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">G</text>
+  </g>
+
+  <g>
+    <rect x="394" y="196" width="76" height="24" rx="4" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+    <text x="432" y="213" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">C</text>
+  </g>
+
+  <g>
+    <rect x="394" y="228" width="76" height="24" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="432" y="245" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">A</text>
+  </g>
+</svg>

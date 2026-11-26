@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 360" width="540" height="360" font-family="Nunito, sans-serif">
+  <rect width="540" height="360" fill="#ffffff"/>
+
+  <g id="kapsul-ve-sivi">
+    <path d="M 218 106 C 172 118 164 150 164 180 C 164 210 172 242 218 254 L 302 254 C 344 242 350 210 350 180 C 350 150 344 118 302 106 Z" fill="#d9e4f2" stroke="#5a7394" stroke-width="2"/>
+    <path d="M 214 126 C 186 136 180 158 180 180 C 180 202 186 224 214 234 L 306 234 C 330 224 334 202 334 180 C 334 158 330 136 306 126 Z" fill="#e6f5f2" stroke="#6aa098" stroke-width="1.4" stroke-dasharray="4 3"/>
+  </g>
+
+  <g id="kemikler">
+    <path d="M 226 20 L 226 98 C 226 116 204 128 204 146 C 238 164 282 164 316 146 C 316 128 294 116 294 98 L 294 20 Z" fill="#f3ead8" stroke="#7c6a52" stroke-width="1.8"/>
+    <path d="M 226 340 L 226 262 C 226 244 204 232 204 214 C 238 230 282 230 316 214 C 316 232 294 244 294 262 L 294 340 Z" fill="#f3ead8" stroke="#7c6a52" stroke-width="1.8"/>
+    <text x="260" y="68" text-anchor="middle" font-size="14" font-weight="700" fill="#524738">Kemik</text>
+    <text x="260" y="302" text-anchor="middle" font-size="14" font-weight="700" fill="#524738">Kemik</text>
+  </g>
+
+  <g id="eklem-kikirdagi">
+    <path d="M 204 146 C 238 164 282 164 316 146 L 316 157 C 282 175 238 175 204 157 Z" fill="#b8daf5" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M 204 203 C 238 219 282 219 316 203 L 316 214 C 282 230 238 230 204 214 Z" fill="#b8daf5" stroke="#1f5fa8" stroke-width="1.6"/>
+  </g>
+
+  <g id="bag-ligament">
+    <path d="M 294 84 C 354 104 378 138 378 180 C 378 222 354 256 294 276 L 294 258 C 340 242 360 214 360 180 C 360 146 340 118 294 102 Z" fill="#f3d2bc" stroke="#c8642a" stroke-width="1.8"/>
+    <path d="M 298 93 C 347 111 369 142 369 180 C 369 218 347 249 298 267" fill="none" stroke="#c8642a" stroke-width="1.2" stroke-dasharray="6 4"/>
+  </g>
+
+  <g id="etiketler">
+    <line x1="94" y1="140" x2="218" y2="155" stroke="#6b7480" stroke-width="1.5"/>
+    <circle cx="218" cy="155" r="3.5" fill="#1f5fa8"/>
+    <rect x="52" y="124" width="42" height="30" rx="6" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="73" y="145" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">I</text>
+
+    <line x1="94" y1="184" x2="232" y2="188" stroke="#6b7480" stroke-width="1.5"/>
+    <circle cx="232" cy="188" r="3.5" fill="#3a867c"/>
+    <rect x="52" y="168" width="42" height="30" rx="6" fill="#ffffff" stroke="#3a867c" stroke-width="1.5"/>
+    <text x="73" y="189" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">II</text>
+
+    <line x1="94" y1="228" x2="173" y2="214" stroke="#6b7480" stroke-width="1.5"/>
+    <circle cx="173" cy="214" r="3.5" fill="#5a7394"/>
+    <rect x="52" y="212" width="42" height="30" rx="6" fill="#ffffff" stroke="#5a7394" stroke-width="1.5"/>
+    <text x="73" y="233" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">III</text>
+
+    <line x1="446" y1="180" x2="369" y2="180" stroke="#6b7480" stroke-width="1.5"/>
+    <circle cx="369" cy="180" r="3.5" fill="#c8642a"/>
+    <rect x="446" y="165" width="44" height="30" rx="6" fill="#ffffff" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="468" y="186" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">IV</text>
+  </g>
+</svg>

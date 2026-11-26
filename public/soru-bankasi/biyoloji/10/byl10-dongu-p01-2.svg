@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 296" width="560" height="296" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-gri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="560" height="296" fill="#ffffff"/>
+
+  <rect x="150" y="24" width="260" height="48" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="280" y="53" text-anchor="middle" font-size="15" font-weight="700" fill="#174a82">Atmosferdeki CO₂</text>
+
+  <rect x="24" y="214" width="150" height="58" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="99" y="239" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Üreticiler</text>
+  <text x="99" y="258" text-anchor="middle" font-size="13" fill="#2b6b37">(Bitkiler)</text>
+
+  <rect x="205" y="214" width="150" height="58" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="280" y="239" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Tüketiciler</text>
+  <text x="280" y="258" text-anchor="middle" font-size="13" fill="#8f4318">(Hayvanlar)</text>
+
+  <rect x="386" y="214" width="150" height="58" rx="10" fill="#eceae6" stroke="#6b7480" stroke-width="1.8"/>
+  <text x="461" y="248" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Fosil Yakıtlar</text>
+
+  <line x1="174" y1="243" x2="199" y2="243" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok-gri)"/>
+
+  <path d="M 150 56 Q 72 78 72 208" fill="none" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <circle cx="78" cy="128" r="14" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="78" y="133" text-anchor="middle" font-size="14" font-weight="700" fill="#3b8f4a">K</text>
+
+  <path d="M 134 214 L 204 78" fill="none" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <circle cx="188" cy="148" r="14" fill="#ffffff" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="188" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">L</text>
+
+  <path d="M 280 214 L 280 78" fill="none" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <circle cx="308" cy="146" r="14" fill="#ffffff" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="308" y="151" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">M</text>
+
+  <path d="M 461 214 Q 461 78 416 56" fill="none" stroke="#6b7480" stroke-width="2" marker-end="url(#ok-gri)"/>
+  <circle cx="458" cy="128" r="14" fill="#ffffff" stroke="#6b7480" stroke-width="1.8"/>
+  <text x="458" y="133" text-anchor="middle" font-size="14" font-weight="700" fill="#4b535e">N</text>
+</svg>

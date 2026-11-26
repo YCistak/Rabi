@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 350" width="620" height="350" font-family="Nunito, sans-serif">
+<rect width="620" height="350" fill="#ffffff"/>
+<polygon points="0,80 90,80 200,250 620,250 620,290 0,290" fill="#efe6d8" stroke="#8a6b45" stroke-width="1.6"/>
+<polygon points="90,80 620,80 620,250 200,250" fill="#eef5fb" stroke="none"/>
+<line x1="90" y1="80" x2="620" y2="80" stroke="#1f5fa8" stroke-width="1.6"/>
+<polyline points="90,80 200,250 620,250" fill="none" stroke="#8a6b45" stroke-width="1.6"/>
+<text x="40" y="68" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">Kıyı</text>
+<text x="600" y="108" font-size="14" font-weight="700" fill="#222222" text-anchor="end">Açık su</text>
+<text x="600" y="240" font-size="14" font-weight="700" fill="#222222" text-anchor="end">Dip</text>
+<line x1="108" y1="107.818" x2="108" y2="40" stroke="#3b8f4a" stroke-width="2"/><ellipse cx="108" cy="40" rx="3.5" ry="9" fill="#3b8f4a"/>
+<line x1="126" y1="135.636" x2="126" y2="40" stroke="#3b8f4a" stroke-width="2"/><ellipse cx="126" cy="40" rx="3.5" ry="9" fill="#3b8f4a"/>
+<line x1="144" y1="163.455" x2="144" y2="40" stroke="#3b8f4a" stroke-width="2"/><ellipse cx="144" cy="40" rx="3.5" ry="9" fill="#3b8f4a"/>
+<ellipse cx="300" cy="130" rx="10" ry="5" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/><polygon points="290,130 283,125 283,135" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<ellipse cx="385" cy="165" rx="10" ry="5" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/><polygon points="375,165 368,160 368,170" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<ellipse cx="470" cy="122" rx="10" ry="5" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/><polygon points="460,122 453,117 453,127" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<ellipse cx="330" cy="236" rx="10" ry="5" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/><polygon points="320,236 313,231 313,241" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<ellipse cx="440" cy="238" rx="10" ry="5" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/><polygon points="430,238 423,233 423,243" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<circle cx="162" cy="194.545" r="6" fill="#ffffff" stroke="#222222" stroke-width="1.4"/><circle cx="162" cy="194.545" r="2" fill="#222222"/>
+<circle cx="180" cy="222.364" r="6" fill="#ffffff" stroke="#222222" stroke-width="1.4"/><circle cx="180" cy="222.364" r="2" fill="#222222"/>
+<line x1="40" y1="340" x2="40" y2="318" stroke="#3b8f4a" stroke-width="2"/><ellipse cx="40" cy="318" rx="3.5" ry="6" fill="#3b8f4a"/>
+<text x="55" y="333" font-size="14" fill="#222222" text-anchor="start">K türü</text>
+<ellipse cx="215" cy="328" rx="10" ry="5" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/><polygon points="205,328 198,323 198,333" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<text x="235" y="333" font-size="14" fill="#222222" text-anchor="start">L türü</text>
+<circle cx="400" cy="328" r="6" fill="#ffffff" stroke="#222222" stroke-width="1.4"/><circle cx="400" cy="328" r="2" fill="#222222"/>
+<text x="415" y="333" font-size="14" fill="#222222" text-anchor="start">M türü</text>
+</svg>

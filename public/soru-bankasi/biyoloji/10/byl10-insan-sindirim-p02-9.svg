@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 290" width="520" height="290" font-family="Nunito, sans-serif">
+<rect width="520" height="290" fill="#ffffff"/>
+<text x="168" y="25" text-anchor="middle" font-size="15" fill="#222222">Geçen toplam hacim (mL)</text>
+<line x1="76" y1="228" x2="452" y2="228" stroke="#d7dce0" stroke-width="1.2"/><text x="49" y="233" text-anchor="middle" font-size="15" fill="#222222">0</text>
+<line x1="76" y1="183" x2="452" y2="183" stroke="#d7dce0" stroke-width="1.2"/><text x="49" y="188" text-anchor="middle" font-size="15" fill="#222222">30</text>
+<line x1="76" y1="138" x2="452" y2="138" stroke="#d7dce0" stroke-width="1.2"/><text x="49" y="143" text-anchor="middle" font-size="15" fill="#222222">60</text>
+<line x1="76" y1="93" x2="452" y2="93" stroke="#d7dce0" stroke-width="1.2"/><text x="49" y="98" text-anchor="middle" font-size="15" fill="#222222">90</text>
+<line x1="76" y1="48" x2="452" y2="48" stroke="#d7dce0" stroke-width="1.2"/><text x="49" y="53" text-anchor="middle" font-size="15" fill="#222222">120</text>
+<path d="M76 43 V228 H458" fill="none" stroke="#444444" stroke-width="1.8"/>
+<polyline points="76,228 200,183 324,93 448,48" stroke="#1f5fa8" stroke-width="2" fill="none"/>
+<circle cx="76" cy="228" r="4" fill="#1f5fa8"/><text x="76" y="249" text-anchor="middle" font-size="15" fill="#222222">0</text>
+<circle cx="200" cy="183" r="4" fill="#1f5fa8"/><text x="200" y="249" text-anchor="middle" font-size="15" fill="#222222">10</text>
+<circle cx="324" cy="93" r="4" fill="#1f5fa8"/><text x="324" y="249" text-anchor="middle" font-size="15" fill="#222222">20</text>
+<circle cx="448" cy="48" r="4" fill="#1f5fa8"/><text x="448" y="249" text-anchor="middle" font-size="15" fill="#222222">30</text>
+<text x="262" y="277" text-anchor="middle" font-size="15" fill="#222222">Zaman (dk)</text>
+</svg>

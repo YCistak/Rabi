@@ -147,13 +147,14 @@ describe('kaynak kaydı', () => {
 })
 
 describe('yedek', () => {
+  // Zaman aşımı geniş: depo içe aktarımı tüm veri modüllerini yüklüyor, dört derste veri büyüdü.
   it('kaynaklar yedekten süzülerek okunur, eski yedekte alan yoksa dokunulmaz', async () => {
     const { yedegiDogrula } = await import('../depo')
     const yeni = yedegiDogrula(JSON.stringify({ uygulama: 'rabi', kaynakTakibi: [ornek(), { id: 'bozuk' }] }))
     expect('yedek' in yeni && yeni.yedek.kaynakTakibi?.map((k) => k.id)).toEqual(['a'])
     const eski = yedegiDogrula(JSON.stringify({ uygulama: 'rabi' }))
     expect('yedek' in eski && eski.yedek.kaynakTakibi).toBeUndefined()
-  })
+  }, 30_000)
 })
 
 describe('ders grupları', () => {

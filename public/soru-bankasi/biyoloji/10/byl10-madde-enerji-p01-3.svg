@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 300" width="460" height="300" font-family="Nunito, sans-serif">
+  <rect width="460" height="300" fill="#ffffff"/>
+  <polygon points="92,212 368,212 414,274 46,274" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <polygon points="138,150 322,150 368,212 92,212" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <polygon points="184,88 276,88 322,150 138,150" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <polygon points="230,26 184,88 276,88" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="230" y="74" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">N</text>
+  <text x="230" y="125" font-size="17" font-weight="700" fill="#222222" text-anchor="middle">M</text>
+  <text x="230" y="187" font-size="17" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+  <text x="230" y="249" font-size="17" font-weight="700" fill="#222222" text-anchor="middle">K (50 000 kJ)</text>
+</svg>

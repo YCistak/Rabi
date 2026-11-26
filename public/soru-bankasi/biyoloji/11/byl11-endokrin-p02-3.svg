@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 315" width="580" height="315" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-koyu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-gri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="580" height="315" fill="#ffffff"/>
+
+  <polygon points="168,18 160,32 176,32" fill="#1f5fa8"/>
+  <text x="184" y="30" font-size="14" font-weight="600" fill="#222222">Hormon 1</text>
+  <circle cx="332" cy="25" r="7" fill="#3b8f4a"/>
+  <text x="346" y="30" font-size="14" font-weight="600" fill="#222222">Hormon 2</text>
+
+  <rect x="30" y="48" width="520" height="54" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <text x="44" y="70" font-size="13" font-weight="700" fill="#8c3f14">Kan damarı</text>
+  <line x1="46" y1="84" x2="112" y2="84" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-koyu)"/>
+
+  <polygon points="154,60 146,74 162,74" fill="#1f5fa8"/>
+  <circle cx="198" cy="84" r="7" fill="#3b8f4a"/>
+  <polygon points="248,76 240,90 256,90" fill="#1f5fa8"/>
+  <circle cx="294" cy="66" r="7" fill="#3b8f4a"/>
+  <polygon points="348,60 340,74 356,74" fill="#1f5fa8"/>
+  <circle cx="394" cy="84" r="7" fill="#3b8f4a"/>
+  <polygon points="448,76 440,90 456,90" fill="#1f5fa8"/>
+  <circle cx="498" cy="66" r="7" fill="#3b8f4a"/>
+
+  <line x1="125" y1="102" x2="125" y2="148" stroke="#6b7480" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#ok-gri)"/>
+  <line x1="290" y1="102" x2="290" y2="148" stroke="#6b7480" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#ok-gri)"/>
+  <line x1="455" y1="102" x2="455" y2="148" stroke="#6b7480" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#ok-gri)"/>
+
+  <text x="14" y="138" font-size="13" fill="#222222">Reseptör</text>
+  <line x1="68" y1="142" x2="88" y2="165" stroke="#6b7480" stroke-width="1.3"/>
+
+  <g>
+    <rect x="60" y="178" width="130" height="102" rx="16" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="125" cy="236" rx="28" ry="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <path d="M 85 178 L 85 164 L 92 174 L 99 164 L 99 178 Z" fill="#475569"/>
+    <path d="M 151 178 L 151 164 L 158 174 L 165 164 L 165 178 Z" fill="#475569"/>
+    <text x="125" y="302" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">K hücresi</text>
+  </g>
+
+  <g>
+    <rect x="225" y="178" width="130" height="102" rx="16" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="290" cy="236" rx="28" ry="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <path d="M 248 178 L 248 164 L 251 164 A 7 7 0 0 0 265 164 L 268 164 L 268 178 Z" fill="#475569"/>
+    <path d="M 312 178 L 312 164 L 315 164 A 7 7 0 0 0 329 164 L 332 164 L 332 178 Z" fill="#475569"/>
+    <text x="290" y="302" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">L hücresi</text>
+  </g>
+
+  <g>
+    <rect x="390" y="178" width="130" height="102" rx="16" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="455" cy="236" rx="28" ry="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <path d="M 415 178 L 415 164 L 422 174 L 429 164 L 429 178 Z" fill="#475569"/>
+    <path d="M 477 178 L 477 164 L 480 164 A 7 7 0 0 0 494 164 L 497 164 L 497 178 Z" fill="#475569"/>
+    <text x="455" y="302" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">M hücresi</text>
+  </g>
+</svg>

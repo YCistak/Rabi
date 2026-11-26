@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 350" width="640" height="350" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="okKirmizi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#b83a2d"/>
+    </marker>
+  </defs>
+  <rect width="640" height="350" fill="#ffffff"/>
+
+  <rect x="14" y="14" width="612" height="98" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="74" y="57" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Düzenek I</text>
+  <text x="74" y="77" text-anchor="middle" font-size="13" fill="#4b5563">(Kontrol)</text>
+  <rect x="136" y="28" width="164" height="70" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="218" y="57" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">X bezi doğal yerinde</text>
+  <text x="218" y="78" text-anchor="middle" font-size="13" fill="#374151">Kan dolaşımına bağlı</text>
+  <line x1="300" y1="63" x2="386" y2="63" stroke="#b83a2d" stroke-width="2" marker-end="url(#okKirmizi)"/>
+  <text x="343" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="#b83a2d">Kan yoluyla</text>
+  <text x="343" y="82" text-anchor="middle" font-size="13" fill="#4b5563">X hormonu</text>
+  <rect x="392" y="28" width="222" height="70" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="503" y="55" text-anchor="middle" font-size="13" fill="#222222">Hedef: Reseptörler serbest</text>
+  <text x="503" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="#1f6b2e">Sonuç: Yanıt VAR</text>
+
+  <rect x="14" y="126" width="612" height="98" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="74" y="169" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Düzenek II</text>
+  <text x="74" y="189" text-anchor="middle" font-size="13" fill="#4b5563">(Bez nakli)</text>
+  <rect x="136" y="140" width="164" height="70" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="218" y="169" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">X bezi başka bölgede</text>
+  <text x="218" y="190" text-anchor="middle" font-size="13" fill="#374151">Kan damarına bağlı</text>
+  <line x1="300" y1="175" x2="386" y2="175" stroke="#b83a2d" stroke-width="2" marker-end="url(#okKirmizi)"/>
+  <text x="343" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#b83a2d">Kan yoluyla</text>
+  <text x="343" y="194" text-anchor="middle" font-size="13" fill="#4b5563">X hormonu</text>
+  <rect x="392" y="140" width="222" height="70" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="503" y="167" text-anchor="middle" font-size="13" fill="#222222">Hedef: Reseptörler serbest</text>
+  <text x="503" y="191" text-anchor="middle" font-size="14" font-weight="700" fill="#1f6b2e">Sonuç: Yanıt VAR</text>
+
+  <rect x="14" y="238" width="612" height="98" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="74" y="281" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Düzenek III</text>
+  <text x="74" y="301" text-anchor="middle" font-size="13" fill="#4b5563">(Engelleme)</text>
+  <rect x="136" y="252" width="164" height="70" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="218" y="281" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">X bezi doğal yerinde</text>
+  <text x="218" y="302" text-anchor="middle" font-size="13" fill="#374151">Kan dolaşımına bağlı</text>
+  <line x1="300" y1="287" x2="386" y2="287" stroke="#b83a2d" stroke-width="2" marker-end="url(#okKirmizi)"/>
+  <text x="343" y="276" text-anchor="middle" font-size="13" font-weight="700" fill="#b83a2d">Kan yoluyla</text>
+  <text x="343" y="306" text-anchor="middle" font-size="13" fill="#4b5563">X hormonu</text>
+  <rect x="392" y="252" width="222" height="70" rx="8" fill="#fceae8" stroke="#b83a2d" stroke-width="1.6"/>
+  <text x="503" y="279" text-anchor="middle" font-size="13" fill="#222222">Hedef: Reseptörler engelli</text>
+  <text x="503" y="303" text-anchor="middle" font-size="14" font-weight="700" fill="#a6281c">Sonuç: Yanıt YOK</text>
+</svg>

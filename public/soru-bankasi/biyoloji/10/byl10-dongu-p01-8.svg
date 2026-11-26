@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 336" width="580" height="336" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-kahve" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8c5a2b"/>
+    </marker>
+    <marker id="ok-gri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#5b6572"/>
+    </marker>
+  </defs>
+  <rect width="580" height="336" fill="#ffffff"/>
+
+  <rect x="24" y="24" width="210" height="52" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="129" y="55" text-anchor="middle" font-size="14" font-weight="700" fill="#174a82">Atmosferdeki azot (N₂)</text>
+
+  <rect x="346" y="24" width="210" height="52" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="451" y="55" text-anchor="middle" font-size="14" font-weight="700" fill="#8f4318">Topraktaki nitrat (NO₃⁻)</text>
+
+  <rect x="24" y="260" width="210" height="52" rx="10" fill="#f5e8d8" stroke="#8c5a2b" stroke-width="1.8"/>
+  <text x="129" y="291" text-anchor="middle" font-size="14" font-weight="700" fill="#5c4529">Topraktaki amonyak (NH₃)</text>
+
+  <rect x="346" y="260" width="210" height="52" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="451" y="291" text-anchor="middle" font-size="14" font-weight="700" fill="#2b6b37">Canlılardaki organik azot</text>
+
+  <line x1="129" y1="76" x2="129" y2="254" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <circle cx="98" cy="168" r="13" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="98" y="173" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">1</text>
+
+  <line x1="346" y1="286" x2="240" y2="286" stroke="#8c5a2b" stroke-width="2" marker-end="url(#ok-kahve)"/>
+  <circle cx="292" cy="256" r="13" fill="#ffffff" stroke="#8c5a2b" stroke-width="1.8"/>
+  <text x="292" y="261" text-anchor="middle" font-size="14" font-weight="700" fill="#8c5a2b">2</text>
+
+  <line x1="210" y1="258" x2="370" y2="80" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <circle cx="290" cy="168" r="13" fill="#ffffff" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="290" y="173" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">3</text>
+
+  <line x1="346" y1="50" x2="240" y2="50" stroke="#5b6572" stroke-width="2" marker-end="url(#ok-gri)"/>
+  <circle cx="292" cy="80" r="13" fill="#ffffff" stroke="#5b6572" stroke-width="1.8"/>
+  <text x="292" y="85" text-anchor="middle" font-size="14" font-weight="700" fill="#5b6572">4</text>
+
+  <line x1="451" y1="76" x2="451" y2="254" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <circle cx="482" cy="168" r="13" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="482" y="173" text-anchor="middle" font-size="14" font-weight="700" fill="#3b8f4a">5</text>
+</svg>

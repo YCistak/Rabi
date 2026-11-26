@@ -44,6 +44,7 @@ const DERS_VURGUSU: Record<BankaDersi, string> = {
   matematik: 'var(--konu-matematik-ok)',
   fizik: 'var(--konu-fizik-ok)',
   kimya: 'var(--konu-kimya-ok)',
+  biyoloji: 'var(--konu-biyoloji-ok)',
 }
 
 function SekilSec({ gorsel, ders }: { gorsel: BankaGorseli; ders?: BankaDersi }) {

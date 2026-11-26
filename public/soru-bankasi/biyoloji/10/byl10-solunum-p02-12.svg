@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 210" width="560" height="210" font-family="Nunito, sans-serif">
+  <rect width="560" height="210" fill="#ffffff"/>
+  <text x="139" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#222222">K</text>
+  <rect x="24" y="50" width="230" height="120" rx="58" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <path d="M 82 62 L 132 62 L 132 86 Q 139 92 146 86 L 146 62 L 196 62 A 48 48 0 0 1 196 158 L 146 158 L 146 134 Q 139 128 132 134 L 132 158 L 82 158 A 48 48 0 0 1 82 62 Z" fill="#f6d4b8" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="421" y="34" text-anchor="middle" font-size="18" font-weight="700" fill="#222222">L</text>
+  <rect x="306" y="50" width="230" height="120" rx="58" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <path d="M 364 62 L 368 62 L 368 100 Q 372 105 376 100 L 376 62 L 392 62 L 392 100 Q 396 105 400 100 L 400 62 L 416 62 L 416 100 Q 420 105 424 100 L 424 62 L 440 62 L 440 100 Q 444 105 448 100 L 448 62 L 464 62 L 464 100 Q 468 105 472 100 L 472 62 L 478 62 A 48 48 0 0 1 478 158 L 460 158 L 460 120 Q 456 115 452 120 L 452 158 L 436 158 L 436 120 Q 432 115 428 120 L 428 158 L 412 158 L 412 120 Q 408 115 404 120 L 404 158 L 388 158 L 388 120 Q 384 115 380 120 L 380 158 L 364 158 A 48 48 0 0 1 364 62 Z" fill="#f6d4b8" stroke="#c8642a" stroke-width="1.8"/>
+</svg>

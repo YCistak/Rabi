@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 350" width="620" height="350" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="620" height="350" fill="#ffffff"/>
+  <text x="200" y="30" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">Durum I</text>
+  <text x="465" y="30" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">Durum II</text>
+  <path d="M 184 96 L 184 82 L 216 82 L 216 96 C 216 112, 276 112, 276 144 L 276 250 Q 200 296, 124 250 L 124 144 C 124 112, 184 112, 184 96 Z" fill="#eef5fb" stroke="none"/>
+  <path d="M 184 82 L 184 96 C 184 112, 124 112, 124 144 L 124 250 M 216 82 L 216 96 C 216 112, 276 112, 276 144 L 276 250" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="184" y="72" width="32" height="18" rx="2" fill="#d9c3a5" stroke="#8a6d4b" stroke-width="1.5"/>
+  <path d="M 195 48 L 195 144 L 166 172 L 173 179 L 200 152 L 227 179 L 234 172 L 205 144 L 205 48 Z" fill="#ffffff" stroke="#222222" stroke-width="1.6"/>
+  <ellipse cx="163" cy="208" rx="26" ry="34" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <ellipse cx="237" cy="208" rx="26" ry="34" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <path d="M 124 250 Q 200 296, 276 250" fill="none" stroke="#c8642a" stroke-width="3" stroke-linecap="round"/>
+  <line x1="200" y1="278" x2="200" y2="316" stroke="#c8642a" stroke-width="2.2" marker-end="url(#ok)"/>
+  <text x="200" y="336" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Aşağı çekilir</text>
+  <path d="M 449 96 L 449 82 L 481 82 L 481 96 C 481 112, 541 112, 541 144 L 541 250 Q 465 210, 389 250 L 389 144 C 389 112, 449 112, 449 96 Z" fill="#eef5fb" stroke="none"/>
+  <path d="M 449 82 L 449 96 C 449 112, 389 112, 389 144 L 389 250 M 481 82 L 481 96 C 481 112, 541 112, 541 144 L 541 250" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="449" y="72" width="32" height="18" rx="2" fill="#d9c3a5" stroke="#8a6d4b" stroke-width="1.5"/>
+  <path d="M 460 48 L 460 144 L 431 172 L 438 179 L 465 152 L 492 179 L 499 172 L 470 144 L 470 48 Z" fill="#ffffff" stroke="#222222" stroke-width="1.6"/>
+  <ellipse cx="432" cy="196" rx="12" ry="20" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <ellipse cx="498" cy="196" rx="12" ry="20" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <path d="M 389 250 Q 465 210, 541 250" fill="none" stroke="#c8642a" stroke-width="3" stroke-linecap="round"/>
+  <line x1="465" y1="278" x2="465" y2="238" stroke="#c8642a" stroke-width="2.2" marker-end="url(#ok)"/>
+  <text x="465" y="302" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Yukarı kubbeleşir</text>
+  <line x1="88" y1="58" x2="195" y2="58" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="195" cy="58" r="2.8" fill="#222222"/>
+  <text x="16" y="63" font-size="14" font-weight="600" fill="#222222" text-anchor="start">Y borusu</text>
+  <line x1="94" y1="152" x2="124" y2="152" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="124" cy="152" r="2.8" fill="#222222"/>
+  <text x="16" y="157" font-size="14" font-weight="600" fill="#222222" text-anchor="start">Cam fanus</text>
+  <line x1="66" y1="208" x2="137" y2="208" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="137" cy="208" r="2.8" fill="#222222"/>
+  <text x="16" y="213" font-size="14" font-weight="600" fill="#222222" text-anchor="start">Balon</text>
+  <line x1="88" y1="267" x2="162" y2="267" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="162" cy="267" r="2.8" fill="#222222"/>
+  <text x="16" y="273" font-size="14" font-weight="600" fill="#222222" text-anchor="start">Lastik zar</text>
+</svg>

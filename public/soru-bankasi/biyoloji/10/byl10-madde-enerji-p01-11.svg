@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 380" width="540" height="380" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <polygon points="0,0 7.5,3 0,6" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="540" height="380" fill="#ffffff"/>
+  <line x1="270" y1="310" x2="270" y2="272" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="270" y1="220" x2="270" y2="187" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="110" y1="85" x2="428" y2="85" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="108" y1="94" x2="245" y2="150" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="293" y1="151" x2="430" y2="95" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="104" y1="101" x2="250" y2="227" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="289" y1="229" x2="435" y2="103" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <path d="M 250,322 Q 95,245 86,112" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <path d="M 290,322 Q 445,245 454,112" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <circle cx="85" cy="85" r="24" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="85" y="91" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+  <circle cx="455" cy="85" r="24" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="455" y="91" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">S</text>
+  <circle cx="270" cy="160" r="24" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="270" y="166" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">N</text>
+  <circle cx="270" cy="245" r="24" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="270" y="251" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">M</text>
+  <circle cx="270" cy="335" r="24" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="270" y="341" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+</svg>

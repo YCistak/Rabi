@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 264" width="580" height="264" font-family="Nunito, sans-serif">
+  <rect width="580" height="264" fill="#ffffff"/>
+  <text x="330" y="24" text-anchor="middle" font-size="14" font-weight="600" fill="#6b7480">Sırt tarafı</text>
+  <text x="330" y="250" text-anchor="middle" font-size="14" font-weight="600" fill="#6b7480">Karın tarafı</text>
+  <text x="48" y="136" text-anchor="middle" font-size="14" font-weight="600" fill="#6b7480">Baş ucu</text>
+
+  <path d="M 96 132 C 96 86 132 68 176 68 L 494 68 C 524 68 544 96 544 132 C 544 168 524 196 494 196 L 176 196 C 132 196 96 178 96 132 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+
+  <g stroke="#b8cde0" stroke-width="1.2" stroke-dasharray="4,4">
+    <line x1="176" y1="70" x2="176" y2="194"/>
+    <line x1="236" y1="70" x2="236" y2="194"/>
+    <line x1="296" y1="70" x2="296" y2="194"/>
+    <line x1="356" y1="70" x2="356" y2="194"/>
+    <line x1="416" y1="70" x2="416" y2="194"/>
+    <line x1="476" y1="70" x2="476" y2="194"/>
+  </g>
+
+  <g stroke="#c8642a" fill="none">
+    <path d="M 142 120 C 154 134 156 154 164 166" stroke-width="2"/>
+    <line x1="122" y1="104" x2="104" y2="96" stroke-width="1.4"/>
+    <line x1="120" y1="112" x2="103" y2="116" stroke-width="1.4"/>
+    <line x1="164" y1="166" x2="514" y2="166" stroke-width="2.4"/>
+
+    <line x1="206" y1="160" x2="206" y2="132" stroke-width="1.3"/>
+    <line x1="206" y1="172" x2="206" y2="188" stroke-width="1.3"/>
+    <line x1="266" y1="160" x2="266" y2="132" stroke-width="1.3"/>
+    <line x1="266" y1="172" x2="266" y2="188" stroke-width="1.3"/>
+    <line x1="326" y1="160" x2="326" y2="132" stroke-width="1.3"/>
+    <line x1="326" y1="172" x2="326" y2="188" stroke-width="1.3"/>
+    <line x1="386" y1="160" x2="386" y2="132" stroke-width="1.3"/>
+    <line x1="386" y1="172" x2="386" y2="188" stroke-width="1.3"/>
+    <line x1="446" y1="160" x2="446" y2="132" stroke-width="1.3"/>
+    <line x1="446" y1="172" x2="446" y2="188" stroke-width="1.3"/>
+    <line x1="504" y1="160" x2="504" y2="136" stroke-width="1.3"/>
+    <line x1="504" y1="172" x2="504" y2="186" stroke-width="1.3"/>
+  </g>
+
+  <ellipse cx="140" cy="108" rx="18" ry="13" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8">
+    <ellipse cx="206" cy="166" rx="9" ry="6.5"/>
+    <ellipse cx="266" cy="166" rx="9" ry="6.5"/>
+    <ellipse cx="326" cy="166" rx="9" ry="6.5"/>
+    <ellipse cx="386" cy="166" rx="9" ry="6.5"/>
+    <ellipse cx="446" cy="166" rx="9" ry="6.5"/>
+    <ellipse cx="504" cy="166" rx="8.5" ry="6"/>
+  </g>
+
+  <g stroke="#6b7480" stroke-width="1.4">
+    <line x1="140" y1="52" x2="140" y2="95"/>
+    <line x1="266" y1="204" x2="266" y2="173"/>
+    <line x1="416" y1="204" x2="416" y2="167"/>
+  </g>
+
+  <text x="140" y="45" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">1</text>
+  <text x="266" y="222" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">2</text>
+  <text x="416" y="222" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">3</text>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260" font-family="Nunito, sans-serif">
+  <rect width="600" height="260" fill="#ffffff"/>
+
+  <text x="100" y="25" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">K</text>
+  <text x="300" y="25" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">L</text>
+  <text x="500" y="25" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">M</text>
+
+  <rect x="16" y="36" width="168" height="88" fill="#ffffff"/>
+  <rect x="16" y="124" width="168" height="120" fill="#eef5fb"/>
+  <line x1="16" y1="124" x2="184" y2="124" stroke="#1f5fa8" stroke-width="2"/>
+  <circle cx="100" cy="178" r="25" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <polygon points="88,172 102,165 113,174 109,188 92,189" fill="#c8642a"/>
+  <text x="24" y="56" font-size="13" fill="#6b7480">Hücre dışı</text>
+  <text x="24" y="234" font-size="13" fill="#6b7480">Sitoplazma</text>
+  <rect x="16" y="36" width="168" height="208" fill="none" stroke="#d9e4f2" stroke-width="1.5"/>
+
+  <rect x="216" y="36" width="168" height="208" fill="#ffffff"/>
+  <path d="M 216 124 L 262 124 Q 272 100 284 114 Q 300 128 316 114 Q 328 100 338 124 L 384 124 L 384 244 L 216 244 Z" fill="#eef5fb"/>
+  <path d="M 216 124 L 262 124 Q 272 100 284 114 Q 300 128 316 114 Q 328 100 338 124 L 384 124" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <polygon points="288,86 302,79 313,88 309,102 292,103" fill="#c8642a"/>
+  <rect x="216" y="36" width="168" height="208" fill="none" stroke="#d9e4f2" stroke-width="1.5"/>
+
+  <rect x="416" y="36" width="168" height="208" fill="#ffffff"/>
+  <path d="M 416 124 L 464 124 Q 466 86 492 92 Q 474 112 478 134 Q 500 156 522 134 Q 526 112 508 92 Q 534 86 536 124 L 584 124 L 584 244 L 416 244 Z" fill="#eef5fb"/>
+  <path d="M 416 124 L 464 124 Q 466 86 492 92 Q 474 112 478 134 Q 500 156 522 134 Q 526 112 508 92 Q 534 86 536 124 L 584 124" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <polygon points="488,118 502,111 513,120 509,134 492,135" fill="#c8642a"/>
+  <rect x="416" y="36" width="168" height="208" fill="none" stroke="#d9e4f2" stroke-width="1.5"/>
+</svg>

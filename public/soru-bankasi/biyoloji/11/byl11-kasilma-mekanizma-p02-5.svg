@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 310" width="580" height="310" font-family="Nunito, sans-serif">
+  <rect width="580" height="310" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#6b7480"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <g stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4 3">
+    <line x1="92" y1="44" x2="92" y2="56"/>
+    <line x1="224" y1="44" x2="224" y2="74"/>
+    <line x1="356" y1="44" x2="356" y2="74"/>
+    <line x1="488" y1="44" x2="488" y2="56"/>
+    <line x1="180" y1="150" x2="180" y2="214"/>
+    <line x1="400" y1="150" x2="400" y2="214"/>
+    <line x1="92" y1="196" x2="92" y2="250"/>
+    <line x1="488" y1="196" x2="488" y2="250"/>
+  </g>
+  <g stroke="#6b7480" stroke-width="1.4" fill="none">
+    <line x1="94" y1="44" x2="222" y2="44" marker-start="url(#ok)" marker-end="url(#ok)"/>
+    <line x1="358" y1="44" x2="486" y2="44" marker-start="url(#ok)" marker-end="url(#ok)"/>
+    <line x1="182" y1="214" x2="398" y2="214" marker-start="url(#ok)" marker-end="url(#ok)"/>
+    <line x1="94" y1="250" x2="486" y2="250" marker-start="url(#ok)" marker-end="url(#ok)"/>
+  </g>
+  <text x="158" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">6 cm</text>
+  <text x="422" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">6 cm</text>
+  <text x="290" y="232" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">10 cm</text>
+  <text x="290" y="268" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">18 cm</text>
+  <rect x="64" y="186" width="452" height="10" rx="3" fill="#eef5fb" stroke="#6b7480" stroke-width="1.4"/>
+  <rect x="80" y="56" width="12" height="130" rx="2" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="488" y="56" width="12" height="130" rx="2" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="34" y1="120" x2="72" y2="120" stroke="#1f5fa8" stroke-width="2.2" marker-end="url(#ok-mavi)"/>
+  <line x1="546" y1="120" x2="508" y2="120" stroke="#1f5fa8" stroke-width="2.2" marker-end="url(#ok-mavi)"/>
+  <g fill="#c8642a">
+    <rect x="180" y="92" width="220" height="10" rx="3"/>
+    <rect x="180" y="138" width="220" height="10" rx="3"/>
+  </g>
+  <g stroke="#3b8f4a" stroke-width="3" stroke-linecap="butt">
+    <line x1="92" y1="76" x2="224" y2="76"/>
+    <line x1="92" y1="120" x2="224" y2="120"/>
+    <line x1="92" y1="164" x2="224" y2="164"/>
+    <line x1="356" y1="76" x2="488" y2="76"/>
+    <line x1="356" y1="120" x2="488" y2="120"/>
+    <line x1="356" y1="164" x2="488" y2="164"/>
+  </g>
+  <rect x="46" y="284" width="12" height="16" rx="2" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="66" y="297" font-size="13" fill="#222222">Hareketli levha</text>
+  <line x1="196" y1="292" x2="222" y2="292" stroke="#3b8f4a" stroke-width="3"/>
+  <text x="230" y="297" font-size="13" fill="#222222">Sert ince çubuk</text>
+  <rect x="372" y="288" width="26" height="8" rx="3" fill="#c8642a"/>
+  <text x="406" y="297" font-size="13" fill="#222222">Sert kalın çubuk</text>
+</svg>

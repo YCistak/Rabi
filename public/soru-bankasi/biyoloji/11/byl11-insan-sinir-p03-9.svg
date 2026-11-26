@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 340" width="560" height="340" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 Z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="560" height="340" fill="#ffffff"/>
+  <g stroke="#c8642a" stroke-width="1.8" fill="#fbe6d6" stroke-linejoin="round">
+    <path d="M 134 26 C 98 26 76 46 76 74 C 76 96 92 108 112 110 L 154 110 C 174 108 188 94 188 72 C 188 44 166 26 134 26 Z"/>
+    <path d="M 114 110 L 148 110 L 143 176 L 119 176 Z"/>
+    <rect x="120" y="176" width="22" height="128" rx="10"/>
+  </g>
+  <g fill="none" stroke="#c8642a" stroke-width="1.2">
+    <path d="M 96 52 C 106 46 116 52 122 58"/>
+    <path d="M 142 46 C 154 44 164 52 168 62"/>
+    <path d="M 94 84 C 106 88 116 84 124 80"/>
+  </g>
+  <g font-size="14" font-weight="700" fill="#222222" text-anchor="middle">
+    <text x="132" y="74">Beyin</text>
+    <text x="52" y="148">Beyin sapı</text>
+  </g>
+  <line x1="90" y1="143" x2="122" y2="143" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="122" cy="143" r="3" fill="#222222"/>
+  <line x1="65" y1="246" x2="126" y2="246" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="126" cy="246" r="3" fill="#222222"/>
+  <circle cx="48" cy="246" r="15" fill="#ffffff" stroke="#222222" stroke-width="1.5"/>
+  <text x="48" y="251" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">M</text>
+  <g stroke="#1f5fa8" stroke-width="2.2" fill="none">
+    <line x1="424" y1="70" x2="194" y2="70" marker-end="url(#ok)"/>
+    <line x1="146" y1="154" x2="430" y2="154" marker-end="url(#ok)"/>
+    <line x1="143" y1="264" x2="398" y2="264" marker-end="url(#ok)"/>
+  </g>
+  <g font-size="15" font-weight="700" text-anchor="middle" fill="#222222">
+    <circle cx="298" cy="48" r="14" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="298" y="53">K</text>
+    <circle cx="298" cy="132" r="14" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="298" y="137">L</text>
+    <circle cx="298" cy="242" r="14" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="298" y="247">N</text>
+  </g>
+  <g stroke="#222222" stroke-width="1.6" fill="#eef5fb">
+    <path d="M 454 38 C 472 34 486 48 484 66 C 482 82 470 90 462 88 C 454 86 452 78 456 72 C 460 66 462 60 456 54 C 450 48 446 40 454 38 Z"/>
+    <path d="M 462 48 C 472 50 476 58 472 68 C 468 74 464 76 460 72" fill="none" stroke-width="1.3"/>
+    <path d="M 426 65 L 452 65 L 452 73 L 426 73 Z" fill="#d9e4f2"/>
+  </g>
+  <text x="464" y="106" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Kulak</text>
+  <g stroke="#b3491f" stroke-width="1.6" fill="#fbe6d6">
+    <path d="M 464 136 C 456 124 436 126 436 144 C 436 160 454 170 464 178 C 474 170 492 160 492 144 C 492 126 472 124 464 136 Z"/>
+  </g>
+  <text x="464" y="198" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Kalp</text>
+  <g stroke="#b3491f" stroke-width="1.6">
+    <rect x="404" y="260" width="18" height="8" rx="3" fill="#eef5fb" stroke="#6b7480"/>
+    <rect x="510" y="260" width="18" height="8" rx="3" fill="#eef5fb" stroke="#6b7480"/>
+    <path d="M 420 264 C 436 244 496 244 512 264 C 496 284 436 284 420 264 Z" fill="#fbe6d6"/>
+    <line x1="442" y1="252" x2="442" y2="276" stroke-width="1.1"/>
+    <line x1="454" y1="249" x2="454" y2="279" stroke-width="1.1"/>
+    <line x1="466" y1="248" x2="466" y2="280" stroke-width="1.1"/>
+    <line x1="478" y1="249" x2="478" y2="279" stroke-width="1.1"/>
+    <line x1="490" y1="252" x2="490" y2="276" stroke-width="1.1"/>
+  </g>
+  <text x="466" y="300" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">İskelet kası</text>
+  <line x1="200" y1="324" x2="232" y2="324" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="242" y="329" font-size="13" fill="#444444" text-anchor="start">Uyartı iletim yönü</text>
+</svg>

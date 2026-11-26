@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 270" width="540" height="270" font-family="Nunito, sans-serif">
+  <rect width="540" height="270" fill="#ffffff"/>
+  <path d="M 355 138 Q 378 122 396 138 Q 412 152 430 134" fill="none" stroke="#6b7480" stroke-width="2" stroke-linecap="round"/>
+  <rect x="125" y="82" width="230" height="112" rx="56" fill="#eaf0dc" stroke="#6f8242" stroke-width="2"/>
+  <rect x="135" y="92" width="210" height="92" rx="46" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <path d="M 192 138 C 186 116, 212 110, 226 126 C 242 108, 274 114, 270 138 C 278 158, 250 168, 234 152 C 218 168, 186 160, 192 138 Z" fill="none" stroke="#8c2d5c" stroke-width="2"/>
+  <circle cx="308" cy="144" r="11" fill="none" stroke="#8c2d5c" stroke-width="1.6"/>
+  <circle cx="158" cy="126" r="2.5" fill="#4a5568"/>
+  <circle cx="168" cy="152" r="2.5" fill="#4a5568"/>
+  <circle cx="178" cy="116" r="2.5" fill="#4a5568"/>
+  <circle cx="250" cy="168" r="2.5" fill="#4a5568"/>
+  <circle cx="282" cy="120" r="2.5" fill="#4a5568"/>
+  <circle cx="284" cy="158" r="2.5" fill="#4a5568"/>
+  <circle cx="326" cy="122" r="2.5" fill="#4a5568"/>
+  <circle cx="326" cy="162" r="2.5" fill="#4a5568"/>
+  <circle cx="204" cy="168" r="2.5" fill="#4a5568"/>
+  <line x1="184" y1="82" x2="132" y2="42" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="126" y="46" text-anchor="end" font-size="13" fill="#222222">Hücre duvarı</text>
+  <line x1="236" y1="118" x2="236" y2="44" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="236" y="36" text-anchor="middle" font-size="13" fill="#222222">Halkasal DNA</text>
+  <line x1="296" y1="92" x2="356" y2="42" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="362" y="46" text-anchor="start" font-size="13" fill="#222222">Hücre zarı</text>
+  <line x1="166" y1="164" x2="132" y2="226" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="126" y="232" text-anchor="end" font-size="13" fill="#222222">Sitoplazma</text>
+  <line x1="250" y1="170" x2="250" y2="226" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="250" y="244" text-anchor="middle" font-size="13" fill="#222222">Ribozom</text>
+  <line x1="314" y1="154" x2="356" y2="226" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="362" y="232" text-anchor="start" font-size="13" fill="#222222">Plazmit</text>
+  <line x1="414" y1="142" x2="452" y2="142" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="458" y="146" text-anchor="start" font-size="13" fill="#222222">Kamçı</text>
+</svg>

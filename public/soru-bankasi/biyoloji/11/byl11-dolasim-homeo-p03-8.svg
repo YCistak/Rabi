@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 360" width="560" height="360" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="okKirmizi" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="#b83b2d"/>
+    </marker>
+    <marker id="okMavi" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="560" height="360" fill="#ffffff"/>
+
+  <rect x="28" y="24" width="164" height="44" rx="10" fill="#fbe6e2" stroke="#b83b2d" stroke-width="2"/>
+  <text x="110" y="51" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kalbin sol yarısı</text>
+
+  <rect x="368" y="24" width="164" height="44" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="450" y="51" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kalbin sağ yarısı</text>
+
+  <line x1="110" y1="68" x2="110" y2="308" stroke="#b83b2d" stroke-width="2.4"/>
+  <line x1="110" y1="80" x2="110" y2="110" stroke="#b83b2d" stroke-width="2.4" marker-end="url(#okKirmizi)"/>
+  <line x1="110" y1="158" x2="110" y2="196" stroke="#b83b2d" stroke-width="2.4" marker-end="url(#okKirmizi)"/>
+  <line x1="110" y1="246" x2="110" y2="284" stroke="#b83b2d" stroke-width="2.4" marker-end="url(#okKirmizi)"/>
+  <text x="84" y="106" text-anchor="end" font-size="16" font-weight="700" fill="#b83b2d">X</text>
+
+  <line x1="110" y1="132" x2="188" y2="132" stroke="#b83b2d" stroke-width="2" marker-end="url(#okKirmizi)"/>
+  <line x1="110" y1="220" x2="188" y2="220" stroke="#b83b2d" stroke-width="2" marker-end="url(#okKirmizi)"/>
+  <line x1="110" y1="308" x2="188" y2="308" stroke="#b83b2d" stroke-width="2" marker-end="url(#okKirmizi)"/>
+
+  <rect x="192" y="110" width="176" height="44" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="1.8"/>
+  <text x="280" y="137" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Beyin kılcalları</text>
+
+  <rect x="192" y="198" width="176" height="44" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="1.8"/>
+  <text x="280" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Böbrek kılcalları</text>
+
+  <rect x="192" y="286" width="176" height="44" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="1.8"/>
+  <text x="280" y="313" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">İskelet kası kılcalları</text>
+
+  <line x1="368" y1="132" x2="444" y2="132" stroke="#1f5fa8" stroke-width="2" marker-end="url(#okMavi)"/>
+  <line x1="368" y1="220" x2="444" y2="220" stroke="#1f5fa8" stroke-width="2" marker-end="url(#okMavi)"/>
+  <line x1="368" y1="308" x2="444" y2="308" stroke="#1f5fa8" stroke-width="2" marker-end="url(#okMavi)"/>
+
+  <line x1="450" y1="308" x2="450" y2="72" stroke="#1f5fa8" stroke-width="2.4" marker-end="url(#okMavi)"/>
+  <line x1="450" y1="284" x2="450" y2="246" stroke="#1f5fa8" stroke-width="2.4" marker-end="url(#okMavi)"/>
+  <line x1="450" y1="196" x2="450" y2="158" stroke="#1f5fa8" stroke-width="2.4" marker-end="url(#okMavi)"/>
+  <text x="476" y="106" text-anchor="start" font-size="16" font-weight="700" fill="#1f5fa8">Y</text>
+</svg>

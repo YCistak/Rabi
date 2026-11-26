@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 240" width="640" height="240" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+
+  <rect width="640" height="240" fill="#ffffff"/>
+
+  <g>
+    <rect x="12" y="12" width="616" height="100" rx="12" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+    <text x="24" y="34" font-size="14" font-weight="700" fill="#1f5fa8">Tek hücreli canlı (Amip)</text>
+
+    <rect x="20" y="48" width="56" height="38" rx="8" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+    <text x="48" y="72" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Atom</text>
+    <line x1="77" y1="67" x2="89" y2="67" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="92" y="48" width="68" height="38" rx="8" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+    <text x="126" y="72" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Molekül</text>
+    <line x1="161" y1="67" x2="173" y2="67" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="176" y="48" width="68" height="38" rx="8" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+    <text x="210" y="72" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Organel</text>
+    <line x1="245" y1="67" x2="257" y2="67" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="260" y="43" width="112" height="48" rx="9" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="316" y="63" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Hücre</text>
+    <text x="316" y="81" text-anchor="middle" font-size="13" font-weight="600" fill="#1f5fa8">(Organizma)</text>
+
+    <path d="M 396 64 C 392 53 406 50 414 56 C 423 52 432 62 427 71 C 431 80 419 86 411 81 C 402 86 391 77 396 64 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="411" cy="68" r="4.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+  </g>
+
+  <g>
+    <rect x="12" y="126" width="616" height="102" rx="12" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+    <text x="24" y="148" font-size="14" font-weight="700" fill="#c8642a">Çok hücreli canlı (İnsan)</text>
+
+    <rect x="20" y="164" width="56" height="38" rx="8" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+    <text x="48" y="188" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Atom</text>
+    <line x1="77" y1="183" x2="89" y2="183" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="92" y="164" width="68" height="38" rx="8" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+    <text x="126" y="188" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Molekül</text>
+    <line x1="161" y1="183" x2="173" y2="183" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="176" y="164" width="68" height="38" rx="8" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+    <text x="210" y="188" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Organel</text>
+    <line x1="245" y1="183" x2="257" y2="183" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="260" y="164" width="64" height="38" rx="8" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+    <text x="292" y="188" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Hücre</text>
+    <line x1="325" y1="183" x2="337" y2="183" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="340" y="164" width="46" height="38" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="363" y="189" text-anchor="middle" font-size="15" font-weight="700" fill="#c8642a">K</text>
+    <line x1="387" y1="183" x2="399" y2="183" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="402" y="164" width="46" height="38" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="425" y="189" text-anchor="middle" font-size="15" font-weight="700" fill="#c8642a">L</text>
+    <line x1="449" y1="183" x2="461" y2="183" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="464" y="164" width="46" height="38" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="487" y="189" text-anchor="middle" font-size="15" font-weight="700" fill="#c8642a">M</text>
+    <line x1="511" y1="183" x2="523" y2="183" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+
+    <rect x="526" y="164" width="94" height="38" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="573" y="188" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Organizma</text>
+  </g>
+</svg>

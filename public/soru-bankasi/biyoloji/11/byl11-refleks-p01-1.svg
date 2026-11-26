@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 310" width="560" height="310" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-koyu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#222222"/>
+    </marker>
+  </defs>
+  <rect width="560" height="310" fill="#ffffff"/>
+
+  <g>
+    <text x="410" y="54" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Omurilik</text>
+    <path d="M 410 76 C 464 76, 496 108, 496 155 C 496 202, 464 234, 410 234 C 356 234, 324 202, 324 155 C 324 108, 356 76, 410 76 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <path d="M 410 144 C 420 132, 434 106, 452 108 C 462 110, 460 128, 446 146 C 458 160, 466 184, 454 198 C 440 208, 422 184, 410 166 C 398 184, 380 208, 366 198 C 354 184, 362 160, 374 146 C 360 128, 358 110, 368 108 C 386 106, 400 132, 410 144 Z" fill="#d9e4f2" stroke="#4a73a8" stroke-width="1.5"/>
+    <circle cx="410" cy="155" r="4" fill="#ffffff" stroke="#4a73a8" stroke-width="1.2"/>
+  </g>
+
+  <g>
+    <line x1="26" y1="36" x2="54" y2="66" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+    <text x="64" y="42" font-size="13" font-weight="600" fill="#222222">Uyaran</text>
+    <rect x="30" y="70" width="102" height="46" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <text x="76" y="90" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Deri</text>
+    <text x="76" y="107" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">reseptörü</text>
+    <circle cx="124" cy="93" r="4.5" fill="#c8642a"/>
+  </g>
+
+  <g>
+    <path d="M 129 93 L 200 93" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+    <path d="M 200 93 L 228 93" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <circle cx="239" cy="93" r="11" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="239" cy="93" r="4" fill="#1f5fa8"/>
+    <path d="M 250 93 C 296 93, 336 104, 376 124" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+    <line x1="239" y1="70" x2="239" y2="82" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="239" y="64" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5fa8">X</text>
+  </g>
+
+  <g>
+    <circle cx="386" cy="153" r="6" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <path d="M 382 132 L 385 147" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+    <path d="M 385 159 L 379 180" fill="none" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+    <line x1="294" y1="153" x2="379" y2="153" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="282" y="158" text-anchor="middle" font-size="16" font-weight="700" fill="#c8642a">Y</text>
+  </g>
+
+  <g>
+    <circle cx="376" cy="190" r="6.5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <path d="M 370 194 C 330 214, 286 224, 232 224" fill="none" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+    <path d="M 232 224 L 138 224" fill="none" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+    <line x1="239" y1="224" x2="239" y2="239" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="239" y="256" text-anchor="middle" font-size="16" font-weight="700" fill="#3b8f4a">Z</text>
+  </g>
+
+  <g>
+    <path d="M 30 224 C 52 200, 112 200, 134 224 C 112 248, 52 248, 30 224 Z" fill="#f7dcdc" stroke="#b54545" stroke-width="1.6"/>
+    <line x1="50" y1="218" x2="114" y2="218" stroke="#b54545" stroke-width="1.2"/>
+    <line x1="46" y1="224" x2="118" y2="224" stroke="#b54545" stroke-width="1.2"/>
+    <line x1="50" y1="230" x2="114" y2="230" stroke="#b54545" stroke-width="1.2"/>
+    <text x="82" y="266" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">İskelet kası</text>
+  </g>
+
+  <g>
+    <line x1="364" y1="286" x2="396" y2="286" stroke="#222222" stroke-width="1.8" marker-end="url(#ok-koyu)"/>
+    <text x="406" y="291" font-size="13" fill="#222222">Uyartı yönü</text>
+  </g>
+</svg>

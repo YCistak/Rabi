@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" width="520" height="320" font-family="Nunito, sans-serif">
+<rect width="520" height="320" fill="#ffffff"/>
+<g stroke="#4a4f57" stroke-width="1.6" stroke-linejoin="round">
+<path d="M82 170 L118 170 Q114 230 100 268 Q86 230 82 170 Z" fill="#ece4cf"/>
+<path d="M82 170 Q84 120 92 76 L104 76 Q114 120 118 170 Z" fill="#faf7ee"/>
+<path d="M236 170 L284 170 Q278 240 260 282 Q242 240 236 170 Z" fill="#ece4cf"/>
+<path d="M260 40 Q276 100 284 170 L236 170 Q244 100 260 40 Z" fill="#faf7ee"/>
+<path d="M378 170 L462 170 L456 200 Q450 240 444 264 Q436 240 428 205 L412 205 Q404 240 396 264 Q390 240 384 200 Z" fill="#ece4cf"/>
+<path d="M372 170 L370 100 Q382 86 394 100 Q406 86 420 100 Q434 86 446 100 Q458 86 470 100 L468 170 Z" fill="#faf7ee"/>
+</g>
+<path d="M380 114 Q392 106 404 114 Q416 106 428 114 Q440 106 452 114 Q458 110 462 114" fill="none" stroke="#6b7480" stroke-width="1.3"/>
+<path d="M382 128 Q394 120 406 128 Q418 120 430 128 Q442 120 456 128" fill="none" stroke="#6b7480" stroke-width="1.3"/>
+<g font-size="18" font-weight="700" fill="#222222" text-anchor="middle">
+<text x="100" y="304">1</text>
+<text x="260" y="304">2</text>
+<text x="420" y="304">3</text>
+</g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220" width="480" height="220" font-family="Nunito, sans-serif">
+  <rect width="480" height="220" fill="#ffffff"/>
+  <defs><marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#344953"/></marker></defs>
+  <g fill="#f7f3ed" stroke="#a09483" stroke-width="1.4"><rect x="16" y="24" width="97" height="67" rx="12"/><rect x="16" y="137" width="97" height="67" rx="12"/></g>
+  <g stroke="#648573" fill="none" stroke-width="2">
+    <path d="M46 50 Q36 53 46 60 H142 Q179 60 206 89 L241 120 Q253 130 272 130 H455"/>
+    <path d="M46 50 H142 Q183 50 214 80 L247 109 Q257 120 275 120 H455"/>
+    <path d="M44 161 Q34 166 44 171 H146 Q172 171 197 155 L230 136 Q245 127 254 128"/>
+    <path d="M44 161 H145 Q169 161 190 148 L223 129 Q235 122 242 121"/>
+  </g>
+  <g stroke="#344953" fill="none" stroke-width="1.6" marker-end="url(#ok)"><path d="M77 55 H105"/><path d="M77 166 H105"/><path d="M340 125 H377"/></g>
+  <path d="M146 48 L146 62" stroke="#ac563e" stroke-width="2"/>
+  <g fill="#222222" font-size="16"><text x="28" y="82">P bölgesi</text><text x="28" y="194">R bölgesi</text><text x="141" y="40" font-weight="bold">K</text><text x="309" y="106">Ortak lenf damarı</text></g>
+</svg>

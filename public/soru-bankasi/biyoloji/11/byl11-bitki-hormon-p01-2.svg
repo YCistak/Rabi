@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 275" width="560" height="275" font-family="Nunito, sans-serif">
+  <rect width="560" height="275" fill="#ffffff"/>
+
+  <rect x="64" y="16" width="22" height="16" rx="2" fill="#f3f4f6" stroke="#6b7480" stroke-width="1.5"/>
+  <text x="94" y="29" font-size="13" fill="#222222">Boş agar bloğu</text>
+
+  <rect x="242" y="16" width="22" height="16" rx="2" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  <text x="272" y="29" font-size="13" fill="#222222">Filiz ucu bekletilmiş agar bloğu</text>
+
+  <g>
+    <rect x="24" y="50" width="156" height="206" rx="8" fill="#fafafa" stroke="#d1d5db" stroke-width="1.3"/>
+    <text x="102" y="74" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">I. Düzenek</text>
+
+    <rect x="56" y="210" width="92" height="26" rx="4" fill="#e8dccb" stroke="#8b6b4c" stroke-width="1.5"/>
+    <rect x="88" y="130" width="28" height="80" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <line x1="102" y1="132" x2="102" y2="208" stroke="#3b8f4a" stroke-width="1" stroke-dasharray="3 3"/>
+    <rect x="102" y="114" width="14" height="16" rx="2" fill="#f3f4f6" stroke="#6b7480" stroke-width="1.5"/>
+
+    <line x1="68" y1="168" x2="88" y2="168" stroke="#6b7480" stroke-width="1.2"/>
+    <text x="64" y="165" font-size="13" text-anchor="end" fill="#222222">Kesik</text>
+    <text x="64" y="181" font-size="13" text-anchor="end" fill="#222222">filiz</text>
+  </g>
+
+  <g>
+    <rect x="202" y="50" width="156" height="206" rx="8" fill="#fafafa" stroke="#d1d5db" stroke-width="1.3"/>
+    <text x="280" y="74" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">II. Düzenek</text>
+
+    <rect x="234" y="210" width="92" height="26" rx="4" fill="#e8dccb" stroke="#8b6b4c" stroke-width="1.5"/>
+    <rect x="266" y="130" width="28" height="80" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <line x1="280" y1="132" x2="280" y2="208" stroke="#3b8f4a" stroke-width="1" stroke-dasharray="3 3"/>
+    <rect x="268" y="114" width="24" height="16" rx="2" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  </g>
+
+  <g>
+    <rect x="380" y="50" width="156" height="206" rx="8" fill="#fafafa" stroke="#d1d5db" stroke-width="1.3"/>
+    <text x="458" y="74" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">III. Düzenek</text>
+
+    <rect x="412" y="210" width="92" height="26" rx="4" fill="#e8dccb" stroke="#8b6b4c" stroke-width="1.5"/>
+    <rect x="444" y="130" width="28" height="80" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <line x1="458" y1="132" x2="458" y2="208" stroke="#3b8f4a" stroke-width="1" stroke-dasharray="3 3"/>
+    <rect x="458" y="114" width="14" height="16" rx="2" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  </g>
+</svg>

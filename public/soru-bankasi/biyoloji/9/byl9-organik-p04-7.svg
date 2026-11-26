@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 340" width="620" height="340" font-family="Nunito, sans-serif">
+  <rect width="620" height="340" fill="#ffffff"/>
+
+  <g>
+    <text x="110" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1. Tüp</text>
+    <path d="M 84 156 L 84 164 A 26 26 0 0 0 136 164 L 136 156 Z" fill="#eef5fb"/>
+    <circle cx="98" cy="171" r="4" fill="#c8642a"/>
+    <circle cx="112" cy="176" r="4" fill="#c8642a"/>
+    <circle cx="124" cy="169" r="4" fill="#c8642a"/>
+    <circle cx="106" cy="164" r="3.5" fill="#6b7480"/>
+    <circle cx="118" cy="163" r="3.5" fill="#6b7480"/>
+    <path d="M 80 44 L 84 44 L 84 164 A 26 26 0 0 0 136 164 L 136 44 L 140 44" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <line x1="84" y1="156" x2="136" y2="156" stroke="#1f5fa8" stroke-width="1.4"/>
+    <rect x="21" y="206" width="178" height="118" rx="8" fill="#f8f9fb" stroke="#d9e4f2" stroke-width="1.4"/>
+    <text x="110" y="228" text-anchor="middle" font-size="13" fill="#222222">10 g maltoz</text>
+    <text x="110" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">%5 su</text>
+    <text x="110" y="268" text-anchor="middle" font-size="13" fill="#222222">Enzim: Var (37 °C, pH 7)</text>
+    <rect x="33" y="282" width="154" height="30" rx="6" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <text x="110" y="302" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Glikoz oluşumu: Yok</text>
+  </g>
+
+  <g>
+    <text x="310" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">2. Tüp</text>
+    <path d="M 284 94 L 284 164 A 26 26 0 0 0 336 164 L 336 94 Z" fill="#eef5fb"/>
+    <circle cx="298" cy="118" r="4" fill="#c8642a"/>
+    <circle cx="320" cy="128" r="4" fill="#c8642a"/>
+    <circle cx="304" cy="150" r="4" fill="#c8642a"/>
+    <circle cx="322" cy="166" r="4" fill="#c8642a"/>
+    <circle cx="300" cy="172" r="4" fill="#c8642a"/>
+    <path d="M 280 44 L 284 44 L 284 164 A 26 26 0 0 0 336 164 L 336 44 L 340 44" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <line x1="284" y1="94" x2="336" y2="94" stroke="#1f5fa8" stroke-width="1.4"/>
+    <rect x="221" y="206" width="178" height="118" rx="8" fill="#f8f9fb" stroke="#d9e4f2" stroke-width="1.4"/>
+    <text x="310" y="228" text-anchor="middle" font-size="13" fill="#222222">10 g maltoz</text>
+    <text x="310" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">%60 su</text>
+    <text x="310" y="268" text-anchor="middle" font-size="13" fill="#222222">Enzim: Var (37 °C, pH 7)</text>
+    <rect x="233" y="282" width="154" height="30" rx="6" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <text x="310" y="302" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Glikoz oluşumu: Var</text>
+  </g>
+
+  <g>
+    <text x="510" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">3. Tüp</text>
+    <path d="M 484 94 L 484 164 A 26 26 0 0 0 536 164 L 536 94 Z" fill="#eef5fb"/>
+    <path d="M 480 44 L 484 44 L 484 164 A 26 26 0 0 0 536 164 L 536 44 L 540 44" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <line x1="484" y1="94" x2="536" y2="94" stroke="#1f5fa8" stroke-width="1.4"/>
+    <rect x="421" y="206" width="178" height="118" rx="8" fill="#f8f9fb" stroke="#d9e4f2" stroke-width="1.4"/>
+    <text x="510" y="228" text-anchor="middle" font-size="13" fill="#222222">10 g maltoz</text>
+    <text x="510" y="248" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">%60 su</text>
+    <text x="510" y="268" text-anchor="middle" font-size="13" fill="#222222">Enzim: Yok (37 °C, pH 7)</text>
+    <rect x="433" y="282" width="154" height="30" rx="6" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <text x="510" y="302" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Glikoz oluşumu: Yok</text>
+  </g>
+</svg>

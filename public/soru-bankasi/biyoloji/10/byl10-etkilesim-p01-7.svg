@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 310" width="600" height="310" font-family="Nunito, sans-serif">
+  <rect width="600" height="310" fill="#ffffff"/>
+  <text x="300" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">48 Saat Sonunda Petri Kapları</text>
+
+  <g>
+    <circle cx="105" cy="138" r="70" fill="#f4f6f8" stroke="#6b7480" stroke-width="1.6"/>
+    <circle cx="105" cy="138" r="64" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="72" cy="110" r="3" fill="#3b8f4a"/>
+    <circle cx="105" cy="96" r="3" fill="#3b8f4a"/>
+    <circle cx="138" cy="110" r="3" fill="#3b8f4a"/>
+    <circle cx="62" cy="138" r="3" fill="#3b8f4a"/>
+    <circle cx="92" cy="124" r="3" fill="#3b8f4a"/>
+    <circle cx="118" cy="124" r="3" fill="#3b8f4a"/>
+    <circle cx="148" cy="138" r="3" fill="#3b8f4a"/>
+    <circle cx="80" cy="146" r="3" fill="#3b8f4a"/>
+    <circle cx="105" cy="142" r="3" fill="#3b8f4a"/>
+    <circle cx="130" cy="146" r="3" fill="#3b8f4a"/>
+    <circle cx="72" cy="170" r="3" fill="#3b8f4a"/>
+    <circle cx="95" cy="166" r="3" fill="#3b8f4a"/>
+    <circle cx="116" cy="166" r="3" fill="#3b8f4a"/>
+    <circle cx="138" cy="170" r="3" fill="#3b8f4a"/>
+    <circle cx="105" cy="184" r="3" fill="#3b8f4a"/>
+    <text x="105" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kap 1</text>
+    <text x="105" y="246" text-anchor="middle" font-size="13" fill="#222222">Yalnız B bakterisi</text>
+  </g>
+
+  <g>
+    <circle cx="300" cy="138" r="70" fill="#f4f6f8" stroke="#6b7480" stroke-width="1.6"/>
+    <circle cx="300" cy="138" r="64" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.3"/>
+    <circle cx="300" cy="138" r="20" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="300" y="143" text-anchor="middle" font-size="13" font-weight="700" fill="#8a3a10">2 cm</text>
+    <text x="300" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kap 2</text>
+    <text x="300" y="246" text-anchor="middle" font-size="13" fill="#222222">Yalnız M küfü</text>
+  </g>
+
+  <g>
+    <circle cx="495" cy="138" r="70" fill="#f4f6f8" stroke="#6b7480" stroke-width="1.6"/>
+    <circle cx="495" cy="138" r="64" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="495" cy="85" r="3" fill="#3b8f4a"/>
+    <circle cx="524" cy="92" r="3" fill="#3b8f4a"/>
+    <circle cx="544" cy="114" r="3" fill="#3b8f4a"/>
+    <circle cx="549" cy="142" r="3" fill="#3b8f4a"/>
+    <circle cx="539" cy="168" r="3" fill="#3b8f4a"/>
+    <circle cx="518" cy="186" r="3" fill="#3b8f4a"/>
+    <circle cx="491" cy="191" r="3" fill="#3b8f4a"/>
+    <circle cx="465" cy="182" r="3" fill="#3b8f4a"/>
+    <circle cx="447" cy="161" r="3" fill="#3b8f4a"/>
+    <circle cx="442" cy="134" r="3" fill="#3b8f4a"/>
+    <circle cx="451" cy="107" r="3" fill="#3b8f4a"/>
+    <circle cx="470" cy="90" r="3" fill="#3b8f4a"/>
+    <circle cx="495" cy="138" r="41" fill="#eef5fb" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="4 3"/>
+    <circle cx="495" cy="138" r="20" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="495" y="143" text-anchor="middle" font-size="13" font-weight="700" fill="#8a3a10">2 cm</text>
+    <line x1="517" y1="115" x2="530" y2="57" stroke="#6b7480" stroke-width="1.3"/>
+    <circle cx="517" cy="115" r="2.5" fill="#6b7480"/>
+    <text x="495" y="51" text-anchor="middle" font-size="13" fill="#222222">Üreme olmayan bölge</text>
+    <text x="495" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kap 3</text>
+    <text x="495" y="246" text-anchor="middle" font-size="13" fill="#222222">M küfü ve B bakterisi</text>
+  </g>
+
+  <g>
+    <rect x="65" y="266" width="470" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+    <rect x="85" y="274" width="16" height="16" rx="3" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="93" cy="282" r="2.5" fill="#3b8f4a"/>
+    <text x="108" y="287" font-size="13" fill="#222222">B bakterisi</text>
+
+    <circle cx="242" cy="282" r="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="257" y="287" font-size="13" fill="#222222">M küfü (koloni çapı)</text>
+
+    <rect x="412" y="274" width="16" height="16" rx="3" fill="#eef5fb" stroke="#6b7480" stroke-width="1.3" stroke-dasharray="3 2"/>
+    <text x="435" y="287" font-size="13" fill="#222222">Boş besiyeri</text>
+  </g>
+</svg>

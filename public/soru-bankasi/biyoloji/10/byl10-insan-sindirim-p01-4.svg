@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" width="520" height="300" font-family="Nunito, sans-serif">
+<rect width="520" height="300" fill="#ffffff"/>
+<text x="80" y="30" font-size="14" font-weight="700" fill="#222222">Kimyasal sindirime uğramamış miktar (%)</text>
+<line x1="80" y1="150" x2="500" y2="150" stroke="#c9ced6" stroke-width="1.2" stroke-dasharray="4 4"/>
+<line x1="80" y1="60" x2="500" y2="60" stroke="#c9ced6" stroke-width="1.2" stroke-dasharray="4 4"/>
+<line x1="164" y1="60" x2="164" y2="240" stroke="#c9ced6" stroke-width="1.2" stroke-dasharray="4 4"/>
+<line x1="248" y1="60" x2="248" y2="240" stroke="#c9ced6" stroke-width="1.2" stroke-dasharray="4 4"/>
+<line x1="332" y1="60" x2="332" y2="240" stroke="#c9ced6" stroke-width="1.2" stroke-dasharray="4 4"/>
+<line x1="416" y1="60" x2="416" y2="240" stroke="#c9ced6" stroke-width="1.2" stroke-dasharray="4 4"/>
+<line x1="80" y1="240" x2="500" y2="240" stroke="#6b7480" stroke-width="1.6"/>
+<line x1="80" y1="240" x2="80" y2="48" stroke="#6b7480" stroke-width="1.6"/>
+<text x="72" y="245" font-size="13" fill="#222222" text-anchor="end">0</text>
+<text x="72" y="155" font-size="13" fill="#222222" text-anchor="end">50</text>
+<text x="72" y="65" font-size="13" fill="#222222" text-anchor="end">100</text>
+<text x="122" y="262" font-size="13" fill="#222222" text-anchor="middle">Ağız</text>
+<text x="206" y="262" font-size="13" fill="#222222" text-anchor="middle"><tspan x="206" y="262">Yemek</tspan><tspan x="206" y="279">borusu</tspan></text>
+<text x="290" y="262" font-size="13" fill="#222222" text-anchor="middle">Mide</text>
+<text x="374" y="262" font-size="13" fill="#222222" text-anchor="middle"><tspan x="374" y="262">İnce</tspan><tspan x="374" y="279">bağırsak</tspan></text>
+<text x="458" y="262" font-size="13" fill="#222222" text-anchor="middle"><tspan x="458" y="262">Kalın</tspan><tspan x="458" y="279">bağırsak</tspan></text>
+<polyline points="80,60 164,92 332,92 416,240 500,240" fill="none" stroke="#c8642a" stroke-width="2.6" stroke-linejoin="round"/>
+</svg>

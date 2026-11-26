@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 360" width="620" height="360" font-family="Nunito, sans-serif">
+<rect width="620" height="360" fill="#ffffff"/>
+<line x1="80" y1="250" x2="580" y2="250" stroke="#e3e7ec" stroke-width="1"/>
+<text x="70" y="255" font-size="13" text-anchor="end" fill="#222222">2</text>
+<line x1="80" y1="200" x2="580" y2="200" stroke="#e3e7ec" stroke-width="1"/>
+<text x="70" y="205" font-size="13" text-anchor="end" fill="#222222">4</text>
+<line x1="80" y1="150" x2="580" y2="150" stroke="#e3e7ec" stroke-width="1"/>
+<text x="70" y="155" font-size="13" text-anchor="end" fill="#222222">6</text>
+<line x1="80" y1="100" x2="580" y2="100" stroke="#e3e7ec" stroke-width="1"/>
+<text x="70" y="105" font-size="13" text-anchor="end" fill="#222222">8</text>
+<line x1="80" y1="50" x2="580" y2="50" stroke="#e3e7ec" stroke-width="1"/>
+<text x="70" y="55" font-size="13" text-anchor="end" fill="#222222">10</text>
+<line x1="80" y1="300" x2="80" y2="305" stroke="#6b7480" stroke-width="1.2"/>
+<text x="80" y="322" font-size="13" text-anchor="middle" fill="#222222">0</text>
+<line x1="205" y1="300" x2="205" y2="305" stroke="#6b7480" stroke-width="1.2"/>
+<text x="205" y="322" font-size="13" text-anchor="middle" fill="#222222">14</text>
+<line x1="330" y1="300" x2="330" y2="305" stroke="#6b7480" stroke-width="1.2"/>
+<text x="330" y="322" font-size="13" text-anchor="middle" fill="#222222">28</text>
+<line x1="455" y1="300" x2="455" y2="305" stroke="#6b7480" stroke-width="1.2"/>
+<text x="455" y="322" font-size="13" text-anchor="middle" fill="#222222">42</text>
+<line x1="580" y1="300" x2="580" y2="305" stroke="#6b7480" stroke-width="1.2"/>
+<text x="580" y="322" font-size="13" text-anchor="middle" fill="#222222">56</text>
+<polyline points="80,35 80,300 590,300" fill="none" stroke="#222222" stroke-width="1.6"/>
+<text x="330" y="346" font-size="14" text-anchor="middle" fill="#222222">Zaman (gün)</text>
+<text x="24" y="175" font-size="14" text-anchor="middle" fill="#222222" transform="rotate(-90 24 175)">Antikor miktarı (birim)</text>
+<polyline points="80,300 133.6,300 169.3,270 205,250 258.6,272.5 330,290 347.9,287.5 374.6,150 401.4,75 455,95 526.4,140 580,160" fill="none" stroke="#1f5fa8" stroke-width="2.4" stroke-linejoin="round"/>
+<polyline points="330,300 392.5,300 428.2,284 464,246 499.6,233 544,256 580,266" fill="none" stroke="#c8642a" stroke-width="2.4" stroke-dasharray="7 5" stroke-linejoin="round"/>
+<line x1="104" y1="64" x2="140" y2="64" stroke="#1f5fa8" stroke-width="2.4"/>
+<text x="148" y="69" font-size="14" text-anchor="start" fill="#222222">P antijenine özgü antikor</text>
+<line x1="104" y1="90" x2="140" y2="90" stroke="#c8642a" stroke-width="2.4" stroke-dasharray="7 5"/>
+<text x="148" y="95" font-size="14" text-anchor="start" fill="#222222">R antijenine özgü antikor</text>
+</svg>

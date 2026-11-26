@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 305" width="560" height="305" font-family="Nunito, sans-serif">
+<rect width="560" height="305" fill="#ffffff"/>
+<rect x="60" y="70" width="480" height="25" fill="#f7dede" stroke="#b0605a" stroke-width="1.6"/>
+<path d="M60 200 L60 180 A20 20 0 0 1 100 180 A20 20 0 0 1 140 180 A20 20 0 0 1 180 180 A20 20 0 0 1 220 180 A20 20 0 0 1 260 180 A20 20 0 0 1 300 180 A20 20 0 0 1 340 180 A20 20 0 0 1 380 180 A20 20 0 0 1 420 180 A20 20 0 0 1 460 180 A20 20 0 0 1 500 180 A20 20 0 0 1 540 180 L540 200 Z" fill="#f7dede" stroke="#b0605a" stroke-width="1.6"/>
+<path d="M60 290 L60 270 L65 270 L65 240 L75 240 L75 270 L85 270 L85 240 L95 240 L95 270 L105 270 L105 240 L115 240 L115 270 L125 270 L125 240 L135 240 L135 270 L145 270 L145 240 L155 240 L155 270 L165 270 L165 240 L175 240 L175 270 L185 270 L185 240 L195 240 L195 270 L205 270 L205 240 L215 240 L215 270 L225 270 L225 240 L235 240 L235 270 L245 270 L245 240 L255 240 L255 270 L265 270 L265 240 L275 240 L275 270 L285 270 L285 240 L295 240 L295 270 L305 270 L305 240 L315 240 L315 270 L325 270 L325 240 L335 240 L335 270 L345 270 L345 240 L355 240 L355 270 L365 270 L365 240 L375 240 L375 270 L385 270 L385 240 L395 240 L395 270 L405 270 L405 240 L415 240 L415 270 L425 270 L425 240 L435 240 L435 270 L445 270 L445 240 L455 240 L455 270 L465 270 L465 240 L475 240 L475 270 L485 270 L485 240 L495 240 L495 270 L505 270 L505 240 L515 240 L515 270 L525 270 L525 240 L535 240 L535 270 L540 270 L540 290 Z" fill="#f7dede" stroke="#b0605a" stroke-width="1.6"/>
+<text x="34" y="88" font-size="16" fill="#222222" text-anchor="middle" font-weight="700">X</text>
+<text x="34" y="192" font-size="16" fill="#222222" text-anchor="middle" font-weight="700">Y</text>
+<text x="34" y="278" font-size="16" fill="#222222" text-anchor="middle" font-weight="700">Z</text>
+<text x="300" y="40" font-size="14" fill="#222222" text-anchor="middle">Besin çözeltisi her kesitte üst yüzeye temas eder.</text>
+</svg>

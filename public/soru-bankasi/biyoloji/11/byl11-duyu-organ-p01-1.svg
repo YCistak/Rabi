@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" width="520" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="520" height="320" fill="#ffffff"/>
+  <g>
+    <line x1="28" y1="146" x2="104" y2="146" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+    <line x1="28" y1="174" x2="104" y2="174" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+    <text x="64" y="134" font-size="14" font-weight="700" fill="#1f5fa8" text-anchor="middle">Işık</text>
+  </g>
+  <g>
+    <path d="M 168 111.5 A 104 104 0 0 1 363.7 152 L 436 152 L 436 182 L 361.6 182 A 104 104 0 0 1 168 208.5 C 122 198 122 122 168 111.5 Z" fill="#e8edf3" stroke="#334155" stroke-width="1.8"/>
+    <path d="M 174 118 A 96 96 0 0 1 355.7 153 L 354 181 A 96 96 0 0 1 174 202 Z" fill="#f6d6c4" stroke="none"/>
+    <path d="M 174 118 A 96 96 0 0 1 355.7 153" fill="none" stroke="#b85a2b" stroke-width="1.4"/>
+    <path d="M 354 181 A 96 96 0 0 1 174 202" fill="none" stroke="#b85a2b" stroke-width="1.4"/>
+    <path d="M 179 124 A 90 90 0 0 1 349.8 155 L 348.5 178 A 90 90 0 0 1 179 196 Z" fill="#fef3c7" stroke="none"/>
+    <path d="M 179 124 A 90 90 0 0 1 349.8 155" fill="none" stroke="#c48a12" stroke-width="1.6"/>
+    <path d="M 348.5 178 A 90 90 0 0 1 179 196" fill="none" stroke="#c48a12" stroke-width="1.6"/>
+    <path d="M 183 129 A 85 85 0 0 1 344.8 156 L 343.8 176 A 85 85 0 0 1 183 191 C 174 176 174 144 183 129 Z" fill="#eef5fb" stroke="none"/>
+    <path d="M 183 129 A 85 85 0 0 1 344.8 156" fill="none" stroke="#c48a12" stroke-width="1.2"/>
+    <path d="M 343.8 176 A 85 85 0 0 1 183 191" fill="none" stroke="#c48a12" stroke-width="1.2"/>
+    <path d="M 168 111.5 C 122 122 122 198 168 208.5 L 175 201 C 136 192 136 128 175 119 Z" fill="#dff0fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <path d="M 348 155 L 436 155 L 436 179 L 347 179 Z" fill="#f9e4a8" stroke="#a67414" stroke-width="1.5"/>
+    <line x1="354" y1="163" x2="434" y2="163" stroke="#a67414" stroke-width="1.2"/>
+    <line x1="354" y1="171" x2="434" y2="171" stroke="#a67414" stroke-width="1.2"/>
+    <path d="M 174 118 L 182 118 L 180 144 L 173 144 Z" fill="#5b8db8" stroke="#1f5fa8" stroke-width="1.4"/>
+    <path d="M 174 202 L 182 202 L 180 176 L 173 176 Z" fill="#5b8db8" stroke="#1f5fa8" stroke-width="1.4"/>
+    <line x1="194" y1="114" x2="196" y2="132" stroke="#6b7480" stroke-width="1.2"/>
+    <line x1="201" y1="115" x2="199" y2="132" stroke="#6b7480" stroke-width="1.2"/>
+    <line x1="194" y1="206" x2="196" y2="188" stroke="#6b7480" stroke-width="1.2"/>
+    <line x1="201" y1="205" x2="199" y2="188" stroke="#6b7480" stroke-width="1.2"/>
+    <ellipse cx="198" cy="160" rx="12" ry="30" fill="#d7ecfa" stroke="#1f5fa8" stroke-width="1.6"/>
+  </g>
+  <g>
+    <line x1="114" y1="90" x2="145" y2="142" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="145" cy="142" r="2.6" fill="#222222"/>
+    <text x="106" y="84" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">1</text>
+
+    <line x1="196" y1="46" x2="198" y2="144" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="198" cy="144" r="2.6" fill="#222222"/>
+    <text x="196" y="38" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">2</text>
+
+    <line x1="268" y1="280" x2="268" y2="196" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="268" cy="196" r="2.6" fill="#222222"/>
+    <text x="268" y="300" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">3</text>
+
+    <line x1="364" y1="68" x2="323" y2="99" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="323" cy="99" r="2.6" fill="#222222"/>
+    <text x="374" y="64" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">4</text>
+
+    <line x1="454" y1="167" x2="418" y2="167" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="418" cy="167" r="2.6" fill="#222222"/>
+    <text x="468" y="172" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">5</text>
+  </g>
+</svg>

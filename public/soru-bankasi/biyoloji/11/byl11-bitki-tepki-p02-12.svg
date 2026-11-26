@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 280" width="460" height="280" font-family="Nunito, sans-serif">
+  <rect width="460" height="280" fill="#ffffff"/>
+  <path d="M 225 84 L 225 36 L 235 36 L 235 84 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <ellipse cx="212" cy="40" rx="14" ry="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <ellipse cx="248" cy="40" rx="14" ry="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <path d="M 92 84 L 368 84 L 354 252 Q 352 260 344 260 L 116 260 Q 108 260 106 252 Z" fill="#f3e6d6" stroke="#8d6346" stroke-width="2"/>
+  <rect x="112" y="114" width="84" height="132" rx="10" fill="#fde8e8" stroke="#b91c1c" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <circle cx="128" cy="132" r="2.2" fill="#dc2626"/>
+  <circle cx="176" cy="136" r="2.2" fill="#dc2626"/>
+  <circle cx="132" cy="228" r="2.2" fill="#dc2626"/>
+  <circle cx="172" cy="224" r="2.2" fill="#dc2626"/>
+  <text x="154" y="164" font-size="13" font-weight="700" fill="#991b1b" text-anchor="middle">Zararlı</text>
+  <text x="154" y="182" font-size="13" font-weight="700" fill="#991b1b" text-anchor="middle">kimyasal</text>
+  <text x="154" y="200" font-size="13" font-weight="700" fill="#991b1b" text-anchor="middle">madde</text>
+  <path d="M 223 84 L 223 128 Q 225 190 296 226 L 302 220 Q 241 178 237 124 L 237 84 Z" fill="#f8efe2" stroke="#8d6346" stroke-width="2"/>
+  <text x="326" y="106" font-size="13" fill="#6b7480" text-anchor="middle">Toprak</text>
+  <line x1="242" y1="184" x2="218" y2="226" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="242" cy="184" r="2.8" fill="#222222"/>
+  <text x="214" y="244" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">M</text>
+  <line x1="255" y1="175" x2="306" y2="144" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="255" cy="175" r="2.8" fill="#222222"/>
+  <text x="314" y="146" font-size="16" font-weight="700" fill="#222222" text-anchor="start">N</text>
+</svg>

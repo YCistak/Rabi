@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="okX" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="okY" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#c8642a"/>
+    </marker>
+    <marker id="okKan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#8c2d2d"/>
+    </marker>
+  </defs>
+  <rect width="600" height="300" fill="#ffffff"/>
+  <rect x="20" y="16" width="266" height="268" rx="12" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
+  <text x="153" y="40" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">I. Bölge</text>
+  <rect x="48" y="58" width="210" height="68" rx="28" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="153" y="97" font-size="14" font-weight="600" fill="#222222" text-anchor="middle">Alveol boşluğu</text>
+  <rect x="38" y="184" width="230" height="52" rx="8" fill="#fdeaea" stroke="#b93838" stroke-width="1.8"/>
+  <ellipse cx="80" cy="210" rx="14" ry="9" fill="#d9534f" stroke="#9e2a2b" stroke-width="1.2"/>
+  <ellipse cx="153" cy="210" rx="14" ry="9" fill="#d9534f" stroke="#9e2a2b" stroke-width="1.2"/>
+  <ellipse cx="226" cy="210" rx="14" ry="9" fill="#d9534f" stroke="#9e2a2b" stroke-width="1.2"/>
+  <line x1="102" y1="210" x2="128" y2="210" stroke="#8c2d2d" stroke-width="1.6" marker-end="url(#okKan)"/>
+  <line x1="176" y1="210" x2="202" y2="210" stroke="#8c2d2d" stroke-width="1.6" marker-end="url(#okKan)"/>
+  <text x="153" y="262" font-size="14" font-weight="600" fill="#222222" text-anchor="middle">Akciğer kılcalı</text>
+  <line x1="114" y1="120" x2="114" y2="188" stroke="#1f5fa8" stroke-width="2.6" marker-end="url(#okX)"/>
+  <text x="92" y="160" font-size="17" font-weight="700" fill="#1f5fa8" text-anchor="middle">X</text>
+  <line x1="192" y1="192" x2="192" y2="124" stroke="#c8642a" stroke-width="2.6" marker-end="url(#okY)"/>
+  <text x="214" y="160" font-size="17" font-weight="700" fill="#c8642a" text-anchor="middle">Y</text>
+  <rect x="314" y="16" width="266" height="268" rx="12" fill="#ffffff" stroke="#d0d7de" stroke-width="1.5"/>
+  <text x="447" y="40" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">II. Bölge</text>
+  <text x="447" y="66" font-size="14" font-weight="600" fill="#222222" text-anchor="middle">Doku kılcalı</text>
+  <rect x="332" y="76" width="230" height="52" rx="8" fill="#fdeaea" stroke="#b93838" stroke-width="1.8"/>
+  <ellipse cx="374" cy="102" rx="14" ry="9" fill="#d9534f" stroke="#9e2a2b" stroke-width="1.2"/>
+  <ellipse cx="447" cy="102" rx="14" ry="9" fill="#d9534f" stroke="#9e2a2b" stroke-width="1.2"/>
+  <ellipse cx="520" cy="102" rx="14" ry="9" fill="#d9534f" stroke="#9e2a2b" stroke-width="1.2"/>
+  <line x1="396" y1="102" x2="422" y2="102" stroke="#8c2d2d" stroke-width="1.6" marker-end="url(#okKan)"/>
+  <line x1="470" y1="102" x2="496" y2="102" stroke="#8c2d2d" stroke-width="1.6" marker-end="url(#okKan)"/>
+  <rect x="342" y="186" width="66" height="52" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <circle cx="375" cy="212" r="10" fill="#b7dfae" stroke="#3b8f4a" stroke-width="1.4"/>
+  <rect x="414" y="186" width="66" height="52" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <circle cx="447" cy="212" r="10" fill="#b7dfae" stroke="#3b8f4a" stroke-width="1.4"/>
+  <rect x="486" y="186" width="66" height="52" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <circle cx="519" cy="212" r="10" fill="#b7dfae" stroke="#3b8f4a" stroke-width="1.4"/>
+  <text x="447" y="264" font-size="14" font-weight="600" fill="#222222" text-anchor="middle">Doku hücreleri</text>
+  <line x1="408" y1="122" x2="408" y2="190" stroke="#1f5fa8" stroke-width="2.6" marker-end="url(#okX)"/>
+  <text x="386" y="162" font-size="17" font-weight="700" fill="#1f5fa8" text-anchor="middle">X</text>
+  <line x1="486" y1="194" x2="486" y2="126" stroke="#c8642a" stroke-width="2.6" marker-end="url(#okY)"/>
+  <text x="508" y="162" font-size="17" font-weight="700" fill="#c8642a" text-anchor="middle">Y</text>
+</svg>

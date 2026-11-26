@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 275" width="600" height="275" font-family="Nunito, sans-serif">
+  <rect width="600" height="275" fill="#ffffff"/>
+  <text x="135" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">I. Hücre</text>
+  <text x="440" y="30" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">II. Hücre</text>
+  <line x1="274" y1="22" x2="274" y2="254" stroke="#d0d7de" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <g>
+    <rect x="38" y="92" width="194" height="100" rx="50" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <path d="M 74 134 C 70 118, 92 114, 100 126 C 110 114, 128 120, 124 136 C 128 150, 108 154, 98 144 C 88 154, 70 148, 74 134 Z" fill="none" stroke="#8c2d5c" stroke-width="2"/>
+    <text x="98" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#8c2d5c">DNA</text>
+    <text x="176" y="128" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Tepkime A</text>
+    <text x="176" y="164" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Tepkime B</text>
+    <text x="135" y="236" text-anchor="middle" font-size="13" fill="#4a5568">Ortak sitoplazma alanı</text>
+  </g>
+  <g>
+    <ellipse cx="440" cy="142" rx="140" ry="82" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <circle cx="370" cy="142" r="42" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8" stroke-dasharray="8 2"/>
+    <path d="M 346 132 Q 358 122 370 132 Q 382 142 394 130" fill="none" stroke="#8c2d5c" stroke-width="2"/>
+    <path d="M 348 146 Q 360 136 372 146 Q 382 154 392 144" fill="none" stroke="#8c2d5c" stroke-width="2"/>
+    <text x="370" y="172" text-anchor="middle" font-size="13" font-weight="700" fill="#8c2d5c">DNA</text>
+    <ellipse cx="494" cy="108" rx="54" ry="26" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="494" y="113" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Tepkime A</text>
+    <ellipse cx="494" cy="176" rx="54" ry="26" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="494" y="181" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Tepkime B</text>
+    <text x="440" y="250" text-anchor="middle" font-size="13" fill="#4a5568">Zarla ayrılmış ayrı bölmeler</text>
+  </g>
+</svg>

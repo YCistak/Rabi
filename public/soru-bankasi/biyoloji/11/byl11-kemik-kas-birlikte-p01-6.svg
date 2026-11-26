@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 380" width="480" height="380" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#2f7d4a"/>
+    </marker>
+  </defs>
+  <rect width="480" height="380" fill="#ffffff"/>
+  <circle cx="220" cy="192" r="24" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <path d="M 208 42 C 208 28 232 28 232 42 L 230 176 C 236 184 234 196 220 196 C 206 196 204 184 210 176 Z" fill="#f5f0e6" stroke="#7c6d58" stroke-width="1.8"/>
+  <path d="M 208 202 C 212 194 228 196 230 206 L 200 338 C 198 346 182 344 184 334 Z" fill="#f5f0e6" stroke="#7c6d58" stroke-width="1.8"/>
+  <path d="M 184 336 C 176 342 178 356 192 356 L 246 356 C 254 356 254 344 244 342 L 204 336 Z" fill="#f5f0e6" stroke="#7c6d58" stroke-width="1.6"/>
+  <ellipse cx="245" cy="190" rx="7" ry="12" fill="#f5f0e6" stroke="#7c6d58" stroke-width="1.6"/>
+  <path d="M 232 54 L 243 68 L 238 72 L 230 60 Z" fill="#e6dfd3" stroke="#8a7d6b" stroke-width="1.3"/>
+  <path d="M 244 166 L 248 178 L 245 202 L 226 226 L 222 221 L 239 199 L 241 178 L 238 168 Z" fill="#e6dfd3" stroke="#8a7d6b" stroke-width="1.3"/>
+  <path d="M 239 68 C 268 92 270 136 246 168 C 235 140 234 94 239 68 Z" fill="#f6cfc4" stroke="#b84a39" stroke-width="1.8"/>
+  <path d="M 208 54 L 198 68 L 203 72 L 210 60 Z" fill="#e6dfd3" stroke="#8a7d6b" stroke-width="1.3"/>
+  <path d="M 192 172 L 206 232 L 199 234 L 186 174 Z" fill="#e6dfd3" stroke="#8a7d6b" stroke-width="1.3"/>
+  <path d="M 201 68 C 174 96 174 142 189 174 C 201 144 203 96 201 68 Z" fill="#f6cfc4" stroke="#b84a39" stroke-width="1.8"/>
+  <path d="M 240 314 A 130 130 0 0 0 316 270" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <text x="330" y="268" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5fa8">1</text>
+  <path d="M 164 314 A 130 130 0 0 1 102 264" fill="none" stroke="#2f7d4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <text x="88" y="260" text-anchor="middle" font-size="16" font-weight="700" fill="#2f7d4a">2</text>
+  <line x1="262" y1="112" x2="332" y2="112" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="346" y="117" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">A</text>
+  <line x1="114" y1="114" x2="178" y2="114" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="100" y="119" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">B</text>
+  <line x1="252" y1="192" x2="332" y2="192" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="346" y="197" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">E</text>
+</svg>

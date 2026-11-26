@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 240" width="580" height="240" font-family="Nunito, sans-serif">
+  <rect width="580" height="240" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+
+  <line x1="195" y1="34" x2="385" y2="34" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="290" y="23" font-size="14" font-weight="700" fill="#1f5fa8" text-anchor="middle">Uyartı yönü</text>
+
+  <g stroke="#1f5fa8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 62 114 L 34 86 M 46 98 L 28 102 M 58 128 L 24 128 M 62 144 L 34 172 M 46 160 L 28 156 M 78 104 L 68 74 M 78 156 L 68 186" fill="none"/>
+    <path d="M 114 126 L 320 126 L 320 134 L 114 134 Z" fill="#eef5fb"/>
+    <circle cx="86" cy="130" r="28" fill="#eef5fb"/>
+    <circle cx="86" cy="130" r="12" fill="#d9e4f2"/>
+    <path d="M 320 128 L 348 104 M 320 130 L 352 130 M 320 132 L 348 156" fill="none"/>
+    <circle cx="352" cy="102" r="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <circle cx="356" cy="130" r="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <circle cx="352" cy="158" r="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  </g>
+
+  <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6">
+    <rect x="132" y="116" width="50" height="28" rx="9"/>
+    <rect x="194" y="116" width="50" height="28" rx="9"/>
+    <rect x="256" y="116" width="50" height="28" rx="9"/>
+  </g>
+
+  <g stroke="#1f5fa8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 432 114 L 392 98 M 412 106 L 394 114 M 428 130 L 388 130 M 432 146 L 392 162 M 412 154 L 394 146 M 448 104 L 440 78 M 448 156 L 440 182" fill="none"/>
+    <path d="M 484 126 L 558 126 L 558 134 L 484 134 Z" fill="#eef5fb"/>
+    <circle cx="456" cy="130" r="28" fill="#eef5fb"/>
+    <circle cx="456" cy="130" r="12" fill="#d9e4f2"/>
+  </g>
+  <rect x="500" y="116" width="46" height="28" rx="9" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+
+  <line x1="188" y1="134" x2="188" y2="194" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="188" y="214" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">X</text>
+
+  <line x1="372" y1="130" x2="372" y2="66" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="372" y="58" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">Y</text>
+
+  <line x1="406" y1="156" x2="406" y2="194" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="406" y="214" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">Z</text>
+
+  <text x="86" y="218" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">1. nöron</text>
+  <text x="492" y="218" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">2. nöron</text>
+</svg>

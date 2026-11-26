@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="560" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+  </defs>
+  <rect width="560" height="320" fill="#ffffff"/>
+  <rect x="12" y="12" width="536" height="296" rx="12" fill="#f7fbfe" stroke="#d5e3f0" stroke-width="1.5"/>
+
+  <g>
+    <circle cx="494" cy="56" r="20" fill="#fde3a7" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="494" y1="26" x2="494" y2="32" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="494" y1="80" x2="494" y2="86" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="464" y1="56" x2="470" y2="56" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="518" y1="56" x2="524" y2="56" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="473" y1="35" x2="477" y2="39" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="511" y1="73" x2="515" y2="77" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="515" y1="35" x2="511" y2="39" stroke="#d98a1c" stroke-width="1.8"/>
+    <line x1="477" y1="73" x2="473" y2="77" stroke="#d98a1c" stroke-width="1.8"/>
+    <text x="494" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#8a5200">Güneş</text>
+  </g>
+
+  <g>
+    <path d="M 134 84 L 278 84 C 296 84 304 70 296 58 C 290 48 278 46 270 48 C 264 32 242 26 224 34 C 212 24 188 26 178 40 C 162 34 142 42 138 56 C 122 58 118 84 134 84 Z" fill="#e6eff8" stroke="#6b8fb3" stroke-width="1.6"/>
+    <text x="208" y="65" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Bulutlar</text>
+  </g>
+
+  <polygon points="12,154 110,176 220,212 330,242 330,308 12,308" fill="#e8dcc8" stroke="#8c6d46" stroke-width="1.6"/>
+  <text x="72" y="286" text-anchor="middle" font-size="14" font-weight="700" fill="#5c4529">Kara</text>
+
+  <polygon points="330,242 548,242 548,308 330,308" fill="#cfe6f8" stroke="#1f5fa8" stroke-width="1.6"/>
+  <path d="M 352 258 Q 372 252 392 258 T 432 258 T 472 258 T 512 258" fill="none" stroke="#6fa4d4" stroke-width="1.4"/>
+  <text x="444" y="288" text-anchor="middle" font-size="14" font-weight="700" fill="#174a82">Deniz</text>
+
+  <g>
+    <rect x="244" y="194" width="12" height="28" rx="2" fill="#8c5a2b"/>
+    <circle cx="250" cy="176" r="20" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <circle cx="235" cy="186" r="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <circle cx="265" cy="186" r="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <circle cx="250" cy="182" r="16" fill="#dff0dc"/>
+    <text x="314" y="194" text-anchor="middle" font-size="13" font-weight="700" fill="#2b6b37">Bitkiler</text>
+  </g>
+
+  <path d="M 432 234 Q 418 126 306 68" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <circle cx="394" cy="139" r="13" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="394" y="144" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">1</text>
+
+  <path d="M 250 154 L 250 92" fill="none" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <circle cx="276" cy="124" r="13" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="276" y="129" text-anchor="middle" font-size="14" font-weight="700" fill="#3b8f4a">2</text>
+
+  <path d="M 142 88 L 106 158" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <circle cx="92" cy="122" r="13" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="92" y="127" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">3</text>
+
+  <path d="M 106 184 Q 214 218 320 248" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <circle cx="186" cy="232" r="13" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="186" y="237" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">4</text>
+</svg>

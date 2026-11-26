@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 230" width="620" height="230" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect width="620" height="230" fill="#ffffff"/>
+  <text x="104" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">K çözeltisinde</text>
+  <text x="310" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Başlangıç</text>
+  <text x="516" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">L çözeltisinde</text>
+  <rect x="40" y="54" width="128" height="128" rx="16" fill="#dff0dc" stroke="#3b8f4a" stroke-width="3.6"/>
+  <rect x="48" y="62" width="112" height="112" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <ellipse cx="98" cy="120" rx="43" ry="39" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="144" cy="80" r="9" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+  <ellipse cx="62" cy="76" rx="5.5" ry="3.2" fill="#3b8f4a"/>
+  <ellipse cx="146" cy="158" rx="5.5" ry="3.2" fill="#3b8f4a"/>
+  <ellipse cx="62" cy="160" rx="5.5" ry="3.2" fill="#3b8f4a"/>
+  <rect x="248" y="58" width="124" height="120" rx="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="3.4"/>
+  <rect x="256" y="66" width="108" height="104" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <ellipse cx="302" cy="122" rx="28" ry="22" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="302" y="126" text-anchor="middle" font-size="13" fill="#222222">Koful</text>
+  <circle cx="342" cy="88" r="10" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+  <ellipse cx="272" cy="84" rx="5.5" ry="3.2" fill="#3b8f4a"/>
+  <ellipse cx="344" cy="152" rx="5.5" ry="3.2" fill="#3b8f4a"/>
+  <ellipse cx="274" cy="154" rx="5.5" ry="3.2" fill="#3b8f4a"/>
+  <rect x="454" y="58" width="124" height="120" rx="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="3.4"/>
+  <rect x="462" y="66" width="108" height="104" rx="8" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.2"/>
+  <path d="M 488 86 Q 516 94 544 86 Q 550 118 544 150 Q 516 142 488 150 Q 482 118 488 86 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <ellipse cx="510" cy="122" rx="15" ry="12" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <circle cx="534" cy="103" r="8.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+  <ellipse cx="496" cy="102" rx="5" ry="3" fill="#3b8f4a"/>
+  <ellipse cx="530" cy="138" rx="5" ry="3" fill="#3b8f4a"/>
+  <line x1="238" y1="118" x2="184" y2="118" stroke="#475569" stroke-width="2" marker-end="url(#ok)"/>
+  <line x1="382" y1="118" x2="436" y2="118" stroke="#475569" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="310" y="208" text-anchor="middle" font-size="14" fill="#475569">Normal bitki hücresi</text>
+</svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 380" width="520" height="380" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="520" height="380" fill="#ffffff"/>
+  <g>
+    <rect x="120" y="18" width="280" height="54" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <text x="260" y="40" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Besin yıkımı</text>
+    <text x="260" y="60" font-size="14" font-weight="700" fill="#3b8f4a" text-anchor="middle">100 birim enerji</text>
+  </g>
+  <g>
+    <line x1="260" y1="72" x2="260" y2="94" stroke="#6b7480" stroke-width="2"/>
+    <line x1="140" y1="94" x2="393" y2="94" stroke="#6b7480" stroke-width="2"/>
+    <line x1="140" y1="94" x2="140" y2="116" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+    <line x1="393" y1="94" x2="393" y2="116" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  </g>
+  <g>
+    <rect x="30" y="118" width="220" height="54" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="140" y="140" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">ATP sentezi</text>
+    <text x="140" y="160" font-size="14" font-weight="700" fill="#1f5fa8" text-anchor="middle">40 birim</text>
+    <rect x="296" y="118" width="194" height="54" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="393" y="140" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Isı enerjisi</text>
+    <text x="393" y="160" font-size="14" font-weight="700" fill="#c8642a" text-anchor="middle">60 birim</text>
+  </g>
+  <g>
+    <line x1="140" y1="172" x2="140" y2="210" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+    <rect x="60" y="212" width="160" height="46" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="140" y="240" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">ATP kullanımı</text>
+  </g>
+  <g>
+    <line x1="140" y1="258" x2="140" y2="280" stroke="#6b7480" stroke-width="2"/>
+    <line x1="140" y1="280" x2="393" y2="280" stroke="#6b7480" stroke-width="2"/>
+    <line x1="140" y1="280" x2="140" y2="302" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+    <line x1="393" y1="280" x2="393" y2="302" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  </g>
+  <g>
+    <rect x="30" y="304" width="220" height="54" rx="10" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="140" y="326" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Hücresel işler</text>
+    <text x="140" y="346" font-size="14" font-weight="700" fill="#1f5fa8" text-anchor="middle">25 birim</text>
+    <rect x="296" y="304" width="194" height="54" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="393" y="326" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Isı enerjisi</text>
+    <text x="393" y="346" font-size="14" font-weight="700" fill="#c8642a" text-anchor="middle">15 birim</text>
+  </g>
+</svg>

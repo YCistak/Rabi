@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 310" width="540" height="310" font-family="Nunito, sans-serif">
+  <rect width="540" height="310" fill="#ffffff"/>
+  <rect x="20" y="16" width="500" height="60" fill="#f4f8fc"/>
+  <text x="270" y="52" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Hava sıcaklığı: −12 °C</text>
+  <rect x="40" y="108" width="460" height="44" fill="#dcebf8"/>
+  <rect x="40" y="152" width="460" height="44" fill="#c5e0f5"/>
+  <rect x="40" y="196" width="460" height="72" fill="#aed3f0"/>
+  <rect x="40" y="76" width="460" height="32" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="78" y1="78" x2="64" y2="106" stroke="#ffffff" stroke-width="1.4"/>
+  <line x1="142" y1="78" x2="128" y2="106" stroke="#ffffff" stroke-width="1.4"/>
+  <line x1="412" y1="78" x2="398" y2="106" stroke="#ffffff" stroke-width="1.4"/>
+  <line x1="464" y1="78" x2="450" y2="106" stroke="#ffffff" stroke-width="1.4"/>
+  <text x="270" y="97" text-anchor="middle" font-size="14" font-weight="700" fill="#144175">Buz tabakası (0 °C)</text>
+  <line x1="65" y1="152" x2="475" y2="152" stroke="#7ca6cf" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <line x1="85" y1="196" x2="455" y2="196" stroke="#7ca6cf" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <text x="412" y="135" text-anchor="middle" font-size="14" font-weight="600" fill="#1f5fa8">1 °C</text>
+  <text x="412" y="179" text-anchor="middle" font-size="14" font-weight="600" fill="#1f5fa8">2 °C</text>
+  <text x="412" y="236" text-anchor="middle" font-size="15" font-weight="700" fill="#144175">+4 °C</text>
+  <g>
+    <path d="M 134 268 Q 126 244 134 220" fill="none" stroke="#3b8f4a" stroke-width="2.2"/>
+    <path d="M 144 268 Q 152 246 146 226" fill="none" stroke="#3b8f4a" stroke-width="2.2"/>
+    <path d="M 152 268 Q 160 250 156 234" fill="none" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 352 268 Q 344 246 350 224" fill="none" stroke="#3b8f4a" stroke-width="2.2"/>
+    <path d="M 362 268 Q 370 248 364 230" fill="none" stroke="#3b8f4a" stroke-width="2"/>
+  </g>
+  <g>
+    <ellipse cx="222" cy="228" rx="20" ry="10" fill="#c8642a" stroke="#8d4117" stroke-width="1.4"/>
+    <polygon points="202,228 188,218 188,238" fill="#c8642a" stroke="#8d4117" stroke-width="1.4"/>
+    <circle cx="234" cy="225" r="2.2" fill="#ffffff"/>
+    <ellipse cx="304" cy="242" rx="16" ry="8" fill="#d97c46" stroke="#8d4117" stroke-width="1.3"/>
+    <polygon points="320,242 332,234 332,250" fill="#d97c46" stroke="#8d4117" stroke-width="1.3"/>
+    <circle cx="295" cy="240" r="2" fill="#ffffff"/>
+  </g>
+  <path d="M 20 76 L 44 76 L 78 214 Q 90 264 128 268 L 412 268 Q 450 264 462 214 L 496 76 L 520 76 L 520 294 L 20 294 Z" fill="#e8dfd3" stroke="#7d6b58" stroke-width="1.8"/>
+  <text x="270" y="286" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Göl tabanı</text>
+  <rect x="20" y="16" width="500" height="278" fill="none" stroke="#6b7480" stroke-width="1.5"/>
+</svg>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" width="520" height="400" font-family="Nunito, sans-serif">
+<rect width="520" height="400" fill="#ffffff"/>
+<defs>
+<marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M 0 0 L 10 5 L 0 10 Z" fill="#222222"/>
+</marker>
+</defs>
+<g fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6">
+<rect x="240" y="16" width="120" height="36" rx="6"/>
+<rect x="230" y="82" width="140" height="70" rx="6"/>
+<rect x="240" y="182" width="120" height="36" rx="6"/>
+<rect x="240" y="248" width="120" height="36" rx="6"/>
+</g>
+<circle cx="300" cy="350" r="36" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+<g fill="#222222" font-size="15" text-anchor="middle">
+<text x="300" y="39">Glikoz</text>
+<text x="300" y="122">Glikoliz</text>
+<text x="300" y="205">Piruvat</text>
+<text x="300" y="271">Asetil CoA</text>
+<text x="300" y="346" font-size="13">Krebs</text>
+<text x="300" y="363" font-size="13">döngüsü</text>
+</g>
+<g stroke="#222222" stroke-width="1.6" marker-end="url(#ok)">
+<line x1="300" y1="52" x2="300" y2="80"/>
+<line x1="300" y1="152" x2="300" y2="180"/>
+<line x1="300" y1="218" x2="300" y2="246"/>
+<line x1="300" y1="284" x2="300" y2="312"/>
+<line x1="94" y1="117" x2="228" y2="117"/>
+<line x1="94" y1="200" x2="238" y2="200"/>
+<line x1="94" y1="266" x2="238" y2="266"/>
+<line x1="94" y1="350" x2="262" y2="350"/>
+</g>
+<g fill="#ffffff" stroke="#222222" stroke-width="1.4">
+<circle cx="80" cy="117" r="13"/>
+<circle cx="80" cy="200" r="13"/>
+<circle cx="80" cy="266" r="13"/>
+<circle cx="80" cy="350" r="13"/>
+</g>
+<g fill="#222222" font-size="15" font-weight="700" text-anchor="middle">
+<text x="80" y="122">1</text>
+<text x="80" y="205">2</text>
+<text x="80" y="271">3</text>
+<text x="80" y="355">4</text>
+</g>
+</svg>

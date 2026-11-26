@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 360" width="620" height="360" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="620" height="360" fill="#ffffff"/>
+
+  <text x="46" y="26" font-size="13" font-weight="700" fill="#1f5fa8">Akış yönü</text>
+  <line x1="114" y1="22" x2="154" y2="22" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+
+  <line x1="195" y1="18" x2="195" y2="54" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <text x="206" y="34" font-size="13" font-weight="700" fill="#c8642a">Arıtılmamış organik atık girişi</text>
+
+  <rect x="76" y="58" width="464" height="32" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="120" cy="74" r="11" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="120" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">K</text>
+  <circle cx="270" cy="74" r="11" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="270" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">L</text>
+  <circle cx="400" cy="74" r="11" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="400" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">M</text>
+  <circle cx="510" cy="74" r="11" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="510" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">N</text>
+
+  <line x1="120" y1="90" x2="120" y2="294" stroke="#d1d5db" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="270" y1="90" x2="270" y2="294" stroke="#d1d5db" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="400" y1="90" x2="400" y2="294" stroke="#d1d5db" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="510" y1="90" x2="510" y2="294" stroke="#d1d5db" stroke-width="1.2" stroke-dasharray="4 4"/>
+
+  <text x="20" y="128" font-size="13" font-weight="700" fill="#1f5fa8">Çözünmüş O₂ (mg/L)</text>
+  <text x="600" y="128" text-anchor="end" font-size="13" font-weight="700" fill="#c8642a">Ayrıştırıcı (bağıl birim)</text>
+
+  <line x1="76" y1="144" x2="76" y2="294" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="540" y1="144" x2="540" y2="294" stroke="#c8642a" stroke-width="1.6"/>
+  <line x1="76" y1="294" x2="540" y2="294" stroke="#6b7480" stroke-width="1.6"/>
+
+  <line x1="72" y1="144" x2="76" y2="144" stroke="#1f5fa8" stroke-width="1.4"/>
+  <line x1="72" y1="219" x2="76" y2="219" stroke="#1f5fa8" stroke-width="1.4"/>
+  <line x1="72" y1="294" x2="76" y2="294" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="66" y="149" text-anchor="end" font-size="13" fill="#1f5fa8">10</text>
+  <text x="66" y="224" text-anchor="end" font-size="13" fill="#1f5fa8">5</text>
+  <text x="66" y="299" text-anchor="end" font-size="13" fill="#1f5fa8">0</text>
+
+  <line x1="540" y1="144" x2="544" y2="144" stroke="#c8642a" stroke-width="1.4"/>
+  <line x1="540" y1="219" x2="544" y2="219" stroke="#c8642a" stroke-width="1.4"/>
+  <line x1="540" y1="294" x2="544" y2="294" stroke="#c8642a" stroke-width="1.4"/>
+  <text x="550" y="149" font-size="13" fill="#c8642a">100</text>
+  <text x="550" y="224" font-size="13" fill="#c8642a">50</text>
+  <text x="550" y="299" font-size="13" fill="#c8642a">0</text>
+
+  <polyline points="120,159 270,271.5 400,211.5 510,166.5" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <circle cx="120" cy="159" r="4" fill="#1f5fa8"/>
+  <circle cx="270" cy="271.5" r="4" fill="#1f5fa8"/>
+  <circle cx="400" cy="211.5" r="4" fill="#1f5fa8"/>
+  <circle cx="510" cy="166.5" r="4" fill="#1f5fa8"/>
+
+  <text x="120" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">9,0</text>
+  <text x="282" y="276" font-size="13" font-weight="700" fill="#1f5fa8">1,5</text>
+  <text x="400" y="200" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">5,5</text>
+  <text x="510" y="156" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">8,5</text>
+
+  <polyline points="120,279 270,159 400,241.5 510,271.5" fill="none" stroke="#c8642a" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="120" cy="279" r="4" fill="#c8642a"/>
+  <circle cx="270" cy="159" r="4" fill="#c8642a"/>
+  <circle cx="400" cy="241.5" r="4" fill="#c8642a"/>
+  <circle cx="510" cy="271.5" r="4" fill="#c8642a"/>
+
+  <text x="120" y="269" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">10</text>
+  <text x="270" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">90</text>
+  <text x="400" y="260" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">35</text>
+  <text x="510" y="261" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">15</text>
+
+  <text x="120" y="314" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">K</text>
+  <text x="270" y="314" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">L</text>
+  <text x="400" y="314" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">M</text>
+  <text x="510" y="314" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">N</text>
+
+  <line x1="94" y1="340" x2="126" y2="340" stroke="#1f5fa8" stroke-width="2"/>
+  <circle cx="110" cy="340" r="3.5" fill="#1f5fa8"/>
+  <text x="134" y="345" font-size="13" fill="#222222">Çözünmüş O₂ (mg/L)</text>
+
+  <line x1="304" y1="340" x2="336" y2="340" stroke="#c8642a" stroke-width="2" stroke-dasharray="6 4"/>
+  <circle cx="320" cy="340" r="3.5" fill="#c8642a"/>
+  <text x="344" y="345" font-size="13" fill="#222222">Ayrıştırıcı yoğunluğu (bağıl birim)</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 180" width="420" height="180" font-family="Nunito, sans-serif">
+  <rect width="420" height="180" fill="#ffffff"/>
+  <g stroke="#576b78" stroke-width="2" fill="#eef5fb">
+    <ellipse cx="77" cy="87" rx="27" ry="33"/>
+    <path d="M193 57 C167 61 164 108 186 118 C207 127 228 109 226 87 Q227 80 224 76 C248 74 239 47 221 53 Q215 55 213 62 Q204 54 193 57 Z"/>
+    <ellipse cx="332" cy="88" rx="26" ry="32"/><ellipse cx="369" cy="53" rx="13" ry="16" transform="rotate(26 369 53)"/>
+  </g>
+  <g stroke="#6b7480" stroke-width="1.8" fill="none"><path d="M115 87 H151 M144 81 L151 87 L144 93"/><path d="M250 87 H288 M281 81 L288 87 L281 93"/></g>
+  <g fill="#222222" font-size="15" text-anchor="middle"><text x="77" y="150">İlk gözlem</text><text x="203" y="150">İkinci gözlem</text><text x="348" y="150">Son gözlem</text></g>
+</svg>

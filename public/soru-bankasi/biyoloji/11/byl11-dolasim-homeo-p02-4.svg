@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="600" height="360" font-family="Nunito, sans-serif">
+  <rect width="600" height="360" fill="#ffffff"/>
+  <line x1="80" y1="240" x2="390" y2="240" stroke="#d6dbe1" stroke-width="1.2"/>
+  <line x1="80" y1="180" x2="390" y2="180" stroke="#d6dbe1" stroke-width="1.2"/>
+  <line x1="80" y1="120" x2="390" y2="120" stroke="#d6dbe1" stroke-width="1.2"/>
+  <line x1="80" y1="60" x2="390" y2="60" stroke="#d6dbe1" stroke-width="1.2"/>
+  <text x="70" y="305" font-size="14" fill="#222222" text-anchor="end">0</text>
+  <text x="70" y="245" font-size="14" fill="#222222" text-anchor="end">10</text>
+  <text x="70" y="185" font-size="14" fill="#222222" text-anchor="end">20</text>
+  <text x="70" y="125" font-size="14" fill="#222222" text-anchor="end">30</text>
+  <text x="70" y="65" font-size="14" fill="#222222" text-anchor="end">40</text>
+  <line x1="80" y1="300" x2="80" y2="46" stroke="#6b7480" stroke-width="1.8"/>
+  <line x1="80" y1="300" x2="396" y2="300" stroke="#6b7480" stroke-width="1.8"/>
+  <text x="20" y="30" font-size="14" fill="#222222" text-anchor="start">Basınç (mmHg)</text>
+  <text x="80" y="322" font-size="14" fill="#222222" text-anchor="start">Atardamar ucu</text>
+  <text x="390" y="322" font-size="14" fill="#222222" text-anchor="end">Toplardamar ucu</text>
+  <text x="235" y="348" font-size="14" fill="#222222" text-anchor="middle">Kılcal damar boyunca konum</text>
+  <line x1="80" y1="84" x2="390" y2="204" stroke="#b03a2e" stroke-width="2"/>
+  <text x="88" y="76" font-size="14" fill="#b03a2e" text-anchor="start">36</text>
+  <text x="382" y="198" font-size="14" fill="#b03a2e" text-anchor="end">16</text>
+  <line x1="393" y1="204" x2="404" y2="210" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="408" y="215" font-size="14" fill="#b03a2e" text-anchor="start">S: kan basıncı</text>
+  <line x1="80" y1="228" x2="390" y2="252" stroke="#7a3fa0" stroke-width="2"/>
+  <text x="88" y="250" font-size="14" fill="#7a3fa0" text-anchor="start">12</text>
+  <text x="382" y="272" font-size="14" fill="#7a3fa0" text-anchor="end">8</text>
+  <line x1="393" y1="252" x2="404" y2="258" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="408" y="263" font-size="14" fill="#7a3fa0" text-anchor="start">A: kan basıncı</text>
+  <line x1="80" y1="150" x2="390" y2="150" stroke="#1f5fa8" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="88" y="142" font-size="14" fill="#1f5fa8" text-anchor="start">25</text>
+  <line x1="393" y1="150" x2="404" y2="141" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="408" y="140" font-size="14" fill="#1f5fa8" text-anchor="start">Kana çeken basınç</text>
+  <text x="408" y="158" font-size="14" fill="#1f5fa8" text-anchor="start">(S ve A için aynı)</text>
+</svg>

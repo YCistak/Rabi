@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 220" width="620" height="220" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="620" height="220" fill="#ffffff"/>
+
+  <path d="M 34 52 L 114 52 L 114 80 L 82 94 L 82 126 L 114 140 L 114 168 L 34 168 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="60" y="116" font-size="18" font-weight="700" text-anchor="middle" fill="#1f5fa8">X</text>
+
+  <path d="M 158 80 L 126 94 L 126 126 L 158 140 L 186 140 L 186 80 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <text x="162" y="116" font-size="18" font-weight="700" text-anchor="middle" fill="#2b6e37">Y</text>
+
+  <text x="110" y="198" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">1. Aşama</text>
+
+  <line x1="200" y1="110" x2="232" y2="110" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <path d="M 246 52 L 326 52 L 326 80 L 294 94 L 294 126 L 326 140 L 326 168 L 246 168 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="272" y="116" font-size="18" font-weight="700" text-anchor="middle" fill="#1f5fa8">X</text>
+
+  <path d="M 326 80 L 294 94 L 294 126 L 326 140 L 354 140 L 354 80 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <text x="330" y="116" font-size="18" font-weight="700" text-anchor="middle" fill="#2b6e37">Y</text>
+
+  <text x="300" y="198" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">2. Aşama</text>
+
+  <line x1="370" y1="110" x2="402" y2="110" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <path d="M 418 52 L 498 52 L 498 80 L 466 94 L 466 126 L 498 140 L 498 168 L 418 168 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="444" y="116" font-size="18" font-weight="700" text-anchor="middle" fill="#1f5fa8">X</text>
+
+  <path d="M 546 64 L 514 78 L 514 96 L 576 96 L 576 64 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <text x="550" y="86" font-size="16" font-weight="700" text-anchor="middle" fill="#a8432b">Z</text>
+
+  <path d="M 514 124 L 514 142 L 546 156 L 576 156 L 576 124 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <text x="550" y="146" font-size="16" font-weight="700" text-anchor="middle" fill="#a8432b">T</text>
+
+  <text x="500" y="198" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">3. Aşama</text>
+</svg>

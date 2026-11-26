@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 320" width="500" height="320" font-family="Nunito, sans-serif">
+  <rect width="500" height="320" fill="#ffffff"/>
+
+  <path d="M 135 115 L 205 115 L 205 196 C 205 212 220 218 250 218 L 250 270 C 175 270 135 258 135 210 Z" fill="#dff0dc"/>
+  <path d="M 295 115 L 365 115 L 365 210 C 365 258 325 270 250 270 L 250 218 C 280 218 295 212 295 196 Z" fill="#eef5fb"/>
+
+  <line x1="135" y1="115" x2="205" y2="115" stroke="#3b8f4a" stroke-width="1.6"/>
+  <line x1="295" y1="115" x2="365" y2="115" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="205" y1="115" x2="295" y2="115" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4,4"/>
+
+  <path d="M 135 55 L 135 210 C 135 258 175 270 250 270 C 325 270 365 258 365 210 L 365 55" fill="none" stroke="#222222" stroke-width="2"/>
+  <path d="M 205 55 L 205 196 C 205 212 220 218 250 218 C 280 218 295 212 295 196 L 295 55" fill="none" stroke="#222222" stroke-width="2"/>
+
+  <line x1="250" y1="218" x2="250" y2="270" stroke="#c8642a" stroke-width="2" stroke-dasharray="6,4"/>
+
+  <text x="170" y="42" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">A kolu</text>
+  <text x="330" y="42" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">B kolu</text>
+
+  <line x1="112" y1="160" x2="152" y2="160" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="106" y="156" font-size="14" font-weight="700" text-anchor="end" fill="#222222">%10 sükroz</text>
+  <text x="106" y="174" font-size="13" text-anchor="end" fill="#222222">çözeltisi</text>
+
+  <line x1="388" y1="160" x2="348" y2="160" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="394" y="156" font-size="14" font-weight="700" text-anchor="start" fill="#222222">%4 glikoz</text>
+  <text x="394" y="174" font-size="13" text-anchor="start" fill="#222222">çözeltisi</text>
+
+  <line x1="250" y1="270" x2="250" y2="288" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="250" y="305" font-size="14" font-weight="700" text-anchor="middle" fill="#c8642a">Seçici geçirgen zar</text>
+</svg>

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 296" width="600" height="296" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-gri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="600" height="296" fill="#ffffff"/>
+
+  <text x="150" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">1. Ölçüm (Akış öncesi)</text>
+  <text x="92" y="48" font-size="13" text-anchor="middle" fill="#c8642a">Güneş ışığı</text>
+
+  <rect x="36" y="76" width="228" height="176" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <rect x="37" y="232" width="226" height="19" fill="#e7dcc8"/>
+
+  <line x1="64" y1="55" x2="64" y2="188" stroke="#c8642a" stroke-width="1.6" marker-end="url(#ok-turuncu)"/>
+  <line x1="92" y1="55" x2="92" y2="188" stroke="#c8642a" stroke-width="1.6" marker-end="url(#ok-turuncu)"/>
+  <line x1="120" y1="55" x2="120" y2="188" stroke="#c8642a" stroke-width="1.6" marker-end="url(#ok-turuncu)"/>
+
+  <g fill="#3b8f4a">
+    <circle cx="54" cy="83" r="2.5"/>
+    <circle cx="78" cy="85" r="2.5"/>
+    <circle cx="106" cy="82" r="2.5"/>
+    <circle cx="132" cy="84" r="2.5"/>
+  </g>
+
+  <g fill="none" stroke="#3b8f4a" stroke-width="2">
+    <path d="M 64 232 Q 58 214 66 198"/>
+    <path d="M 64 232 Q 71 218 72 204"/>
+    <path d="M 92 232 Q 86 212 94 196"/>
+    <path d="M 92 232 Q 99 216 100 202"/>
+    <path d="M 120 232 Q 114 214 122 198"/>
+    <path d="M 120 232 Q 127 218 128 205"/>
+  </g>
+
+  <rect x="144" y="88" width="112" height="40" rx="5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+  <text x="200" y="104" font-size="13" text-anchor="middle" fill="#222222">Yüzey O₂</text>
+  <text x="200" y="121" font-size="13" font-weight="700" text-anchor="middle" fill="#1f5fa8">8,5 mg/L</text>
+
+  <rect x="144" y="182" width="112" height="40" rx="5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+  <text x="200" y="198" font-size="13" text-anchor="middle" fill="#222222">Dip O₂</text>
+  <text x="200" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="#1f5fa8">7,8 mg/L</text>
+
+  <line x1="92" y1="224" x2="92" y2="262" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="92" y="278" font-size="13" text-anchor="middle" fill="#222222">Dip bitkileri</text>
+
+  <text x="450" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">2. Ölçüm (3 hafta sonra)</text>
+  <text x="392" y="48" font-size="13" text-anchor="middle" fill="#c8642a">Güneş ışığı</text>
+
+  <rect x="336" y="76" width="228" height="176" fill="#dce6de" stroke="#1f5fa8" stroke-width="1.8"/>
+  <rect x="337" y="77" width="226" height="26" fill="#7ec487" stroke="#3b8f4a" stroke-width="1.2"/>
+  <rect x="337" y="232" width="226" height="19" fill="#d9ccb4"/>
+
+  <line x1="364" y1="55" x2="364" y2="96" stroke="#c8642a" stroke-width="1.6" marker-end="url(#ok-turuncu)"/>
+  <line x1="392" y1="55" x2="392" y2="96" stroke="#c8642a" stroke-width="1.6" marker-end="url(#ok-turuncu)"/>
+  <line x1="420" y1="55" x2="420" y2="96" stroke="#c8642a" stroke-width="1.6" marker-end="url(#ok-turuncu)"/>
+
+  <text x="498" y="95" font-size="13" font-weight="700" text-anchor="middle" fill="#173d1e">Alg tabakası</text>
+
+  <g fill="#7c6c4e">
+    <ellipse cx="358" cy="118" rx="4.5" ry="2.2"/>
+    <ellipse cx="382" cy="126" rx="4" ry="2"/>
+    <ellipse cx="412" cy="120" rx="4.5" ry="2.2"/>
+    <ellipse cx="368" cy="142" rx="4" ry="2"/>
+    <ellipse cx="402" cy="146" rx="4.5" ry="2.2"/>
+    <ellipse cx="424" cy="136" rx="4" ry="2"/>
+  </g>
+  <line x1="392" y1="112" x2="392" y2="152" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#ok-gri)"/>
+
+  <text x="390" y="172" font-size="13" text-anchor="middle" fill="#222222">Çöken</text>
+  <text x="390" y="188" font-size="13" text-anchor="middle" fill="#222222">kalıntılar</text>
+
+  <g fill="#c8642a">
+    <circle cx="354" cy="222" r="3"/>
+    <circle cx="364" cy="226" r="3"/>
+    <circle cx="375" cy="220" r="3"/>
+    <circle cx="386" cy="225" r="3"/>
+    <circle cx="396" cy="219" r="3"/>
+    <circle cx="406" cy="226" r="3"/>
+    <circle cx="417" cy="221" r="3"/>
+    <circle cx="426" cy="226" r="3"/>
+    <circle cx="370" cy="215" r="2.5"/>
+    <circle cx="402" cy="214" r="2.5"/>
+  </g>
+
+  <rect x="444" y="112" width="112" height="40" rx="5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+  <text x="500" y="128" font-size="13" text-anchor="middle" fill="#222222">Yüzey O₂</text>
+  <text x="500" y="145" font-size="13" font-weight="700" text-anchor="middle" fill="#3b8f4a">9,2 mg/L</text>
+
+  <rect x="444" y="182" width="112" height="40" rx="5" fill="#ffffff" stroke="#c8642a" stroke-width="1.4"/>
+  <text x="500" y="198" font-size="13" text-anchor="middle" fill="#222222">Dip O₂</text>
+  <text x="500" y="215" font-size="13" font-weight="700" text-anchor="middle" fill="#c8642a">1,4 mg/L</text>
+
+  <line x1="390" y1="227" x2="390" y2="262" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="390" y="278" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">X canlıları</text>
+</svg>

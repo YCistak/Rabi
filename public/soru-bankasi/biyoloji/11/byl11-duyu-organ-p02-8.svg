@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 280" width="480" height="280" font-family="Nunito, sans-serif">
+  <rect width="480" height="280" fill="#ffffff"/>
+
+  <g>
+    <path d="M 226 132 L 398 92 L 404 114 L 242 152 Z" fill="#f7e8c8" stroke="#8a6d3b" stroke-width="1.4"/>
+    <line x1="242" y1="138" x2="398" y2="101" stroke="#8a6d3b" stroke-width="1.1"/>
+    <line x1="244" y1="145" x2="400" y2="108" stroke="#8a6d3b" stroke-width="1.1"/>
+  </g>
+
+  <g>
+    <path d="M 176 130 C 166 80 176 42 206 42 C 234 42 238 82 224 128" fill="none" stroke="#1f5fa8" stroke-width="15" stroke-linecap="round"/>
+    <path d="M 176 130 C 166 80 176 42 206 42 C 234 42 238 82 224 128" fill="none" stroke="#eef5fb" stroke-width="11" stroke-linecap="round"/>
+
+    <path d="M 182 138 C 134 94 98 102 98 134 C 98 164 134 180 184 166" fill="none" stroke="#1f5fa8" stroke-width="15" stroke-linecap="round"/>
+    <path d="M 182 138 C 134 94 98 102 98 134 C 98 164 134 180 184 166" fill="none" stroke="#eef5fb" stroke-width="11" stroke-linecap="round"/>
+
+    <path d="M 178 148 C 138 148 118 176 138 192 C 158 206 188 192 204 176" fill="none" stroke="#1f5fa8" stroke-width="14" stroke-linecap="round"/>
+    <path d="M 178 148 C 138 148 118 176 138 192 C 158 206 188 192 204 176" fill="none" stroke="#eef5fb" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <path d="M 178 126 C 194 114 232 118 244 138 C 254 156 250 188 232 198 C 210 210 176 200 172 174 C 168 154 170 134 178 126 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="198" cy="166" rx="10" ry="7" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+  </g>
+
+  <g>
+    <path d="M 244 150 C 266 134 300 124 330 130 C 366 136 382 168 370 196 C 358 224 316 232 286 214 C 268 203 256 192 242 186 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="2.2" stroke-linejoin="round"/>
+    <path d="M 286 214 C 264 198 266 164 290 152 C 314 140 346 154 344 178 C 342 198 318 204 304 192 C 294 182 300 166 314 166 C 324 166 328 176 320 182" fill="none" stroke="#c8642a" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <line x1="206" y1="42" x2="112" y2="42" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="206" cy="42" r="2.8" fill="#222222"/>
+    <text x="96" y="47" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">X</text>
+
+    <line x1="208" y1="196" x2="178" y2="246" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="208" cy="196" r="2.8" fill="#222222"/>
+    <text x="166" y="256" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">Y</text>
+
+    <line x1="368" y1="196" x2="416" y2="232" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="368" cy="196" r="2.8" fill="#222222"/>
+    <text x="428" y="240" text-anchor="start" font-size="16" font-weight="700" fill="#222222">Z</text>
+  </g>
+</svg>

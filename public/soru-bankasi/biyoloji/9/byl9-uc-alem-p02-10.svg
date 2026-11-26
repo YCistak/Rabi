@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 400" width="480" height="400" font-family="Nunito, sans-serif">
+<rect width="480" height="400" fill="#ffffff"/>
+<polygon points="30,385 70,335 150,318 300,320 390,338 450,385" fill="#ececea" stroke="#6b7480" stroke-width="1.5"/>
+<g fill="none" stroke-linecap="round">
+<path d="M 211 190 Q 185 153, 128 137" stroke="#c8642a" stroke-width="9"/>
+<path d="M 216 190 Q 200 133, 147 110" stroke="#c8642a" stroke-width="9"/>
+<path d="M 223 190 Q 218 118, 174 88" stroke="#c8642a" stroke-width="9"/>
+<path d="M 231 190 Q 238 108, 206 75" stroke="#c8642a" stroke-width="9"/>
+<path d="M 240 190 Q 258 105, 240 70" stroke="#c8642a" stroke-width="9"/>
+<path d="M 249 190 Q 277 108, 274 75" stroke="#c8642a" stroke-width="9"/>
+<path d="M 257 190 Q 292 118, 306 88" stroke="#c8642a" stroke-width="9"/>
+<path d="M 264 190 Q 304 133, 333 110" stroke="#c8642a" stroke-width="9"/>
+<path d="M 269 190 Q 311 153, 352 137" stroke="#c8642a" stroke-width="9"/>
+<path d="M 211 190 Q 185 153, 128 137" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 216 190 Q 200 133, 147 110" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 223 190 Q 218 118, 174 88" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 231 190 Q 238 108, 206 75" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 240 190 Q 258 105, 240 70" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 249 190 Q 277 108, 274 75" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 257 190 Q 292 118, 306 88" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 264 190 Q 304 133, 333 110" stroke="#fbe6d6" stroke-width="6"/>
+<path d="M 269 190 Q 311 153, 352 137" stroke="#fbe6d6" stroke-width="6"/>
+</g>
+<path d="M 196 322 C 190 270, 200 230, 204 192 L 276 192 C 280 230, 290 270, 284 322 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+<ellipse cx="240" cy="192" rx="42" ry="9" fill="#f6d2b8" stroke="#c8642a" stroke-width="1.5"/>
+<g stroke="#6b7480" stroke-width="1.2">
+<line x1="319" y1="152" x2="400" y2="110"/>
+<line x1="282" y1="280" x2="395" y2="280"/>
+</g>
+<g fill="#222222" font-size="14">
+<text x="405" y="115">Dokunaç</text>
+<text x="240" y="362" text-anchor="middle">Kaya</text>
+<text x="403" y="285">Gövde</text>
+</g>
+</svg>

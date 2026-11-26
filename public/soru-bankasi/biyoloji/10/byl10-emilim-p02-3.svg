@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+  </defs>
+  <rect width="600" height="300" fill="#ffffff"/>
+
+  <text x="92" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Bağırsak boşluğu</text>
+  <text x="288" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Villus epitel hücresi</text>
+  <text x="502" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Taşıma damarları</text>
+
+  <rect x="20" y="44" width="144" height="236" rx="8" fill="#fdfaf4" stroke="#6b7480" stroke-width="1.5"/>
+
+  <path d="M 204 48 L 376 48 L 376 276 L 204 276 L 204 270 C 184 270 184 260 204 260 L 204 252 C 184 252 184 242 204 242 L 204 234 C 184 234 184 224 204 224 L 204 216 C 184 216 184 206 204 206 L 204 198 C 184 198 184 188 204 188 L 204 180 C 184 180 184 170 204 170 L 204 162 C 184 162 184 152 204 152 L 204 144 C 184 144 184 134 204 134 L 204 126 C 184 126 184 116 204 116 L 204 108 C 184 108 184 98 204 98 L 204 90 C 184 90 184 80 204 80 L 204 72 C 184 72 184 62 204 62 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <ellipse cx="286" cy="248" rx="28" ry="13" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+
+  <rect x="424" y="44" width="156" height="106" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <text x="502" y="68" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Kılcal kan damarı</text>
+
+  <rect x="424" y="174" width="156" height="106" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <text x="502" y="198" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Lenf kılcalı</text>
+
+  <polygon points="81,92 95,92 102,104 95,116 81,116 74,104" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="88" y="135" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">X</text>
+
+  <line x1="108" y1="104" x2="262" y2="104" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+
+  <polygon points="279,92 293,92 300,104 293,116 279,116 272,104" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="286" y="135" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">X</text>
+
+  <line x1="306" y1="104" x2="478" y2="104" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+
+  <polygon points="495,92 509,92 516,104 509,116 495,116 488,104" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="502" y="135" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">X</text>
+
+  <path d="M 64 182 Q 72 174 80 182 T 96 182 T 112 182" fill="none" stroke="#c8642a" stroke-width="2.2"/>
+  <text x="88" y="204" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Y</text>
+
+  <rect x="76" y="222" width="24" height="12" rx="3" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="88" y="254" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Z</text>
+
+  <line x1="118" y1="182" x2="254" y2="182" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <path d="M 106 228 L 222 228 L 256 202" fill="none" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+
+  <circle cx="286" cy="186" r="24" fill="#fbe6d6" stroke="#c8642a" stroke-width="2" stroke-dasharray="4 2"/>
+  <rect x="270" y="175" width="8" height="22" rx="2" fill="#ffffff" stroke="#c8642a" stroke-width="1.5"/>
+  <path d="M 280 179 Q 286 175 292 179 T 303 179" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+  <path d="M 280 186 Q 286 182 292 186 T 303 186" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+  <path d="M 280 193 Q 286 189 292 193 T 303 193" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+
+  <path d="M 312 186 L 398 186 L 398 238 L 472 238" fill="none" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+
+  <circle cx="502" cy="238" r="22" fill="#fbe6d6" stroke="#c8642a" stroke-width="2" stroke-dasharray="4 2"/>
+  <rect x="488" y="228" width="7" height="20" rx="2" fill="#ffffff" stroke="#c8642a" stroke-width="1.5"/>
+  <path d="M 497 232 Q 503 228 508 232 T 518 232" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+  <path d="M 497 238 Q 503 234 508 238 T 518 238" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+  <path d="M 497 244 Q 503 240 508 244 T 518 244" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+</svg>

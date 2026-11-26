@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" width="560" height="300" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="560" height="300" fill="#ffffff"/>
+  <rect x="24" y="24" width="242" height="244" rx="14" fill="#d9e4f2"/>
+  <rect x="284" y="24" width="252" height="244" rx="14" fill="#eef5fb"/>
+  <circle cx="96" cy="144" r="32" fill="#9bb7db" stroke="#1f5fa8" stroke-width="1.4"/>
+  <g fill="none" stroke="#2b4c7e" stroke-width="1.5" stroke-linecap="round">
+    <path d="M 52 206 C 72 194, 92 222, 114 208 C 134 196, 146 220, 166 212"/>
+    <path d="M 64 234 C 86 222, 108 248, 134 234 C 150 226, 168 242, 184 236"/>
+    <path d="M 52 96 C 70 84, 92 98, 112 86 C 128 78, 146 94, 164 88"/>
+  </g>
+  <g fill="#4a6fa5">
+    <circle cx="446" cy="138" r="5"/>
+    <circle cx="452" cy="144" r="3.5"/>
+    <circle cx="476" cy="196" r="5"/>
+    <circle cx="482" cy="202" r="3.5"/>
+    <circle cx="426" cy="232" r="5"/>
+    <circle cx="432" cy="238" r="3.5"/>
+    <circle cx="486" cy="116" r="5"/>
+    <circle cx="492" cy="122" r="3.5"/>
+  </g>
+  <g fill="#b8d0eb" stroke="#1f5fa8" stroke-width="1.8">
+    <rect x="266" y="24" width="18" height="72" rx="8"/>
+    <rect x="266" y="130" width="18" height="46" rx="8"/>
+    <rect x="266" y="210" width="18" height="58" rx="8"/>
+  </g>
+  <line x1="190" y1="113" x2="368" y2="113" stroke="#1f5fa8" stroke-width="2.2" marker-end="url(#ok1)"/>
+  <line x1="368" y1="193" x2="190" y2="193" stroke="#c8642a" stroke-width="2.2" marker-end="url(#ok2)"/>
+  <line x1="286" y1="100" x2="326" y2="82" stroke="#6b7480" stroke-width="1.4"/>
+  <line x1="275" y1="268" x2="275" y2="278" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="136" y="52" text-anchor="middle" font-size="16" font-weight="700" fill="#1f3b5c">Çekirdek</text>
+  <text x="414" y="52" text-anchor="middle" font-size="16" font-weight="700" fill="#1f3b5c">Sitoplazma</text>
+  <text x="382" y="119" font-size="17" font-weight="700" fill="#1f5fa8">1</text>
+  <text x="168" y="199" font-size="17" font-weight="700" fill="#c8642a">2</text>
+  <text x="332" y="84" font-size="14" fill="#222222">Por</text>
+  <text x="275" y="293" text-anchor="middle" font-size="14" fill="#222222">Çekirdek zarfı</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <rect width="600" height="320" fill="#ffffff"/>
+  <g>
+    <rect x="12" y="12" width="280" height="296" rx="12" fill="#fafafa" stroke="#d0d7de" stroke-width="1.4"/>
+    <text x="152" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1. Fanus</text>
+    <rect x="60" y="48" width="184" height="32" rx="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <text x="152" y="69" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">4 saat sonra: %22,4 O₂</text>
+    <line x1="152" y1="80" x2="152" y2="104" stroke="#4a5568" stroke-width="1.6"/>
+    <path d="M 48 260 L 48 158 A 104 54 0 0 1 256 158 L 256 260 Z" fill="#f7fbff" stroke="#4a5568" stroke-width="1.8"/>
+    <rect x="38" y="260" width="228" height="10" rx="3" fill="#cfd6de" stroke="#6b7480" stroke-width="1.3"/>
+    <rect x="86" y="220" width="38" height="40" fill="#e6f2fb" stroke="#4a5568" stroke-width="1.4"/>
+    <line x1="105" y1="254" x2="105" y2="154" stroke="#2d6e38" stroke-width="2.4"/>
+    <ellipse cx="90" cy="196" rx="13" ry="7" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <ellipse cx="120" cy="186" rx="13" ry="7" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <ellipse cx="92" cy="168" rx="12" ry="6.5" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <ellipse cx="118" cy="160" rx="12" ry="6.5" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <rect x="172" y="224" width="48" height="36" fill="#dbeeff" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="196" y="212" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Saf su</text>
+    <text x="152" y="294" text-anchor="middle" font-size="13" fill="#374151">Eşit ışık · 25 °C · Başlangıç: %21,0 O₂</text>
+  </g>
+  <g>
+    <rect x="308" y="12" width="280" height="296" rx="12" fill="#fafafa" stroke="#d0d7de" stroke-width="1.4"/>
+    <text x="448" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">2. Fanus</text>
+    <rect x="356" y="48" width="184" height="32" rx="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="448" y="69" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">4 saat sonra: %20,3 O₂</text>
+    <line x1="448" y1="80" x2="448" y2="104" stroke="#4a5568" stroke-width="1.6"/>
+    <path d="M 344 260 L 344 158 A 104 54 0 0 1 552 158 L 552 260 Z" fill="#f7fbff" stroke="#4a5568" stroke-width="1.8"/>
+    <rect x="334" y="260" width="228" height="10" rx="3" fill="#cfd6de" stroke="#6b7480" stroke-width="1.3"/>
+    <rect x="382" y="220" width="38" height="40" fill="#e6f2fb" stroke="#4a5568" stroke-width="1.4"/>
+    <line x1="401" y1="254" x2="401" y2="154" stroke="#2d6e38" stroke-width="2.4"/>
+    <ellipse cx="386" cy="196" rx="13" ry="7" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <ellipse cx="416" cy="186" rx="13" ry="7" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <ellipse cx="388" cy="168" rx="12" ry="6.5" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <ellipse cx="414" cy="160" rx="12" ry="6.5" fill="#58b368" stroke="#2d6e38" stroke-width="1.4"/>
+    <rect x="468" y="224" width="48" height="36" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+    <text x="492" y="198" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">KOH</text>
+    <text x="492" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">çözeltisi</text>
+    <text x="448" y="294" text-anchor="middle" font-size="13" fill="#374151">Eşit ışık · 25 °C · Başlangıç: %21,0 O₂</text>
+  </g>
+</svg>

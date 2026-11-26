@@ -4,6 +4,7 @@ import { konuDersi } from './ders'
 import { BANKA_DIZINLERI } from './dizin'
 
 describe('Soru Bankası verisi', () => {
+  // Zaman aşımı geniş: tüm veri dosyalarını tarıyor, dört derste veri büyüdü.
   it('her veri dosyasını biçim ve dizin sayısı bakımından denetler', async () => {
     const BANKA_DIZINI = Object.values(BANKA_DIZINLERI).flat()
     const konuKimlikleri = new Set(BANKA_DIZINI.flatMap((sinif) => sinif.temalar).flatMap((tema) => tema.konular).map((konu) => konu.id))
@@ -27,5 +28,5 @@ describe('Soru Bankası verisi', () => {
         }
       }
     }
-  })
+  }, 120_000)
 })

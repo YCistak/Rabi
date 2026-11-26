@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220" width="400" height="220" font-family="Nunito, sans-serif">
+  <rect width="400" height="220" fill="#ffffff"/>
+  <defs><marker id="ok" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 Z" fill="#222222"/></marker></defs>
+  <path d="M25 48 H375 V79 H25" fill="#e6f1f9" stroke="#32618a" stroke-width="2"/>
+  <path d="M25 149 H375 V175 H25" fill="#f8e4dc" stroke="#995747" stroke-width="2"/>
+  <text x="25" y="36" font-size="16" fill="#222222">Böbrek kanalcığı</text>
+  <text x="25" y="202" font-size="16" fill="#222222">Kılcal damar</text>
+  <line x1="145" y1="62" x2="145" y2="163" stroke="#222222" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="119" y="118" font-size="16" fill="#222222">X</text>
+  <line x1="245" y1="163" x2="245" y2="62" stroke="#222222" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="258" y="118" font-size="16" fill="#222222">Y</text>
+</svg>

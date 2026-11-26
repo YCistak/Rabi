@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" width="600" height="280" font-family="Nunito, sans-serif">
+  <rect width="600" height="280" fill="#ffffff"/>
+  <defs>
+    <marker id="okMavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="okTuruncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="okSinir" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8a6d3b"/>
+    </marker>
+  </defs>
+
+  <g>
+    <line x1="56" y1="194" x2="56" y2="96" stroke="#222222" stroke-width="3"/>
+    <polygon points="56,84 48,100 64,100" fill="#222222"/>
+    <circle cx="56" cy="194" r="3.2" fill="#c8642a"/>
+    <text x="56" y="74" text-anchor="middle" font-size="15" font-weight="700" fill="#1f5fa8">K</text>
+    <text x="56" y="213" text-anchor="middle" font-size="15" font-weight="700" fill="#c8642a">L</text>
+    <text x="56" y="236" text-anchor="middle" font-size="14" fill="#4b5563">Cisim</text>
+  </g>
+
+  <g>
+    <path d="M 224 106 A 76 76 0 0 1 362 170 L 468 152 L 468 174 L 349 190 A 76 76 0 0 1 224 174 C 196 164 196 116 224 106 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <path d="M 224 106 C 196 116 196 164 224 174 C 213 156 213 124 224 106 Z" fill="#dff0fc" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="292" cy="140" r="68" fill="#ffffff"/>
+
+    <path d="M 236 102 A 68 68 0 0 1 355 166" fill="none" stroke="#d49b2a" stroke-width="4" stroke-linecap="round"/>
+    <path d="M 343 185 A 68 68 0 0 1 236 178" fill="none" stroke="#d49b2a" stroke-width="4" stroke-linecap="round"/>
+
+    <path d="M 358 171 L 468 153 L 468 173 L 347 189 Z" fill="#f7e8c8" stroke="#8a6d3b" stroke-width="1.4"/>
+    <line x1="364" y1="176" x2="454" y2="161" stroke="#8a6d3b" stroke-width="1.4" marker-end="url(#okSinir)"/>
+    <line x1="360" y1="183" x2="454" y2="168" stroke="#8a6d3b" stroke-width="1.4" marker-end="url(#okSinir)"/>
+
+    <rect x="214" y="106" width="7" height="16" rx="2" fill="#7c4a2d"/>
+    <rect x="214" y="158" width="7" height="16" rx="2" fill="#7c4a2d"/>
+
+    <path d="M 228 118 C 239 126 239 154 228 162 C 217 154 217 126 228 118 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="292" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Göz</text>
+  </g>
+
+  <g>
+    <polyline points="56,86 228,128 352,162" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#okMavi)"/>
+    <polyline points="56,194 228,152 352,118" fill="none" stroke="#c8642a" stroke-width="1.8" marker-end="url(#okTuruncu)"/>
+
+    <line x1="354" y1="118" x2="354" y2="152" stroke="#222222" stroke-width="2.4"/>
+    <polygon points="354,162 349,150 359,150" fill="#222222"/>
+    <circle cx="354" cy="118" r="2.6" fill="#c8642a"/>
+
+    <text x="336" y="112" text-anchor="end" font-size="14" font-weight="700" fill="#c8642a">L'</text>
+    <text x="336" y="176" text-anchor="end" font-size="14" font-weight="700" fill="#1f5fa8">K'</text>
+  </g>
+
+  <g>
+    <path d="M 468 140 C 464 108 486 88 520 88 C 554 88 576 110 576 140 C 576 168 558 190 526 190 C 508 190 494 184 484 176 C 472 174 468 160 468 140 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <path d="M 494 114 C 506 106 526 106 538 114" fill="none" stroke="#c8642a" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M 544 126 C 554 134 554 150 544 158" fill="none" stroke="#c8642a" stroke-width="1.4" stroke-linecap="round"/>
+    <text x="522" y="146" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">Beyin</text>
+  </g>
+
+  <g>
+    <line x1="344" y1="96" x2="386" y2="66" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="344" cy="96" r="2.8" fill="#222222"/>
+    <text x="392" y="70" text-anchor="start" font-size="14" font-weight="700" fill="#222222">Ağ tabaka</text>
+
+    <line x1="412" y1="176" x2="412" y2="210" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="412" cy="176" r="2.8" fill="#222222"/>
+    <text x="412" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Görme siniri</text>
+  </g>
+</svg>

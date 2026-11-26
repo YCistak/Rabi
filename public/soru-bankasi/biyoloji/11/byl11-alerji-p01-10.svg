@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 290" width="600" height="290" font-family="Nunito, sans-serif">
+<rect width="600" height="290" fill="#ffffff"/>
+<rect x="30" y="80" width="540" height="120" rx="58" fill="#f7ede4" stroke="#8a6d5a" stroke-width="1.6"/>
+<circle cx="96" cy="140" r="17.5" fill="#f4cfc0" stroke="#c8642a" stroke-width="1.6"/>
+<circle cx="96" cy="140" r="2.5" fill="#8a3f15"/>
+<text x="96" y="66" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">1</text>
+<text x="96" y="232" font-size="14" text-anchor="middle" fill="#222222">7 mm</text>
+<circle cx="198" cy="140" r="2.5" fill="#8a3f15"/>
+<text x="198" y="66" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">2</text>
+<text x="198" y="232" font-size="14" text-anchor="middle" fill="#222222">0 mm</text>
+<circle cx="300" cy="140" r="22.5" fill="#f4cfc0" stroke="#c8642a" stroke-width="1.6"/>
+<circle cx="300" cy="140" r="2.5" fill="#8a3f15"/>
+<text x="300" y="66" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">3</text>
+<text x="300" y="232" font-size="14" text-anchor="middle" fill="#222222">9 mm</text>
+<circle cx="402" cy="140" r="2.5" fill="#8a3f15"/>
+<text x="402" y="66" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">4</text>
+<text x="402" y="232" font-size="14" text-anchor="middle" fill="#222222">0 mm</text>
+<circle cx="504" cy="140" r="15.0" fill="#f4cfc0" stroke="#c8642a" stroke-width="1.6"/>
+<circle cx="504" cy="140" r="2.5" fill="#8a3f15"/>
+<text x="504" y="66" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">5</text>
+<text x="504" y="232" font-size="14" text-anchor="middle" fill="#222222">6 mm</text>
+<text x="300" y="266" font-size="14" text-anchor="middle" fill="#222222">20 dakika sonra ölçülen kabarıklık çapı</text>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 360" width="400" height="360" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="400" height="360" fill="#ffffff"/>
+  <rect x="150" y="60" width="60" height="132" fill="#fbf0c8"/>
+  <rect x="150" y="192" width="60" height="6" fill="#f2f2ee"/>
+  <path d="M 150 198 L 210 198 L 210 300 A 30 30 0 0 1 150 300 Z" fill="#b8473a"/>
+  <line x1="150" y1="192" x2="210" y2="192" stroke="#9a8f6a" stroke-width="1.2"/>
+  <line x1="150" y1="198" x2="210" y2="198" stroke="#9a8f6a" stroke-width="1.2"/>
+  <path d="M 150 40 L 150 300 A 30 30 0 0 0 210 300 L 210 40" fill="none" stroke="#6b7480" stroke-width="2"/>
+  <line x1="142" y1="40" x2="150" y2="40" stroke="#6b7480" stroke-width="2"/>
+  <line x1="210" y1="40" x2="218" y2="40" stroke="#6b7480" stroke-width="2"/>
+  <line x1="214" y1="126" x2="262" y2="126" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="270" y="132" font-size="17" font-weight="700" fill="#222222" text-anchor="start">X</text>
+  <text x="296" y="132" font-size="14" fill="#222222" text-anchor="start">(hacmin %55'i)</text>
+  <line x1="214" y1="195" x2="262" y2="195" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="270" y="201" font-size="17" font-weight="700" fill="#222222" text-anchor="start">Y</text>
+  <text x="296" y="201" font-size="14" fill="#222222" text-anchor="start">(hacmin %1'i)</text>
+  <line x1="214" y1="259" x2="262" y2="259" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="270" y="265" font-size="17" font-weight="700" fill="#222222" text-anchor="start">Z</text>
+  <text x="296" y="265" font-size="14" fill="#222222" text-anchor="start">(hacmin %44'ü)</text>
+</svg>

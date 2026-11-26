@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" width="640" height="320" font-family="Nunito, sans-serif">
+<rect width="640" height="320" fill="#ffffff"/>
+<rect x="15" y="15" width="480" height="290" rx="36" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+<circle cx="72" cy="245" r="38" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+<ellipse cx="280" cy="160" rx="170" ry="95" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+<ellipse cx="280" cy="160" rx="150" ry="75" fill="#fff8f1" stroke="#c8642a" stroke-width="1.8"/>
+<path d="M183 101.3 L183 142.0 A7 7 0 0 0 197 142.0 L197 96.0" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<path d="M243 85.8 L243 128.5 A7 7 0 0 0 257 128.5 L257 84.4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<path d="M303 84.4 L303 128.5 A7 7 0 0 0 317 128.5 L317 85.8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<path d="M363 96.0 L363 142.0 A7 7 0 0 0 377 142.0 L377 101.3" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<path d="M213 228.6 L213 186.7 A7 7 0 0 1 227 186.7 L227 231.7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<path d="M273 236.4 L273 193.0 A7 7 0 0 1 287 193.0 L287 236.4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<path d="M333 231.7 L333 186.7 A7 7 0 0 1 347 186.7 L347 228.6" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<text x="62" y="72" font-size="16" fill="#222222" text-anchor="middle" font-weight="700">K</text>
+<line x1="560" y1="87" x2="400" y2="93" stroke="#6b7480" stroke-width="1.2"/>
+<text x="568" y="92" font-size="16" fill="#222222" text-anchor="start" font-weight="700">N</text>
+<line x1="560" y1="132" x2="377" y2="128" stroke="#6b7480" stroke-width="1.2"/>
+<text x="568" y="137" font-size="16" fill="#222222" text-anchor="start" font-weight="700">M</text>
+<line x1="560" y1="182" x2="395" y2="170" stroke="#6b7480" stroke-width="1.2"/>
+<text x="568" y="187" font-size="16" fill="#222222" text-anchor="start" font-weight="700">L</text>
+</svg>

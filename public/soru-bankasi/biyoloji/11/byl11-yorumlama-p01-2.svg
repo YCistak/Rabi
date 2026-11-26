@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" width="600" height="220" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-gri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#6b7480"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="600" height="220" fill="#ffffff"/>
+  <text x="300" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Uyarandan İstemli Harekete İletim Yolu</text>
+
+  <text x="38" y="102" text-anchor="middle" font-size="13" fill="#6b7480">Uyaran</text>
+  <line x1="16" y1="118" x2="64" y2="118" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok-gri)"/>
+
+  <rect x="70" y="84" width="112" height="68" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="126" y="114" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">El derisi</text>
+  <text x="126" y="133" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">reseptörü</text>
+
+  <line x1="182" y1="118" x2="251" y2="118" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <circle cx="217" cy="90" r="13" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="217" y="95" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">1</text>
+
+  <path d="M 260 128 C 250 116 254 94 268 84 C 282 74 302 72 316 76 C 330 72 350 76 364 88 C 378 100 378 122 368 136 C 360 148 344 154 330 150 C 322 156 306 156 296 150 C 280 152 268 142 260 128 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="315" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Beyin</text>
+  <text x="315" y="176" text-anchor="middle" font-size="13" fill="#6b7480">Değerlendirme merkezi</text>
+
+  <line x1="375" y1="118" x2="446" y2="118" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <circle cx="411" cy="90" r="13" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="411" y="95" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">2</text>
+
+  <path d="M 450 118 C 462 88 486 82 514 82 C 542 82 566 88 578 118 C 566 148 542 154 514 154 C 486 154 462 148 450 118 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="514" y="123" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kol kası</text>
+
+  <text x="300" y="206" text-anchor="middle" font-size="13" fill="#6b7480">Oklar sinirsel uyartının iletim yönünü gösterir.</text>
+</svg>

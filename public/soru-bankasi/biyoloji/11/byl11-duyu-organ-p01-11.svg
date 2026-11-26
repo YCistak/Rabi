@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" width="520" height="220" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#222222"/>
+    </marker>
+  </defs>
+  <rect width="520" height="220" fill="#ffffff"/>
+  <g>
+    <path d="M 44 114 Q 132 54 220 114 Q 132 174 44 114 Z" fill="#f8fafc" stroke="#334155" stroke-width="1.8"/>
+    <circle cx="132" cy="114" r="38" fill="#8fb8de" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="132" y1="78" x2="132" y2="90" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="132" y1="138" x2="132" y2="150" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="96" y1="114" x2="108" y2="114" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="156" y1="114" x2="168" y2="114" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="106" y1="88" x2="115" y2="97" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="149" y1="131" x2="158" y2="140" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="158" y1="88" x2="149" y2="97" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="115" y1="131" x2="106" y2="140" stroke="#4a7eb0" stroke-width="1.2"/>
+    <circle cx="132" cy="114" r="22" fill="#1e293b"/>
+    <text x="132" y="196" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">1. durum</text>
+  </g>
+  <line x1="236" y1="114" x2="282" y2="114" stroke="#222222" stroke-width="2" marker-end="url(#ok)"/>
+  <g>
+    <path d="M 300 114 Q 388 54 476 114 Q 388 174 300 114 Z" fill="#f8fafc" stroke="#334155" stroke-width="1.8"/>
+    <circle cx="388" cy="114" r="38" fill="#8fb8de" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="388" y1="78" x2="388" y2="102" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="388" y1="126" x2="388" y2="150" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="352" y1="114" x2="376" y2="114" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="400" y1="114" x2="424" y2="114" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="362" y1="88" x2="379" y2="105" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="397" y1="123" x2="414" y2="140" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="414" y1="88" x2="397" y2="105" stroke="#4a7eb0" stroke-width="1.2"/>
+    <line x1="379" y1="123" x2="362" y2="140" stroke="#4a7eb0" stroke-width="1.2"/>
+    <circle cx="388" cy="114" r="10" fill="#1e293b"/>
+    <text x="388" y="196" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">2. durum</text>
+  </g>
+  <g>
+    <line x1="334" y1="54" x2="384" y2="110" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="384" cy="110" r="2.6" fill="#ffffff" stroke="#222222" stroke-width="1.2"/>
+    <text x="324" y="48" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">Y</text>
+
+    <line x1="454" y1="54" x2="412" y2="94" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="412" cy="94" r="2.6" fill="#222222"/>
+    <text x="464" y="48" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">X</text>
+  </g>
+</svg>

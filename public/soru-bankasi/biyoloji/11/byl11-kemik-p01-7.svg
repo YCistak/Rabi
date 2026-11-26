@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 310" width="560" height="310" font-family="Nunito, sans-serif">
+  <rect width="560" height="310" fill="#ffffff"/>
+  <text x="130" y="32" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">I. Kemik</text>
+  <text x="415" y="32" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">II. Kemik</text>
+  <line x1="274" y1="20" x2="274" y2="292" stroke="#d4d8de" stroke-width="1.5" stroke-dasharray="5,5"/>
+  <g>
+    <path d="M 98 118 L 98 222 L 102 222 L 102 118 Z" fill="#8c5a3c"/>
+    <path d="M 158 118 L 158 222 L 162 222 L 162 118 Z" fill="#8c5a3c"/>
+    <path d="M 96 58 C 82 64, 82 94, 96 108 C 101 114, 102 118, 102 124 L 102 216 C 102 222, 101 226, 96 232 C 82 246, 82 276, 96 282 C 108 287, 120 281, 130 281 C 140 281, 152 287, 164 282 C 178 276, 178 246, 164 232 C 159 226, 158 222, 158 216 L 158 124 C 158 118, 159 114, 164 108 C 178 94, 178 64, 164 58 C 152 53, 140 59, 130 59 C 120 59, 108 53, 96 58 Z" fill="#e8dcc4" stroke="#7a6240" stroke-width="2"/>
+    <path d="M 100 68 C 91 75, 92 94, 104 106 C 110 112, 116 116, 116 120 L 144 120 C 144 116, 150 112, 156 106 C 168 94, 169 75, 160 68 C 150 65, 140 69, 130 69 C 120 69, 110 65, 100 68 Z" fill="#e8a898" stroke="#c86452" stroke-width="1.4"/>
+    <path d="M 100 272 C 91 265, 92 246, 104 234 C 110 228, 116 224, 116 220 L 144 220 C 144 224, 150 228, 156 234 C 168 246, 169 265, 160 272 C 150 275, 140 271, 130 271 C 120 271, 110 275, 100 272 Z" fill="#e8a898" stroke="#c86452" stroke-width="1.4"/>
+    <g fill="#c86452">
+      <circle cx="110" cy="80" r="2.6"/>
+      <circle cx="124" cy="79" r="2.5"/>
+      <circle cx="139" cy="80" r="2.6"/>
+      <circle cx="152" cy="81" r="2.4"/>
+      <circle cx="107" cy="94" r="2.5"/>
+      <circle cx="122" cy="93" r="2.8"/>
+      <circle cx="138" cy="94" r="2.6"/>
+      <circle cx="151" cy="94" r="2.4"/>
+      <circle cx="121" cy="107" r="2.5"/>
+      <circle cx="138" cy="107" r="2.5"/>
+      <circle cx="121" cy="233" r="2.5"/>
+      <circle cx="138" cy="233" r="2.5"/>
+      <circle cx="108" cy="246" r="2.5"/>
+      <circle cx="123" cy="247" r="2.8"/>
+      <circle cx="138" cy="246" r="2.6"/>
+      <circle cx="151" cy="247" r="2.4"/>
+      <circle cx="110" cy="260" r="2.6"/>
+      <circle cx="125" cy="260" r="2.5"/>
+      <circle cx="140" cy="259" r="2.6"/>
+      <circle cx="152" cy="260" r="2.4"/>
+    </g>
+    <rect x="116" y="120" width="28" height="100" rx="8" fill="#f6df8c" stroke="#b88c24" stroke-width="1.5"/>
+  </g>
+  <g>
+    <rect x="306" y="114" width="168" height="96" rx="28" fill="#e8dcc4" stroke="#8c5a3c" stroke-width="3"/>
+    <rect x="322" y="136" width="136" height="52" rx="16" fill="#e8a898" stroke="#c86452" stroke-width="1.5"/>
+    <g fill="#c86452">
+      <circle cx="338" cy="152" r="3"/>
+      <circle cx="356" cy="149" r="2.8"/>
+      <circle cx="375" cy="152" r="3"/>
+      <circle cx="394" cy="149" r="2.8"/>
+      <circle cx="413" cy="152" r="3"/>
+      <circle cx="432" cy="150" r="2.8"/>
+      <circle cx="446" cy="156" r="2.4"/>
+      <circle cx="344" cy="171" r="2.8"/>
+      <circle cx="364" cy="173" r="3"/>
+      <circle cx="384" cy="170" r="2.8"/>
+      <circle cx="403" cy="173" r="3"/>
+      <circle cx="422" cy="171" r="2.8"/>
+      <circle cx="441" cy="172" r="2.6"/>
+    </g>
+  </g>
+  <g stroke="#6b7480" stroke-width="1.5">
+    <line x1="130" y1="170" x2="218" y2="170"/>
+    <line x1="422" y1="125" x2="504" y2="125"/>
+    <line x1="422" y1="162" x2="504" y2="162"/>
+  </g>
+  <g fill="#222222">
+    <circle cx="130" cy="170" r="3.2"/>
+    <circle cx="422" cy="125" r="3.2"/>
+    <circle cx="422" cy="162" r="3.2"/>
+  </g>
+  <g font-size="18" font-weight="700" fill="#222222">
+    <text x="228" y="176">X</text>
+    <text x="514" y="131">Y</text>
+    <text x="514" y="168">Z</text>
+  </g>
+</svg>

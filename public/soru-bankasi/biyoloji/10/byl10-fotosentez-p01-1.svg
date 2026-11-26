@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" width="520" height="260" font-family="Nunito, sans-serif">
+<rect width="520" height="260" fill="#ffffff"/>
+<ellipse cx="240" cy="135" rx="180" ry="90" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+<ellipse cx="240" cy="135" rx="171" ry="81" fill="none" stroke="#3b8f4a" stroke-width="1.4"/>
+<line x1="172" y1="145" x2="218" y2="115" stroke="#3b8f4a" stroke-width="2"/>
+<line x1="262" y1="115" x2="308" y2="150" stroke="#3b8f4a" stroke-width="2"/>
+<g fill="#3b8f4a" stroke="#2c6b37" stroke-width="1.2">
+<rect x="128" y="123" width="44" height="7" rx="3"/>
+<rect x="128" y="132" width="44" height="7" rx="3"/>
+<rect x="128" y="141" width="44" height="7" rx="3"/>
+<rect x="128" y="150" width="44" height="7" rx="3"/>
+<rect x="128" y="159" width="44" height="7" rx="3"/>
+<rect x="218" y="93" width="44" height="7" rx="3"/>
+<rect x="218" y="102" width="44" height="7" rx="3"/>
+<rect x="218" y="111" width="44" height="7" rx="3"/>
+<rect x="218" y="120" width="44" height="7" rx="3"/>
+<rect x="218" y="129" width="44" height="7" rx="3"/>
+<rect x="308" y="128" width="44" height="7" rx="3"/>
+<rect x="308" y="137" width="44" height="7" rx="3"/>
+<rect x="308" y="146" width="44" height="7" rx="3"/>
+<rect x="308" y="155" width="44" height="7" rx="3"/>
+<rect x="308" y="164" width="44" height="7" rx="3"/>
+</g>
+<line x1="447" y1="92" x2="352" y2="133" stroke="#6b7480" stroke-width="1.4"/>
+<text x="455" y="98" font-size="18" font-weight="700" fill="#222222">X</text>
+<line x1="447" y1="190" x2="275" y2="192" stroke="#6b7480" stroke-width="1.4"/>
+<text x="455" y="196" font-size="18" font-weight="700" fill="#222222">Y</text>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="560" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="560" height="320" fill="#ffffff"/>
+  <circle cx="160" cy="160" r="130" fill="#eef5fb" stroke="#6b7480" stroke-width="2"/>
+  <circle cx="160" cy="160" r="120" fill="#fef3c7" stroke="#cbd5e1" stroke-width="1.5"/>
+  <circle cx="160" cy="140" r="60" fill="#fefce8" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4,4"/>
+  <circle cx="160" cy="140" r="24" fill="#3b8f4a" stroke="#1b4332" stroke-width="2"/>
+  <circle cx="155" cy="135" r="9" fill="#52b788"/>
+  <circle cx="167" cy="145" r="7" fill="#74c69d"/>
+  <circle cx="85" cy="95" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="110" cy="75" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="140" cy="65" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="190" cy="65" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="220" cy="80" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="245" cy="110" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="255" cy="145" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="248" cy="185" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="228" cy="215" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="200" cy="240" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="160" cy="250" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="120" cy="240" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="90" cy="215" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="75" cy="180" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="70" cy="140" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="92" cy="120" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="232" cy="155" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="125" cy="208" r="6" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <circle cx="195" cy="212" r="5" fill="#c8642a" stroke="#9a4a1c" stroke-width="1.2"/>
+  <line x1="324" y1="85" x2="186" y2="132" stroke="#6b7480" stroke-width="1.5" marker-end="url(#ok)"/>
+  <text x="332" y="89" font-size="14" font-weight="bold" fill="#222222">Küf mantarı (Penicillium)</text>
+  <line x1="324" y1="158" x2="206" y2="152" stroke="#6b7480" stroke-width="1.5" marker-end="url(#ok)"/>
+  <text x="332" y="154" font-size="14" font-weight="bold" fill="#222222">Açılma bölgesi</text>
+  <text x="332" y="172" font-size="13" fill="#6b7480">(Bakteri üremesi yok)</text>
+  <line x1="324" y1="232" x2="236" y2="217" stroke="#6b7480" stroke-width="1.5" marker-end="url(#ok)"/>
+  <text x="332" y="236" font-size="14" font-weight="bold" fill="#c8642a">Bakteri kolonileri</text>
+</svg>

@@ -2,15 +2,16 @@
  * Soru Bankası'ndaki dersler.
  *
  * Ders ayrı bir alanda tutulmuyor: konu kimliğinin öneki söylüyor (`mat10-…`,
- * `fzk11-…`, `kim9-…`). Böylece kayıt anahtarları ve eski kayıtlar olduğu gibi kalıyor;
+ * `fzk11-…`, `kim9-…`, `byl9-…`). Böylece kayıt anahtarları ve eski kayıtlar olduğu gibi kalıyor;
  * yeni ders eklemek bu listeye bir satır eklemek demek.
  */
-export type BankaDersi = 'matematik' | 'fizik' | 'kimya'
+export type BankaDersi = 'matematik' | 'fizik' | 'kimya' | 'biyoloji'
 
 export const BANKA_DERSLERI: { id: BankaDersi; ad: string; onek: string }[] = [
   { id: 'matematik', ad: 'Matematik', onek: 'mat' },
   { id: 'fizik', ad: 'Fizik', onek: 'fzk' },
   { id: 'kimya', ad: 'Kimya', onek: 'kim' },
+  { id: 'biyoloji', ad: 'Biyoloji', onek: 'byl' },
 ]
 
 /** Konu kimliğinin dersi; tanınmayan önek eski (yalnız matematik) bankadan kalmadır. */

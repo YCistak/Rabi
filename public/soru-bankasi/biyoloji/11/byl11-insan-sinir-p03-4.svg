@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 350" width="640" height="350" font-family="Nunito, sans-serif">
+  <rect width="640" height="350" fill="#ffffff"/>
+  <g fill="none" stroke="#6b7480" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 320 48 L 320 61 M 180 61 L 476 61 M 180 61 L 180 74 M 476 61 L 476 74"/>
+    <path d="M 180 108 L 180 123 M 140 123 L 260 123 M 140 123 L 140 138 M 260 123 L 260 138"/>
+    <path d="M 476 108 L 476 123 M 410 123 L 542 123 M 410 123 L 410 138 M 542 123 L 542 138"/>
+    <path d="M 140 172 L 140 189 M 59 189 L 267 189 M 59 189 L 59 206 M 161 189 L 161 206 M 267 189 L 267 206"/>
+    <path d="M 542 172 L 542 189 M 448 189 L 564 189 M 448 189 L 448 206 M 564 189 L 564 206"/>
+    <path d="M 267 240 L 267 261 M 166 261 L 362 261 M 166 261 L 166 282 M 267 261 L 267 282 M 362 261 L 362 282"/>
+  </g>
+  <g stroke-width="1.6">
+    <rect x="215" y="14" width="210" height="34" rx="8" fill="#f4f6f8" stroke="#6b7480"/>
+    <rect x="82" y="74" width="196" height="34" rx="8" fill="#fbe6d6" stroke="#c8642a"/>
+    <rect x="378" y="74" width="196" height="34" rx="8" fill="#eef5fb" stroke="#1f5fa8"/>
+    <rect x="86" y="138" width="108" height="34" rx="8" fill="#fbe6d6" stroke="#c8642a"/>
+    <rect x="222" y="138" width="76" height="34" rx="8" fill="#ffffff" stroke="#c8642a" stroke-width="2"/>
+    <rect x="352" y="138" width="116" height="34" rx="8" fill="#eef5fb" stroke="#1f5fa8"/>
+    <rect x="496" y="138" width="92" height="34" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+    <rect x="16" y="206" width="86" height="34" rx="8" fill="#fbe6d6" stroke="#c8642a"/>
+    <rect x="114" y="206" width="94" height="34" rx="8" fill="#fbe6d6" stroke="#c8642a"/>
+    <rect x="220" y="206" width="94" height="34" rx="8" fill="#fbe6d6" stroke="#c8642a"/>
+    <rect x="410" y="206" width="76" height="40" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+    <rect x="504" y="206" width="120" height="40" rx="8" fill="#eef5fb" stroke="#1f5fa8"/>
+    <rect x="122" y="282" width="88" height="34" rx="8" fill="#fbe6d6" stroke="#c8642a"/>
+    <rect x="228" y="282" width="78" height="34" rx="8" fill="#fbe6d6" stroke="#c8642a"/>
+    <rect x="324" y="282" width="76" height="34" rx="8" fill="#ffffff" stroke="#c8642a" stroke-width="2"/>
+  </g>
+  <g fill="#222222" text-anchor="middle" font-weight="700" font-size="14">
+    <text x="320" y="36">İnsan Sinir Sistemi</text>
+    <text x="180" y="96">Merkezî Sinir Sistemi</text>
+    <text x="476" y="96">Çevresel Sinir Sistemi</text>
+    <text x="140" y="160">Beyin</text>
+    <text x="410" y="160" font-size="13">Duyu bölümü</text>
+    <text x="59" y="228" font-size="13">Ön beyin</text>
+    <text x="161" y="228" font-size="13">Orta beyin</text>
+    <text x="267" y="228" font-size="13">Arka beyin</text>
+    <text x="564" y="223" font-size="13">Otonom</text>
+    <text x="564" y="239" font-size="13">sinir sistemi</text>
+    <text x="166" y="304" font-size="13">Beyincik</text>
+    <text x="267" y="304" font-size="13">Pons</text>
+  </g>
+  <g fill="#222222" text-anchor="middle" font-weight="700" font-size="16">
+    <text x="260" y="161">K</text>
+    <text x="542" y="161">M</text>
+    <text x="448" y="232">N</text>
+    <text x="362" y="305">L</text>
+  </g>
+</svg>

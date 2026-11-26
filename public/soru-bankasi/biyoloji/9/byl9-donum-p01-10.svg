@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="600" height="300" fill="#ffffff"/>
+  <text x="145" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#222222">1. Düzenek (Düz Boyunlu)</text>
+  <text x="145" y="54" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f5fa8">Hava girişi</text>
+  <line x1="145" y1="60" x2="145" y2="82" stroke="#1f5fa8" stroke-width="1.6" marker-end="url(#ok-mavi)"/>
+  <path d="M 137 88 L 137 136 L 85 240 L 205 240 L 153 136 L 153 88" fill="#eef5fb" stroke="#6b7480" stroke-width="2"/>
+  <path d="M 101 208 L 85 240 L 205 240 L 189 208 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  <circle cx="115" cy="224" r="2.5" fill="#c8642a"/>
+  <circle cx="130" cy="218" r="2" fill="#c8642a"/>
+  <circle cx="145" cy="228" r="2.5" fill="#c8642a"/>
+  <circle cx="160" cy="220" r="2" fill="#c8642a"/>
+  <circle cx="175" cy="226" r="2.5" fill="#c8642a"/>
+  <circle cx="135" cy="233" r="2" fill="#c8642a"/>
+  <circle cx="165" cy="233" r="2" fill="#c8642a"/>
+  <circle cx="150" cy="215" r="2.5" fill="#c8642a"/>
+  <text x="145" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="#c8642a">Bulanık sıvı (üreme var)</text>
+  <text x="415" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#222222">2. Düzenek (Kuğu Boyunlu)</text>
+  <path d="M 387 136 L 387 104 Q 387 68 424 68 Q 456 68 456 106 Q 456 138 478 138 Q 496 138 496 112 L 510 112 Q 510 152 478 152 Q 442 152 442 106 Q 442 82 424 82 Q 403 82 403 104 L 403 136 Z" fill="#eef5fb" stroke="none"/>
+  <path d="M 387 136 L 335 240 L 455 240 L 403 136" fill="#eef5fb" stroke="#6b7480" stroke-width="2"/>
+  <path d="M 387 136 L 387 104 Q 387 68 424 68 Q 456 68 456 106 Q 456 138 478 138 Q 496 138 496 112" fill="none" stroke="#6b7480" stroke-width="2"/>
+  <path d="M 403 136 L 403 104 Q 403 82 424 82 Q 442 82 442 106 Q 442 152 478 152 Q 510 152 510 112" fill="none" stroke="#6b7480" stroke-width="2"/>
+  <path d="M 351 208 L 335 240 L 455 240 L 439 208 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  <text x="535" y="76" text-anchor="middle" font-size="13" font-weight="bold" fill="#1f5fa8">Hava girişi</text>
+  <line x1="528" y1="84" x2="508" y2="104" stroke="#1f5fa8" stroke-width="1.6" marker-end="url(#ok-mavi)"/>
+  <line x1="510" y1="180" x2="482" y2="156" stroke="#6b7480" stroke-width="1.5" marker-end="url(#ok)"/>
+  <text x="522" y="196" text-anchor="middle" font-size="13" fill="#222222">Kıvrım dirseği</text>
+  <text x="395" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b8f4a">Berrak sıvı (üreme yok)</text>
+</svg>

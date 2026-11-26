@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 250" width="560" height="250" font-family="Nunito, sans-serif">
+<rect width="560" height="250" fill="#ffffff"/>
+<defs>
+<marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#222222"/></marker>
+<marker id="okt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#c8642a"/></marker>
+</defs>
+<rect x="10" y="10" width="540" height="230" rx="50" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+<rect x="50" y="55" width="60" height="40" rx="6" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+<text x="80" y="81" font-size="17" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+<line x1="114" y1="75" x2="200" y2="75" stroke="#222222" stroke-width="1.8" marker-end="url(#ok)"/>
+<text x="157" y="66" font-size="14" fill="#222222" text-anchor="middle">O₂</text>
+<rect x="205" y="55" width="60" height="40" rx="6" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+<text x="235" y="81" font-size="17" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+<line x1="157" y1="82" x2="378" y2="174" stroke="#c8642a" stroke-width="1.8" stroke-dasharray="6 4" marker-end="url(#okt)"/>
+<text x="190" y="128" font-size="14" fill="#c8642a" text-anchor="middle">Enerji</text>
+<rect x="230" y="165" width="60" height="40" rx="6" fill="#ffffff" stroke="#6b7480" stroke-width="1.5"/>
+<text x="260" y="191" font-size="17" font-weight="700" fill="#222222" text-anchor="middle">M</text>
+<text x="322" y="190" font-size="15" fill="#222222" text-anchor="middle">+ H₂O</text>
+<line x1="352" y1="185" x2="410" y2="185" stroke="#222222" stroke-width="1.8" marker-end="url(#ok)"/>
+<rect x="415" y="165" width="120" height="40" rx="6" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+<text x="475" y="190" font-size="15" fill="#222222" text-anchor="middle">Organik besin</text>
+</svg>

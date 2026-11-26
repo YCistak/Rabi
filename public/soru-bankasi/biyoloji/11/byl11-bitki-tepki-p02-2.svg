@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 270" width="460" height="270" font-family="Nunito, sans-serif">
+  <rect width="460" height="270" fill="#ffffff"/>
+  <circle cx="225" cy="140" r="24" fill="#eddcc8" stroke="#8d6346" stroke-width="2"/>
+  <circle cx="225" cy="140" r="15" fill="none" stroke="#c9ad8b" stroke-width="1.2"/>
+  <circle cx="225" cy="140" r="6" fill="none" stroke="#c9ad8b" stroke-width="1.2"/>
+  <path d="M 249 242 L 249 140 A 24 24 0 0 0 208 123 C 202 128 190 116 195 110 A 42 42 0 0 1 267 140 L 267 242 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <line x1="216" y1="158" x2="152" y2="216" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="216" cy="158" r="2.5" fill="#6b7480"/>
+  <text x="148" y="232" font-size="14" fill="#222222" text-anchor="middle">Destek çubuğu</text>
+  <text x="148" y="249" font-size="13" fill="#6b7480" text-anchor="middle">(enine kesit)</text>
+  <line x1="208" y1="123" x2="125" y2="158" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="208" cy="123" r="2.8" fill="#222222"/>
+  <text x="116" y="164" font-size="16" font-weight="700" fill="#222222" text-anchor="end">K</text>
+  <line x1="255" y1="110" x2="316" y2="80" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="255" cy="110" r="2.8" fill="#222222"/>
+  <text x="324" y="84" font-size="16" font-weight="700" fill="#222222" text-anchor="start">L</text>
+  <line x1="267" y1="205" x2="322" y2="205" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="267" cy="205" r="2.5" fill="#6b7480"/>
+  <text x="330" y="210" font-size="14" fill="#222222" text-anchor="start">Asma sülüğü</text>
+</svg>

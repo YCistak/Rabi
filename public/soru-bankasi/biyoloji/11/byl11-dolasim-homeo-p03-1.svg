@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 280" width="560" height="280" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="okMavi" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="#1f5fa8"/>
+    </marker>
+    <marker id="okKoyu" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect width="560" height="280" fill="#ffffff"/>
+
+  <text x="140" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">I. Durum</text>
+  <rect x="20" y="38" width="240" height="224" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="140" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Kalp yönü</text>
+  <line x1="184" y1="62" x2="184" y2="48" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#okMavi)"/>
+
+  <rect x="102" y="72" width="76" height="174" fill="#e8f1fa"/>
+  <line x1="102" y1="72" x2="102" y2="246" stroke="#1f5fa8" stroke-width="2.2"/>
+  <line x1="178" y1="72" x2="178" y2="246" stroke="#1f5fa8" stroke-width="2.2"/>
+
+  <path d="M 102 172 Q 112 152 117 132" fill="none" stroke="#1f5fa8" stroke-width="2.2"/>
+  <path d="M 178 172 Q 168 152 163 132" fill="none" stroke="#1f5fa8" stroke-width="2.2"/>
+
+  <line x1="140" y1="232" x2="140" y2="176" stroke="#1f5fa8" stroke-width="2" marker-end="url(#okMavi)"/>
+  <line x1="140" y1="158" x2="140" y2="88" stroke="#1f5fa8" stroke-width="2" marker-end="url(#okMavi)"/>
+
+  <line x1="88" y1="152" x2="111" y2="152" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="84" y="156" text-anchor="end" font-size="13" fill="#222222">Kapakçık</text>
+  <line x1="178" y1="210" x2="196" y2="210" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="200" y="206" text-anchor="start" font-size="13" fill="#222222">Damar</text>
+  <text x="200" y="222" text-anchor="start" font-size="13" fill="#222222">duvarı</text>
+
+  <text x="420" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">II. Durum</text>
+  <rect x="300" y="38" width="240" height="224" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="420" y="60" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Kalp yönü</text>
+  <line x1="464" y1="62" x2="464" y2="48" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#okMavi)"/>
+
+  <rect x="382" y="72" width="76" height="174" fill="#e8f1fa"/>
+  <line x1="382" y1="72" x2="382" y2="246" stroke="#1f5fa8" stroke-width="2.2"/>
+  <line x1="458" y1="72" x2="458" y2="246" stroke="#1f5fa8" stroke-width="2.2"/>
+
+  <path d="M 382 172 Q 396 144 419 138" fill="none" stroke="#1f5fa8" stroke-width="2.4"/>
+  <path d="M 458 172 Q 444 144 421 138" fill="none" stroke="#1f5fa8" stroke-width="2.4"/>
+
+  <line x1="406" y1="90" x2="406" y2="132" stroke="#475569" stroke-width="1.8" marker-end="url(#okKoyu)"/>
+  <line x1="434" y1="90" x2="434" y2="132" stroke="#475569" stroke-width="1.8" marker-end="url(#okKoyu)"/>
+
+  <line x1="368" y1="152" x2="395" y2="152" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="364" y="156" text-anchor="end" font-size="13" fill="#222222">Kapakçık</text>
+</svg>

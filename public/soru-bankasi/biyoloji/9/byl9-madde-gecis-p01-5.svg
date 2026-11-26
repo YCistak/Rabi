@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="600" height="260" fill="#ffffff"/>
+
+  <text x="100" y="25" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">1</text>
+  <text x="300" y="25" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">2</text>
+  <text x="500" y="25" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">3</text>
+
+  <rect x="16" y="36" width="168" height="90" fill="#ffffff"/>
+  <rect x="16" y="126" width="168" height="118" fill="#eef5fb"/>
+  <line x1="16" y1="126" x2="184" y2="126" stroke="#1f5fa8" stroke-width="2"/>
+  <circle cx="100" cy="184" r="24" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <g fill="#c8642a">
+    <circle cx="93" cy="178" r="4.5"/><circle cx="107" cy="179" r="4.5"/>
+    <circle cx="95" cy="191" r="4.5"/><circle cx="108" cy="192" r="4.5"/>
+  </g>
+  <line x1="100" y1="156" x2="100" y2="136" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+  <text x="24" y="56" font-size="13" fill="#6b7480">Hücre dışı</text>
+  <text x="24" y="234" font-size="13" fill="#6b7480">Sitoplazma</text>
+  <rect x="16" y="36" width="168" height="208" fill="none" stroke="#d9e4f2" stroke-width="1.5"/>
+
+  <line x1="190" y1="140" x2="210" y2="140" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <rect x="216" y="36" width="168" height="90" fill="#ffffff"/>
+  <rect x="216" y="126" width="168" height="118" fill="#eef5fb"/>
+  <path d="M 278 126 A 24 24 0 1 0 322 126 Z" fill="#ffffff"/>
+  <path d="M 216 126 L 278 126 A 24 24 0 1 0 322 126 L 384 126" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <g fill="#c8642a">
+    <circle cx="292" cy="136" r="4.5"/><circle cx="308" cy="138" r="4.5"/>
+    <circle cx="296" cy="150" r="4.5"/><circle cx="306" cy="122" r="4.5"/>
+  </g>
+  <line x1="300" y1="112" x2="300" y2="88" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+  <rect x="216" y="36" width="168" height="208" fill="none" stroke="#d9e4f2" stroke-width="1.5"/>
+
+  <line x1="390" y1="140" x2="410" y2="140" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <rect x="416" y="36" width="168" height="90" fill="#ffffff"/>
+  <rect x="416" y="126" width="168" height="118" fill="#eef5fb"/>
+  <line x1="416" y1="126" x2="584" y2="126" stroke="#1f5fa8" stroke-width="2"/>
+  <g fill="#c8642a">
+    <circle cx="476" cy="84" r="4.5"/><circle cx="502" cy="70" r="4.5"/>
+    <circle cx="526" cy="86" r="4.5"/><circle cx="496" cy="96" r="4.5"/>
+  </g>
+  <rect x="416" y="36" width="168" height="208" fill="none" stroke="#d9e4f2" stroke-width="1.5"/>
+</svg>

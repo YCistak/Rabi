@@ -29,6 +29,7 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 
 ### Kimya ve hazır SVG şekiller
 
+- Biyoloji de hazır SVG şekil kullanır; dosyalar `public/soru-bankasi/biyoloji/<sınıf>/`.
 - Kimya önce `scripts/kimya-donustur.mjs <ham> <ara>`, sonra `soru-bankasi-aktar.mjs <ara>`. Konu kimliği ham dosyada
   yazan kimliktir ve programda birebir bulunmalıdır, tahmin edilmez. Kaynak/kazanım alanları uygulamaya girmez.
 - `scripts/kimya-onay.json`: kör çözüm ve denetimden geçen **hâlin** özeti (kök, şıklar, cevap, çözüm, şekil). Soru ya da

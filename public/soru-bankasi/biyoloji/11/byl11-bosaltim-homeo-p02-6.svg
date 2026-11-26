@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="600" height="340" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-kan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c0392b"/>
+    </marker>
+    <marker id="ok-tubul" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="600" height="340" fill="#ffffff"/>
+
+  <path d="M 102 82 C 134 60, 194 70, 204 108 L 534 108 L 534 144 L 204 144 C 194 182, 134 192, 102 170 C 84 156, 84 96, 102 82 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+
+  <line x1="478" y1="126" x2="520" y2="126" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-tubul)"/>
+
+  <path d="M 24 114 L 116 114" fill="none" stroke="#c0392b" stroke-width="6.5" stroke-linecap="round"/>
+  <path d="M 24 114 L 116 114" fill="none" stroke="#fdeaea" stroke-width="3" stroke-linecap="round"/>
+
+  <path d="M 116 114 C 126 100, 158 100, 164 116 C 170 130, 132 132, 124 122 C 116 112, 152 112, 162 132 C 168 146, 132 154, 122 140 C 116 130, 136 130, 138 148" fill="none" stroke="#c0392b" stroke-width="3.2" stroke-linecap="round"/>
+
+  <path d="M 138 148 L 138 212 L 266 212" fill="none" stroke="#c0392b" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 138 148 L 138 212 L 266 212" fill="none" stroke="#fdeaea" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path d="M 266 212 C 278 182, 290 168, 308 168 L 438 168 C 456 168, 468 182, 478 212" fill="none" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 266 212 L 478 212" fill="none" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 318 168 C 326 186, 326 196, 318 212" fill="none" stroke="#c0392b" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M 372 168 C 364 186, 364 196, 372 212" fill="none" stroke="#c0392b" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M 426 168 C 434 186, 434 196, 426 212" fill="none" stroke="#c0392b" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M 290 212 C 306 232, 344 232, 360 212" fill="none" stroke="#c0392b" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M 384 212 C 400 232, 438 232, 454 212" fill="none" stroke="#c0392b" stroke-width="2.6" stroke-linecap="round"/>
+
+  <path d="M 478 212 L 574 212" fill="none" stroke="#c0392b" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 478 212 L 574 212" fill="none" stroke="#fdeaea" stroke-width="2.8" stroke-linecap="round"/>
+
+  <circle cx="142" cy="126" r="32" fill="none" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <line x1="142" y1="56" x2="142" y2="94" stroke="#6b7480" stroke-width="1.3"/>
+  <circle cx="142" cy="42" r="14" fill="#ffffff" stroke="#c0392b" stroke-width="2"/>
+  <text x="142" y="47" font-size="14" font-weight="700" fill="#c0392b" text-anchor="middle">I</text>
+
+  <rect x="256" y="158" width="232" height="80" rx="14" fill="none" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <line x1="372" y1="238" x2="372" y2="262" stroke="#6b7480" stroke-width="1.3"/>
+  <circle cx="372" cy="276" r="14" fill="#ffffff" stroke="#c0392b" stroke-width="2"/>
+  <text x="372" y="281" font-size="14" font-weight="700" fill="#c0392b" text-anchor="middle">II</text>
+
+  <line x1="30" y1="96" x2="76" y2="96" stroke="#c0392b" stroke-width="2" marker-end="url(#ok-kan)"/>
+  <text x="54" y="82" font-size="13" font-weight="600" fill="#8b2620" text-anchor="middle">Kan girişi</text>
+
+  <line x1="516" y1="232" x2="564" y2="232" stroke="#c0392b" stroke-width="2" marker-end="url(#ok-kan)"/>
+  <text x="540" y="252" font-size="13" font-weight="600" fill="#8b2620" text-anchor="middle">Kan çıkışı</text>
+
+  <line x1="238" y1="52" x2="188" y2="90" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="254" y="44" font-size="14" fill="#222222" text-anchor="middle">Bowman kapsülü</text>
+
+  <text x="372" y="94" font-size="14" font-weight="600" fill="#1f5fa8" text-anchor="middle">Nefron kanalcığı</text>
+</svg>

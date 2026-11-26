@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <rect width="600" height="320" fill="#ffffff"/>
+  <rect x="20" y="14" width="560" height="98" rx="8" fill="#eef5fb" stroke="#d9e4f2" stroke-width="1.2"/>
+  <rect x="20" y="208" width="560" height="98" rx="8" fill="#eef5fb" stroke="#d9e4f2" stroke-width="1.2"/>
+  <text x="564" y="38" font-size="14" font-weight="700" fill="#222222" text-anchor="end">Hücre dışı</text>
+  <text x="36" y="292" font-size="14" font-weight="700" fill="#222222" text-anchor="start">Sitoplazma</text>
+  <g fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round">
+    <path d="M 52 126 Q 49 134 52 141 T 52 155"/>
+    <path d="M 60 126 Q 63 134 60 141 T 60 155"/>
+    <path d="M 82 126 Q 79 134 82 141 T 82 155"/>
+    <path d="M 90 126 Q 93 134 90 141 T 90 155"/>
+    <path d="M 112 126 Q 109 134 112 141 T 112 155"/>
+    <path d="M 120 126 Q 123 134 120 141 T 120 155"/>
+    <path d="M 146 126 Q 143 134 146 141 T 146 155"/>
+    <path d="M 154 126 Q 157 134 154 141 T 154 155"/>
+    <path d="M 176 126 Q 173 134 176 141 T 176 155"/>
+    <path d="M 184 126 Q 187 134 184 141 T 184 155"/>
+    <path d="M 282 126 Q 279 134 282 141 T 282 155"/>
+    <path d="M 290 126 Q 293 134 290 141 T 290 155"/>
+    <path d="M 312 126 Q 309 134 312 141 T 312 155"/>
+    <path d="M 320 126 Q 323 134 320 141 T 320 155"/>
+    <path d="M 342 126 Q 339 134 342 141 T 342 155"/>
+    <path d="M 350 126 Q 353 134 350 141 T 350 155"/>
+    <path d="M 372 126 Q 369 134 372 141 T 372 155"/>
+    <path d="M 380 126 Q 383 134 380 141 T 380 155"/>
+    <path d="M 406 126 Q 403 134 406 141 T 406 155"/>
+    <path d="M 414 126 Q 417 134 414 141 T 414 155"/>
+    <path d="M 436 126 Q 433 134 436 141 T 436 155"/>
+    <path d="M 444 126 Q 447 134 444 141 T 444 155"/>
+    <path d="M 466 126 Q 463 134 466 141 T 466 155"/>
+    <path d="M 474 126 Q 477 134 474 141 T 474 155"/>
+    <path d="M 496 126 Q 493 134 496 141 T 496 155"/>
+    <path d="M 504 126 Q 507 134 504 141 T 504 155"/>
+    <path d="M 526 126 Q 523 134 526 141 T 526 155"/>
+    <path d="M 534 126 Q 537 134 534 141 T 534 155"/>
+    <path d="M 554 126 Q 551 134 554 141 T 554 155"/>
+    <path d="M 562 126 Q 565 134 562 141 T 562 155"/>
+    <path d="M 52 194 Q 49 186 52 179 T 52 165"/>
+    <path d="M 60 194 Q 63 186 60 179 T 60 165"/>
+    <path d="M 82 194 Q 79 186 82 179 T 82 165"/>
+    <path d="M 90 194 Q 93 186 90 179 T 90 165"/>
+    <path d="M 112 194 Q 109 186 112 179 T 112 165"/>
+    <path d="M 120 194 Q 123 186 120 179 T 120 165"/>
+    <path d="M 146 194 Q 143 186 146 179 T 146 165"/>
+    <path d="M 154 194 Q 157 186 154 179 T 154 165"/>
+    <path d="M 176 194 Q 173 186 176 179 T 176 165"/>
+    <path d="M 184 194 Q 187 186 184 179 T 184 165"/>
+    <path d="M 282 194 Q 279 186 282 179 T 282 165"/>
+    <path d="M 290 194 Q 293 186 290 179 T 290 165"/>
+    <path d="M 312 194 Q 309 186 312 179 T 312 165"/>
+    <path d="M 320 194 Q 323 186 320 179 T 320 165"/>
+    <path d="M 342 194 Q 339 186 342 179 T 342 165"/>
+    <path d="M 350 194 Q 353 186 350 179 T 350 165"/>
+    <path d="M 372 194 Q 369 186 372 179 T 372 165"/>
+    <path d="M 380 194 Q 383 186 380 179 T 380 165"/>
+    <path d="M 406 194 Q 403 186 406 179 T 406 165"/>
+    <path d="M 414 194 Q 417 186 414 179 T 414 165"/>
+    <path d="M 436 194 Q 433 186 436 179 T 436 165"/>
+    <path d="M 444 194 Q 447 186 444 179 T 444 165"/>
+    <path d="M 466 194 Q 463 186 466 179 T 466 165"/>
+    <path d="M 474 194 Q 477 186 474 179 T 474 165"/>
+    <path d="M 496 194 Q 493 186 496 179 T 496 165"/>
+    <path d="M 504 194 Q 507 186 504 179 T 504 165"/>
+    <path d="M 526 194 Q 523 186 526 179 T 526 165"/>
+    <path d="M 534 194 Q 537 186 534 179 T 534 165"/>
+    <path d="M 554 194 Q 551 186 554 179 T 554 165"/>
+    <path d="M 562 194 Q 565 186 562 179 T 562 165"/>
+  </g>
+  <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6">
+    <polygon points="133,128 139,133 139,141 133,146 127,141 127,133"/>
+    <polygon points="133,146 139,150 139,157 133,161 127,157 127,150"/>
+    <polygon points="393,161 399,166 399,174 393,179 387,174 387,166"/>
+    <polygon points="393,179 399,183 399,190 393,194 387,190 387,183"/>
+    <polygon points="455,128 461,133 461,141 455,146 449,141 449,133"/>
+    <polygon points="455,146 461,150 461,157 455,161 449,157 449,150"/>
+  </g>
+  <g fill="#1f5fa8" stroke="#16467d" stroke-width="1.4">
+    <circle cx="56" cy="114" r="12"/>
+    <circle cx="86" cy="114" r="12"/>
+    <circle cx="116" cy="114" r="12"/>
+    <circle cx="150" cy="114" r="12"/>
+    <circle cx="180" cy="114" r="12"/>
+    <circle cx="286" cy="114" r="12"/>
+    <circle cx="316" cy="114" r="12"/>
+    <circle cx="346" cy="114" r="12"/>
+    <circle cx="376" cy="114" r="12"/>
+    <circle cx="410" cy="114" r="12"/>
+    <circle cx="440" cy="114" r="12"/>
+    <circle cx="470" cy="114" r="12"/>
+    <circle cx="500" cy="114" r="12"/>
+    <circle cx="530" cy="114" r="12"/>
+    <circle cx="558" cy="114" r="12"/>
+    <circle cx="56" cy="206" r="12"/>
+    <circle cx="86" cy="206" r="12"/>
+    <circle cx="116" cy="206" r="12"/>
+    <circle cx="150" cy="206" r="12"/>
+    <circle cx="180" cy="206" r="12"/>
+    <circle cx="286" cy="206" r="12"/>
+    <circle cx="316" cy="206" r="12"/>
+    <circle cx="346" cy="206" r="12"/>
+    <circle cx="376" cy="206" r="12"/>
+    <circle cx="410" cy="206" r="12"/>
+    <circle cx="440" cy="206" r="12"/>
+    <circle cx="470" cy="206" r="12"/>
+    <circle cx="500" cy="206" r="12"/>
+    <circle cx="530" cy="206" r="12"/>
+    <circle cx="558" cy="206" r="12"/>
+  </g>
+  <rect x="200" y="96" width="26" height="128" rx="12" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="238" y="96" width="26" height="128" rx="12" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <ellipse cx="504" cy="236" rx="38" ry="17" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <g stroke="#3b8f4a" stroke-width="1.6" fill="#dff0dc">
+    <line x1="316" y1="102" x2="316" y2="94"/>
+    <polygon points="316,80 323,84 323,92 316,96 309,92 309,84"/>
+    <line x1="316" y1="80" x2="316" y2="74"/>
+    <polygon points="316,60 323,64 323,72 316,76 309,72 309,64"/>
+    <line x1="323" y1="68" x2="331" y2="62"/>
+    <polygon points="338,52 345,56 345,64 338,68 331,64 331,56"/>
+    <line x1="309" y1="68" x2="301" y2="62"/>
+    <polygon points="294,52 301,56 301,64 294,68 287,64 287,56"/>
+  </g>
+  <line x1="86" y1="102" x2="86" y2="62" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="86" cy="48" r="13" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+  <text x="86" y="53" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">1</text>
+  <line x1="213" y1="96" x2="213" y2="62" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="213" cy="48" r="13" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+  <text x="213" y="53" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">2</text>
+  <line x1="345" y1="58" x2="383" y2="48" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="396" cy="48" r="13" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+  <text x="396" y="53" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">3</text>
+  <line x1="393" y1="194" x2="393" y2="258" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="393" cy="272" r="13" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+  <text x="393" y="277" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">4</text>
+  <line x1="504" y1="253" x2="504" y2="271" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="504" cy="284" r="13" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+  <text x="504" y="289" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">5</text>
+</svg>

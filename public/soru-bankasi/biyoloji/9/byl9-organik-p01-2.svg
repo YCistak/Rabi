@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" width="600" height="280" font-family="Nunito, sans-serif">
+  <rect width="600" height="280" fill="#ffffff"/>
+
+  <rect x="20" y="18" width="268" height="244" rx="10" fill="#fafbfd" stroke="#d9e4f2" stroke-width="1.5"/>
+  <text x="154" y="44" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">X molekülü</text>
+
+  <rect x="34" y="72" width="64" height="156" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="66" y="155" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Gliserol</text>
+
+  <line x1="98" y1="98" x2="116" y2="98" stroke="#6b7480" stroke-width="2"/>
+  <polyline points="116,98 128,88 140,108 152,88 164,108 176,88 188,108 200,98" fill="none" stroke="#c8642a" stroke-width="2.2"/>
+  <text x="208" y="103" font-size="13" fill="#222222">Yağ asidi</text>
+
+  <line x1="98" y1="150" x2="116" y2="150" stroke="#6b7480" stroke-width="2"/>
+  <polyline points="116,150 128,140 140,160 152,140 164,160 176,140 188,160 200,150" fill="none" stroke="#c8642a" stroke-width="2.2"/>
+  <text x="208" y="155" font-size="13" fill="#222222">Yağ asidi</text>
+
+  <line x1="98" y1="202" x2="116" y2="202" stroke="#6b7480" stroke-width="2"/>
+  <polyline points="116,202 128,192 140,212 152,192 164,212 176,192 188,212 200,202" fill="none" stroke="#c8642a" stroke-width="2.2"/>
+  <text x="208" y="207" font-size="13" fill="#222222">Yağ asidi</text>
+
+  <rect x="312" y="18" width="268" height="244" rx="10" fill="#fafbfd" stroke="#d9e4f2" stroke-width="1.5"/>
+  <text x="446" y="44" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">Y molekülü</text>
+
+  <circle cx="446" cy="84" r="24" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="446" y="89" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Fosfat</text>
+
+  <line x1="446" y1="108" x2="446" y2="124" stroke="#6b7480" stroke-width="2"/>
+  <rect x="386" y="124" width="120" height="32" rx="7" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="446" y="145" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Gliserol</text>
+
+  <line x1="416" y1="156" x2="416" y2="170" stroke="#6b7480" stroke-width="2"/>
+  <polyline points="416,170 408,182 424,194 408,206 424,218 408,230 416,242" fill="none" stroke="#c8642a" stroke-width="2.2"/>
+  <line x1="386" y1="206" x2="404" y2="206" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="380" y="202" font-size="13" text-anchor="end" fill="#222222">Yağ</text>
+  <text x="380" y="218" font-size="13" text-anchor="end" fill="#222222">asidi</text>
+
+  <line x1="476" y1="156" x2="476" y2="170" stroke="#6b7480" stroke-width="2"/>
+  <polyline points="476,170 468,182 484,194 468,206 484,218 468,230 476,242" fill="none" stroke="#c8642a" stroke-width="2.2"/>
+  <line x1="488" y1="206" x2="506" y2="206" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="512" y="202" font-size="13" fill="#222222">Yağ</text>
+  <text x="512" y="218" font-size="13" fill="#222222">asidi</text>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 270" width="520" height="270" font-family="Nunito, sans-serif">
+<rect width="520" height="270" fill="#ffffff"/>
+<path d="M80,100 L80,200 A30,30 0 0 0 140,200 L140,100 Z" fill="#eef5fb"/>
+<line x1="80" y1="100" x2="140" y2="100" stroke="#1f5fa8" stroke-width="1.2"/>
+<rect x="95" y="178" width="30" height="30" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+<path d="M80,50 L80,200 A30,30 0 0 0 140,200 L140,50" fill="none" stroke="#222222" stroke-width="1.8"/>
+<text x="110" y="260" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">1</text>
+<path d="M230,100 L230,200 A30,30 0 0 0 290,200 L290,100 Z" fill="#eef5fb"/>
+<line x1="230" y1="100" x2="290" y2="100" stroke="#1f5fa8" stroke-width="1.2"/>
+<rect x="245" y="180" width="14" height="14" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+<rect x="245" y="197" width="14" height="14" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+<rect x="262" y="180" width="14" height="14" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+<rect x="262" y="197" width="14" height="14" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+<path d="M230,50 L230,200 A30,30 0 0 0 290,200 L290,50" fill="none" stroke="#222222" stroke-width="1.8"/>
+<text x="260" y="260" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">2</text>
+<path d="M380,100 L380,200 A30,30 0 0 0 440,200 L440,100 Z" fill="#eef5fb"/>
+<line x1="380" y1="100" x2="440" y2="100" stroke="#1f5fa8" stroke-width="1.2"/>
+<circle cx="396" cy="192" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="404" cy="190" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="413" cy="191" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="422" cy="193" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="399" cy="200" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="408" cy="199" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="417" cy="201" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="425" cy="202" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="395" cy="208" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="403" cy="208" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="411" cy="209" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="420" cy="210" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="400" cy="216" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="409" cy="217" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="418" cy="217" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<circle cx="414" cy="222" r="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+<path d="M380,50 L380,200 A30,30 0 0 0 440,200 L440,50" fill="none" stroke="#222222" stroke-width="1.8"/>
+<text x="410" y="260" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">3</text>
+</svg>

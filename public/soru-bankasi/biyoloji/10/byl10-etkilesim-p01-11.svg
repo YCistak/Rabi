@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#222222"/>
+    </marker>
+    <marker id="ok-kirmizi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+
+  <rect width="600" height="320" fill="#ffffff"/>
+
+  <g>
+    <rect x="20" y="16" width="270" height="110" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+    <circle cx="42" cy="38" r="13" fill="#1f5fa8"/>
+    <text x="42" y="43" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">1</text>
+
+    <circle cx="82" cy="74" r="15" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="82" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5427">X</text>
+
+    <rect x="133" y="60" width="44" height="28" rx="6" fill="#eef5fb" stroke="#3b8f4a" stroke-width="1.4"/>
+    <text x="155" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Ot</text>
+
+    <circle cx="228" cy="74" r="15" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="228" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5427">X</text>
+
+    <line x1="99" y1="74" x2="129" y2="74" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+    <line x1="211" y1="74" x2="181" y2="74" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+    <text x="155" y="114" text-anchor="middle" font-size="13" fill="#222222">Aynı besin için yarış</text>
+  </g>
+
+  <g>
+    <rect x="310" y="16" width="270" height="110" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+    <circle cx="332" cy="38" r="13" fill="#1f5fa8"/>
+    <text x="332" y="43" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">2</text>
+
+    <circle cx="372" cy="74" r="15" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="372" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5427">X</text>
+
+    <rect x="423" y="60" width="44" height="28" rx="6" fill="#eef5fb" stroke="#3b8f4a" stroke-width="1.4"/>
+    <text x="445" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Ot</text>
+
+    <polygon points="518,57 535,88 501,88" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="518" y="83" text-anchor="middle" font-size="13" font-weight="700" fill="#8a3a10">Y</text>
+
+    <line x1="389" y1="74" x2="419" y2="74" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+    <line x1="500" y1="74" x2="471" y2="74" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+    <text x="445" y="114" text-anchor="middle" font-size="13" fill="#222222">Aynı besin için yarış</text>
+  </g>
+
+  <g>
+    <rect x="20" y="140" width="270" height="110" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+    <circle cx="42" cy="162" r="13" fill="#1f5fa8"/>
+    <text x="42" y="167" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">3</text>
+
+    <line x1="106" y1="196" x2="144" y2="180" stroke="#1f5fa8" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <line x1="166" y1="180" x2="204" y2="196" stroke="#1f5fa8" stroke-width="1.6" stroke-dasharray="4 3"/>
+    <line x1="108" y1="202" x2="202" y2="202" stroke="#1f5fa8" stroke-width="1.6" stroke-dasharray="4 3"/>
+
+    <rect x="82" y="187" width="26" height="26" rx="4" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="95" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#153f70">Z</text>
+
+    <rect x="142" y="164" width="26" height="26" rx="4" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="155" y="182" text-anchor="middle" font-size="14" font-weight="700" fill="#153f70">Z</text>
+
+    <rect x="202" y="187" width="26" height="26" rx="4" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="215" y="205" text-anchor="middle" font-size="14" font-weight="700" fill="#153f70">Z</text>
+
+    <text x="155" y="238" text-anchor="middle" font-size="13" fill="#222222">Birlikte yuva koruma</text>
+  </g>
+
+  <g>
+    <rect x="310" y="140" width="270" height="110" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+    <circle cx="332" cy="162" r="13" fill="#1f5fa8"/>
+    <text x="332" y="167" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">4</text>
+
+    <rect x="372" y="182" width="28" height="28" rx="4" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="386" y="201" text-anchor="middle" font-size="14" font-weight="700" fill="#153f70">Z</text>
+
+    <line x1="405" y1="196" x2="484" y2="196" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-kirmizi)"/>
+
+    <polygon points="507,179 524,210 490,210" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="507" y="205" text-anchor="middle" font-size="13" font-weight="700" fill="#8a3a10">Y</text>
+
+    <text x="445" y="238" text-anchor="middle" font-size="13" fill="#222222">Avlama ilişkisi</text>
+  </g>
+
+  <g>
+    <rect x="20" y="266" width="560" height="40" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+    <circle cx="56" cy="286" r="11" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <text x="56" y="291" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5427">X</text>
+    <text x="74" y="291" font-size="13" fill="#222222">X türü (otçul)</text>
+
+    <polygon points="236,272 251,298 221,298" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <text x="236" y="295" text-anchor="middle" font-size="13" font-weight="700" fill="#8a3a10">Y</text>
+    <text x="256" y="291" font-size="13" fill="#222222">Y türü (otçul)</text>
+
+    <rect x="414" y="275" width="22" height="22" rx="4" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+    <text x="425" y="291" text-anchor="middle" font-size="13" font-weight="700" fill="#153f70">Z</text>
+    <text x="444" y="291" font-size="13" fill="#222222">Z türü (etçil)</text>
+  </g>
+</svg>

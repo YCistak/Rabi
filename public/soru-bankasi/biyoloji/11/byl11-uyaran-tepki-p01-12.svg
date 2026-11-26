@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="560" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 z" fill="#6b7480"/>
+    </marker>
+    <marker id="isikOk" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M 0 0 L 7 3.5 L 0 7 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="560" height="320" fill="#ffffff"/>
+
+  <circle cx="412" cy="28" r="11" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="431" y="33" text-anchor="start" font-size="14" font-weight="600" fill="#222222">Işık kaynağı</text>
+
+  <line x1="398" y1="42" x2="364" y2="74" stroke="#c8642a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#isikOk)"/>
+  <line x1="412" y1="43" x2="412" y2="74" stroke="#c8642a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#isikOk)"/>
+  <line x1="426" y1="42" x2="460" y2="74" stroke="#c8642a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#isikOk)"/>
+
+  <text x="226" y="56" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Işık geçirmeyen kapak</text>
+
+  <text x="24" y="120" text-anchor="start" font-size="14" font-weight="700" fill="#222222">Başlangıç</text>
+
+  <rect x="136" y="80" width="184" height="70" fill="#d9e4f2"/>
+  <rect x="320" y="80" width="184" height="70" fill="#eef5fb"/>
+  <line x1="320" y1="80" x2="320" y2="150" stroke="#6b7480" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <rect x="136" y="80" width="368" height="70" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="132" y="68" width="188" height="12" rx="2" fill="#4a5568" stroke="#222222" stroke-width="1.2"/>
+
+  <g fill="#3b8f4a" stroke="#245c2f" stroke-width="1.2">
+    <ellipse cx="164" cy="100" rx="7" ry="3.5"/>
+    <line x1="171" y1="100" x2="179" y2="98" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="222" cy="96" rx="7" ry="3.5"/>
+    <line x1="229" y1="96" x2="237" y2="98" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="284" cy="102" rx="7" ry="3.5"/>
+    <line x1="291" y1="102" x2="299" y2="100" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="182" cy="132" rx="7" ry="3.5"/>
+    <line x1="189" y1="132" x2="197" y2="134" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="248" cy="128" rx="7" ry="3.5"/>
+    <line x1="255" y1="128" x2="263" y2="126" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="294" cy="135" rx="7" ry="3.5"/>
+    <line x1="301" y1="135" x2="309" y2="133" stroke="#245c2f" stroke-width="1.2"/>
+
+    <ellipse cx="352" cy="98" rx="7" ry="3.5"/>
+    <line x1="359" y1="98" x2="367" y2="96" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="412" cy="102" rx="7" ry="3.5"/>
+    <line x1="419" y1="102" x2="427" y2="100" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="468" cy="96" rx="7" ry="3.5"/>
+    <line x1="475" y1="96" x2="483" y2="98" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="366" cy="133" rx="7" ry="3.5"/>
+    <line x1="373" y1="133" x2="381" y2="131" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="426" cy="130" rx="7" ry="3.5"/>
+    <line x1="433" y1="130" x2="441" y2="132" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="476" cy="134" rx="7" ry="3.5"/>
+    <line x1="483" y1="134" x2="491" y2="132" stroke="#245c2f" stroke-width="1.2"/>
+  </g>
+
+  <line x1="320" y1="157" x2="320" y2="184" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="376" y1="170" x2="376" y2="194" stroke="#c8642a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#isikOk)"/>
+  <line x1="416" y1="170" x2="416" y2="194" stroke="#c8642a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#isikOk)"/>
+  <line x1="456" y1="170" x2="456" y2="194" stroke="#c8642a" stroke-width="1.4" stroke-dasharray="4 3" marker-end="url(#isikOk)"/>
+
+  <text x="24" y="232" text-anchor="start" font-size="14" font-weight="700" fill="#222222">15 dakika</text>
+  <text x="24" y="250" text-anchor="start" font-size="14" font-weight="700" fill="#222222">sonra</text>
+
+  <rect x="136" y="200" width="184" height="70" fill="#d9e4f2"/>
+  <rect x="320" y="200" width="184" height="70" fill="#eef5fb"/>
+  <line x1="320" y1="200" x2="320" y2="270" stroke="#6b7480" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <rect x="136" y="200" width="368" height="70" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="132" y="188" width="188" height="12" rx="2" fill="#4a5568" stroke="#222222" stroke-width="1.2"/>
+
+  <g fill="#3b8f4a" stroke="#245c2f" stroke-width="1.2">
+    <ellipse cx="288" cy="236" rx="7" ry="3.5"/>
+    <line x1="295" y1="236" x2="303" y2="234" stroke="#245c2f" stroke-width="1.2"/>
+
+    <ellipse cx="344" cy="216" rx="7" ry="3.5"/>
+    <line x1="351" y1="216" x2="359" y2="214" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="384" cy="214" rx="7" ry="3.5"/>
+    <line x1="391" y1="214" x2="399" y2="216" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="428" cy="216" rx="7" ry="3.5"/>
+    <line x1="435" y1="216" x2="443" y2="214" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="472" cy="215" rx="7" ry="3.5"/>
+    <line x1="479" y1="215" x2="487" y2="213" stroke="#245c2f" stroke-width="1.2"/>
+
+    <ellipse cx="358" cy="236" rx="7" ry="3.5"/>
+    <line x1="365" y1="236" x2="373" y2="234" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="404" cy="234" rx="7" ry="3.5"/>
+    <line x1="411" y1="234" x2="419" y2="236" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="452" cy="236" rx="7" ry="3.5"/>
+    <line x1="459" y1="236" x2="467" y2="234" stroke="#245c2f" stroke-width="1.2"/>
+
+    <ellipse cx="344" cy="255" rx="7" ry="3.5"/>
+    <line x1="351" y1="255" x2="359" y2="253" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="388" cy="256" rx="7" ry="3.5"/>
+    <line x1="395" y1="256" x2="403" y2="254" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="432" cy="254" rx="7" ry="3.5"/>
+    <line x1="439" y1="254" x2="447" y2="256" stroke="#245c2f" stroke-width="1.2"/>
+    <ellipse cx="476" cy="255" rx="7" ry="3.5"/>
+    <line x1="483" y1="255" x2="491" y2="253" stroke="#245c2f" stroke-width="1.2"/>
+  </g>
+
+  <ellipse cx="32" cy="296" rx="7" ry="3.5" fill="#3b8f4a" stroke="#245c2f" stroke-width="1.2"/>
+  <line x1="39" y1="296" x2="47" y2="294" stroke="#245c2f" stroke-width="1.2"/>
+  <text x="54" y="301" text-anchor="start" font-size="13" fill="#222222">Öglena</text>
+
+  <text x="228" y="298" text-anchor="middle" font-size="13" fill="#6b7480">Karanlık bölge</text>
+  <text x="412" y="298" text-anchor="middle" font-size="13" fill="#6b7480">Aydınlık bölge</text>
+</svg>

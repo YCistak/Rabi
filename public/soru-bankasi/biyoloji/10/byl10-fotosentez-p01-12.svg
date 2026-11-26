@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 260" width="480" height="260" font-family="Nunito, sans-serif">
+<rect width="480" height="260" fill="#ffffff"/>
+<defs>
+<marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="#6b7480"/>
+</marker>
+</defs>
+<circle cx="70" cy="120" r="24" fill="#fff6d6" stroke="#6b7480" stroke-width="1.6"/>
+<rect x="60" y="144" width="20" height="14" fill="#d5d9df" stroke="#6b7480" stroke-width="1.4"/>
+<line x1="80" y1="158" x2="80" y2="205" stroke="#6b7480" stroke-width="1.6"/>
+<line x1="60" y1="158" x2="60" y2="205" stroke="#6b7480" stroke-width="1.6"/>
+<line x1="40" y1="205" x2="100" y2="205" stroke="#6b7480" stroke-width="2"/>
+<line x1="104" y1="108" x2="124" y2="102" stroke="#c8642a" stroke-width="1.6"/>
+<line x1="106" y1="120" x2="128" y2="120" stroke="#c8642a" stroke-width="1.6"/>
+<line x1="104" y1="132" x2="124" y2="138" stroke="#c8642a" stroke-width="1.6"/>
+<rect x="261" y="90" width="138" height="129" fill="#eef5fb"/>
+<path d="M260 60 L260 220 L400 220 L400 60" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+<line x1="261" y1="90" x2="399" y2="90" stroke="#1f5fa8" stroke-width="1.2"/>
+<line x1="330" y1="214" x2="330" y2="118" stroke="#3b8f4a" stroke-width="2"/>
+<ellipse cx="317" cy="196" rx="13" ry="5" fill="#3b8f4a"/>
+<ellipse cx="343" cy="180" rx="13" ry="5" fill="#3b8f4a"/>
+<ellipse cx="317" cy="162" rx="13" ry="5" fill="#3b8f4a"/>
+<ellipse cx="343" cy="146" rx="13" ry="5" fill="#3b8f4a"/>
+<ellipse cx="318" cy="130" rx="12" ry="5" fill="#3b8f4a"/>
+<circle cx="332" cy="109" r="3" fill="none" stroke="#1f5fa8" stroke-width="1.2"/>
+<circle cx="336" cy="100" r="3" fill="none" stroke="#1f5fa8" stroke-width="1.2"/>
+<circle cx="331" cy="96" r="2.5" fill="none" stroke="#1f5fa8" stroke-width="1.2"/>
+<line x1="72" y1="240" x2="328" y2="240" stroke="#6b7480" stroke-width="1.6" marker-start="url(#ok)" marker-end="url(#ok)"/>
+<text x="200" y="232" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">d</text>
+<text x="367" y="114" font-size="15" fill="#222222" text-anchor="middle">25 °C</text>
+</svg>

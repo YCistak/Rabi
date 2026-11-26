@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-koyu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#222222"/>
+    </marker>
+  </defs>
+  <rect width="600" height="300" fill="#ffffff"/>
+
+  <line x1="300" y1="20" x2="300" y2="254" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="5 5"/>
+
+  <g>
+    <text x="150" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">I. Refleks yayı</text>
+    <text x="226" y="74" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Omurilik</text>
+    <path d="M 226 86 C 266 86, 288 112, 288 148 C 288 184, 266 210, 226 210 C 186 210, 164 184, 164 148 C 164 112, 186 86, 226 86 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M 226 140 C 234 130, 244 110, 258 112 C 265 114, 264 128, 253 142 C 262 152, 268 170, 259 182 C 248 190, 235 170, 226 156 C 217 170, 204 190, 193 182 C 184 170, 190 152, 199 142 C 188 128, 187 114, 194 112 C 208 110, 218 130, 226 140 Z" fill="#d9e4f2" stroke="#4a73a8" stroke-width="1.3"/>
+
+    <rect x="18" y="88" width="80" height="34" rx="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="58" y="110" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Reseptör</text>
+
+    <rect x="18" y="180" width="80" height="34" rx="7" fill="#f7dcdc" stroke="#b54545" stroke-width="1.5"/>
+    <text x="58" y="202" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Efektör</text>
+
+    <path d="M 98 105 L 128 105" fill="none" stroke="#1f5fa8" stroke-width="1.9" marker-end="url(#ok-mavi)"/>
+    <circle cx="140" cy="105" r="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="140" cy="105" r="3" fill="#1f5fa8"/>
+    <path d="M 148 105 C 176 105, 198 118, 203 163" fill="none" stroke="#1f5fa8" stroke-width="1.9" marker-end="url(#ok-mavi)"/>
+
+    <circle cx="203" cy="175" r="5.5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.7"/>
+    <path d="M 198 178 C 176 192, 156 197, 134 197" fill="none" stroke="#3b8f4a" stroke-width="1.9" marker-end="url(#ok-yesil)"/>
+    <path d="M 134 197 L 101 197" fill="none" stroke="#3b8f4a" stroke-width="1.9" marker-end="url(#ok-yesil)"/>
+  </g>
+
+  <g>
+    <text x="450" y="32" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">II. Refleks yayı</text>
+    <text x="526" y="74" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Omurilik</text>
+    <path d="M 526 86 C 566 86, 588 112, 588 148 C 588 184, 566 210, 526 210 C 486 210, 464 184, 464 148 C 464 112, 486 86, 526 86 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M 526 140 C 534 130, 544 110, 558 112 C 565 114, 564 128, 553 142 C 562 152, 568 170, 559 182 C 548 190, 535 170, 526 156 C 517 170, 504 190, 493 182 C 484 170, 490 152, 499 142 C 488 128, 487 114, 494 112 C 508 110, 518 130, 526 140 Z" fill="#d9e4f2" stroke="#4a73a8" stroke-width="1.3"/>
+
+    <rect x="318" y="88" width="80" height="34" rx="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="358" y="110" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Reseptör</text>
+
+    <rect x="318" y="180" width="80" height="34" rx="7" fill="#f7dcdc" stroke="#b54545" stroke-width="1.5"/>
+    <text x="358" y="202" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Efektör</text>
+
+    <path d="M 398 105 L 428 105" fill="none" stroke="#1f5fa8" stroke-width="1.9" marker-end="url(#ok-mavi)"/>
+    <circle cx="440" cy="105" r="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="440" cy="105" r="3" fill="#1f5fa8"/>
+    <path d="M 448 105 C 474 105, 492 114, 504 126" fill="none" stroke="#1f5fa8" stroke-width="1.9" marker-end="url(#ok-mavi)"/>
+
+    <circle cx="511" cy="147" r="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.7"/>
+    <path d="M 508 131 L 510 142" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+    <path d="M 510 152 L 505 167" fill="none" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+
+    <circle cx="503" cy="175" r="5.5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.7"/>
+    <path d="M 498 178 C 476 192, 456 197, 434 197" fill="none" stroke="#3b8f4a" stroke-width="1.9" marker-end="url(#ok-yesil)"/>
+    <path d="M 434 197 L 401 197" fill="none" stroke="#3b8f4a" stroke-width="1.9" marker-end="url(#ok-yesil)"/>
+  </g>
+
+  <g>
+    <line x1="242" y1="276" x2="274" y2="276" stroke="#222222" stroke-width="1.8" marker-end="url(#ok-koyu)"/>
+    <text x="284" y="281" font-size="13" fill="#222222">Uyartı yönü</text>
+  </g>
+</svg>

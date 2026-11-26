@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 220" width="560" height="220" font-family="Nunito, sans-serif">
+  <rect width="560" height="220" fill="#ffffff"/>
+
+  <g>
+    <rect x="18" y="18" width="252" height="184" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="144" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">X Nükleotidi</text>
+
+    <line x1="75" y1="108" x2="104" y2="124" stroke="#475569" stroke-width="2"/>
+    <line x1="164" y1="124" x2="186" y2="124" stroke="#475569" stroke-width="2"/>
+
+    <circle cx="58" cy="100" r="20" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="58" y="106" text-anchor="middle" font-size="15" font-weight="700" fill="#1f5fa8">P</text>
+
+    <polygon points="134,102 164,124 153,160 115,160 104,124" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <text x="134" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">I</text>
+
+    <rect x="186" y="104" width="68" height="40" rx="6" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="220" y="129" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Timin</text>
+  </g>
+
+  <g>
+    <rect x="290" y="18" width="252" height="184" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="416" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Y Nükleotidi</text>
+
+    <line x1="347" y1="108" x2="376" y2="124" stroke="#475569" stroke-width="2"/>
+    <line x1="436" y1="124" x2="458" y2="124" stroke="#475569" stroke-width="2"/>
+
+    <circle cx="330" cy="100" r="20" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="330" y="106" text-anchor="middle" font-size="15" font-weight="700" fill="#1f5fa8">P</text>
+
+    <polygon points="406,102 436,124 425,160 387,160 376,124" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+    <text x="406" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">II</text>
+
+    <rect x="458" y="104" width="68" height="40" rx="6" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/>
+    <text x="492" y="129" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Urasil</text>
+  </g>
+</svg>

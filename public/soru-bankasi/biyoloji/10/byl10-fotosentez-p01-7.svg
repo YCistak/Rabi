@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 240" width="460" height="240" font-family="Nunito, sans-serif">
+<rect width="460" height="240" fill="#ffffff"/>
+<line x1="60" y1="120" x2="18" y2="146" stroke="#3b8f4a" stroke-width="2"/>
+<path d="M60 120 Q200 20 400 120 Q200 220 60 120 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+<line x1="60" y1="120" x2="400" y2="120" stroke="#3b8f4a" stroke-width="1.4"/>
+<rect x="190" y="90" width="90" height="60" fill="#c9ced6" stroke="#6b7480" stroke-width="1.6"/>
+<text x="235" y="116" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+<line x1="126" y1="200" x2="130" y2="136" stroke="#6b7480" stroke-width="1.4"/>
+<text x="124" y="220" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+<text x="235" y="138" font-size="13" fill="#222222" text-anchor="middle">folyo</text>
+</svg>

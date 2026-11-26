@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 300" width="620" height="300" font-family="Nunito, sans-serif">
+<rect width="620" height="300" fill="#ffffff"/>
+<rect x="15" y="15" width="400" height="270" rx="10" fill="#eef7ec" stroke="#3b8f4a" stroke-width="1.8"/>
+<text x="25" y="36" font-size="14" font-weight="700" fill="#222222" text-anchor="start">Park</text>
+<line x1="90" y1="76" x2="90" y2="88" stroke="#6b4a2a" stroke-width="2"/><circle cx="90" cy="70" r="11" fill="#3b8f4a" stroke="#2b6b37" stroke-width="1.2"/>
+<line x1="220" y1="68" x2="220" y2="80" stroke="#6b4a2a" stroke-width="2"/><circle cx="220" cy="62" r="11" fill="#3b8f4a" stroke="#2b6b37" stroke-width="1.2"/>
+<line x1="345" y1="91" x2="345" y2="103" stroke="#6b4a2a" stroke-width="2"/><circle cx="345" cy="85" r="11" fill="#3b8f4a" stroke="#2b6b37" stroke-width="1.2"/>
+<line x1="120" y1="206" x2="120" y2="218" stroke="#6b4a2a" stroke-width="2"/><circle cx="120" cy="200" r="11" fill="#3b8f4a" stroke="#2b6b37" stroke-width="1.2"/>
+<line x1="300" y1="221" x2="300" y2="233" stroke="#6b4a2a" stroke-width="2"/><circle cx="300" cy="215" r="11" fill="#3b8f4a" stroke="#2b6b37" stroke-width="1.2"/>
+<circle cx="60" cy="140" r="7" fill="#444444" stroke="#222222" stroke-width="1.4"/>
+<circle cx="175" cy="125" r="7" fill="#444444" stroke="#222222" stroke-width="1.4"/>
+<circle cx="260" cy="165" r="7" fill="#444444" stroke="#222222" stroke-width="1.4"/>
+<circle cx="365" cy="190" r="7" fill="#444444" stroke="#222222" stroke-width="1.4"/>
+<circle cx="110" cy="110" r="7" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+<circle cx="205" cy="240" r="7" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+<circle cx="330" cy="140" r="7" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+<polygon points="150,162 142,176 158,176" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<polygon points="255,97 247,111 263,111" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<polygon points="380,247 372,261 388,261" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<polygon points="65,242 57,256 73,256" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<circle cx="445" cy="70" r="7" fill="#444444" stroke="#222222" stroke-width="1.4"/>
+<text x="462" y="75" font-size="14" fill="#222222" text-anchor="start">K türü, koyu tüylü</text>
+<circle cx="445" cy="110" r="7" fill="#ffffff" stroke="#222222" stroke-width="1.4"/>
+<text x="462" y="115" font-size="14" fill="#222222" text-anchor="start">K türü, açık tüylü</text>
+<polygon points="445,142 437,156 453,156" fill="#c8642a" stroke="#8a4318" stroke-width="1.2"/>
+<text x="462" y="155" font-size="14" fill="#222222" text-anchor="start">L türü kuş</text>
+<line x1="445" y1="192" x2="445" y2="204" stroke="#6b4a2a" stroke-width="2"/><circle cx="445" cy="186" r="11" fill="#3b8f4a" stroke="#2b6b37" stroke-width="1.2"/>
+<text x="462" y="191" font-size="14" fill="#222222" text-anchor="start">M türü ağaç</text>
+</svg>

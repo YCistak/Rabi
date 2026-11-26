@@ -64,6 +64,7 @@ describe('svg görsel türü', () => {
 })
 
 describe('yayımlanan SVG dosyaları', () => {
+  // Zaman aşımı geniş: tüm veri dosyalarını tarıyor, dört derste veri büyüdü.
   it('her başvurunun güvenli ve doğru ölçülü bir dosyası var; sahipsiz dosya yok', async () => {
     const kullanilan = new Set<string>()
     const konular = Object.values(BANKA_DIZINLERI).flat().flatMap((s) => s.temalar).flatMap((t) => t.konular)
@@ -79,5 +80,5 @@ describe('yayımlanan SVG dosyaları', () => {
     }
     const dosyalar = readdirSync('public/soru-bankasi', { recursive: true }).map(String).filter((d) => d.includes('.'))
     expect(dosyalar.map((d) => `soru-bankasi/${d.replaceAll('\\', '/')}`).sort()).toEqual([...kullanilan].sort())
-  })
+  }, 120_000)
 })

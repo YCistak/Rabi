@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 440" width="560" height="440" font-family="Nunito, sans-serif">
+  <rect width="560" height="440" fill="#ffffff"/>
+  <text x="295" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Gevşemiş sarkomer</text>
+  <rect x="115" y="58" width="80" height="28" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <rect x="195" y="58" width="60" height="28" fill="#c8642a"/>
+  <rect x="255" y="58" width="80" height="28" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+  <rect x="335" y="58" width="60" height="28" fill="#c8642a"/>
+  <rect x="395" y="58" width="80" height="28" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <g stroke="#1f5fa8" stroke-width="3.6" stroke-linecap="round">
+    <line x1="115" y1="52" x2="115" y2="92"/>
+    <line x1="475" y1="52" x2="475" y2="92"/>
+  </g>
+  <text x="115" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Z</text>
+  <text x="475" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Z</text>
+  <text x="155" y="77" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">I</text>
+  <text x="295" y="77" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">H</text>
+  <text x="435" y="77" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">I</text>
+  <polyline points="195,94 195,103 395,103 395,94" fill="none" stroke="#222222" stroke-width="1.5"/>
+  <text x="295" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">A bandı</text>
+  <line x1="24" y1="136" x2="536" y2="136" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="38" y="172" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">K</text>
+  <rect x="175" y="154" width="50" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <rect x="225" y="154" width="60" height="24" fill="#c8642a"/>
+  <rect x="285" y="154" width="20" height="24" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+  <rect x="305" y="154" width="60" height="24" fill="#c8642a"/>
+  <rect x="365" y="154" width="50" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <g stroke="#1f5fa8" stroke-width="3.6" stroke-linecap="round">
+    <line x1="175" y1="149" x2="175" y2="183"/>
+    <line x1="415" y1="149" x2="415" y2="183"/>
+  </g>
+  <text x="38" y="218" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">L</text>
+  <rect x="145" y="200" width="50" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <rect x="195" y="200" width="30" height="24" fill="#c8642a"/>
+  <rect x="225" y="200" width="140" height="24" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+  <rect x="365" y="200" width="30" height="24" fill="#c8642a"/>
+  <rect x="395" y="200" width="50" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <g stroke="#1f5fa8" stroke-width="3.6" stroke-linecap="round">
+    <line x1="145" y1="195" x2="145" y2="229"/>
+    <line x1="445" y1="195" x2="445" y2="229"/>
+  </g>
+  <text x="38" y="264" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">M</text>
+  <rect x="145" y="246" width="50" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <rect x="195" y="246" width="90" height="24" fill="#c8642a"/>
+  <rect x="285" y="246" width="20" height="24" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+  <rect x="305" y="246" width="90" height="24" fill="#c8642a"/>
+  <rect x="395" y="246" width="50" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <g stroke="#1f5fa8" stroke-width="3.6" stroke-linecap="round">
+    <line x1="145" y1="241" x2="145" y2="275"/>
+    <line x1="445" y1="241" x2="445" y2="275"/>
+  </g>
+  <text x="38" y="310" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">N</text>
+  <rect x="145" y="292" width="20" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <rect x="165" y="292" width="120" height="24" fill="#c8642a"/>
+  <rect x="285" y="292" width="20" height="24" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+  <rect x="305" y="292" width="120" height="24" fill="#c8642a"/>
+  <rect x="425" y="292" width="20" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <g stroke="#1f5fa8" stroke-width="3.6" stroke-linecap="round">
+    <line x1="145" y1="287" x2="145" y2="321"/>
+    <line x1="445" y1="287" x2="445" y2="321"/>
+  </g>
+  <text x="38" y="356" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">P</text>
+  <rect x="85" y="338" width="110" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <rect x="195" y="338" width="30" height="24" fill="#c8642a"/>
+  <rect x="225" y="338" width="140" height="24" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+  <rect x="365" y="338" width="30" height="24" fill="#c8642a"/>
+  <rect x="395" y="338" width="110" height="24" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <g stroke="#1f5fa8" stroke-width="3.6" stroke-linecap="round">
+    <line x1="85" y1="333" x2="85" y2="367"/>
+    <line x1="505" y1="333" x2="505" y2="367"/>
+  </g>
+  <line x1="28" y1="400" x2="28" y2="418" stroke="#1f5fa8" stroke-width="3.6" stroke-linecap="round"/>
+  <text x="38" y="414" font-size="13" fill="#222222">Z çizgisi</text>
+  <rect x="116" y="402" width="18" height="14" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="142" y="414" font-size="13" fill="#222222">I bandı</text>
+  <rect x="208" y="402" width="18" height="14" fill="#c8642a"/>
+  <text x="234" y="414" font-size="13" fill="#222222">A bandı (örtüşme)</text>
+  <rect x="380" y="402" width="18" height="14" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+  <text x="406" y="414" font-size="13" fill="#222222">H bölgesi</text>
+</svg>

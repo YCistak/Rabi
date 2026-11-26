@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 326" width="620" height="326" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#3b8f4a"/>
+    </marker>
+  </defs>
+  <rect width="620" height="326" fill="#ffffff"/>
+  <text x="310" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Duyu Organlarından Beyin Kabuğuna Uyartı Yolları</text>
+
+  <rect x="24" y="52" width="128" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="88" y="78" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Göz (Görme)</text>
+
+  <rect x="24" y="114" width="128" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="88" y="140" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Kulak (İşitme)</text>
+
+  <rect x="24" y="176" width="128" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="88" y="202" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Deri (Dokunma)</text>
+
+  <rect x="24" y="246" width="128" height="42" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="88" y="272" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Burun (Koku)</text>
+
+  <ellipse cx="275" cy="135" rx="40" ry="34" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <text x="275" y="142" text-anchor="middle" font-size="18" font-weight="700" fill="#c8642a">X</text>
+
+  <rect x="414" y="44" width="182" height="254" rx="16" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="505" y="68" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">Beyin kabuğu</text>
+
+  <rect x="432" y="82" width="146" height="36" rx="7" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="505" y="105" text-anchor="middle" font-size="13.5" fill="#222222">Görme alanı</text>
+
+  <rect x="432" y="132" width="146" height="36" rx="7" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="505" y="155" text-anchor="middle" font-size="13.5" fill="#222222">İşitme alanı</text>
+
+  <rect x="432" y="182" width="146" height="36" rx="7" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="505" y="205" text-anchor="middle" font-size="13.5" fill="#222222">Dokunma alanı</text>
+
+  <rect x="432" y="248" width="146" height="36" rx="7" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.4"/>
+  <text x="505" y="271" text-anchor="middle" font-size="13.5" fill="#222222">Koku alanı</text>
+
+  <path d="M 152 73 C 194 73 206 112 234 121" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <line x1="152" y1="135" x2="231" y2="135" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <path d="M 152 197 C 194 197 206 158 234 149" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+
+  <path d="M 312 122 C 360 112 384 100 428 100" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <path d="M 315 137 C 362 140 384 150 428 150" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <path d="M 311 150 C 360 164 384 200 428 200" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+
+  <line x1="152" y1="266" x2="428" y2="266" stroke="#3b8f4a" stroke-width="1.8" marker-end="url(#ok-yesil)"/>
+
+  <text x="310" y="316" text-anchor="middle" font-size="13" fill="#6b7480">Oklar sinirsel uyartının iletim yönünü gösterir.</text>
+</svg>

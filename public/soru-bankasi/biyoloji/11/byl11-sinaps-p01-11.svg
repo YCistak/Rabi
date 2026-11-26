@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="580" height="260" font-family="Nunito, sans-serif">
+  <rect width="580" height="260" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+
+  <line x1="190" y1="30" x2="365" y2="30" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="278" y="20" font-size="14" font-weight="700" fill="#1f5fa8" text-anchor="middle">Uyartı yönü</text>
+
+  <text x="24" y="54" font-size="14" font-weight="800" fill="#222222">K nöronu</text>
+  <g stroke="#1f5fa8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 68 78 L 44 60 M 64 92 L 36 92 M 68 106 L 44 124 M 80 70 L 72 52 M 80 114 L 72 132" fill="none"/>
+    <path d="M 110 88 L 478 88 L 478 96 L 110 96 Z" fill="#eef5fb"/>
+    <circle cx="88" cy="92" r="23" fill="#eef5fb"/>
+    <circle cx="88" cy="92" r="10" fill="#d9e4f2"/>
+    <path d="M 478 90 L 516 70 M 478 92 L 522 92 M 478 94 L 516 114" fill="none"/>
+    <circle cx="520" cy="68" r="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="526" cy="92" r="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="520" cy="116" r="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  </g>
+  <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6">
+    <rect x="132" y="78" width="66" height="28" rx="9"/>
+    <rect x="214" y="78" width="66" height="28" rx="9"/>
+    <rect x="296" y="78" width="66" height="28" rx="9"/>
+    <rect x="378" y="78" width="66" height="28" rx="9"/>
+  </g>
+
+  <line x1="288" y1="96" x2="288" y2="132" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="288" y="150" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">1</text>
+
+  <line x1="411" y1="78" x2="411" y2="54" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="411" y="46" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">2</text>
+
+  <text x="24" y="168" font-size="14" font-weight="800" fill="#222222">L nöronu</text>
+  <g stroke="#1f5fa8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 68 190 L 44 172 M 64 204 L 36 204 M 68 218 L 44 236 M 80 182 L 72 164 M 80 226 L 72 244" fill="none"/>
+    <path d="M 110 200 L 478 200 L 478 208 L 110 208 Z" fill="#eef5fb"/>
+    <circle cx="88" cy="204" r="23" fill="#eef5fb"/>
+    <circle cx="88" cy="204" r="10" fill="#d9e4f2"/>
+    <path d="M 478 202 L 516 182 M 478 204 L 522 204 M 478 206 L 516 226" fill="none"/>
+    <circle cx="520" cy="180" r="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="526" cy="204" r="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="520" cy="228" r="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  </g>
+</svg>

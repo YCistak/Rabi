@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 180" width="600" height="180" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="600" height="180" fill="#ffffff"/>
+  <text x="300" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Süreç Basamakları</text>
+
+  <rect x="14" y="56" width="104" height="76" rx="10" fill="#f4f6f8" stroke="#6b7480" stroke-width="1.5"/>
+  <ellipse cx="66" cy="79" rx="7" ry="4" fill="#6b7480"/>
+  <ellipse cx="62" cy="72" rx="6" ry="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+  <ellipse cx="70" cy="72" rx="6" ry="3" fill="#ffffff" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="66" y="106" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Böceğin</text>
+  <text x="66" y="122" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">hareketi</text>
+
+  <line x1="118" y1="94" x2="144" y2="94" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+
+  <rect x="148" y="46" width="84" height="96" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <path d="M 168 82 Q 190 64 212 82 Q 190 100 168 82 Z" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+  <circle cx="190" cy="82" r="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+  <circle cx="190" cy="82" r="3.5" fill="#1f5fa8"/>
+  <text x="190" y="128" text-anchor="middle" font-size="18" font-weight="700" fill="#1f5fa8">K</text>
+
+  <line x1="232" y1="94" x2="258" y2="94" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+
+  <rect x="262" y="46" width="84" height="96" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <line x1="289" y1="74" x2="319" y2="74" stroke="#c8642a" stroke-width="1.6"/>
+  <line x1="289" y1="74" x2="304" y2="95" stroke="#c8642a" stroke-width="1.6"/>
+  <line x1="319" y1="74" x2="304" y2="95" stroke="#c8642a" stroke-width="1.6"/>
+  <circle cx="289" cy="74" r="6" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+  <circle cx="319" cy="74" r="6" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+  <circle cx="304" cy="95" r="6" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="304" y="128" text-anchor="middle" font-size="18" font-weight="700" fill="#c8642a">L</text>
+
+  <line x1="346" y1="94" x2="372" y2="94" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+
+  <rect x="376" y="46" width="84" height="96" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <path d="M 392 82 Q 418 66 444 82 Q 418 98 392 82 Z" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.5"/>
+  <path d="M 400 82 Q 418 74 436 82" fill="none" stroke="#3b8f4a" stroke-width="1.3"/>
+  <path d="M 400 82 Q 418 90 436 82" fill="none" stroke="#3b8f4a" stroke-width="1.3"/>
+  <text x="418" y="128" text-anchor="middle" font-size="18" font-weight="700" fill="#3b8f4a">M</text>
+
+  <line x1="460" y1="94" x2="486" y2="94" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+
+  <rect x="490" y="56" width="96" height="76" rx="10" fill="#f4f6f8" stroke="#6b7480" stroke-width="1.5"/>
+  <text x="538" y="90" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Dilin</text>
+  <text x="538" y="109" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">uzatılması</text>
+</svg>

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" width="520" height="330" font-family="Nunito, sans-serif">
+<rect width="520" height="330" fill="#ffffff"/>
+<defs>
+<marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M0 0 L10 5 L0 10 Z" fill="#444444"/>
+</marker>
+</defs>
+<g stroke="#dde3ea" stroke-width="1.2">
+<line x1="175" y1="270" x2="175" y2="90"/>
+<line x1="270" y1="270" x2="270" y2="90"/>
+<line x1="365" y1="270" x2="365" y2="90"/>
+<line x1="460" y1="270" x2="460" y2="90"/>
+<line x1="80" y1="230" x2="470" y2="230"/>
+<line x1="80" y1="190" x2="470" y2="190"/>
+<line x1="80" y1="150" x2="470" y2="150"/>
+<line x1="80" y1="110" x2="470" y2="110"/>
+</g>
+<line x1="80" y1="270" x2="490" y2="270" stroke="#444444" stroke-width="1.8" marker-end="url(#ok)"/>
+<line x1="80" y1="270" x2="80" y2="55" stroke="#444444" stroke-width="1.8" marker-end="url(#ok)"/>
+<g font-size="14" fill="#222222" text-anchor="middle">
+<text x="80" y="290">0</text>
+<text x="175" y="290">10</text>
+<text x="270" y="290">20</text>
+<text x="365" y="290">30</text>
+<text x="460" y="290">40</text>
+</g>
+<g font-size="14" fill="#222222" text-anchor="end">
+<text x="70" y="235">2</text>
+<text x="70" y="195">4</text>
+<text x="70" y="155">6</text>
+<text x="70" y="115">8</text>
+</g>
+<text x="495" y="315" font-size="14" fill="#222222" text-anchor="end">Zaman (dk)</text>
+<text x="92" y="44" font-size="14" fill="#222222">Kofuldaki sindirilmemiş besin miktarı (birim)</text>
+<polyline points="80,110 175,110 365,230 460,230" fill="none" stroke="#c8642a" stroke-width="2.6" stroke-linejoin="round"/>
+<g fill="#c8642a">
+<circle cx="80" cy="110" r="4"/>
+<circle cx="175" cy="110" r="4"/>
+<circle cx="365" cy="230" r="4"/>
+<circle cx="460" cy="230" r="4"/>
+</g>
+</svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 340" width="460" height="340" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="460" height="340" fill="#ffffff"/>
+  <line x1="207" y1="277" x2="154" y2="234" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="253" y1="277" x2="306" y2="234" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="153" y1="197" x2="206" y2="154" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="307" y1="197" x2="254" y2="154" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="230" y1="107" x2="230" y2="81" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <circle cx="230" cy="50" r="26" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="230" y="56" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">P</text>
+  <circle cx="230" cy="135" r="26" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="230" y="141" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">N</text>
+  <circle cx="130" cy="215" r="26" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="130" y="221" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+  <circle cx="330" cy="215" r="26" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="330" y="221" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">M</text>
+  <circle cx="230" cy="295" r="26" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="230" y="301" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+</svg>
