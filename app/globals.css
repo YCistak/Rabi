@@ -508,6 +508,13 @@ body {
 
   /* Maskot artık bir görsel (`public/tavsan-yuz.png`); boyanacak bir çizim
      kalmadığı için maskot renk değişkenleri kaldırıldı. */
+
+  /* Alt ekranların yuvarlak cam geri düğmesi (`GeriDugmesi`, ui.tsx). Adı
+     `--cam-*` değil: o ad iOS'un camdan alt menüsünde başka değerlerle var. */
+  --geri-cam-zemin: rgba(255, 255, 255, 0.8);
+  --geri-cam-kenar: rgba(255, 255, 255, 0.94);
+  --geri-cam-golge: 0 4px 12px rgba(105, 62, 28, 0.09);
+  --geri-cam-basili: rgba(246, 235, 224, 0.96);
 }
 
 /* ---------------------------------------------------------------------------
@@ -574,6 +581,11 @@ body {
   --nokta-desen: rgba(255, 245, 235, 0.06);
 
   --shadow-kart: 0 6px 20px rgba(0, 0, 0, 0.32);
+
+  --geri-cam-zemin: rgba(45, 36, 29, 0.78);
+  --geri-cam-kenar: rgba(255, 236, 216, 0.13);
+  --geri-cam-golge: 0 4px 14px rgba(0, 0, 0, 0.34);
+  --geri-cam-basili: rgba(62, 50, 40, 0.92);
 
   --yzm: #35221f;
   --yzm-kart: #3e2824;
@@ -895,6 +907,24 @@ body {
   */
   .golge-kart {
     box-shadow: var(--shadow-kart);
+  }
+  /*
+    Alt ekranların geri düğmesinin dairesi (`GeriDugmesi`, ui.tsx): yarı
+    saydam kart zemini, ince açık kenar, yumuşak gölge. Bulanıklık yok: Android'de
+    üstte duran öğede backdrop-blur takılma yapıyor (hareket-ve-gecisler.md). Basılınca dış düğme (`group`, 44 px dokunma alanı) içteki daireyi
+    küçültüyor; hover yok, telefonda yapışıp kalıyordu.
+  */
+  .geri-dugmesi {
+    background: var(--geri-cam-zemin);
+    border: 1px solid var(--geri-cam-kenar);
+    box-shadow: var(--geri-cam-golge);
+    transition:
+      transform 150ms cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 150ms ease;
+  }
+  .group:active > .geri-dugmesi {
+    transform: scale(0.92);
+    background: var(--geri-cam-basili);
   }
   /*
     Kaydırma çubuğunu gizler. Tekerleklerde (components/secici.tsx) çubuk hem

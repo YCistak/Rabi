@@ -15,6 +15,10 @@ Rabi proje kurallarının bir parçası — dizin ve genel kurallar: [AGENTS.md]
 - Alt sayfalar aşağı çekilince kapanır (`useAsagiKaydirKapat`, `lib/asagi-kaydir.ts`);
   yeni alt sayfa kancayı `ref` olarak alır. Kapatılması karar olan sonuç sayfaları
   almaz.
+- **Alt ekranlarda geri = başlığın solunda yuvarlak cam düğme** (`GeriDugmesi`,
+  `components/ui.tsx`; `BaslikSatiri` `GeriBaglami`ndan kendisi alır, kendi başlığını
+  çizen ekran `useGeriEylemi` ile); yazılı "Geri" düğmesi kullanma (kullanıcı istedi,
+  2026-11-26).
 - Izgara kartları sırayla gelir (`kart-girisi`, `components/ui.tsx` → `kartGirisi(sıra)`);
   gecikme tavanı JS'te (CSS `min()` eski WebView'de düşüyor), sekizinci kartta.
 - Bilgi taşımayan bütün hareketler `prefers-reduced-motion` altında susar (açılış

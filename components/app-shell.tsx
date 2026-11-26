@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { App as CapacitorApp } from '@capacitor/app'
-import { ArrowLeft } from 'lucide-react'
 import type {
   Ayarlar,
   Deneme,
@@ -71,7 +70,7 @@ import { useBugun, useUygulamaGorunur } from '@/lib/gorunurluk'
 import { useTema } from '@/lib/tema-kancasi'
 import { katmanVarMi, tumKatmanlariKapat, ustKatmaniKapat } from '@/lib/geri'
 import { Acilis, GECIS_SOLMA_SURESI, GECIS_SURESI, KurulumGecisi } from '@/components/acilis'
-import { Buton } from '@/components/ui'
+import { GeriBaglami, GeriDugmesi } from '@/components/ui'
 import { BottomNav } from '@/components/bottom-nav'
 import { Kurulum } from '@/components/kurulum'
 import { AnaSayfa } from '@/components/ekranlar/ana-sayfa'
@@ -1090,21 +1089,27 @@ function RabiUygulamasi() {
   const acilisKatmani = acilisGorunur ? <Acilis onBitti={acilisiKapat} /> : null
 
   /**
-   * Alt ekranların üstündeki "Geri". Kenardan kaydırma ve Android'in geri
+   * Alt ekranların geri düğmesi. Kenardan kaydırma ve Android'in geri
    * tuşuyla aynı sıra (`geriGit`): önce ekranın kendi açtığı katman, sonra
-   * ekran. Pomodoro'da onu kendi yuvası çiziyor (aşağıda).
+   * ekran.
+   *
+   * Düğmeyi ekranın başlığı çiziyor, başlığın solunda (`GeriBaglami` →
+   * `BaslikSatiri`, `components/ui.tsx`). Başlığı kendine özgü bir alt görünüm
+   * (Kaynak Takibi'nde açık kaynak…) düğmeyi almazsa `geriSahibi` sıfır kalıyor
+   * ve kabuk aynı düğmeyi ekranın en üstüne tek başına koyuyor.
    */
-  const geriDugmesi = (
-    <Buton
-      bicim="hayalet"
-      boy="kucuk"
-      onClick={() => {
+  const [geriSahibi, setGeriSahibi] = useState(0)
+  const geriBaglami = useMemo(
+    () => ({
+      geri: () => {
         if (!ustKatmaniKapat()) setEkran(null)
-      }}
-      className="-ml-2 mb-3"
-    >
-      <ArrowLeft size={16} aria-hidden /> Geri
-    </Buton>
+      },
+      sahiplen: () => {
+        setGeriSahibi((n) => n + 1)
+        return () => setGeriSahibi((n) => n - 1)
+      },
+    }),
+    [],
   )
 
   // Veri okunmadan ekran çizilirse "kayıt yok" bir an yanıp söner.
@@ -1200,13 +1205,12 @@ function RabiUygulamasi() {
           da hep böyle yapıyordu). Her açılışta yeni kutu: giriş hareketi
           her seferinde baştan oynuyor.
 
-          Geri düğmesi de burada, Pomodoro'nun başlığının üstünde: diğer
-          araçlardaki gibi `SayfaGecisi`nin içinde dursaydı yuvanın, yani
-          bütün Pomodoro'nun altında kalırdı. */}
+          Geri düğmesini Pomodoro'nun kendi başlığı çiziyor: bileşen portalla
+          buraya geliyor ama bağlamı (`GeriBaglami`) aşağıda, portalın
+          kurulduğu yerde veriliyor. */}
       {ekran === 'pomodoro' && (
         // Tablette Pomodoro kurulumu iki sütun (`pomodoro.tsx`): geniş sayfa.
         <div data-geri-sayfa className="sayfa-girisi sayfa-ileri tablet:mx-auto tablet:max-w-[60rem]">
-          {geriDugmesi}
           <div ref={setPomodoroYuvasi} />
         </div>
       )}
@@ -1220,7 +1224,7 @@ function RabiUygulamasi() {
         genis={GENIS_SAYFALAR.has(ekran ?? `sekme:${sekme}`)}
       >
         {ekran !== null ? (
-          <>
+          <GeriBaglami.Provider value={geriBaglami}>
             {/*
               Ekranın içinde açılan bir alt görünüm varsa (Konu Takibi'nde bir
               ders) "Geri" önce onu kapatıyor — Android'in geri tuşu ve iOS'un
@@ -1228,9 +1232,14 @@ function RabiUygulamasi() {
               çizmek zorunda kalmıyor; üstte iki geri, hangisinin nereye
               götürdüğünü belirsiz bırakıyordu. Pencereler ve tam ekran
               katmanlar bu düğmeyi zaten örtüyor.
+
+              Düğmeyi başlık çiziyor (`BaslikSatiri`); başlığı almayan alt
+              görünümde yedeği burada. Pomodoro'da yedek yok, başlığı hep
+              `BaslikSatiri` (yuvası yukarıda).
             */}
-            {/* Pomodoro'nun geri düğmesi kendi yuvasında (yukarıda). */}
-            {ekran !== 'pomodoro' && geriDugmesi}
+            {ekran !== 'pomodoro' && geriSahibi === 0 && (
+              <GeriDugmesi onClick={geriBaglami.geri} className="mb-3" />
+            )}
 
             {ekran === 'okul' && (
               <OkulEkrani
@@ -1387,7 +1396,7 @@ function RabiUygulamasi() {
             {ekran === 'rabi-giydir' && (
               <RabiGiydirEkrani giyilenler={giyilenler} setGiyilenler={setGiyilenler} />
             )}
-          </>
+          </GeriBaglami.Provider>
         ) : (
           <>
             {sekme === 'ana' && (
@@ -1561,6 +1570,9 @@ function RabiUygulamasi() {
       {pomodoroKalici &&
         (ekran === 'pomodoro' || pomodoroDurumu?.canli === true) &&
         createPortal(
+          // Geri yalnız ekran görünürken; arka planda süren Pomodoro'nun
+          // başlığı başka ekranın yedek düğmesini de susturmasın.
+          <GeriBaglami.Provider value={ekran === 'pomodoro' && denemeFormu === null ? geriBaglami : null}>
           <PomodoroEkrani
             demoVeri={tanitim.tanitimdaMi}
             ayar={pomodoroAyar}
@@ -1573,7 +1585,8 @@ function RabiUygulamasi() {
             // tam da bu çağrıyı yapan sahne — kendini yeniden çağırırdı.
             onArkaPlan={() => setEkran(null)}
             baslatIstegi={pomodoroIstegi}
-          />,
+          />
+          </GeriBaglami.Provider>,
           pomodoroKalici,
         )}
       {pomodoroDurumu?.canli && ekran !== 'pomodoro' && genelTest === null && !tanitim.tanitimdaMi && (

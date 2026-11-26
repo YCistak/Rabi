@@ -1,8 +1,8 @@
 'use client'
 
-import { useContext, useState } from 'react'
+import { createContext, useContext, useLayoutEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ChevronLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useGeriKatmani } from '@/lib/geri'
 import { KARTLAR, type Ekran } from '@/lib/gezinme'
@@ -191,6 +191,67 @@ export function AracSimgesi({ arac }: { arac: Ekran }) {
   )
 }
 
+/**
+ * Alt ekranın geri eylemi. `AppShell` açık ekranın çevresine koyuyor; başlık
+ * (`BaslikSatiri` ya da kendi başlığını çizen ekran) `useGeriEylemi` ile
+ * alıyor ve düğmeyi kendi satırına, başlığın soluna yerleştiriyor.
+ *
+ * Neden prop değil: geri düğmesi olan on beşten fazla ekran var ve hepsi
+ * aynı tek eylemi elden ele taşıyacaktı. `sahiplen`: düğmeyi kendi
+ * başlığında çizen biri var mı, kabuk bunu sayıyor; yoksa (başlığı kendine
+ * özgü bir alt görünüm) düğmeyi kendisi tek başına çiziyor — hiçbir ekran
+ * geri düğmesiz kalmıyor.
+ */
+export const GeriBaglami = createContext<{
+  geri: () => void
+  sahiplen: () => () => void
+} | null>(null)
+
+/**
+ * Açık ekranın geri eylemi; ekran dışında (sekmeler, deneme formu) `null`.
+ * Çağıran düğmeyi çizmeyi üstlenir — kabuk o zaman kendi yedeğini çizmez.
+ */
+export function useGeriEylemi(): (() => void) | null {
+  const baglam = useContext(GeriBaglami)
+  // Boyamadan önce: kabuğun yedek düğmesi bir kare bile görünmesin.
+  useLayoutEffect(() => baglam?.sahiplen(), [baglam])
+  return baglam?.geri ?? null
+}
+
+/**
+ * Alt ekranların geri düğmesi: başlığın solunda, başlıkla aynı satırda
+ * yuvarlak cam düğme (`.geri-dugmesi`, `globals.css`). Başlığın üstünde ayrı
+ * satırdaki yazılı "← Geri" düğmesinin yerine geldi (kullanıcı istedi,
+ * 2026-11-26): kötü görünüyordu ve başlığı aşağı itiyordu.
+ *
+ * Görünen daire 40 px, düğmenin kendisi 44 px: dokunma hedefi parmağa göre,
+ * daire başlığa göre. Eksi kenar boşluğu dairenin solunu içeriğin hizasına
+ * çekiyor.
+ */
+export function GeriDugmesi({
+  onClick,
+  etiket = 'Geri',
+  className,
+}: {
+  onClick: () => void
+  /** Ekran okuyucu adı; Pomodoro'nun odak sahnesi "Ekrandan çık" diyor. */
+  etiket?: string
+  className?: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={etiket}
+      className={cn('group -m-0.5 grid size-11 shrink-0 place-items-center', className)}
+    >
+      <span className="geri-dugmesi grid size-10 place-items-center rounded-full text-foreground">
+        <ChevronLeft size={19} strokeWidth={2.4} aria-hidden />
+      </span>
+    </button>
+  )
+}
+
 export function BaslikSatiri({
   baslik,
   sag,
@@ -227,21 +288,33 @@ export function BaslikSatiri({
     Başlığın boyu emoji kutusuna göre (44 piksel kutu, 26 piksel yazı): satır
     yüksekliği kutunun kendisi, yani başlık kutunun tam karşısında duruyor.
   */
+  /*
+    Alt ekranda geri düğmesi başlığın solunda, aynı satırda (`GeriDugmesi`);
+    44 piksellik düğme başlık satırının yüksekliğiyle aynı, ortaları hizalı.
+  */
+  const geri = useGeriEylemi()
+  const geriDugmesi = geri && <GeriDugmesi onClick={geri} />
+
   if (arac) {
     return (
       // `sutun-boyu`: iki sütunlu tablet ekranında başlık iki sütunu kaplıyor.
       <div className="sutun-boyu mb-4 flex items-center justify-between gap-3">
-        <h1 className="flex min-h-11 items-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
-          {baslik}
-        </h1>
+        <div className="flex min-w-0 items-center gap-2.5">
+          {geriDugmesi}
+          <h1 className="flex min-h-11 items-center font-display text-[26px] font-extrabold leading-tight tracking-tight">
+            {baslik}
+          </h1>
+        </div>
         {sag ?? <AracSimgesi arac={arac} />}
       </div>
     )
   }
 
   if (ortala) {
+    // Geri düğmesi de mutlak konumda: akışta kalsaydı başlığı ortadan iterdi.
     return (
-      <div className="relative mb-4 px-12 text-center">
+      <div className={cn('relative mb-4 px-12 text-center', geri && 'flex min-h-11 items-center justify-center')}>
+        {geri && <div className="absolute inset-y-0 left-0 flex items-center">{geriDugmesi}</div>}
         <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
         {sag && <div className="absolute right-0 top-0">{sag}</div>}
       </div>
@@ -249,8 +322,11 @@ export function BaslikSatiri({
   }
 
   return (
-    <div className="mb-4 flex items-end justify-between gap-3">
-      <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
+    <div className={cn('mb-4 flex justify-between gap-3', geri ? 'items-center' : 'items-end')}>
+      <div className="flex min-w-0 items-center gap-2.5">
+        {geriDugmesi}
+        <h1 className="font-display text-2xl font-extrabold tracking-tight">{baslik}</h1>
+      </div>
       {sag}
     </div>
   )

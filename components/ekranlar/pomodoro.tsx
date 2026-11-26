@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom'
 import { KeepAwake } from '@capacitor-community/keep-awake'
 import { Capacitor } from '@capacitor/core'
 import {
-  ChevronLeft,
   Clock,
   Pause,
   Play,
@@ -51,7 +50,7 @@ import { OdakAyarlari } from '@/components/odak/odak-ayarlari'
 import { IosOdakAyarlari } from '@/components/odak/ios-odak-ayarlari'
 import { iosMu } from '@/lib/platform'
 import { cn, yeniId } from '@/lib/utils'
-import { Anahtar, BaslikSatiri, Buton, Kart, Not, Onay } from '@/components/ui'
+import { Anahtar, BaslikSatiri, Buton, GeriDugmesi, Kart, Not, Onay } from '@/components/ui'
 
 export function PomodoroEkrani({
   ayar,
@@ -972,14 +971,9 @@ function CalismaSahnesi({
         }}
       >
         <div className="flex shrink-0 items-center justify-between">
-          <button
-            type="button"
-            onClick={onGeri}
-            aria-label="Ekrandan çık"
-            className="golge-kart flex size-10 items-center justify-center rounded-[13px] bg-card text-muted-foreground transition active:brightness-95"
-          >
-            <ChevronLeft size={19} aria-hidden />
-          </button>
+          {/* Alt ekranların geri düğmesiyle aynı yuvarlak cam düğme; davranışı
+              sahneye özgü (`onGeri`: tur arka planda sürer). */}
+          <GeriDugmesi onClick={onGeri} etiket="Ekrandan çık" />
           <span className="text-[12.5px] font-extrabold tracking-[0.1em] text-muted-foreground yatay:invisible">
             {durum}
           </span>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowLeft, ArrowRight, X } from 'lucide-react'
+import { ArrowRight, X } from 'lucide-react'
 import type { OyunTanimi } from '@/lib/oyunlar/tanim'
 import type { OyunId } from '@/lib/types'
 import { MODLAR, type OyunModu } from '@/lib/oyunlar/mod'
@@ -11,6 +11,7 @@ import { useGeriKatmani } from '@/lib/geri'
 import { useGenelTest, useGenelTestIlkMi } from '@/components/genel-test-baglami'
 import { useTurAyari } from '@/components/tur-ayari-baglami'
 import { cn } from '@/lib/utils'
+import { GeriDugmesi } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 import { ModSecimi } from '@/components/mod-secimi'
 import { dersVurgusu } from '@/components/ders-renkleri'
@@ -309,14 +310,8 @@ function Sayfa({
         }}
       >
         <div className="flex shrink-0 items-center">
-          <button
-            type="button"
-            onClick={onGeri}
-            aria-label={geriEtiketi}
-            className="golge-kart flex size-9 items-center justify-center rounded-full bg-card text-foreground transition active:brightness-95"
-          >
-            <ArrowLeft size={18} aria-hidden />
-          </button>
+          {/* Alt ekranların geri düğmesiyle aynı yuvarlak cam düğme. */}
+          <GeriDugmesi onClick={onGeri} etiket={geriEtiketi} />
         </div>
         {children}
       </div>
