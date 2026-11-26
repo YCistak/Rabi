@@ -16,7 +16,7 @@ import { NOKTALAMA_ACIKLAMASI, type NoktalamaKurali } from '@/lib/oyunlar/noktal
 import { BildirimDugmesi, type BildirimKolu } from '@/components/hata-bildir'
 import { Check, ListChecks } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { BosDurum, Buton } from '@/components/ui'
+import { BosDurum, Buton, GeriDugmesi, useGeriEylemi } from '@/components/ui'
 import { Rabi } from '@/components/maskot/rabi'
 
 /**
@@ -183,12 +183,18 @@ export function OyunBankasiEkrani({
 }
 
 function Baslik() {
+  const geri = useGeriEylemi()
   return (
-    <header className="mb-4 px-0.5">
-      <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
-      <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
-        Oyun Bankası 🗂️
-      </h1>
+    // Geri düğmesi başlığın solunda; alta hizalı, böylece üstteki "RABİ"
+    // satırının değil başlık satırının karşısında duruyor.
+    <header className="mb-4 flex items-end gap-2.5 px-0.5">
+      {geri && <GeriDugmesi onClick={geri} />}
+      <div className="min-w-0">
+        <p className="text-[11px] font-black tracking-[0.2em] text-ikincil">RABİ</p>
+        <h1 className="mt-1 font-display text-[27px] font-extrabold tracking-tight">
+          Oyun Bankası 🗂️
+        </h1>
+      </div>
     </header>
   )
 }
