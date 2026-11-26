@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 320" width="460" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="460" height="320" fill="#ffffff"/>
+  <rect x="153" y="24" width="154" height="272" fill="#eef5fb"/>
+  <rect x="135" y="24" width="18" height="272" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <rect x="307" y="24" width="18" height="272" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <line x1="94" y1="244" x2="94" y2="78" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="52" y="148" text-anchor="middle" font-size="13" font-weight="600" fill="#1f5fa8">Suyun</text>
+  <text x="52" y="165" text-anchor="middle" font-size="13" font-weight="600" fill="#1f5fa8">taşınma</text>
+  <text x="52" y="182" text-anchor="middle" font-size="13" font-weight="600" fill="#1f5fa8">yönü</text>
+  <line x1="206" y1="98" x2="214" y2="146" stroke="#222222" stroke-width="1.8" stroke-dasharray="5,4"/>
+  <line x1="238" y1="184" x2="250" y2="226" stroke="#222222" stroke-width="1.8" stroke-dasharray="5,4"/>
+  <line x1="186" y1="176" x2="153" y2="176" stroke="#222222" stroke-width="1.8" stroke-dasharray="5,4"/>
+  <line x1="284" y1="256" x2="307" y2="256" stroke="#222222" stroke-width="1.8" stroke-dasharray="5,4"/>
+  <g>
+    <line x1="225" y1="74" x2="206" y2="90" stroke="#444444" stroke-width="2"/>
+    <line x1="225" y1="74" x2="244" y2="90" stroke="#444444" stroke-width="2"/>
+    <circle cx="225" cy="74" r="14" fill="#c8642a" stroke="#8d4117" stroke-width="1.4"/>
+    <text x="225" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">O</text>
+    <circle cx="206" cy="90" r="10" fill="#1f5fa8" stroke="#144175" stroke-width="1.3"/>
+    <text x="206" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">H</text>
+    <circle cx="244" cy="90" r="10" fill="#1f5fa8" stroke="#144175" stroke-width="1.3"/>
+    <text x="244" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">H</text>
+  </g>
+  <g>
+    <line x1="215" y1="160" x2="196" y2="176" stroke="#444444" stroke-width="2"/>
+    <line x1="215" y1="160" x2="234" y2="176" stroke="#444444" stroke-width="2"/>
+    <circle cx="215" cy="160" r="14" fill="#c8642a" stroke="#8d4117" stroke-width="1.4"/>
+    <text x="215" y="165" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">O</text>
+    <circle cx="196" cy="176" r="10" fill="#1f5fa8" stroke="#144175" stroke-width="1.3"/>
+    <text x="196" y="181" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">H</text>
+    <circle cx="234" cy="176" r="10" fill="#1f5fa8" stroke="#144175" stroke-width="1.3"/>
+    <text x="234" y="181" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">H</text>
+  </g>
+  <g>
+    <line x1="255" y1="240" x2="236" y2="256" stroke="#444444" stroke-width="2"/>
+    <line x1="255" y1="240" x2="274" y2="256" stroke="#444444" stroke-width="2"/>
+    <circle cx="255" cy="240" r="14" fill="#c8642a" stroke="#8d4117" stroke-width="1.4"/>
+    <text x="255" y="245" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">O</text>
+    <circle cx="236" cy="256" r="10" fill="#1f5fa8" stroke="#144175" stroke-width="1.3"/>
+    <text x="236" y="261" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">H</text>
+    <circle cx="274" cy="256" r="10" fill="#1f5fa8" stroke="#144175" stroke-width="1.3"/>
+    <text x="274" y="261" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">H</text>
+  </g>
+  <line x1="210" y1="122" x2="248" y2="122" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="256" y="127" font-size="15" font-weight="700" fill="#222222">X</text>
+  <line x1="295" y1="256" x2="295" y2="218" stroke="#6b7480" stroke-width="1.4"/>
+  <line x1="295" y1="218" x2="364" y2="218" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="372" y="223" font-size="15" font-weight="700" fill="#222222">Y</text>
+  <line x1="325" y1="68" x2="356" y2="68" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="362" y="64" font-size="13" font-weight="600" fill="#222222">İletim borusu</text>
+  <text x="362" y="81" font-size="13" font-weight="600" fill="#222222">çeperi</text>
+</svg>

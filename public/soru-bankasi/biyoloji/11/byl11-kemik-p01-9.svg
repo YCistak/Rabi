@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 280" width="620" height="280" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="620" height="280" fill="#ffffff"/>
+  <rect x="14" y="12" width="190" height="256" rx="10" fill="#fafbfc" stroke="#d4d8de" stroke-width="1.4"/>
+  <rect x="215" y="12" width="190" height="256" rx="10" fill="#fafbfc" stroke="#d4d8de" stroke-width="1.4"/>
+  <rect x="416" y="12" width="190" height="256" rx="10" fill="#fafbfc" stroke="#d4d8de" stroke-width="1.4"/>
+  <g font-size="15" font-weight="700" fill="#222222" text-anchor="middle">
+    <text x="109" y="34">1. Grup</text>
+    <text x="310" y="34">2. Grup</text>
+    <text x="511" y="34">3. Grup</text>
+  </g>
+  <g>
+    <rect x="67" y="62" width="84" height="68" rx="4" fill="#e6f2fb" stroke="none"/>
+    <polyline points="65,48 65,130 153,130 153,48" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <line x1="66" y1="62" x2="152" y2="62" stroke="#1f5fa8" stroke-width="1.4"/>
+    <path d="M 77 92 C 73 92, 73 102, 78 102 L 140 102 C 145 102, 145 92, 141 92 C 138 88, 134 92, 134 94 L 84 94 C 84 92, 80 88, 77 92 Z" fill="#e8dcc4" stroke="#7a6240" stroke-width="1.6"/>
+    <text x="109" y="148" text-anchor="middle" font-size="13.5" fill="#222222">Saf su</text>
+  </g>
+  <g>
+    <rect x="268" y="62" width="84" height="68" rx="4" fill="#fdf3d6" stroke="none"/>
+    <polyline points="266,48 266,130 354,130 354,48" fill="none" stroke="#b88c24" stroke-width="2"/>
+    <line x1="267" y1="62" x2="353" y2="62" stroke="#b88c24" stroke-width="1.4"/>
+    <path d="M 278 92 C 274 92, 274 102, 279 102 L 341 102 C 346 102, 346 92, 342 92 C 339 88, 335 92, 335 94 L 285 94 C 285 92, 281 88, 278 92 Z" fill="#e8dcc4" stroke="#7a6240" stroke-width="1.6"/>
+    <circle cx="292" cy="80" r="2.2" fill="#ffffff" stroke="#b88c24" stroke-width="1"/>
+    <circle cx="315" cy="74" r="2.6" fill="#ffffff" stroke="#b88c24" stroke-width="1"/>
+    <circle cx="330" cy="82" r="2" fill="#ffffff" stroke="#b88c24" stroke-width="1"/>
+    <text x="310" y="148" text-anchor="middle" font-size="13.5" fill="#222222">Seyreltik asit</text>
+  </g>
+  <g>
+    <line x1="461" y1="130" x2="561" y2="130" stroke="#6b7480" stroke-width="2"/>
+    <path d="M 511 86 C 500 102, 499 118, 511 128 C 523 118, 522 102, 511 86 Z" fill="#d9622f"/>
+    <path d="M 511 100 C 505 110, 505 120, 511 126 C 517 120, 517 110, 511 100 Z" fill="#f6df8c"/>
+    <line x1="471" y1="74" x2="471" y2="130" stroke="#6b7480" stroke-width="1.6"/>
+    <line x1="551" y1="74" x2="551" y2="130" stroke="#6b7480" stroke-width="1.6"/>
+    <path d="M 473 66 C 469 66, 469 76, 474 76 L 548 76 C 553 76, 553 66, 549 66 C 546 62, 542 66, 542 68 L 480 68 C 480 66, 476 62, 473 66 Z" fill="#e8dcc4" stroke="#7a6240" stroke-width="1.6"/>
+    <text x="511" y="148" text-anchor="middle" font-size="13.5" fill="#222222">Yüksek sıcaklık</text>
+  </g>
+  <g stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)">
+    <line x1="109" y1="158" x2="109" y2="184"/>
+    <line x1="310" y1="158" x2="310" y2="184"/>
+    <line x1="511" y1="158" x2="511" y2="184"/>
+  </g>
+  <g>
+    <path d="M 63 212 C 58 212, 58 224, 65 224 L 153 224 C 160 224, 160 212, 155 212 C 151 207, 146 212, 146 215 L 72 215 C 72 212, 67 207, 63 212 Z" fill="#e8dcc4" stroke="#7a6240" stroke-width="1.8"/>
+    <text x="109" y="254" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Sert ve sağlam</text>
+  </g>
+  <g>
+    <path d="M 264 226 C 286 196, 334 196, 356 226 C 360 230, 352 236, 348 231 C 330 207, 290 207, 272 231 C 268 236, 260 230, 264 226 Z" fill="#e8dcc4" stroke="#7a6240" stroke-width="1.8"/>
+    <text x="310" y="254" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Esnek, kolay bükülüyor</text>
+  </g>
+  <g>
+    <polygon points="465,214 489,213 485,224 463,223" fill="#ede7dc" stroke="#6b7480" stroke-width="1.5"/>
+    <polygon points="495,211 521,216 515,226 493,222" fill="#ede7dc" stroke="#6b7480" stroke-width="1.5"/>
+    <polygon points="529,215 557,213 559,223 533,225" fill="#ede7dc" stroke="#6b7480" stroke-width="1.5"/>
+    <circle cx="491" cy="231" r="2.2" fill="#9aa2ad"/>
+    <circle cx="525" cy="229" r="2.5" fill="#9aa2ad"/>
+    <circle cx="509" cy="234" r="1.8" fill="#9aa2ad"/>
+    <text x="511" y="254" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Çok kırılgan, ufalanıyor</text>
+  </g>
+</svg>

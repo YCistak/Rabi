@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 310" width="560" height="310" font-family="Nunito, sans-serif">
+<defs><marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222222"/></marker></defs>
+<rect width="560" height="310" fill="#ffffff"/>
+<rect x="40" y="60" width="480" height="200" rx="60" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+<text x="280" y="90" text-anchor="middle" font-size="14" fill="#6b7480">Bakteri hücresi</text>
+<rect x="90" y="130" width="140" height="56" rx="8" fill="#ffffff" stroke="#222222" stroke-width="1.5"/>
+<text x="160" y="164" text-anchor="middle" font-size="15" fill="#222222">Tepkime 1</text>
+<rect x="330" y="130" width="140" height="56" rx="8" fill="#ffffff" stroke="#222222" stroke-width="1.5"/>
+<text x="400" y="164" text-anchor="middle" font-size="15" fill="#222222">Tepkime 2</text>
+<text x="160" y="32" text-anchor="middle" font-size="16" fill="#222222">NH₃</text>
+<line x1="160" y1="40" x2="160" y2="127" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+<line x1="160" y1="186" x2="160" y2="272" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+<text x="160" y="296" text-anchor="middle" font-size="16" fill="#222222">NO₂⁻</text>
+<text x="400" y="32" text-anchor="middle" font-size="16" fill="#222222">CO₂</text>
+<line x1="400" y1="40" x2="400" y2="127" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+<line x1="400" y1="186" x2="400" y2="212" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+<text x="400" y="236" text-anchor="middle" font-size="15" fill="#222222">Organik besin</text>
+<line x1="230" y1="158" x2="327" y2="158" stroke="#c8642a" stroke-width="2" marker-end="url(#ok)"/>
+<text x="278" y="147" text-anchor="middle" font-size="17" font-weight="700" fill="#c8642a">X</text>
+</svg>

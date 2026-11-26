@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 320" width="620" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="620" height="320" fill="#ffffff"/>
+  <rect x="0" y="190" width="620" height="130" fill="#eef5fb"/>
+
+  <text x="16" y="26" font-size="14" font-weight="700" fill="#222222">Hücre dışı</text>
+  <text x="16" y="306" font-size="14" font-weight="700" fill="#222222">Hücre içi</text>
+
+  <g stroke="#6b7480" stroke-width="1.2">
+    <line x1="16" y1="136" x2="16" y2="155"/><line x1="20" y1="136" x2="20" y2="155"/><line x1="16" y1="180" x2="16" y2="161"/><line x1="20" y1="180" x2="20" y2="161"/>
+    <line x1="32" y1="136" x2="32" y2="155"/><line x1="36" y1="136" x2="36" y2="155"/><line x1="32" y1="180" x2="32" y2="161"/><line x1="36" y1="180" x2="36" y2="161"/>
+    <line x1="48" y1="136" x2="48" y2="155"/><line x1="52" y1="136" x2="52" y2="155"/><line x1="48" y1="180" x2="48" y2="161"/><line x1="52" y1="180" x2="52" y2="161"/>
+    <line x1="64" y1="136" x2="64" y2="155"/><line x1="68" y1="136" x2="68" y2="155"/><line x1="64" y1="180" x2="64" y2="161"/><line x1="68" y1="180" x2="68" y2="161"/>
+    <line x1="80" y1="136" x2="80" y2="155"/><line x1="84" y1="136" x2="84" y2="155"/><line x1="80" y1="180" x2="80" y2="161"/><line x1="84" y1="180" x2="84" y2="161"/>
+    <line x1="96" y1="136" x2="96" y2="155"/><line x1="100" y1="136" x2="100" y2="155"/><line x1="96" y1="180" x2="96" y2="161"/><line x1="100" y1="180" x2="100" y2="161"/>
+    <line x1="112" y1="136" x2="112" y2="155"/><line x1="116" y1="136" x2="116" y2="155"/><line x1="112" y1="180" x2="112" y2="161"/><line x1="116" y1="180" x2="116" y2="161"/>
+    <line x1="128" y1="136" x2="128" y2="155"/><line x1="132" y1="136" x2="132" y2="155"/><line x1="128" y1="180" x2="128" y2="161"/><line x1="132" y1="180" x2="132" y2="161"/>
+    <line x1="144" y1="136" x2="144" y2="155"/><line x1="148" y1="136" x2="148" y2="155"/><line x1="144" y1="180" x2="144" y2="161"/><line x1="148" y1="180" x2="148" y2="161"/>
+    <line x1="160" y1="136" x2="160" y2="155"/><line x1="164" y1="136" x2="164" y2="155"/><line x1="160" y1="180" x2="160" y2="161"/><line x1="164" y1="180" x2="164" y2="161"/>
+    <line x1="176" y1="136" x2="176" y2="155"/><line x1="180" y1="136" x2="180" y2="155"/><line x1="176" y1="180" x2="176" y2="161"/><line x1="180" y1="180" x2="180" y2="161"/>
+    <line x1="192" y1="136" x2="192" y2="155"/><line x1="196" y1="136" x2="196" y2="155"/><line x1="192" y1="180" x2="192" y2="161"/><line x1="196" y1="180" x2="196" y2="161"/>
+    <line x1="208" y1="136" x2="208" y2="155"/><line x1="212" y1="136" x2="212" y2="155"/><line x1="208" y1="180" x2="208" y2="161"/><line x1="212" y1="180" x2="212" y2="161"/>
+    <line x1="224" y1="136" x2="224" y2="155"/><line x1="228" y1="136" x2="228" y2="155"/><line x1="224" y1="180" x2="224" y2="161"/><line x1="228" y1="180" x2="228" y2="161"/>
+
+    <line x1="322" y1="136" x2="322" y2="155"/><line x1="326" y1="136" x2="326" y2="155"/><line x1="322" y1="180" x2="322" y2="161"/><line x1="326" y1="180" x2="326" y2="161"/>
+    <line x1="338" y1="136" x2="338" y2="155"/><line x1="342" y1="136" x2="342" y2="155"/><line x1="338" y1="180" x2="338" y2="161"/><line x1="342" y1="180" x2="342" y2="161"/>
+    <line x1="354" y1="136" x2="354" y2="155"/><line x1="358" y1="136" x2="358" y2="155"/><line x1="354" y1="180" x2="354" y2="161"/><line x1="358" y1="180" x2="358" y2="161"/>
+    <line x1="370" y1="136" x2="370" y2="155"/><line x1="374" y1="136" x2="374" y2="155"/><line x1="370" y1="180" x2="370" y2="161"/><line x1="374" y1="180" x2="374" y2="161"/>
+    <line x1="386" y1="136" x2="386" y2="155"/><line x1="390" y1="136" x2="390" y2="155"/><line x1="386" y1="180" x2="386" y2="161"/><line x1="390" y1="180" x2="390" y2="161"/>
+    <line x1="402" y1="136" x2="402" y2="155"/><line x1="406" y1="136" x2="406" y2="155"/><line x1="402" y1="180" x2="402" y2="161"/><line x1="406" y1="180" x2="406" y2="161"/>
+
+    <line x1="500" y1="136" x2="500" y2="155"/><line x1="504" y1="136" x2="504" y2="155"/><line x1="500" y1="180" x2="500" y2="161"/><line x1="504" y1="180" x2="504" y2="161"/>
+    <line x1="516" y1="136" x2="516" y2="155"/><line x1="520" y1="136" x2="520" y2="155"/><line x1="516" y1="180" x2="516" y2="161"/><line x1="520" y1="180" x2="520" y2="161"/>
+    <line x1="532" y1="136" x2="532" y2="155"/><line x1="536" y1="136" x2="536" y2="155"/><line x1="532" y1="180" x2="532" y2="161"/><line x1="536" y1="180" x2="536" y2="161"/>
+    <line x1="548" y1="136" x2="548" y2="155"/><line x1="552" y1="136" x2="552" y2="155"/><line x1="548" y1="180" x2="548" y2="161"/><line x1="552" y1="180" x2="552" y2="161"/>
+    <line x1="564" y1="136" x2="564" y2="155"/><line x1="568" y1="136" x2="568" y2="155"/><line x1="564" y1="180" x2="564" y2="161"/><line x1="568" y1="180" x2="568" y2="161"/>
+    <line x1="580" y1="136" x2="580" y2="155"/><line x1="584" y1="136" x2="584" y2="155"/><line x1="580" y1="180" x2="580" y2="161"/><line x1="584" y1="180" x2="584" y2="161"/>
+    <line x1="596" y1="136" x2="596" y2="155"/><line x1="600" y1="136" x2="600" y2="155"/><line x1="596" y1="180" x2="596" y2="161"/><line x1="600" y1="180" x2="600" y2="161"/>
+  </g>
+
+  <g fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4">
+    <circle cx="18" cy="130" r="6"/><circle cx="34" cy="130" r="6"/><circle cx="50" cy="130" r="6"/><circle cx="66" cy="130" r="6"/>
+    <circle cx="82" cy="130" r="6"/><circle cx="98" cy="130" r="6"/><circle cx="114" cy="130" r="6"/><circle cx="130" cy="130" r="6"/>
+    <circle cx="146" cy="130" r="6"/><circle cx="162" cy="130" r="6"/><circle cx="178" cy="130" r="6"/><circle cx="194" cy="130" r="6"/>
+    <circle cx="210" cy="130" r="6"/><circle cx="226" cy="130" r="6"/>
+    <circle cx="324" cy="130" r="6"/><circle cx="340" cy="130" r="6"/><circle cx="356" cy="130" r="6"/><circle cx="372" cy="130" r="6"/>
+    <circle cx="388" cy="130" r="6"/><circle cx="404" cy="130" r="6"/>
+    <circle cx="502" cy="130" r="6"/><circle cx="518" cy="130" r="6"/><circle cx="534" cy="130" r="6"/><circle cx="550" cy="130" r="6"/>
+    <circle cx="566" cy="130" r="6"/><circle cx="582" cy="130" r="6"/><circle cx="598" cy="130" r="6"/>
+
+    <circle cx="18" cy="186" r="6"/><circle cx="34" cy="186" r="6"/><circle cx="50" cy="186" r="6"/><circle cx="66" cy="186" r="6"/>
+    <circle cx="82" cy="186" r="6"/><circle cx="98" cy="186" r="6"/><circle cx="114" cy="186" r="6"/><circle cx="130" cy="186" r="6"/>
+    <circle cx="146" cy="186" r="6"/><circle cx="162" cy="186" r="6"/><circle cx="178" cy="186" r="6"/><circle cx="194" cy="186" r="6"/>
+    <circle cx="210" cy="186" r="6"/><circle cx="226" cy="186" r="6"/>
+    <circle cx="324" cy="186" r="6"/><circle cx="340" cy="186" r="6"/><circle cx="356" cy="186" r="6"/><circle cx="372" cy="186" r="6"/>
+    <circle cx="388" cy="186" r="6"/><circle cx="404" cy="186" r="6"/>
+    <circle cx="502" cy="186" r="6"/><circle cx="518" cy="186" r="6"/><circle cx="534" cy="186" r="6"/><circle cx="550" cy="186" r="6"/>
+    <circle cx="566" cy="186" r="6"/><circle cx="582" cy="186" r="6"/><circle cx="598" cy="186" r="6"/>
+  </g>
+
+  <g fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8">
+    <rect x="242" y="116" width="22" height="84" rx="10"/>
+    <rect x="286" y="116" width="22" height="84" rx="10"/>
+  </g>
+
+  <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8">
+    <rect x="420" y="116" width="22" height="84" rx="10"/>
+    <rect x="464" y="116" width="22" height="84" rx="10"/>
+  </g>
+
+  <g fill="#1f5fa8">
+    <circle cx="72" cy="44" r="4.5"/><circle cx="94" cy="38" r="4.5"/><circle cx="120" cy="40" r="4.5"/>
+    <circle cx="142" cy="48" r="4.5"/><circle cx="82" cy="64" r="4.5"/><circle cx="106" cy="58" r="4.5"/>
+    <circle cx="130" cy="66" r="4.5"/><circle cx="88" cy="84" r="4.5"/><circle cx="124" cy="84" r="4.5"/>
+    <circle cx="88" cy="256" r="4.5"/><circle cx="124" cy="264" r="4.5"/><circle cx="106" cy="284" r="4.5"/>
+  </g>
+  <line x1="106" y1="88" x2="106" y2="236" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <text x="64" y="110" font-size="16" font-weight="700" fill="#1f5fa8">K</text>
+
+  <g fill="#3b8f4a">
+    <rect x="240" y="36" width="9" height="9" rx="2"/><rect x="262" y="32" width="9" height="9" rx="2"/>
+    <rect x="286" y="36" width="9" height="9" rx="2"/><rect x="306" y="44" width="9" height="9" rx="2"/>
+    <rect x="248" y="58" width="9" height="9" rx="2"/><rect x="270" y="54" width="9" height="9" rx="2"/>
+    <rect x="294" y="58" width="9" height="9" rx="2"/><rect x="256" y="78" width="9" height="9" rx="2"/>
+    <rect x="256" y="256" width="9" height="9" rx="2"/><rect x="286" y="274" width="9" height="9" rx="2"/>
+  </g>
+  <line x1="275" y1="88" x2="275" y2="236" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <text x="228" y="106" font-size="16" font-weight="700" fill="#3b8f4a">L</text>
+
+  <g fill="#c8642a">
+    <polygon points="436,56 442,66 430,66"/>
+    <polygon points="472,62 478,72 466,72"/>
+    <polygon points="416,246 422,256 410,256"/>
+    <polygon points="438,256 444,266 432,266"/>
+    <polygon points="466,248 472,258 460,258"/>
+    <polygon points="488,256 494,266 482,266"/>
+    <polygon points="426,274 432,284 420,284"/>
+    <polygon points="452,276 458,286 446,286"/>
+    <polygon points="478,278 484,288 472,288"/>
+    <polygon points="442,294 448,304 436,304"/>
+  </g>
+  <line x1="453" y1="88" x2="453" y2="236" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <text x="406" y="106" font-size="16" font-weight="700" fill="#c8642a">M</text>
+
+  <path d="M 498 208 Q 486 222 498 236" fill="none" stroke="#c8642a" stroke-width="1.6" marker-end="url(#ok-turuncu)"/>
+  <text x="506" y="213" font-size="13" font-weight="700" fill="#c8642a">ATP</text>
+  <text x="506" y="241" font-size="13" font-weight="700" fill="#c8642a">ADP + P</text>
+</svg>

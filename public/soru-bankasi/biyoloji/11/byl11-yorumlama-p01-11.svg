@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 344" width="540" height="344" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="540" height="344" fill="#ffffff"/>
+  <text x="270" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Dokunma Uyartılarının Beyin Yarımkürelerine Ulaşımı</text>
+
+  <rect x="92" y="46" width="170" height="80" rx="28" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="177" y="81" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Sol beyin</text>
+  <text x="177" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">yarımküresi</text>
+
+  <rect x="278" y="46" width="170" height="80" rx="28" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="363" y="81" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Sağ beyin</text>
+  <text x="363" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">yarımküresi</text>
+
+  <rect x="220" y="168" width="100" height="56" rx="12" fill="#eef5fb" stroke="#6b7480" stroke-width="1.5"/>
+  <text x="108" y="201" text-anchor="middle" font-size="13.5" font-weight="700" fill="#6b7480">Omurilik</text>
+  <line x1="146" y1="196" x2="218" y2="196" stroke="#6b7480" stroke-width="1.4"/>
+
+  <rect x="80" y="264" width="144" height="44" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="152" y="291" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Sol el derisi</text>
+
+  <rect x="316" y="264" width="144" height="44" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="388" y="291" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Sağ el derisi</text>
+
+  <path d="M 152 264 C 152 226 232 220 270 196 C 308 172 363 166 363 130" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <path d="M 388 264 C 388 226 308 220 270 196 C 232 172 177 166 177 130" fill="none" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+
+  <text x="270" y="332" text-anchor="middle" font-size="13" fill="#6b7480">Oklar dokunma uyartılarının iletim yönünü gösterir.</text>
+</svg>

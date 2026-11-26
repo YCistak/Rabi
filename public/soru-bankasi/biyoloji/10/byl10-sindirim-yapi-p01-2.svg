@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 300" width="580" height="300" font-family="Nunito, sans-serif">
+<rect width="580" height="300" fill="#ffffff"/>
+<defs>
+<marker id="okY" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="#3b8f4a"/>
+</marker>
+<marker id="okK" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0 0 L10 5 L0 10 Z" fill="#8a5a2b"/>
+</marker>
+</defs>
+<path d="M70 80 L95 80 L95 210 Q95 225 110 225 Q125 225 125 210 L125 80 L150 80 L150 220 Q150 250 110 250 Q70 250 70 220 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+<line x1="72" y1="80" x2="48" y2="48" stroke="#1f5fa8" stroke-width="2"/>
+<line x1="80" y1="80" x2="72" y2="42" stroke="#1f5fa8" stroke-width="2"/>
+<line x1="140" y1="80" x2="148" y2="42" stroke="#1f5fa8" stroke-width="2"/>
+<line x1="148" y1="80" x2="172" y2="48" stroke="#1f5fa8" stroke-width="2"/>
+<line x1="103" y1="30" x2="103" y2="150" stroke="#3b8f4a" stroke-width="2" marker-end="url(#okY)"/>
+<line x1="117" y1="160" x2="117" y2="30" stroke="#8a5a2b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#okK)"/>
+<text x="110" y="278" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+<rect x="260" y="110" width="260" height="60" rx="30" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+<rect x="255" y="131" width="270" height="18" fill="#ffffff"/>
+<line x1="262" y1="131" x2="518" y2="131" stroke="#1f5fa8" stroke-width="1.6"/>
+<line x1="262" y1="149" x2="518" y2="149" stroke="#1f5fa8" stroke-width="1.6"/>
+<line x1="210" y1="140" x2="330" y2="140" stroke="#3b8f4a" stroke-width="2" marker-end="url(#okY)"/>
+<line x1="450" y1="140" x2="565" y2="140" stroke="#8a5a2b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#okK)"/>
+<text x="390" y="200" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+<line x1="300" y1="250" x2="340" y2="250" stroke="#3b8f4a" stroke-width="2" marker-end="url(#okY)"/>
+<text x="348" y="255" font-size="14" fill="#222222">Besin</text>
+<line x1="420" y1="250" x2="460" y2="250" stroke="#8a5a2b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#okK)"/>
+<text x="468" y="255" font-size="14" fill="#222222">Artık</text>
+</svg>

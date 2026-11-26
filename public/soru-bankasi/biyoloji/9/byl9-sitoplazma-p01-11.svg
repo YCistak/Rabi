@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 280" width="460" height="280" font-family="Nunito, sans-serif">
+  <rect width="460" height="280" fill="#ffffff"/>
+  <rect x="92" y="44" width="272" height="196" rx="22" fill="#d6ebd3" stroke="#4d7c4f" stroke-width="2"/>
+  <rect x="102" y="54" width="252" height="176" rx="16" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <rect x="176" y="82" width="150" height="122" rx="28" fill="#ffffff" stroke="#5b8fb9" stroke-width="1.6"/>
+  <circle cx="140" cy="142" r="28" fill="#d9e4f2" stroke="#355b8c" stroke-width="1.8"/>
+  <circle cx="140" cy="142" r="23.5" fill="none" stroke="#6486b0" stroke-width="1.2" stroke-dasharray="6 4"/>
+  <circle cx="134" cy="140" r="8" fill="#b4c8e2" stroke="#53749e" stroke-width="1.2"/>
+  <ellipse cx="212" cy="68" rx="14" ry="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  <ellipse cx="290" cy="68" rx="14" ry="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  <ellipse cx="340" cy="126" rx="7" ry="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  <ellipse cx="218" cy="217" rx="14" ry="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  <g transform="translate(292 217)">
+    <ellipse cx="0" cy="0" rx="16" ry="7.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <path d="M -11 0 L -6 -4 L -1 4 L 4 -4 L 9 4 L 12 0" fill="none" stroke="#c8642a" stroke-width="1.2"/>
+  </g>
+  <g transform="translate(340 176) rotate(90)">
+    <ellipse cx="0" cy="0" rx="15" ry="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <path d="M -10 0 L -5 -3.5 L 0 3.5 L 5 -3.5 L 10 0" fill="none" stroke="#c8642a" stroke-width="1.2"/>
+  </g>
+  <g fill="#4b5563">
+    <circle cx="164" cy="70" r="2.1"/>
+    <circle cx="250" cy="66" r="2.1"/>
+    <circle cx="338" cy="92" r="2.1"/>
+    <circle cx="172" cy="214" r="2.1"/>
+    <circle cx="256" cy="216" r="2.1"/>
+    <circle cx="118" cy="196" r="2.1"/>
+  </g>
+  <g stroke="#6b7480" stroke-width="1.4" fill="none">
+    <line x1="97" y1="96" x2="44" y2="96"/>
+    <line x1="140" y1="84" x2="140" y2="28"/>
+    <line x1="102" y1="168" x2="44" y2="168"/>
+    <line x1="256" y1="142" x2="404" y2="142"/>
+    <line x1="144" y1="146" x2="144" y2="256"/>
+  </g>
+  <g fill="#6b7480">
+    <circle cx="97" cy="96" r="3"/>
+    <circle cx="140" cy="84" r="3"/>
+    <circle cx="102" cy="168" r="3"/>
+    <circle cx="256" cy="142" r="3"/>
+    <circle cx="144" cy="146" r="3"/>
+  </g>
+  <g font-size="15" font-weight="700" fill="#222222">
+    <text x="26" y="101">K</text>
+    <text x="140" y="21" text-anchor="middle">L</text>
+    <text x="24" y="173">M</text>
+    <text x="414" y="147">N</text>
+    <text x="144" y="273" text-anchor="middle">P</text>
+  </g>
+</svg>

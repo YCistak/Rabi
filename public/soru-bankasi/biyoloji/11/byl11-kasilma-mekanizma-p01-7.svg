@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 245" width="560" height="245" font-family="Nunito, sans-serif">
+  <rect width="560" height="245" fill="#ffffff"/>
+  <defs>
+    <marker id="okSag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+    <marker id="okSol" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 10 1 L 0 5 L 10 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <text x="280" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2,6 μm</text>
+  <line x1="74" y1="34" x2="486" y2="34" stroke="#6b7480" stroke-width="1.5" marker-start="url(#okSol)" marker-end="url(#okSag)"/>
+  <line x1="72" y1="28" x2="72" y2="48" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <line x1="488" y1="28" x2="488" y2="48" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <text x="72" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#374151">Z</text>
+  <text x="488" y="62" text-anchor="middle" font-size="14" font-weight="700" fill="#374151">Z</text>
+  <polyline points="72,70 78,80 72,90 78,100 72,110 78,120 72,130 78,140 72,150" fill="none" stroke="#374151" stroke-width="2"/>
+  <polyline points="488,70 482,80 488,90 482,100 488,110 482,120 488,130 482,140 488,150" fill="none" stroke="#374151" stroke-width="2"/>
+  <line x1="76" y1="78" x2="232" y2="78" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="76" y1="100" x2="232" y2="100" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="76" y1="122" x2="232" y2="122" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="76" y1="142" x2="232" y2="142" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="328" y1="78" x2="484" y2="78" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="328" y1="100" x2="484" y2="100" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="328" y1="122" x2="484" y2="122" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="328" y1="142" x2="484" y2="142" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="152" y="86" width="256" height="6" rx="3" fill="#c8642a"/>
+  <rect x="152" y="108" width="256" height="6" rx="3" fill="#c8642a"/>
+  <rect x="152" y="130" width="256" height="6" rx="3" fill="#c8642a"/>
+  <line x1="232" y1="146" x2="232" y2="176" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <line x1="328" y1="146" x2="328" y2="176" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <line x1="234" y1="170" x2="326" y2="170" stroke="#6b7480" stroke-width="1.5" marker-start="url(#okSol)" marker-end="url(#okSag)"/>
+  <text x="280" y="190" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">0,6 μm</text>
+  <line x1="152" y1="140" x2="152" y2="216" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <line x1="408" y1="140" x2="408" y2="216" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <line x1="154" y1="210" x2="406" y2="210" stroke="#6b7480" stroke-width="1.5" marker-start="url(#okSol)" marker-end="url(#okSag)"/>
+  <text x="280" y="232" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">1,6 μm</text>
+</svg>

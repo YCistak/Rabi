@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 280" width="460" height="280" font-family="Nunito, sans-serif">
+<rect width="460" height="280" fill="#ffffff"/>
+<ellipse cx="200" cy="150" rx="120" ry="55" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+<path d="M320 150 C340 125 360 175 380 150 C395 132 410 140 425 126" fill="none" stroke="#1f5fa8" stroke-width="1.8"/>
+<circle cx="180" cy="150" r="22" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+<g fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4">
+<ellipse cx="130" cy="122" rx="14" ry="7"/>
+<ellipse cx="110" cy="152" rx="14" ry="7"/>
+<ellipse cx="140" cy="180" rx="14" ry="7"/>
+<ellipse cx="240" cy="125" rx="14" ry="7"/>
+<ellipse cx="272" cy="155" rx="14" ry="7"/>
+<ellipse cx="228" cy="182" rx="14" ry="7"/>
+</g>
+<g stroke="#6b7480" stroke-width="1.2">
+<line x1="100" y1="68" x2="128" y2="115"/>
+<line x1="170" y1="236" x2="178" y2="172"/>
+<line x1="388" y1="102" x2="381" y2="149"/>
+</g>
+<g fill="#222222" font-size="15" text-anchor="middle">
+<text x="95" y="60">Kloroplast</text>
+<text x="165" y="254">Çekirdek</text>
+<text x="390" y="94">Kamçı</text>
+</g>
+</svg>

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 275" width="580" height="275" font-family="Nunito, sans-serif">
+  <rect width="580" height="275" fill="#ffffff"/>
+  <rect x="50" y="118" width="160" height="102" fill="#fbe6d6"/>
+  <rect x="210" y="118" width="160" height="102" fill="#eef5fb"/>
+  <rect x="370" y="118" width="160" height="102" fill="#dff0dc"/>
+  <line x1="50" y1="118" x2="530" y2="118" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="210" y1="50" x2="210" y2="220" stroke="#c8642a" stroke-width="2" stroke-dasharray="7 5"/>
+  <line x1="370" y1="50" x2="370" y2="220" stroke="#c8642a" stroke-width="2" stroke-dasharray="7 5"/>
+  <polyline points="50,50 50,220 530,220 530,50" fill="none" stroke="#334155" stroke-width="2"/>
+  <text x="130" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">K bölmesi</text>
+  <text x="290" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">L bölmesi</text>
+  <text x="450" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">M bölmesi</text>
+  <text x="130" y="162" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">%9 maltoz</text>
+  <text x="130" y="182" text-anchor="middle" font-size="14" fill="#222222">çözeltisi</text>
+  <text x="290" y="162" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">%6 maltoz</text>
+  <text x="290" y="182" text-anchor="middle" font-size="14" fill="#222222">çözeltisi</text>
+  <text x="450" y="150" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">%3 maltoz</text>
+  <text x="450" y="170" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">+ %6 fruktoz</text>
+  <text x="450" y="190" text-anchor="middle" font-size="14" fill="#222222">çözeltisi</text>
+  <polyline points="210,223 210,240 370,240 370,223" fill="none" stroke="#6b7480" stroke-width="1.5"/>
+  <text x="290" y="260" text-anchor="middle" font-size="14" fill="#222222">Seçici geçirgen zarlar</text>
+</svg>

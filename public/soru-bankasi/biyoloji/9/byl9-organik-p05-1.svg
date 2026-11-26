@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 300" width="620" height="300" font-family="Nunito, sans-serif">
+  <rect width="620" height="300" fill="#ffffff"/>
+
+  <rect x="16" y="12" width="588" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="310" y="33" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">35 °C · pH 7 · Eşit miktarda nişasta · 10 dk gözlem</text>
+
+  <g>
+    <text x="90" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">1. tüp</text>
+    <path d="M 72 154 L 72 158 A 18 18 0 0 0 108 158 L 108 154 Z" fill="#dbeafe"/>
+    <path d="M 70 78 L 70 158 A 20 20 0 0 0 110 158 L 110 78" fill="none" stroke="#475569" stroke-width="1.8"/>
+    <line x1="66" y1="78" x2="114" y2="78" stroke="#475569" stroke-width="1.8"/>
+    <rect x="48" y="190" width="84" height="24" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="90" y="207" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">%8 su</text>
+    <text x="90" y="234" text-anchor="middle" font-size="13" fill="#222222">Nişasta + Enzim</text>
+    <rect x="38" y="248" width="104" height="30" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+    <text x="90" y="268" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">Ürün: 0 mg</text>
+  </g>
+
+  <g>
+    <text x="236" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2. tüp</text>
+    <path d="M 218 134 L 218 158 A 18 18 0 0 0 254 158 L 254 134 Z" fill="#bfdbfe"/>
+    <path d="M 216 78 L 216 158 A 20 20 0 0 0 256 158 L 256 78" fill="none" stroke="#475569" stroke-width="1.8"/>
+    <line x1="212" y1="78" x2="260" y2="78" stroke="#475569" stroke-width="1.8"/>
+    <rect x="194" y="190" width="84" height="24" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="236" y="207" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">%25 su</text>
+    <text x="236" y="234" text-anchor="middle" font-size="13" fill="#222222">Nişasta + Enzim</text>
+    <rect x="184" y="248" width="104" height="30" rx="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <text x="236" y="268" text-anchor="middle" font-size="13" font-weight="700" fill="#276738">Ürün: 12 mg</text>
+  </g>
+
+  <g>
+    <text x="382" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">3. tüp</text>
+    <path d="M 364 104 L 364 158 A 18 18 0 0 0 400 158 L 400 104 Z" fill="#93c5fd"/>
+    <path d="M 362 78 L 362 158 A 20 20 0 0 0 402 158 L 402 78" fill="none" stroke="#475569" stroke-width="1.8"/>
+    <line x1="358" y1="78" x2="406" y2="78" stroke="#475569" stroke-width="1.8"/>
+    <rect x="340" y="190" width="84" height="24" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="382" y="207" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">%50 su</text>
+    <text x="382" y="234" text-anchor="middle" font-size="13" fill="#222222">Nişasta + Enzim</text>
+    <rect x="330" y="248" width="104" height="30" rx="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <text x="382" y="268" text-anchor="middle" font-size="13" font-weight="700" fill="#276738">Ürün: 28 mg</text>
+  </g>
+
+  <g>
+    <text x="528" y="66" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">4. tüp</text>
+    <path d="M 510 104 L 510 158 A 18 18 0 0 0 546 158 L 546 104 Z" fill="#93c5fd"/>
+    <path d="M 508 78 L 508 158 A 20 20 0 0 0 548 158 L 548 78" fill="none" stroke="#475569" stroke-width="1.8"/>
+    <line x1="504" y1="78" x2="552" y2="78" stroke="#475569" stroke-width="1.8"/>
+    <rect x="486" y="190" width="84" height="24" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="528" y="207" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">%50 su</text>
+    <text x="528" y="234" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Yalnız nişasta</text>
+    <rect x="476" y="248" width="104" height="30" rx="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+    <text x="528" y="268" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Ürün: 0 mg</text>
+  </g>
+</svg>

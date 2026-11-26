@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 300" width="440" height="300" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-isik" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d99b1a"/>
+    </marker>
+  </defs>
+  <rect width="440" height="300" fill="#ffffff"/>
+  <ellipse cx="175" cy="206" rx="48" ry="8" fill="#8c6239"/>
+  <path d="M 169 204 C 169 145, 195 100, 248 74 L 254 84 C 206 112, 181 152, 181 204 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <path d="M 248 74 C 242 52, 264 42, 274 56 C 266 66, 256 72, 248 74 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <path d="M 254 84 C 272 78, 286 92, 274 104 C 264 100, 257 92, 254 84 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <polygon points="125,212 225,212 210,282 140,282" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <rect x="120" y="200" width="110" height="14" rx="3" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <circle cx="378" cy="64" r="20" fill="#fff4cc" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="378" y1="34" x2="378" y2="40" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="378" y1="88" x2="378" y2="94" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="348" y1="64" x2="354" y2="64" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="402" y1="64" x2="408" y2="64" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="357" y1="43" x2="361" y2="47" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="395" y1="81" x2="399" y2="85" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="399" y1="43" x2="395" y2="47" stroke="#d99b1a" stroke-width="2"/>
+  <line x1="361" y1="81" x2="357" y2="85" stroke="#d99b1a" stroke-width="2"/>
+  <text x="378" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Işık</text>
+  <line x1="342" y1="64" x2="294" y2="78" stroke="#d99b1a" stroke-width="2" marker-end="url(#ok-isik)"/>
+  <line x1="348" y1="88" x2="300" y2="102" stroke="#d99b1a" stroke-width="2" marker-end="url(#ok-isik)"/>
+  <line x1="354" y1="112" x2="306" y2="126" stroke="#d99b1a" stroke-width="2" marker-end="url(#ok-isik)"/>
+  <line x1="189" y1="126" x2="126" y2="126" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="189" cy="126" r="3.2" fill="#222222"/>
+  <text x="112" y="131" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">K</text>
+  <line x1="200" y1="135" x2="270" y2="168" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="200" cy="135" r="3.2" fill="#222222"/>
+  <text x="284" y="174" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">L</text>
+</svg>

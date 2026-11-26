@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 310" width="600" height="310" font-family="Nunito, sans-serif">
+  <rect width="600" height="310" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <text x="300" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">Oksijenlendirilen Akvaryum Ortamı</text>
+
+  <rect x="26" y="64" width="548" height="188" fill="#e8f4fc"/>
+  <rect x="26" y="252" width="548" height="28" fill="#e5dac8" stroke="#b5a58d" stroke-width="1.2"/>
+  <path d="M 26 64 Q 60 58 94 64 T 162 64 T 230 64 T 298 64 T 366 64 T 434 64 T 502 64 T 574 64" fill="none" stroke="#1f5fa8" stroke-width="1.6"/>
+  <rect x="24" y="34" width="552" height="248" rx="8" fill="none" stroke="#475569" stroke-width="2"/>
+
+  <g>
+    <line x1="268" y1="34" x2="268" y2="122" stroke="#64748b" stroke-width="2"/>
+    <rect x="259" y="122" width="18" height="10" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="1.2"/>
+    <circle cx="264" cy="111" r="3.5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+    <circle cx="274" cy="100" r="4" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+    <circle cx="262" cy="88" r="3" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+    <circle cx="272" cy="76" r="3.5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+    <text x="288" y="98" text-anchor="start" font-size="13" font-weight="700" fill="#1f5fa8">O₂ girişi</text>
+  </g>
+
+  <g>
+    <polygon points="82,114 66,102 66,126" fill="#e69a5a" stroke="#9e5320" stroke-width="1.4"/>
+    <ellipse cx="108" cy="114" rx="26" ry="14" fill="#f3b67a" stroke="#9e5320" stroke-width="1.6"/>
+    <circle cx="122" cy="110" r="2.6" fill="#222222"/>
+    <path d="M 102 104 Q 110 96 116 102" fill="none" stroke="#9e5320" stroke-width="1.4"/>
+    <text x="108" y="148" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Balık ve organik atıklar</text>
+  </g>
+
+  <g>
+    <line x1="526" y1="252" x2="526" y2="120" stroke="#286433" stroke-width="2"/>
+    <ellipse cx="512" cy="222" rx="13" ry="6" transform="rotate(-24 512 222)" fill="#3b8f4a"/>
+    <ellipse cx="540" cy="216" rx="13" ry="6" transform="rotate(24 540 216)" fill="#3b8f4a"/>
+    <ellipse cx="510" cy="192" rx="13" ry="6" transform="rotate(-24 510 192)" fill="#3b8f4a"/>
+    <ellipse cx="542" cy="186" rx="13" ry="6" transform="rotate(24 542 186)" fill="#3b8f4a"/>
+    <ellipse cx="512" cy="162" rx="12" ry="5.5" transform="rotate(-24 512 162)" fill="#3b8f4a"/>
+    <ellipse cx="540" cy="156" rx="12" ry="5.5" transform="rotate(24 540 156)" fill="#3b8f4a"/>
+    <ellipse cx="515" cy="136" rx="10" ry="5" transform="rotate(-24 515 136)" fill="#3b8f4a"/>
+    <ellipse cx="537" cy="132" rx="10" ry="5" transform="rotate(24 537 132)" fill="#3b8f4a"/>
+    <text x="524" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#286433">Su bitkisi</text>
+  </g>
+
+  <rect x="46" y="194" width="124" height="40" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="108" y="219" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Amonyak (NH₃)</text>
+
+  <rect x="212" y="194" width="110" height="40" rx="8" fill="#fef3d6" stroke="#b8860b" stroke-width="1.8"/>
+  <text x="267" y="219" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Nitrit (NO₂⁻)</text>
+
+  <rect x="364" y="194" width="114" height="40" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="421" y="219" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Nitrat (NO₃⁻)</text>
+
+  <line x1="108" y1="156" x2="108" y2="189" stroke="#334155" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="82" cy="172" r="12" fill="#ffffff" stroke="#334155" stroke-width="1.6"/>
+  <text x="82" y="177" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">I</text>
+
+  <line x1="172" y1="214" x2="207" y2="214" stroke="#334155" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="190" cy="184" r="13" fill="#ffffff" stroke="#334155" stroke-width="1.6"/>
+  <text x="190" y="189" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">II</text>
+
+  <line x1="324" y1="214" x2="359" y2="214" stroke="#334155" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="342" cy="184" r="13" fill="#ffffff" stroke="#334155" stroke-width="1.6"/>
+  <text x="342" y="189" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">III</text>
+
+  <path d="M 478 206 Q 498 198 506 174" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="472" cy="166" r="13" fill="#ffffff" stroke="#334155" stroke-width="1.6"/>
+  <text x="472" y="171" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">IV</text>
+</svg>

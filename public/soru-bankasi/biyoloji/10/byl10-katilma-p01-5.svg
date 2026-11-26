@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 470" width="560" height="470" font-family="Nunito, sans-serif">
+<rect width="560" height="470" fill="#ffffff"/>
+<defs>
+<marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+<path d="M 0 0 L 10 5 L 0 10 Z" fill="#222222"/>
+</marker>
+</defs>
+<g fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6">
+<rect x="60" y="16" width="120" height="34" rx="6"/>
+<rect x="60" y="76" width="120" height="34" rx="6"/>
+<rect x="55" y="136" width="130" height="34" rx="6"/>
+<rect x="50" y="228" width="140" height="34" rx="6"/>
+</g>
+<circle cx="340" cy="345" r="80" fill="none" stroke="#c8642a" stroke-width="1.8"/>
+<g fill="#c8642a">
+<polygon points="260,336 254,350 266,350"/>
+<polygon points="279,397 290,401 283,408"/>
+</g>
+<g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4">
+<rect x="290" y="252" width="100" height="26" rx="5"/>
+<rect x="372" y="332" width="100" height="26" rx="5"/>
+<rect x="290" y="412" width="100" height="26" rx="5"/>
+</g>
+<g fill="#222222" font-size="14" text-anchor="middle">
+<text x="120" y="38">Glikoz</text>
+<text x="120" y="98">Glikoliz</text>
+<text x="120" y="158">Piruvat (3C)</text>
+<text x="120" y="242">Asetil CoA</text>
+<text x="120" y="257" font-size="13">Asetil grubu (2C)</text>
+<text x="340" y="270" font-size="13">6C ara ürün</text>
+<text x="422" y="350" font-size="13">5C ara ürün</text>
+<text x="340" y="430" font-size="13">4C ara ürün</text>
+<text x="340" y="341">Krebs</text>
+<text x="340" y="358">döngüsü</text>
+</g>
+<g stroke="#222222" stroke-width="1.6" marker-end="url(#ok)" fill="none">
+<line x1="120" y1="50" x2="120" y2="74"/>
+<line x1="120" y1="110" x2="120" y2="134"/>
+<line x1="120" y1="170" x2="120" y2="226"/>
+<line x1="120" y1="198" x2="168" y2="198"/>
+<line x1="190" y1="245" x2="278" y2="284"/>
+<line x1="397" y1="288" x2="434" y2="254"/>
+<line x1="397" y1="402" x2="434" y2="436"/>
+</g>
+<g fill="#222222" font-size="14">
+<text x="174" y="203">CO₂</text>
+<text x="438" y="252">CO₂</text>
+<text x="438" y="452">CO₂</text>
+</g>
+</svg>

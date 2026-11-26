@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 310" width="620" height="310" font-family="Nunito, sans-serif">
+  <rect width="620" height="310" fill="#ffffff"/>
+
+  <g>
+    <rect x="16" y="14" width="138" height="282" rx="8" fill="#fafafa" stroke="#d1d5db" stroke-width="1.3"/>
+    <text x="85" y="38" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">K</text>
+
+    <circle cx="38" cy="58" r="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.4"/>
+    <line x1="38" y1="48" x2="38" y2="50" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="38" y1="66" x2="38" y2="68" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="28" y1="58" x2="30" y2="58" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="46" y1="58" x2="48" y2="58" stroke="#d97706" stroke-width="1.3"/>
+    <text x="54" y="62" font-size="13" fill="#222222">12 saat ışık</text>
+
+    <text x="85" y="84" font-size="13" font-weight="600" text-anchor="middle" fill="#222222">25 °C</text>
+    <text x="85" y="103" font-size="13" font-weight="600" text-anchor="middle" fill="#1f5fa8">Saf su</text>
+    <line x1="28" y1="114" x2="142" y2="114" stroke="#e5e7eb" stroke-width="1.2"/>
+
+    <line x1="85" y1="222" x2="85" y2="194" stroke="#3b8f4a" stroke-width="3"/>
+    <ellipse cx="75" cy="195" rx="10" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <ellipse cx="95" cy="195" rx="10" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <polygon points="58,222 112,222 104,250 66,250" fill="#e8dccb" stroke="#8b6b4c" stroke-width="1.5"/>
+
+    <rect x="27" y="260" width="116" height="26" rx="5" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="85" y="278" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Uzama: +6 cm</text>
+  </g>
+
+  <g>
+    <rect x="166" y="14" width="138" height="282" rx="8" fill="#fafafa" stroke="#d1d5db" stroke-width="1.3"/>
+    <text x="235" y="38" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">L</text>
+
+    <circle cx="188" cy="58" r="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.4"/>
+    <line x1="188" y1="48" x2="188" y2="50" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="188" y1="66" x2="188" y2="68" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="178" y1="58" x2="180" y2="58" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="196" y1="58" x2="198" y2="58" stroke="#d97706" stroke-width="1.3"/>
+    <text x="204" y="62" font-size="13" fill="#222222">12 saat ışık</text>
+
+    <text x="235" y="84" font-size="13" font-weight="600" text-anchor="middle" fill="#222222">25 °C</text>
+    <text x="235" y="103" font-size="13" font-weight="600" text-anchor="middle" fill="#c8642a">Gibberellin</text>
+    <line x1="178" y1="114" x2="292" y2="114" stroke="#e5e7eb" stroke-width="1.2"/>
+
+    <line x1="235" y1="222" x2="235" y2="144" stroke="#3b8f4a" stroke-width="3"/>
+    <ellipse cx="225" cy="145" rx="10" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <ellipse cx="245" cy="145" rx="10" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <ellipse cx="226" cy="180" rx="8" ry="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <ellipse cx="244" cy="180" rx="8" ry="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <polygon points="208,222 262,222 254,250 216,250" fill="#e8dccb" stroke="#8b6b4c" stroke-width="1.5"/>
+
+    <rect x="177" y="260" width="116" height="26" rx="5" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="235" y="278" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Uzama: +18 cm</text>
+  </g>
+
+  <g>
+    <rect x="316" y="14" width="138" height="282" rx="8" fill="#fafafa" stroke="#d1d5db" stroke-width="1.3"/>
+    <text x="385" y="38" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">M</text>
+
+    <circle cx="338" cy="58" r="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.4"/>
+    <line x1="338" y1="48" x2="338" y2="50" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="338" y1="66" x2="338" y2="68" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="328" y1="58" x2="330" y2="58" stroke="#d97706" stroke-width="1.3"/>
+    <line x1="346" y1="58" x2="348" y2="58" stroke="#d97706" stroke-width="1.3"/>
+    <text x="354" y="62" font-size="13" fill="#222222">12 saat ışık</text>
+
+    <text x="385" y="84" font-size="13" font-weight="600" text-anchor="middle" fill="#222222">15 °C</text>
+    <text x="385" y="103" font-size="13" font-weight="600" text-anchor="middle" fill="#c8642a">Gibberellin</text>
+    <line x1="328" y1="114" x2="442" y2="114" stroke="#e5e7eb" stroke-width="1.2"/>
+
+    <line x1="385" y1="222" x2="385" y2="174" stroke="#3b8f4a" stroke-width="3"/>
+    <ellipse cx="375" cy="175" rx="10" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <ellipse cx="395" cy="175" rx="10" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <polygon points="358,222 412,222 404,250 366,250" fill="#e8dccb" stroke="#8b6b4c" stroke-width="1.5"/>
+
+    <rect x="327" y="260" width="116" height="26" rx="5" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="385" y="278" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Uzama: +11 cm</text>
+  </g>
+
+  <g>
+    <rect x="466" y="14" width="138" height="282" rx="8" fill="#fafafa" stroke="#d1d5db" stroke-width="1.3"/>
+    <text x="535" y="38" font-size="16" font-weight="700" text-anchor="middle" fill="#222222">N</text>
+
+    <circle cx="496" cy="58" r="6" fill="#4b5563" stroke="#222222" stroke-width="1.3"/>
+    <text x="510" y="62" font-size="13" fill="#222222">Karanlık</text>
+
+    <text x="535" y="84" font-size="13" font-weight="600" text-anchor="middle" fill="#222222">25 °C</text>
+    <text x="535" y="103" font-size="13" font-weight="600" text-anchor="middle" fill="#1f5fa8">Saf su</text>
+    <line x1="478" y1="114" x2="592" y2="114" stroke="#e5e7eb" stroke-width="1.2"/>
+
+    <line x1="535" y1="222" x2="535" y2="178" stroke="#6b8e3a" stroke-width="3"/>
+    <ellipse cx="525" cy="179" rx="10" ry="5" fill="#f3f4d3" stroke="#6b8e3a" stroke-width="1.4"/>
+    <ellipse cx="545" cy="179" rx="10" ry="5" fill="#f3f4d3" stroke="#6b8e3a" stroke-width="1.4"/>
+    <polygon points="508,222 562,222 554,250 516,250" fill="#e8dccb" stroke="#8b6b4c" stroke-width="1.5"/>
+
+    <rect x="477" y="260" width="116" height="26" rx="5" fill="#eef5fb" stroke="#94a3b8" stroke-width="1.2"/>
+    <text x="535" y="278" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Uzama: +10 cm</text>
+  </g>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260" font-family="Nunito, sans-serif">
+  <rect width="600" height="260" fill="#ffffff"/>
+  <g id="sinir-kesit">
+    <circle cx="134" cy="136" r="82" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <circle cx="104" cy="108" r="29" fill="#f8fafc" stroke="#6b7480" stroke-width="1.3"/>
+    <circle cx="94" cy="98" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="94" cy="98" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="115" cy="97" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="115" cy="97" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="90" cy="117" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="90" cy="117" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="112" cy="119" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="112" cy="119" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="164" cy="112" r="28" fill="#f8fafc" stroke="#6b7480" stroke-width="1.3"/>
+    <circle cx="155" cy="102" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="155" cy="102" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="174" cy="103" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="174" cy="103" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="154" cy="122" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="154" cy="122" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="174" cy="122" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="174" cy="122" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="134" cy="170" r="32" fill="#f8fafc" stroke="#6b7480" stroke-width="1.3"/>
+    <circle cx="118" cy="160" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="118" cy="160" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="136" cy="156" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="136" cy="156" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="122" cy="182" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="122" cy="182" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="144" cy="182" r="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <circle cx="144" cy="182" r="3" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.1"/>
+    <circle cx="154" cy="166" r="7.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="154" cy="166" r="3.2" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.2"/>
+  </g>
+  <line x1="161" y1="160" x2="274" y2="112" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <line x1="161" y1="172" x2="274" y2="164" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4,3"/>
+  <g id="lif-buyutme">
+    <rect x="292" y="114" width="76" height="48" rx="14" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <rect x="384" y="114" width="76" height="48" rx="14" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <rect x="476" y="114" width="76" height="48" rx="14" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <ellipse cx="330" cy="122" rx="7" ry="3.5" fill="#d9e4f2" stroke="#c8642a" stroke-width="1.1"/>
+    <ellipse cx="422" cy="122" rx="7" ry="3.5" fill="#d9e4f2" stroke="#c8642a" stroke-width="1.1"/>
+    <ellipse cx="514" cy="122" rx="7" ry="3.5" fill="#d9e4f2" stroke="#c8642a" stroke-width="1.1"/>
+    <rect x="274" y="131" width="296" height="14" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  </g>
+  <line x1="42" y1="42" x2="76" y2="78" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="38" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">K</text>
+  <line x1="296" y1="212" x2="282" y2="145" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="296" y="230" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">L</text>
+  <line x1="422" y1="62" x2="422" y2="114" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="422" y="52" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">M</text>
+  <line x1="468" y1="212" x2="468" y2="145" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="468" y="230" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">N</text>
+</svg>

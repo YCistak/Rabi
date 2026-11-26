@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 290" width="600" height="290" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-koyu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#222222"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+  </defs>
+  <rect width="600" height="290" fill="#ffffff"/>
+  <line x1="300" y1="18" x2="300" y2="272" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="150" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5fa8">X olayı</text>
+  <text x="450" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#3b8f4a">Y olayı</text>
+  <text x="78" y="54" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">A</text>
+  <text x="224" y="54" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">B</text>
+  <text x="378" y="54" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">C</text>
+  <text x="524" y="54" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">D</text>
+  <text x="78" y="76" text-anchor="middle" font-size="13" fill="#6b7480">Hücre dışı</text>
+  <text x="378" y="76" text-anchor="middle" font-size="13" fill="#6b7480">Hücre dışı</text>
+  <path d="M 22 115 L 54 115 C 54 152 50 176 78 176 C 106 176 102 152 102 115 L 134 115 L 134 242 L 22 242 Z" fill="#eef5fb"/>
+  <path d="M 22 115 L 54 115 C 54 152 50 176 78 176 C 106 176 102 152 102 115 L 134 115" fill="none" stroke="#1f5fa8" stroke-width="2.4"/>
+  <circle cx="70" cy="144" r="5.5" fill="#c8642a"/>
+  <circle cx="86" cy="146" r="5.5" fill="#c8642a"/>
+  <circle cx="78" cy="160" r="5.5" fill="#c8642a"/>
+  <line x1="78" y1="90" x2="78" y2="124" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+  <text x="78" y="264" text-anchor="middle" font-size="13" fill="#6b7480">Sitoplazma</text>
+  <line x1="140" y1="158" x2="162" y2="158" stroke="#222222" stroke-width="2" marker-end="url(#ok-koyu)"/>
+  <rect x="168" y="115" width="112" height="127" fill="#eef5fb"/>
+  <line x1="168" y1="115" x2="280" y2="115" stroke="#1f5fa8" stroke-width="2.4"/>
+  <circle cx="224" cy="186" r="26" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+  <circle cx="216" cy="180" r="5.5" fill="#c8642a"/>
+  <circle cx="232" cy="182" r="5.5" fill="#c8642a"/>
+  <circle cx="224" cy="195" r="5.5" fill="#c8642a"/>
+  <line x1="224" y1="126" x2="224" y2="152" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+  <text x="224" y="264" text-anchor="middle" font-size="13" fill="#6b7480">Sitoplazma</text>
+  <rect x="322" y="115" width="112" height="127" fill="#eef5fb"/>
+  <line x1="322" y1="115" x2="434" y2="115" stroke="#1f5fa8" stroke-width="2.4"/>
+  <circle cx="378" cy="186" r="26" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="366" y="174" width="9" height="9" rx="1.5" fill="#3b8f4a"/>
+  <rect x="381" y="176" width="9" height="9" rx="1.5" fill="#3b8f4a"/>
+  <rect x="373" y="190" width="9" height="9" rx="1.5" fill="#3b8f4a"/>
+  <line x1="378" y1="154" x2="378" y2="128" stroke="#3b8f4a" stroke-width="1.8" marker-end="url(#ok-yesil)"/>
+  <text x="378" y="264" text-anchor="middle" font-size="13" fill="#6b7480">Sitoplazma</text>
+  <line x1="440" y1="158" x2="462" y2="158" stroke="#222222" stroke-width="2" marker-end="url(#ok-koyu)"/>
+  <path d="M 468 115 L 498 115 C 498 152 496 172 524 172 C 552 172 550 152 550 115 L 580 115 L 580 242 L 468 242 Z" fill="#eef5fb"/>
+  <path d="M 468 115 L 498 115 C 498 152 496 172 524 172 C 552 172 550 152 550 115 L 580 115" fill="none" stroke="#1f5fa8" stroke-width="2.4"/>
+  <rect x="506" y="84" width="9" height="9" rx="1.5" fill="#3b8f4a"/>
+  <rect x="534" y="86" width="9" height="9" rx="1.5" fill="#3b8f4a"/>
+  <rect x="520" y="100" width="9" height="9" rx="1.5" fill="#3b8f4a"/>
+  <line x1="524" y1="154" x2="524" y2="120" stroke="#3b8f4a" stroke-width="1.8" marker-end="url(#ok-yesil)"/>
+  <text x="524" y="264" text-anchor="middle" font-size="13" fill="#6b7480">Sitoplazma</text>
+</svg>

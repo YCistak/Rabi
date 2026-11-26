@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" width="560" height="330" font-family="Nunito, sans-serif">
+  <rect width="560" height="330" fill="#ffffff"/>
+  <defs>
+    <marker id="isik-ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#c88a1e"/>
+    </marker>
+  </defs>
+
+  <rect x="16" y="12" width="528" height="66" rx="6" fill="#f5faff" stroke="#cfd8e3" stroke-width="1.4"/>
+  <rect x="16" y="78" width="528" height="114" fill="#d9eefb" stroke="#1f5fa8" stroke-width="1.4"/>
+  <rect x="16" y="192" width="528" height="100" fill="#b8cbe0" stroke="#1f5fa8" stroke-width="1.4"/>
+  <rect x="16" y="292" width="528" height="26" fill="#d9cbb8" stroke="#8b7355" stroke-width="1.4"/>
+
+  <g>
+    <circle cx="62" cy="44" r="15" fill="#f7d060" stroke="#c88a1e" stroke-width="1.6"/>
+    <line x1="62" y1="22" x2="62" y2="26" stroke="#c88a1e" stroke-width="1.5"/>
+    <line x1="62" y1="62" x2="62" y2="66" stroke="#c88a1e" stroke-width="1.5"/>
+    <line x1="40" y1="44" x2="44" y2="44" stroke="#c88a1e" stroke-width="1.5"/>
+    <line x1="80" y1="44" x2="84" y2="44" stroke="#c88a1e" stroke-width="1.5"/>
+    <line x1="47" y1="29" x2="50" y2="32" stroke="#c88a1e" stroke-width="1.5"/>
+    <line x1="74" y1="56" x2="77" y2="59" stroke="#c88a1e" stroke-width="1.5"/>
+    <line x1="77" y1="29" x2="74" y2="32" stroke="#c88a1e" stroke-width="1.5"/>
+    <line x1="50" y1="56" x2="47" y2="59" stroke="#c88a1e" stroke-width="1.5"/>
+    <text x="150" y="48" text-anchor="middle" font-size="13" font-weight="700" fill="#9a6710">Güneş ışığı</text>
+  </g>
+
+  <text x="466" y="48" text-anchor="middle" font-size="14" font-weight="700" fill="#4a6b8a">Atmosfer</text>
+
+  <line x1="118" y1="66" x2="118" y2="180" stroke="#c88a1e" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#isik-ok)"/>
+  <line x1="142" y1="66" x2="142" y2="180" stroke="#c88a1e" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#isik-ok)"/>
+  <line x1="166" y1="66" x2="166" y2="180" stroke="#c88a1e" stroke-width="1.5" stroke-dasharray="4,4" marker-end="url(#isik-ok)"/>
+
+  <text x="474" y="102" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">Işıklı bölge</text>
+
+  <g>
+    <line x1="68" y1="184" x2="68" y2="120" stroke="#286433" stroke-width="2"/>
+    <ellipse cx="56" cy="166" rx="11" ry="5" transform="rotate(-24 56 166)" fill="#3b8f4a"/>
+    <ellipse cx="80" cy="162" rx="11" ry="5" transform="rotate(24 80 162)" fill="#3b8f4a"/>
+    <ellipse cx="56" cy="144" rx="11" ry="5" transform="rotate(-24 56 144)" fill="#3b8f4a"/>
+    <ellipse cx="80" cy="140" rx="11" ry="5" transform="rotate(24 80 140)" fill="#3b8f4a"/>
+    <text x="68" y="104" text-anchor="middle" font-size="13" font-weight="700" fill="#286433">Su bitkisi</text>
+  </g>
+
+  <g>
+    <circle cx="212" cy="124" r="6" fill="#52a85f" stroke="#286433" stroke-width="1.2"/>
+    <circle cx="228" cy="116" r="5" fill="#69bd76" stroke="#286433" stroke-width="1.2"/>
+    <circle cx="238" cy="130" r="6" fill="#52a85f" stroke="#286433" stroke-width="1.2"/>
+    <circle cx="220" cy="138" r="5" fill="#69bd76" stroke="#286433" stroke-width="1.2"/>
+    <ellipse cx="234" cy="143" rx="6" ry="3.5" fill="#3b8f4a"/>
+    <text x="225" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#286433">Algler</text>
+  </g>
+
+  <g>
+    <polygon points="334,134 320,124 320,144" fill="#e69a5a" stroke="#9e5320" stroke-width="1.3"/>
+    <ellipse cx="356" cy="134" rx="22" ry="11" fill="#f3b67a" stroke="#9e5320" stroke-width="1.5"/>
+    <circle cx="368" cy="131" r="2.2" fill="#222222"/>
+    <text x="356" y="164" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Balık</text>
+  </g>
+
+  <line x1="16" y1="192" x2="544" y2="192" stroke="#334155" stroke-width="1.6" stroke-dasharray="6,4"/>
+  <rect x="218" y="180" width="124" height="22" rx="6" fill="#ffffff" stroke="#64748b" stroke-width="1.2"/>
+  <text x="280" y="196" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">Işık sınırı</text>
+
+  <text x="462" y="218" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a5f">Işıksız dip bölgesi</text>
+
+  <g>
+    <polygon points="94,240 80,230 80,250" fill="#8b9bb0" stroke="#475569" stroke-width="1.3"/>
+    <ellipse cx="118" cy="240" rx="24" ry="11" fill="#a8b7c9" stroke="#475569" stroke-width="1.5"/>
+    <circle cx="131" cy="237" r="2.2" fill="#1e293b"/>
+    <text x="118" y="274" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">Dip balığı</text>
+  </g>
+
+  <g>
+    <ellipse cx="252" cy="278" rx="9" ry="4" transform="rotate(-18 252 278)" fill="#8b6b4a" stroke="#5c4228" stroke-width="1.2"/>
+    <ellipse cx="272" cy="282" rx="10" ry="4" transform="rotate(12 272 282)" fill="#7d5e3d" stroke="#5c4228" stroke-width="1.2"/>
+    <ellipse cx="294" cy="276" rx="8" ry="3.5" transform="rotate(-10 294 276)" fill="#967452" stroke="#5c4228" stroke-width="1.2"/>
+    <circle cx="264" cy="272" r="3" fill="#6b4f32"/>
+    <circle cx="284" cy="284" r="3" fill="#6b4f32"/>
+    <text x="272" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#4a3319">Ölü organik kalıntılar</text>
+  </g>
+
+  <g>
+    <rect x="422" y="268" width="12" height="5" rx="2.5" fill="#c8642a" stroke="#7c2d12" stroke-width="1.2"/>
+    <rect x="444" y="274" width="12" height="5" rx="2.5" transform="rotate(-25 450 276)" fill="#c8642a" stroke="#7c2d12" stroke-width="1.2"/>
+    <rect x="462" y="266" width="12" height="5" rx="2.5" transform="rotate(20 468 268)" fill="#c8642a" stroke="#7c2d12" stroke-width="1.2"/>
+    <circle cx="436" cy="282" r="3.5" fill="#d97736" stroke="#7c2d12" stroke-width="1.2"/>
+    <circle cx="458" cy="283" r="3.5" fill="#d97736" stroke="#7c2d12" stroke-width="1.2"/>
+    <text x="446" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#7c2d12">Ayrıştırıcı bakteriler</text>
+  </g>
+
+  <text x="280" y="310" text-anchor="middle" font-size="13" font-weight="700" fill="#5c4632">Göl tabanı</text>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" width="420" height="200" font-family="Nunito, sans-serif">
+  <rect width="420" height="200" fill="#ffffff"/>
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <path d="M43 162 Q87 152 115 133 Q160 113 215 133 Q251 145 277 114 Q289 99 306 106 Q324 108 322 120 Q322 130 306 135 Q296 139 294 149 Q289 164 259 167 Q147 175 43 162Z" fill="#e1ebda" stroke="#506848" stroke-width="1.8"/>
+    <path d="M293 109 L304 80 Q306 77 307 80 L301 109 M305 109 L331 88 Q334 86 333 90 L312 112" fill="#e1ebda" stroke="#506848" stroke-width="1.6"/>
+    <circle cx="306" cy="79" r="2.7" fill="#38443a"/><circle cx="333" cy="88" r="2.7" fill="#38443a"/>
+    <path d="M109 138 C82 104 106 54 145 42 C194 25 242 56 246 101 Q248 126 228 143 Q210 153 196 139 Q153 159 109 138Z" fill="#f4e3cc" stroke="#86633e" stroke-width="1.8"/>
+    <path d="M227 141 C251 101 218 51 176 56 C137 56 114 88 126 116 C136 143 179 143 192 120 C205 99 188 78 168 81 C152 82 144 98 153 108 Q164 119 173 110 Q178 101 171 98" fill="none" stroke="#86633e" stroke-width="1.6"/>
+    <path d="M317 40 H276 L232 65" fill="none" stroke="#6b7480" stroke-width="1.4"/>
+  </g>
+  <text x="268" y="31" fill="#222222" font-size="15">Sert dış örtü</text>
+</svg>

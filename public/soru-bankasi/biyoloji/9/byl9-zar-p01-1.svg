@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 280" width="520" height="280" font-family="Nunito, sans-serif">
+  <rect width="520" height="280" fill="#ffffff"/>
+  <rect x="24" y="16" width="392" height="74" rx="8" fill="#eef5fb" stroke="#d9e4f2" stroke-width="1.2"/>
+  <rect x="24" y="190" width="392" height="74" rx="8" fill="#eef5fb" stroke="#d9e4f2" stroke-width="1.2"/>
+  <text x="220" y="48" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">Hücre dışı ortam (sulu)</text>
+  <text x="220" y="242" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">Sitoplazma (sulu)</text>
+  <g fill="none" stroke="#c8642a" stroke-width="2" stroke-linecap="round">
+    <path d="M 55 104 Q 51 113 55 120 T 55 135"/>
+    <path d="M 65 104 Q 69 113 65 120 T 65 135"/>
+    <path d="M 95 104 Q 91 113 95 120 T 95 135"/>
+    <path d="M 105 104 Q 109 113 105 120 T 105 135"/>
+    <path d="M 135 104 Q 131 113 135 120 T 135 135"/>
+    <path d="M 145 104 Q 149 113 145 120 T 145 135"/>
+    <path d="M 175 104 Q 171 113 175 120 T 175 135"/>
+    <path d="M 185 104 Q 189 113 185 120 T 185 135"/>
+    <path d="M 215 104 Q 211 113 215 120 T 215 135"/>
+    <path d="M 225 104 Q 229 113 225 120 T 225 135"/>
+    <path d="M 255 104 Q 251 113 255 120 T 255 135"/>
+    <path d="M 265 104 Q 269 113 265 120 T 265 135"/>
+    <path d="M 295 104 Q 291 113 295 120 T 295 135"/>
+    <path d="M 305 104 Q 309 113 305 120 T 305 135"/>
+    <path d="M 335 104 Q 331 113 335 120 T 335 135"/>
+    <path d="M 345 104 Q 349 113 345 120 T 345 135"/>
+    <path d="M 375 104 Q 371 113 375 120 T 375 135"/>
+    <path d="M 385 104 Q 389 113 385 120 T 385 135"/>
+    <path d="M 55 176 Q 51 167 55 160 T 55 145"/>
+    <path d="M 65 176 Q 69 167 65 160 T 65 145"/>
+    <path d="M 95 176 Q 91 167 95 160 T 95 145"/>
+    <path d="M 105 176 Q 109 167 105 160 T 105 145"/>
+    <path d="M 135 176 Q 131 167 135 160 T 135 145"/>
+    <path d="M 145 176 Q 149 167 145 160 T 145 145"/>
+    <path d="M 175 176 Q 171 167 175 160 T 175 145"/>
+    <path d="M 185 176 Q 189 167 185 160 T 185 145"/>
+    <path d="M 215 176 Q 211 167 215 160 T 215 145"/>
+    <path d="M 225 176 Q 229 167 225 160 T 225 145"/>
+    <path d="M 255 176 Q 251 167 255 160 T 255 145"/>
+    <path d="M 265 176 Q 269 167 265 160 T 265 145"/>
+    <path d="M 295 176 Q 291 167 295 160 T 295 145"/>
+    <path d="M 305 176 Q 309 167 305 160 T 305 145"/>
+    <path d="M 335 176 Q 331 167 335 160 T 335 145"/>
+    <path d="M 345 176 Q 349 167 345 160 T 345 145"/>
+    <path d="M 375 176 Q 371 167 375 160 T 375 145"/>
+    <path d="M 385 176 Q 389 167 385 160 T 385 145"/>
+  </g>
+  <g fill="#1f5fa8" stroke="#16467d" stroke-width="1.5">
+    <circle cx="60" cy="90" r="14"/>
+    <circle cx="100" cy="90" r="14"/>
+    <circle cx="140" cy="90" r="14"/>
+    <circle cx="180" cy="90" r="14"/>
+    <circle cx="220" cy="90" r="14"/>
+    <circle cx="260" cy="90" r="14"/>
+    <circle cx="300" cy="90" r="14"/>
+    <circle cx="340" cy="90" r="14"/>
+    <circle cx="380" cy="90" r="14"/>
+    <circle cx="60" cy="190" r="14"/>
+    <circle cx="100" cy="190" r="14"/>
+    <circle cx="140" cy="190" r="14"/>
+    <circle cx="180" cy="190" r="14"/>
+    <circle cx="220" cy="190" r="14"/>
+    <circle cx="260" cy="190" r="14"/>
+    <circle cx="300" cy="190" r="14"/>
+    <circle cx="340" cy="190" r="14"/>
+    <circle cx="380" cy="190" r="14"/>
+  </g>
+  <line x1="394" y1="90" x2="460" y2="90" stroke="#6b7480" stroke-width="1.6"/>
+  <circle cx="394" cy="90" r="3" fill="#222222"/>
+  <text x="474" y="96" font-size="18" font-weight="700" fill="#222222">K</text>
+  <line x1="386" y1="158" x2="460" y2="158" stroke="#6b7480" stroke-width="1.6"/>
+  <circle cx="386" cy="158" r="3" fill="#222222"/>
+  <text x="474" y="164" font-size="18" font-weight="700" fill="#222222">L</text>
+</svg>

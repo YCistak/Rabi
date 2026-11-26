@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 280" width="560" height="280" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#3b8f4a"/>
+    </marker>
+  </defs>
+  <rect width="560" height="280" fill="#ffffff"/>
+
+  <text x="280" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Hücre dışı</text>
+  <text x="280" y="270" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Hücre içi</text>
+
+  <g>
+    <rect x="20" y="36" width="248" height="212" rx="12" fill="#ffffff" stroke="#c8d4e0" stroke-width="1.5"/>
+    <path d="M 21 156 L 94 156 C 90 132 88 94 108 86 C 118 82 122 94 116 108 C 110 122 118 144 144 146 C 170 144 178 122 172 108 C 166 94 170 82 180 86 C 200 94 198 132 194 156 L 267 156 L 267 236 Q 267 247 256 247 L 32 247 Q 21 247 21 236 Z" fill="#eef5fb"/>
+    <path d="M 21 153 L 91 153 C 86 130 84 90 107 82 C 120 77 126 92 119 108 C 113 122 120 141 144 143 C 168 141 175 122 169 108 C 162 92 168 77 181 82 C 204 90 202 130 197 153 L 267 153" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <path d="M 21 159 L 97 159 C 94 134 92 98 109 90 C 115 88 117 96 112 108 C 106 124 116 148 144 150 C 172 148 182 124 176 108 C 171 96 173 88 179 90 C 196 98 194 134 191 159 L 267 159" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <polygon points="126,96 140,86 158,90 165,106 156,120 136,122 123,110" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <line x1="144" y1="126" x2="144" y2="141" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+    <text x="144" y="60" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Katı parçacık</text>
+    <circle cx="44" cy="58" r="13" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+    <text x="44" y="63" font-size="14" font-weight="800" text-anchor="middle" fill="#1f5fa8">I</text>
+  </g>
+
+  <g>
+    <rect x="292" y="36" width="248" height="212" rx="12" fill="#ffffff" stroke="#c8d4e0" stroke-width="1.5"/>
+    <path d="M 293 118 L 398 118 C 398 134 378 146 378 170 C 378 192 394 206 416 206 C 438 206 454 192 454 170 C 454 146 434 134 434 118 L 539 118 L 539 236 Q 539 247 528 247 L 304 247 Q 293 247 293 236 Z" fill="#eef5fb"/>
+    <circle cx="416" cy="170" r="28" fill="#dff0dc"/>
+    <ellipse cx="416" cy="134" rx="14" ry="14" fill="#dff0dc"/>
+    <path d="M 293 115 L 401 115 C 401 132 381 144 381 170 C 381 190 396 203 416 203 C 436 203 451 190 451 170 C 451 144 431 132 431 115 L 539 115" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <path d="M 293 121 L 395 121 C 395 136 375 148 375 170 C 375 194 392 209 416 209 C 440 209 457 194 457 170 C 457 148 437 136 437 121 L 539 121" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <g fill="#3b8f4a">
+      <circle cx="404" cy="162" r="4"/>
+      <circle cx="426" cy="160" r="4"/>
+      <circle cx="415" cy="172" r="4"/>
+      <circle cx="402" cy="180" r="4"/>
+      <circle cx="426" cy="181" r="4"/>
+      <circle cx="416" cy="148" r="4"/>
+    </g>
+    <line x1="416" y1="74" x2="416" y2="110" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+    <text x="416" y="60" font-size="13" font-weight="700" text-anchor="middle" fill="#222222">Sıvı damlacığı</text>
+    <circle cx="316" cy="58" r="13" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+    <text x="316" y="63" font-size="14" font-weight="800" text-anchor="middle" fill="#1f5fa8">II</text>
+  </g>
+</svg>

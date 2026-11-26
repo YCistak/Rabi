@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" width="600" height="280" font-family="Nunito, sans-serif">
+  <rect width="600" height="280" fill="#ffffff"/>
+
+  <text x="115" y="30" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">1. tüp</text>
+  <text x="300" y="30" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">2. tüp</text>
+  <text x="485" y="30" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">3. tüp</text>
+
+  <g>
+    <path d="M 85 84 L 145 84 L 145 164 A 30 30 0 0 1 85 164 Z" fill="#eef5fb"/>
+    <rect x="95" y="144" width="40" height="36" rx="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <path d="M 83 48 L 83 164 A 32 32 0 0 0 147 164 L 147 48" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <line x1="78" y1="48" x2="152" y2="48" stroke="#1f5fa8" stroke-width="2" stroke-linecap="round"/>
+    <line x1="85" y1="84" x2="145" y2="84" stroke="#1f5fa8" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="115" y="218" font-size="13.5" font-weight="600" fill="#222222" text-anchor="middle">10 g tek parça et</text>
+  </g>
+
+  <g>
+    <path d="M 270 84 L 330 84 L 330 164 A 30 30 0 0 1 270 164 Z" fill="#eef5fb"/>
+    <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5">
+      <rect x="277" y="147" width="13" height="13" rx="2"/>
+      <rect x="293" y="145" width="13" height="13" rx="2"/>
+      <rect x="309" y="147" width="13" height="13" rx="2"/>
+      <rect x="280" y="164" width="13" height="13" rx="2"/>
+      <rect x="295" y="167" width="13" height="13" rx="2"/>
+      <rect x="309" y="164" width="13" height="13" rx="2"/>
+    </g>
+    <path d="M 268 48 L 268 164 A 32 32 0 0 0 332 164 L 332 48" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <line x1="263" y1="48" x2="337" y2="48" stroke="#1f5fa8" stroke-width="2" stroke-linecap="round"/>
+    <line x1="270" y1="84" x2="330" y2="84" stroke="#1f5fa8" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="300" y="218" font-size="13.5" font-weight="600" fill="#222222" text-anchor="middle">10 g küp doğranmış et</text>
+  </g>
+
+  <g>
+    <path d="M 455 84 L 515 84 L 515 164 A 30 30 0 0 1 455 164 Z" fill="#eef5fb"/>
+    <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4">
+      <circle cx="468" cy="152" r="4"/>
+      <circle cx="480" cy="148" r="4"/>
+      <circle cx="492" cy="151" r="4"/>
+      <circle cx="503" cy="154" r="4"/>
+      <circle cx="464" cy="163" r="4"/>
+      <circle cx="475" cy="161" r="4"/>
+      <circle cx="486" cy="162" r="4"/>
+      <circle cx="498" cy="164" r="4"/>
+      <circle cx="507" cy="165" r="3.5"/>
+      <circle cx="470" cy="173" r="4"/>
+      <circle cx="481" cy="174" r="4"/>
+      <circle cx="492" cy="174" r="4"/>
+      <circle cx="502" cy="175" r="3.5"/>
+      <circle cx="476" cy="183" r="3.8"/>
+      <circle cx="487" cy="185" r="3.8"/>
+      <circle cx="496" cy="183" r="3.5"/>
+    </g>
+    <path d="M 453 48 L 453 164 A 32 32 0 0 0 517 164 L 517 48" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+    <line x1="448" y1="48" x2="522" y2="48" stroke="#1f5fa8" stroke-width="2" stroke-linecap="round"/>
+    <line x1="455" y1="84" x2="515" y2="84" stroke="#1f5fa8" stroke-width="1.2" stroke-dasharray="3 3"/>
+    <text x="485" y="218" font-size="13.5" font-weight="600" fill="#222222" text-anchor="middle">10 g ince kıyılmış et</text>
+  </g>
+
+  <rect x="24" y="236" width="552" height="32" rx="6" fill="#eef5fb" stroke="#d9e4f2" stroke-width="1.2"/>
+  <text x="300" y="257" font-size="13" font-weight="600" fill="#222222" text-anchor="middle">Tüm tüplerde: eşit su + protein parçalayan enzim · 37 °C · pH 7</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" width="520" height="220" font-family="Nunito, sans-serif">
+<rect width="520" height="220" fill="#ffffff"/>
+<g fill="#f6dc8c" stroke="#997720" stroke-width="1.6">
+<circle cx="79" cy="102" r="42"/>
+<circle cx="280" cy="75" r="21"/>
+<circle cx="336" cy="75" r="21"/>
+<circle cx="392" cy="75" r="21"/>
+<circle cx="448" cy="75" r="21"/>
+<circle cx="280" cy="129" r="21"/>
+<circle cx="336" cy="129" r="21"/>
+<circle cx="392" cy="129" r="21"/>
+<circle cx="448" cy="129" r="21"/>
+</g>
+<path d="M144 102 H230 M222 96 L230 102 L222 108" fill="none" stroke="#444444" stroke-width="1.8"/>
+<text x="186" y="88" text-anchor="middle" font-size="15" fill="#222222">Safra</text><text x="79" y="184" text-anchor="middle" font-size="15" fill="#222222">Yağ damlası</text><text x="364" y="184" text-anchor="middle" font-size="15" fill="#222222">Yağ damlacıkları</text>
+</svg>

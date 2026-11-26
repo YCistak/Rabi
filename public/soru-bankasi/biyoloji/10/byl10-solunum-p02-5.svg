@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 314" width="620" height="314" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="620" height="314" fill="#ffffff"/>
+  <line x1="210" y1="16" x2="210" y2="304" stroke="#d9e4f2" stroke-width="1.4"/>
+  <line x1="410" y1="16" x2="410" y2="304" stroke="#d9e4f2" stroke-width="1.4"/>
+
+  <text x="110" y="24" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Şişe 1</text>
+  <rect x="96" y="46" width="28" height="68" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="88" y1="90" x2="132" y2="90" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <text x="136" y="94" font-size="13" fill="#6b7480">0</text>
+  <rect x="98" y="60" width="24" height="8" rx="2" fill="#c8642a"/>
+  <line x1="110" y1="60" x2="110" y2="38" stroke="#c8642a" stroke-width="3"/>
+  <line x1="100" y1="38" x2="120" y2="38" stroke="#c8642a" stroke-width="2.5"/>
+  <line x1="82" y1="88" x2="82" y2="62" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+  <text x="134" y="68" font-size="13" font-weight="700" fill="#c8642a">+10 mL</text>
+  <rect x="46" y="156" width="128" height="62" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+  <rect x="62" y="124" width="96" height="84" rx="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+  <path d="M 64 178 L 156 178 L 156 194 Q 156 206 144 206 L 76 206 Q 64 206 64 194 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+  <circle cx="82" cy="192" r="2.6" fill="#3b8f4a"/>
+  <circle cx="102" cy="187" r="2.6" fill="#3b8f4a"/>
+  <circle cx="118" cy="195" r="2.6" fill="#3b8f4a"/>
+  <circle cx="136" cy="189" r="2.6" fill="#3b8f4a"/>
+  <rect x="92" y="112" width="36" height="14" rx="3" fill="#6b7480" stroke="#222222" stroke-width="1.2"/>
+  <text x="110" y="238" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Canlı bahçe toprağı</text>
+  <text x="110" y="258" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Su banyosu: 35 °C</text>
+  <text x="110" y="278" text-anchor="middle" font-size="13" fill="#222222">O₂ azalışı: 6 mL</text>
+  <text x="110" y="298" text-anchor="middle" font-size="13" fill="#222222">CO₂ artışı: 6 mL</text>
+
+  <text x="310" y="24" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Şişe 2</text>
+  <rect x="296" y="46" width="28" height="68" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="288" y1="90" x2="332" y2="90" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <text x="336" y="94" font-size="13" fill="#6b7480">0</text>
+  <rect x="298" y="60" width="24" height="8" rx="2" fill="#c8642a"/>
+  <line x1="310" y1="60" x2="310" y2="38" stroke="#c8642a" stroke-width="3"/>
+  <line x1="300" y1="38" x2="320" y2="38" stroke="#c8642a" stroke-width="2.5"/>
+  <line x1="282" y1="88" x2="282" y2="62" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+  <text x="334" y="68" font-size="13" font-weight="700" fill="#c8642a">+10 mL</text>
+  <rect x="246" y="156" width="128" height="62" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+  <rect x="262" y="124" width="96" height="84" rx="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+  <path d="M 264 178 L 356 178 L 356 194 Q 356 206 344 206 L 276 206 Q 264 206 264 194 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+  <rect x="292" y="112" width="36" height="14" rx="3" fill="#6b7480" stroke="#222222" stroke-width="1.2"/>
+  <text x="310" y="238" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Steril toprak</text>
+  <text x="310" y="258" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Su banyosu: 35 °C</text>
+  <text x="310" y="278" text-anchor="middle" font-size="13" fill="#222222">O₂ azalışı: 0 mL</text>
+  <text x="310" y="298" text-anchor="middle" font-size="13" fill="#222222">CO₂ artışı: 0 mL</text>
+
+  <text x="510" y="24" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Şişe 3</text>
+  <rect x="496" y="46" width="28" height="68" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="488" y1="90" x2="532" y2="90" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="3,2"/>
+  <text x="536" y="94" font-size="13" fill="#6b7480">0</text>
+  <rect x="498" y="84" width="24" height="8" rx="2" fill="#6b7480"/>
+  <line x1="510" y1="84" x2="510" y2="62" stroke="#6b7480" stroke-width="3"/>
+  <line x1="500" y1="62" x2="520" y2="62" stroke="#6b7480" stroke-width="2.5"/>
+  <text x="534" y="72" font-size="13" font-weight="700" fill="#6b7480">0 mL</text>
+  <rect x="446" y="156" width="128" height="62" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+  <rect x="462" y="124" width="96" height="84" rx="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+  <path d="M 464 178 L 556 178 L 556 194 Q 556 206 544 206 L 476 206 Q 464 206 464 194 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+  <circle cx="482" cy="192" r="2.6" fill="#3b8f4a"/>
+  <circle cx="502" cy="187" r="2.6" fill="#3b8f4a"/>
+  <circle cx="518" cy="195" r="2.6" fill="#3b8f4a"/>
+  <circle cx="536" cy="189" r="2.6" fill="#3b8f4a"/>
+  <rect x="492" y="112" width="36" height="14" rx="3" fill="#6b7480" stroke="#222222" stroke-width="1.2"/>
+  <text x="510" y="238" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Canlı bahçe toprağı</text>
+  <text x="510" y="258" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Su banyosu: 20 °C</text>
+  <text x="510" y="278" text-anchor="middle" font-size="13" fill="#222222">O₂ azalışı: 2,5 mL</text>
+  <text x="510" y="298" text-anchor="middle" font-size="13" fill="#222222">CO₂ artışı: 2,5 mL</text>
+</svg>

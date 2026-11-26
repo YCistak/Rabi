@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 270" width="560" height="270" font-family="Nunito, sans-serif">
+  <rect width="560" height="270" fill="#ffffff"/>
+
+  <g>
+    <rect x="16" y="14" width="252" height="206" rx="10" fill="#fafafa" stroke="#d9e4f2" stroke-width="1.5"/>
+    <text x="142" y="38" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">K kası</text>
+
+    <circle cx="52" cy="84" r="11" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="52" cy="84" r="3.5" fill="#1f5fa8"/>
+    <path d="M 63 84 L 108 84 L 148 67" fill="none" stroke="#1f5fa8" stroke-width="1.8"/>
+    <path d="M 108 84 L 148 101" fill="none" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="148" cy="67" r="3.2" fill="#1f5fa8"/>
+    <circle cx="148" cy="101" r="3.2" fill="#1f5fa8"/>
+
+    <circle cx="52" cy="166" r="11" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <circle cx="52" cy="166" r="3.5" fill="#3b8f4a"/>
+    <path d="M 63 166 L 108 166 L 148 149" fill="none" stroke="#3b8f4a" stroke-width="1.8"/>
+    <path d="M 108 166 L 148 183" fill="none" stroke="#3b8f4a" stroke-width="1.8"/>
+    <circle cx="148" cy="149" r="3.2" fill="#3b8f4a"/>
+    <circle cx="148" cy="183" r="3.2" fill="#3b8f4a"/>
+
+    <rect x="156" y="58" width="96" height="18" rx="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+    <rect x="156" y="92" width="96" height="18" rx="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+    <rect x="156" y="140" width="96" height="18" rx="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+    <rect x="156" y="174" width="96" height="18" rx="5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+  </g>
+
+  <g>
+    <rect x="292" y="14" width="252" height="206" rx="10" fill="#fafafa" stroke="#d9e4f2" stroke-width="1.5"/>
+    <text x="418" y="38" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">L kası</text>
+
+    <circle cx="328" cy="126" r="11" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="328" cy="126" r="3.5" fill="#1f5fa8"/>
+    <line x1="339" y1="126" x2="378" y2="126" stroke="#1f5fa8" stroke-width="1.8"/>
+    <line x1="378" y1="126" x2="424" y2="60" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="378" y1="126" x2="424" y2="79" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="378" y1="126" x2="424" y2="98" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="378" y1="126" x2="424" y2="117" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="378" y1="126" x2="424" y2="136" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="378" y1="126" x2="424" y2="155" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="378" y1="126" x2="424" y2="174" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="378" y1="126" x2="424" y2="193" stroke="#1f5fa8" stroke-width="1.6"/>
+
+    <circle cx="424" cy="60" r="2.8" fill="#1f5fa8"/>
+    <circle cx="424" cy="79" r="2.8" fill="#1f5fa8"/>
+    <circle cx="424" cy="98" r="2.8" fill="#1f5fa8"/>
+    <circle cx="424" cy="117" r="2.8" fill="#1f5fa8"/>
+    <circle cx="424" cy="136" r="2.8" fill="#1f5fa8"/>
+    <circle cx="424" cy="155" r="2.8" fill="#1f5fa8"/>
+    <circle cx="424" cy="174" r="2.8" fill="#1f5fa8"/>
+    <circle cx="424" cy="193" r="2.8" fill="#1f5fa8"/>
+
+    <rect x="432" y="54" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+    <rect x="432" y="73" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+    <rect x="432" y="92" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+    <rect x="432" y="111" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+    <rect x="432" y="130" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+    <rect x="432" y="149" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+    <rect x="432" y="168" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+    <rect x="432" y="187" width="96" height="12" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.3"/>
+  </g>
+
+  <g>
+    <circle cx="102" cy="246" r="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="108" y1="246" x2="128" y2="246" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="136" y="251" font-size="13" fill="#222222">Motor nöron</text>
+
+    <rect x="302" y="239" width="34" height="14" rx="4" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.4"/>
+    <text x="344" y="251" font-size="13" fill="#222222">İskelet kası lifi</text>
+  </g>
+</svg>

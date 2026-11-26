@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" width="600" height="280" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#222222"/>
+    </marker>
+  </defs>
+  <rect width="600" height="280" fill="#ffffff"/>
+
+  <line x1="36" y1="36" x2="562" y2="36" stroke="#222222" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="562" y="23" text-anchor="end" font-size="14" font-weight="700" fill="#222222">Zaman</text>
+
+  <line x1="95" y1="31" x2="95" y2="41" stroke="#222222" stroke-width="1.6"/>
+  <text x="95" y="23" text-anchor="middle" font-size="15" font-weight="800" fill="#222222">t₁</text>
+  <line x1="225" y1="31" x2="225" y2="41" stroke="#222222" stroke-width="1.6"/>
+  <text x="225" y="23" text-anchor="middle" font-size="15" font-weight="800" fill="#222222">t₂</text>
+  <line x1="360" y1="31" x2="360" y2="41" stroke="#222222" stroke-width="1.6"/>
+  <text x="360" y="23" text-anchor="middle" font-size="15" font-weight="800" fill="#222222">t₃</text>
+  <line x1="495" y1="31" x2="495" y2="41" stroke="#222222" stroke-width="1.6"/>
+  <text x="495" y="23" text-anchor="middle" font-size="15" font-weight="800" fill="#222222">t₄</text>
+
+  <rect x="36" y="48" width="528" height="196" rx="8" fill="#f4f8fb" stroke="#cbd5e1" stroke-width="1.4"/>
+
+  <line x1="162" y1="49" x2="162" y2="243" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="294" y1="49" x2="294" y2="243" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="428" y1="49" x2="428" y2="243" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="4 4"/>
+
+  <path d="M 37 198 L 162 198 L 294 206 L 428 218 L 563 228 L 563 243 L 37 243 Z" fill="#9ca3af" stroke="#6b7480" stroke-width="1.3"/>
+  <path d="M 148 198 L 225 192 L 294 189 L 360 185 L 428 182 L 563 180 L 563 228 L 428 218 L 294 206 L 162 198 Z" fill="#9c6644" stroke="#6f4518" stroke-width="1.3"/>
+
+  <path d="M 62 198 L 72 216 L 66 232 M 116 198 L 126 218 M 204 202 L 214 224" stroke="#6b7480" stroke-width="1.2" fill="none"/>
+
+  <ellipse cx="64" cy="196" rx="11" ry="3.2" fill="#c2c56b" stroke="#6b7a48" stroke-width="1.2"/>
+  <ellipse cx="96" cy="196" rx="13" ry="3.4" fill="#98ad72" stroke="#5c6e3d" stroke-width="1.2"/>
+  <ellipse cx="130" cy="196" rx="10" ry="3.2" fill="#c2c56b" stroke="#6b7a48" stroke-width="1.2"/>
+
+  <path d="M 178 195 Q 175 182 173 175 M 182 195 Q 183 180 186 172 M 186 195 Q 190 183 193 175" stroke="#52b788" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M 212 192 Q 208 176 206 168 M 217 192 Q 218 174 221 164 M 222 192 Q 226 177 230 168" stroke="#3b8f4a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M 250 190 Q 246 174 244 165 M 255 190 Q 257 171 260 161 M 260 190 Q 265 175 269 166" stroke="#52b788" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  <path d="M 278 189 Q 276 176 274 169 M 283 189 Q 285 175 288 167" stroke="#3b8f4a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+  <path d="M 326 187 L 326 162 M 326 174 L 314 162 M 326 172 L 338 160" stroke="#6f4518" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="314" cy="155" r="13" fill="#4c956c" stroke="#2c6e49" stroke-width="1.3"/>
+  <circle cx="337" cy="154" r="13" fill="#4c956c" stroke="#2c6e49" stroke-width="1.3"/>
+  <circle cx="326" cy="143" r="15" fill="#3b8f4a" stroke="#2c6e49" stroke-width="1.3"/>
+
+  <path d="M 386 184 L 386 154 M 386 168 L 372 154 M 386 166 L 400 152" stroke="#6f4518" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <circle cx="372" cy="146" r="15" fill="#4c956c" stroke="#2c6e49" stroke-width="1.3"/>
+  <circle cx="400" cy="145" r="15" fill="#4c956c" stroke="#2c6e49" stroke-width="1.3"/>
+  <circle cx="386" cy="133" r="17" fill="#3b8f4a" stroke="#2c6e49" stroke-width="1.3"/>
+
+  <rect x="454" y="114" width="10" height="68" fill="#6f4518"/>
+  <circle cx="448" cy="104" r="18" fill="#40916c" stroke="#1b4332" stroke-width="1.3"/>
+  <circle cx="470" cy="102" r="18" fill="#40916c" stroke="#1b4332" stroke-width="1.3"/>
+  <circle cx="459" cy="86" r="20" fill="#2d6a4f" stroke="#1b4332" stroke-width="1.3"/>
+
+  <rect x="498" y="102" width="12" height="79" fill="#6f4518"/>
+  <circle cx="488" cy="92" r="20" fill="#2d6a4f" stroke="#1b4332" stroke-width="1.3"/>
+  <circle cx="518" cy="92" r="20" fill="#2d6a4f" stroke="#1b4332" stroke-width="1.3"/>
+  <circle cx="504" cy="74" r="22" fill="#3b8f4a" stroke="#1b4332" stroke-width="1.3"/>
+
+  <rect x="538" y="118" width="9" height="63" fill="#6f4518"/>
+  <polygon points="542,72 522,108 560,108" fill="#2d6a4f" stroke="#1b4332" stroke-width="1.3"/>
+  <polygon points="542,92 520,128 562,128" fill="#40916c" stroke="#1b4332" stroke-width="1.3"/>
+
+  <rect x="178" y="256" width="16" height="12" rx="2" fill="#9ca3af" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="200" y="267" font-size="13" font-weight="700" fill="#222222">Ana kaya</text>
+  <rect x="304" y="256" width="16" height="12" rx="2" fill="#9c6644" stroke="#6f4518" stroke-width="1.2"/>
+  <text x="326" y="267" font-size="13" font-weight="700" fill="#222222">Toprak tabakası</text>
+</svg>

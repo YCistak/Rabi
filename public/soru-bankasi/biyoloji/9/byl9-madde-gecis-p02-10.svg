@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 300" width="540" height="300" font-family="Nunito, sans-serif">
+  <rect width="540" height="300" fill="#ffffff"/>
+
+  <text x="170" y="38" font-size="16" font-weight="800" text-anchor="middle" fill="#222222">A bölmesi</text>
+  <text x="370" y="38" font-size="16" font-weight="800" text-anchor="middle" fill="#222222">B bölmesi</text>
+
+  <rect x="72" y="108" width="196" height="136" fill="#fbe6d6"/>
+  <rect x="272" y="108" width="196" height="136" fill="#dff0dc"/>
+
+  <line x1="72" y1="108" x2="268" y2="108" stroke="#c8642a" stroke-width="1.8"/>
+  <line x1="272" y1="108" x2="468" y2="108" stroke="#3b8f4a" stroke-width="1.8"/>
+
+  <polyline points="70,54 70,246 470,246 470,54" fill="none" stroke="#222222" stroke-width="2.4" stroke-linejoin="round"/>
+
+  <line x1="270" y1="54" x2="270" y2="246" stroke="#1f5fa8" stroke-width="3.2" stroke-dasharray="8 5"/>
+
+  <text x="170" y="156" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">%10 protein</text>
+  <text x="170" y="180" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">%4 amino asit</text>
+
+  <text x="370" y="168" font-size="15" font-weight="700" text-anchor="middle" fill="#222222">%12 amino asit</text>
+
+  <g fill="#c8642a">
+    <circle cx="110" cy="218" r="9"/><circle cx="144" cy="222" r="9"/><circle cx="182" cy="216" r="9"/><circle cx="222" cy="220" r="9"/>
+  </g>
+  <g fill="#3b8f4a">
+    <circle cx="128" cy="204" r="4"/><circle cx="204" cy="204" r="4"/>
+    <circle cx="304" cy="206" r="4"/><circle cx="326" cy="218" r="4"/><circle cx="348" cy="206" r="4"/>
+    <circle cx="370" cy="222" r="4"/><circle cx="392" cy="208" r="4"/><circle cx="414" cy="220" r="4"/>
+    <circle cx="436" cy="210" r="4"/><circle cx="316" cy="230" r="4"/><circle cx="358" cy="232" r="4"/><circle cx="404" cy="232" r="4"/>
+  </g>
+
+  <line x1="270" y1="248" x2="270" y2="268" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="270" y="286" font-size="14" font-weight="700" text-anchor="middle" fill="#1f5fa8">Seçici geçirgen zar</text>
+</svg>

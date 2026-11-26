@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <rect width="600" height="320" fill="#ffffff"/>
+  <line x1="20" y1="114" x2="580" y2="114" stroke="#d5dde5" stroke-width="1.2" stroke-dasharray="5,4"/>
+  <line x1="20" y1="208" x2="580" y2="208" stroke="#d5dde5" stroke-width="1.2" stroke-dasharray="5,4"/>
+  <g id="tip-X">
+    <text x="38" y="88" text-anchor="middle" font-size="17" font-weight="700" fill="#222222">X</text>
+    <path d="M 142 80 L 496 80 L 496 86 L 142 86 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M 297 58 L 303 58 L 303 80 L 297 80 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="300" cy="44" r="18" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="300" cy="44" r="7" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <path d="M 142 82 L 112 64 M 128 73 L 104 72 M 142 83 L 102 83 M 142 84 L 112 100 M 128 92 L 104 94" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M 496 82 L 530 64 M 496 83 L 536 83 M 496 84 L 530 100" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="532" cy="64" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="538" cy="83" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="532" cy="100" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+  </g>
+  <g id="tip-Y">
+    <text x="38" y="166" text-anchor="middle" font-size="17" font-weight="700" fill="#222222">Y</text>
+    <path d="M 142 158 L 278 158 L 278 164 L 142 164 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M 322 158 L 496 158 L 496 164 L 322 164 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <ellipse cx="300" cy="161" rx="24" ry="17" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="300" cy="161" r="7" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <path d="M 142 160 L 112 142 M 128 151 L 104 150 M 142 161 L 102 161 M 142 162 L 112 178 M 128 170 L 104 172" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M 496 160 L 530 142 M 496 161 L 536 161 M 496 162 L 530 178" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="532" cy="142" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="538" cy="161" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="532" cy="178" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+  </g>
+  <g id="tip-Z">
+    <text x="38" y="268" text-anchor="middle" font-size="17" font-weight="700" fill="#222222">Z</text>
+    <path d="M 196 260 L 496 260 L 496 266 L 196 266 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M 162 248 L 130 226 M 146 237 L 122 238 M 156 258 L 114 252 M 156 268 L 114 274 M 162 278 L 130 300 M 146 289 L 122 288 M 176 244 L 176 222 M 176 282 L 176 304" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="176" cy="263" r="20" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="176" cy="263" r="7.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <path d="M 496 262 L 530 244 M 496 263 L 536 263 M 496 264 L 530 282" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+    <circle cx="532" cy="244" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="538" cy="263" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="532" cy="282" r="3.5" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+  </g>
+</svg>

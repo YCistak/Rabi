@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 220" width="480" height="220" font-family="Nunito, sans-serif">
+<rect width="480" height="220" fill="#ffffff"/>
+<line x1="80" y1="130" x2="95" y2="130" stroke="#6b7480" stroke-width="2"/>
+<line x1="135" y1="130" x2="150" y2="130" stroke="#6b7480" stroke-width="2"/>
+<line x1="190" y1="130" x2="222.8" y2="130" stroke="#6b7480" stroke-width="2"/>
+<line x1="280.4" y1="120.1" x2="342.2" y2="117.7" stroke="#6b7480" stroke-width="2"/>
+<circle cx="60" cy="130" r="20" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<circle cx="115" cy="130" r="20" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<circle cx="170" cy="130" r="20" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<polygon points="250,98 280.4,120.1 268.8,155.9 231.2,155.9 219.6,120.1" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+<polygon points="393,67 368.8,81 368.8,109 393,123 417.2,109 417.2,81" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+<polygon points="368.8,81 342.2,72.3 325.7,95 342.2,117.7 368.8,109" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+<line x1="440" y1="52" x2="417.2" y2="81" stroke="#6b7480" stroke-width="1.4"/>
+<text x="446" y="50" font-size="18" font-weight="700" fill="#222222">X</text>
+<line x1="250" y1="186" x2="250" y2="146" stroke="#6b7480" stroke-width="1.4"/>
+<text x="250" y="204" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">Y</text>
+<line x1="115" y1="182" x2="115" y2="150" stroke="#6b7480" stroke-width="1.4"/>
+<text x="115" y="200" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">Z</text>
+</svg>

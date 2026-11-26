@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 360" width="560" height="360" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-kirmizi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c0392b"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-sari" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#8a6500"/>
+    </marker>
+  </defs>
+  <rect width="560" height="360" fill="#ffffff"/>
+
+  <path d="M 258 124 C 270 54, 372 32, 430 84 C 468 118, 468 214, 430 248 C 372 300, 270 276, 258 206 C 248 188, 248 142, 258 124 Z" fill="#f6e3d8" stroke="#a8432b" stroke-width="2.2"/>
+
+  <path d="M 332 134 L 316 78 C 338 72, 362 74, 376 84 L 354 136 Z" fill="#e8bfb0" stroke="#c07b67" stroke-width="1.2"/>
+  <path d="M 364 146 L 394 100 C 416 114, 428 134, 430 154 L 370 158 Z" fill="#e8bfb0" stroke="#c07b67" stroke-width="1.2"/>
+  <path d="M 370 174 L 430 178 C 428 198, 416 218, 394 232 L 364 186 Z" fill="#e8bfb0" stroke="#c07b67" stroke-width="1.2"/>
+  <path d="M 354 196 L 376 248 C 362 258, 338 260, 316 254 L 332 198 Z" fill="#e8bfb0" stroke="#c07b67" stroke-width="1.2"/>
+
+  <path d="M 344 150 C 322 162, 296 172, 270 186 C 248 198, 244 218, 244 244 L 244 314 L 260 314 L 260 244 C 260 222, 266 208, 282 198 C 304 186, 326 196, 344 204 C 358 186, 358 164, 344 150 Z" fill="#fdf3c8" stroke="#8a6500" stroke-width="1.8"/>
+
+  <path d="M 54 120 L 284 120 L 312 102 L 318 110 L 288 128 L 318 140 L 314 148 L 282 136 L 54 136 Z" fill="#f9d6d5" stroke="#c0392b" stroke-width="1.8"/>
+
+  <path d="M 54 152 L 284 152 L 312 140 L 316 148 L 290 160 L 316 168 L 312 175 L 284 168 L 54 168 Z" fill="#d6e6f7" stroke="#1f5fa8" stroke-width="1.8"/>
+
+  <line x1="86" y1="106" x2="170" y2="106" stroke="#c0392b" stroke-width="2.4" marker-end="url(#ok-kirmizi)"/>
+  <circle cx="128" cy="80" r="14" fill="#ffffff" stroke="#c0392b" stroke-width="2"/>
+  <text x="128" y="85" font-size="14" font-weight="700" fill="#c0392b" text-anchor="middle">1</text>
+
+  <line x1="170" y1="184" x2="86" y2="184" stroke="#1f5fa8" stroke-width="2.4" marker-end="url(#ok-mavi)"/>
+  <circle cx="128" cy="212" r="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="128" y="217" font-size="14" font-weight="700" fill="#1f5fa8" text-anchor="middle">2</text>
+
+  <line x1="252" y1="248" x2="252" y2="298" stroke="#8a6500" stroke-width="2.4" marker-end="url(#ok-sari)"/>
+  <circle cx="216" cy="274" r="14" fill="#ffffff" stroke="#8a6500" stroke-width="2"/>
+  <text x="216" y="279" font-size="14" font-weight="700" fill="#8a6500" text-anchor="middle">3</text>
+
+  <text x="364" y="34" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Böbrek</text>
+  <text x="252" y="338" font-size="14" font-weight="600" fill="#7a5900" text-anchor="middle">İdrar kesesine</text>
+
+  <line x1="340" y1="308" x2="310" y2="184" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="348" y="326" font-size="14" fill="#222222" text-anchor="middle">Havuzcuk</text>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 270" width="580" height="270" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#4b5563"/>
+    </marker>
+  </defs>
+  <rect width="580" height="270" fill="#ffffff"/>
+  <path d="M 52 110 C 44 86, 72 72, 96 80 C 118 68, 152 80, 154 106 C 168 122, 166 156, 146 172 C 134 192, 92 198, 72 182 C 44 176, 36 144, 52 110 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <circle cx="102" cy="156" r="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <circle cx="99" cy="154" r="5.5" fill="#5b7fb3"/>
+  <line x1="22" y1="126" x2="178" y2="126" stroke="#c8642a" stroke-width="1.8" stroke-dasharray="6,4"/>
+  <text x="100" y="222" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kesim işlemi</text>
+  <line x1="180" y1="112" x2="236" y2="76" stroke="#4b5563" stroke-width="1.7" marker-end="url(#ok)"/>
+  <line x1="180" y1="146" x2="236" y2="188" stroke="#4b5563" stroke-width="1.7" marker-end="url(#ok)"/>
+  <path d="M 250 84 C 244 60, 270 46, 294 54 C 314 44, 342 56, 344 80 C 346 92, 326 98, 296 98 C 266 98, 254 94, 250 84 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="296" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">1. parça</text>
+  <path d="M 252 174 C 264 166, 330 166, 342 176 C 350 194, 340 218, 316 224 C 292 230, 260 222, 250 202 C 246 190, 248 180, 252 174 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <circle cx="296" cy="196" r="15" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <circle cx="293" cy="194" r="4.5" fill="#5b7fb3"/>
+  <text x="296" y="246" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2. parça</text>
+  <line x1="354" y1="74" x2="396" y2="74" stroke="#4b5563" stroke-width="1.7" marker-end="url(#ok)"/>
+  <line x1="354" y1="194" x2="396" y2="194" stroke="#4b5563" stroke-width="1.7" marker-end="url(#ok)"/>
+  <rect x="404" y="44" width="160" height="60" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  <text x="484" y="70" text-anchor="middle" font-size="14" fill="#222222">Birkaç gün içinde</text>
+  <text x="484" y="90" text-anchor="middle" font-size="14" fill="#222222">ölür.</text>
+  <rect x="404" y="164" width="160" height="60" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  <text x="484" y="190" text-anchor="middle" font-size="14" fill="#222222">Kendini onarır ve</text>
+  <text x="484" y="210" text-anchor="middle" font-size="14" fill="#222222">yaşamını sürdürür.</text>
+</svg>

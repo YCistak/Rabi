@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 225" width="560" height="225" font-family="Nunito, sans-serif">
+<rect width="560" height="225" fill="#ffffff"/>
+<g transform="translate(0 78)" fill="#fbe6d6" stroke="#a66342" stroke-width="1.8">
+<path d="M65 -36 Q155 -38 211 -19 Q248 -7 266 -19 Q283 -29 292 -16 Q317 -20 480 -22 L480 -14 Q329 -13 299 -7 Q285 0 273 0 Q249 -1 211 -9 Q153 -28 65 -27 Z"/>
+<path d="M65 36 Q155 38 211 19 Q248 7 266 19 Q283 29 292 16 Q317 20 480 22 L480 14 Q329 13 299 7 Q285 0 273 0 Q249 1 211 9 Q153 28 65 27 Z"/>
+</g>
+<g transform="translate(0 173)" fill="#fbe6d6" stroke="#a66342" stroke-width="1.8">
+<path d="M65 -36 Q155 -38 211 -26 Q253 -16 278 -23 Q306 -27 340 -22 L480 -22 L480 -14 Q337 -14 300 -13 Q262 -8 211 -17 Q150 -28 65 -27 Z"/>
+<path d="M65 36 Q155 38 211 26 Q253 16 278 23 Q306 27 340 22 L480 22 L480 14 Q337 14 300 13 Q262 8 211 17 Q150 28 65 27 Z"/>
+</g>
+<text x="135" y="24" text-anchor="middle" font-size="15" fill="#222222">Mide boşluğu</text><line x1="280" y1="31" x2="280" y2="56" stroke="#6b7480" stroke-width="1.4"/><text x="280" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">X</text><text x="435" y="24" text-anchor="middle" font-size="15" fill="#222222">Onikiparmak bağırsağı</text>
+</svg>

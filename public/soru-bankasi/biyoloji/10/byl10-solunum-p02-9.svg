@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 240" width="540" height="240" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="540" height="240" fill="#ffffff"/>
+  <text x="34" y="42" font-size="14" font-weight="700" fill="#c8642a">Mitokondri iç zarı</text>
+  <rect x="24" y="54" width="492" height="68" rx="14" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <ellipse cx="130" cy="88" rx="40" ry="20" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="130" y="93" text-anchor="middle" font-size="13" font-weight="600" fill="#1f5fa8">Taşıyıcı</text>
+  <ellipse cx="255" cy="88" rx="40" ry="20" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="255" y="93" text-anchor="middle" font-size="13" font-weight="600" fill="#1f5fa8">Taşıyıcı</text>
+  <ellipse cx="380" cy="88" rx="40" ry="20" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="380" y="93" text-anchor="middle" font-size="13" font-weight="600" fill="#1f5fa8">Taşıyıcı</text>
+  <line x1="172" y1="88" x2="210" y2="88" stroke="#c8642a" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="192" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">e⁻</text>
+  <line x1="297" y1="88" x2="335" y2="88" stroke="#c8642a" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="317" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">e⁻</text>
+  <rect x="42" y="168" width="74" height="32" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+  <text x="79" y="189" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">NADH</text>
+  <rect x="136" y="168" width="82" height="32" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+  <text x="177" y="189" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">FADH₂</text>
+  <line x1="88" y1="168" x2="115" y2="113" stroke="#c8642a" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="86" y="146" font-size="13" font-weight="700" fill="#c8642a">e⁻</text>
+  <line x1="168" y1="168" x2="145" y2="113" stroke="#c8642a" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="169" y="146" font-size="13" font-weight="700" fill="#c8642a">e⁻</text>
+  <line x1="380" y1="110" x2="380" y2="157" stroke="#c8642a" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="396" y="142" font-size="13" font-weight="700" fill="#c8642a">e⁻</text>
+  <circle cx="380" cy="184" r="22" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <text x="380" y="190" text-anchor="middle" font-size="18" font-weight="700" fill="#222222">X</text>
+  <line x1="404" y1="184" x2="457" y2="184" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <circle cx="484" cy="184" r="22" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="484" y="190" text-anchor="middle" font-size="18" font-weight="700" fill="#222222">Y</text>
+  <text x="34" y="226" font-size="13" fill="#6b7480">Matriks</text>
+</svg>

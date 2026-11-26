@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 272" width="580" height="272" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#222222"/>
+    </marker>
+  </defs>
+  <rect width="580" height="272" fill="#ffffff"/>
+  <rect x="16" y="12" width="266" height="248" rx="10" fill="#fafbfc" stroke="#d0d7de" stroke-width="1.4"/>
+  <text x="149" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">K kabı: 100 mL saf su</text>
+  <rect x="42" y="54" width="76" height="34" rx="5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+  <text x="80" y="76" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">pH 7,0</text>
+  <line x1="80" y1="88" x2="80" y2="188" stroke="#6b7480" stroke-width="2"/>
+  <rect x="46" y="152" width="68" height="72" fill="#dff0fb"/>
+  <path d="M 46 130 L 46 224 L 114 224 L 114 130" fill="none" stroke="#4a5568" stroke-width="1.8"/>
+  <text x="80" y="246" text-anchor="middle" font-size="13" fill="#222222">Başlangıç</text>
+  <text x="149" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">+5 damla</text>
+  <text x="149" y="167" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">asit</text>
+  <line x1="124" y1="178" x2="173" y2="178" stroke="#222222" stroke-width="1.8" marker-end="url(#ok)"/>
+  <rect x="180" y="54" width="76" height="34" rx="5" fill="#ffffff" stroke="#c8642a" stroke-width="1.5"/>
+  <text x="218" y="76" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">pH 3,2</text>
+  <line x1="218" y1="88" x2="218" y2="188" stroke="#6b7480" stroke-width="2"/>
+  <rect x="184" y="150" width="68" height="74" fill="#fde4dc"/>
+  <path d="M 184 130 L 184 224 L 252 224 L 252 130" fill="none" stroke="#4a5568" stroke-width="1.8"/>
+  <text x="218" y="246" text-anchor="middle" font-size="13" fill="#222222">Son durum</text>
+  <rect x="298" y="12" width="266" height="248" rx="10" fill="#fafbfc" stroke="#d0d7de" stroke-width="1.4"/>
+  <text x="431" y="36" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">L kabı: 100 mL kan plazması</text>
+  <rect x="324" y="54" width="76" height="34" rx="5" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.5"/>
+  <text x="362" y="76" text-anchor="middle" font-size="14" font-weight="700" fill="#2b6e37">pH 7,4</text>
+  <line x1="362" y1="88" x2="362" y2="188" stroke="#6b7480" stroke-width="2"/>
+  <rect x="328" y="152" width="68" height="72" fill="#fbf2d5"/>
+  <path d="M 328 130 L 328 224 L 396 224 L 396 130" fill="none" stroke="#4a5568" stroke-width="1.8"/>
+  <text x="362" y="246" text-anchor="middle" font-size="13" fill="#222222">Başlangıç</text>
+  <text x="431" y="150" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">+5 damla</text>
+  <text x="431" y="167" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">asit</text>
+  <line x1="406" y1="178" x2="455" y2="178" stroke="#222222" stroke-width="1.8" marker-end="url(#ok)"/>
+  <rect x="462" y="54" width="76" height="34" rx="5" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.5"/>
+  <text x="500" y="76" text-anchor="middle" font-size="14" font-weight="700" fill="#2b6e37">pH 7,3</text>
+  <line x1="500" y1="88" x2="500" y2="188" stroke="#6b7480" stroke-width="2"/>
+  <rect x="466" y="150" width="68" height="74" fill="#fbf2d5"/>
+  <path d="M 466 130 L 466 224 L 534 224 L 534 130" fill="none" stroke="#4a5568" stroke-width="1.8"/>
+  <text x="500" y="246" text-anchor="middle" font-size="13" fill="#222222">Son durum</text>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260" font-family="Nunito, sans-serif">
+  <rect width="600" height="260" fill="#ffffff"/>
+  <path d="M 192 126 L 472 126 L 472 134 L 192 134 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.7"/>
+  <path d="M 128 112 C 118 96 108 82 90 66 C 102 82 110 98 116 116 C 98 108 78 104 54 102 C 76 110 96 116 114 126 C 92 130 70 136 48 144 C 72 142 94 138 116 138 C 104 152 92 168 74 186 C 94 172 110 158 124 146 C 122 166 122 186 118 206 C 128 188 134 168 140 152 C 154 158 172 152 184 142 C 190 137 194 134 202 134 L 202 126 C 194 126 190 123 184 118 C 174 106 160 98 146 100 C 148 84 146 68 140 54 C 140 72 136 90 128 112 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M 90 66 L 74 52 M 90 66 L 100 50 M 70 105 L 52 88 M 66 141 L 46 158 M 86 174 L 66 174 M 86 174 L 84 198 M 120 192 L 106 212 M 120 192 L 134 214 M 142 66 L 128 48 M 142 66 L 154 52" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="152" cy="130" r="16" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="155" cy="128" r="4.5" fill="#1f5fa8"/>
+  <ellipse cx="132" cy="122" rx="4" ry="2.2" fill="#94b4d8"/>
+  <ellipse cx="138" cy="144" rx="4.5" ry="2.2" fill="#94b4d8"/>
+  <ellipse cx="174" cy="136" rx="4" ry="2" fill="#94b4d8"/>
+  <path d="M 472 128 C 490 120 502 104 516 86 M 498 108 C 512 104 524 98 540 94 M 472 130 C 494 128 514 124 544 120 M 472 131 C 494 136 514 144 544 150 M 472 133 C 490 144 504 162 520 182 M 498 156 C 512 162 526 168 542 174" fill="none" stroke="#1f5fa8" stroke-width="1.7" stroke-linecap="round"/>
+  <circle cx="516" cy="86" r="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="540" cy="94" r="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="544" cy="120" r="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="544" cy="150" r="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="542" cy="174" r="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="520" cy="182" r="4" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="66" y1="36" x2="78" y2="56" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="66" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">I</text>
+  <line x1="176" y1="36" x2="164" y2="104" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="176" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">II</text>
+  <line x1="340" y1="68" x2="340" y2="126" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="340" y="58" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">III</text>
+  <line x1="534" y1="36" x2="518" y2="82" stroke="#6b7480" stroke-width="1.3"/>
+  <text x="534" y="28" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">IV</text>
+</svg>

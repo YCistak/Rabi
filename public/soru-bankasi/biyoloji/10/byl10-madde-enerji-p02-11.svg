@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" width="520" height="330" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="520" height="330" fill="#ffffff"/>
+  <line x1="179.2" y1="275.4" x2="127.7" y2="211.9" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="210.8" y1="275.4" x2="262.3" y2="211.9" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="154.4" y1="190.0" x2="211.6" y2="190.0" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="135.2" y1="170.8" x2="272.4" y2="66.0" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="282.8" y1="170.0" x2="296.8" y2="68.0" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="428.9" y1="275.3" x2="312.5" y2="67.4" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <rect x="240.8" y="27" width="118.4" height="36" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="300" y="50" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Kızıl tilki</text>
+  <rect x="67.6" y="172" width="84.8" height="36" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="110" y="195" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Çekirge</text>
+  <rect x="216.6" y="172" width="126.8" height="36" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="280" y="195" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Tarla faresi</text>
+  <rect x="160" y="277" width="70" height="36" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="195" y="300" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Ot</text>
+  <rect x="405" y="277" width="70" height="36" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="440" y="300" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Ardıç</text>
+</svg>

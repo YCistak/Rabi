@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 230" width="560" height="230" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="560" height="230" fill="#ffffff"/>
+  <text x="136" y="26" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">t₁ anı</text>
+  <text x="424" y="26" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">t₂ anı</text>
+  <line x1="264" y1="118" x2="294" y2="118" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+  <g>
+    <path d="M 60 94 C 72 68, 114 66, 134 82 C 150 94, 178 96, 180 116 C 182 134, 152 134, 144 152 C 134 174, 96 174, 78 158 C 56 146, 48 118, 60 94 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <circle cx="96" cy="118" r="17" fill="#d9e4f2" stroke="#355b8c" stroke-width="1.6"/>
+    <circle cx="93" cy="116" r="5" fill="#8ca8cc"/>
+    <g fill="#6b7480">
+      <circle cx="114" cy="142" r="2.4"/>
+      <circle cx="144" cy="126" r="2.4"/>
+      <circle cx="122" cy="96" r="2.4"/>
+      <circle cx="84" cy="144" r="2.4"/>
+    </g>
+    <circle cx="134" cy="116" r="5.2" fill="#c8642a" stroke="#7c2d12" stroke-width="1.4"/>
+    <line x1="134" y1="110" x2="134" y2="66" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="134" y="60" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">P</text>
+    <line x1="36" y1="196" x2="242" y2="196" stroke="#9ca3af" stroke-width="1.3"/>
+    <line x1="46" y1="192" x2="46" y2="200" stroke="#9ca3af" stroke-width="1.3"/>
+    <line x1="138" y1="192" x2="138" y2="200" stroke="#9ca3af" stroke-width="1.3"/>
+    <line x1="230" y1="192" x2="230" y2="200" stroke="#9ca3af" stroke-width="1.3"/>
+  </g>
+  <g>
+    <path d="M 358 98 C 368 74, 404 74, 426 90 C 446 102, 496 96, 502 116 C 506 134, 456 132, 434 146 C 420 166, 382 166, 368 152 C 350 140, 348 116, 358 98 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <circle cx="394" cy="118" r="17" fill="#d9e4f2" stroke="#355b8c" stroke-width="1.6"/>
+    <circle cx="391" cy="116" r="5" fill="#8ca8cc"/>
+    <line x1="422" y1="116" x2="444" y2="116" stroke="#6b7480" stroke-width="1.4" marker-end="url(#ok)"/>
+    <g fill="#6b7480">
+      <circle cx="416" cy="138" r="2.4"/>
+      <circle cx="448" cy="124" r="2.4"/>
+      <circle cx="434" cy="106" r="2.4"/>
+      <circle cx="386" cy="144" r="2.4"/>
+    </g>
+    <circle cx="468" cy="116" r="5.2" fill="#c8642a" stroke="#7c2d12" stroke-width="1.4"/>
+    <line x1="468" y1="110" x2="468" y2="66" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="468" y="60" font-size="14" font-weight="700" fill="#222222" text-anchor="middle">P</text>
+    <line x1="324" y1="196" x2="530" y2="196" stroke="#9ca3af" stroke-width="1.3"/>
+    <line x1="334" y1="192" x2="334" y2="200" stroke="#9ca3af" stroke-width="1.3"/>
+    <line x1="426" y1="192" x2="426" y2="200" stroke="#9ca3af" stroke-width="1.3"/>
+    <line x1="518" y1="192" x2="518" y2="200" stroke="#9ca3af" stroke-width="1.3"/>
+  </g>
+</svg>

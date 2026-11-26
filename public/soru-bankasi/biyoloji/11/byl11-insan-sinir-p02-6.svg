@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 350" width="560" height="350" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-yon" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="560" height="350" fill="#ffffff"/>
+  <text x="36" y="22" font-size="13" fill="#555555">Dıştan içe doğru kesit</text>
+  <line x1="20" y1="34" x2="20" y2="312" stroke="#6b7480" stroke-width="1.4" marker-end="url(#ok-yon)"/>
+  <g>
+    <rect x="36" y="32" width="324" height="46" fill="#ede4d5" stroke="#8a7356" stroke-width="1.8"/>
+    <ellipse cx="76" cy="55" rx="10" ry="5" fill="#dfd2bc" stroke="#a68f70" stroke-width="1"/>
+    <ellipse cx="122" cy="54" rx="13" ry="6" fill="#dfd2bc" stroke="#a68f70" stroke-width="1"/>
+    <ellipse cx="172" cy="56" rx="11" ry="5" fill="#dfd2bc" stroke="#a68f70" stroke-width="1"/>
+    <ellipse cx="224" cy="54" rx="14" ry="6" fill="#dfd2bc" stroke="#a68f70" stroke-width="1"/>
+    <ellipse cx="276" cy="56" rx="11" ry="5" fill="#dfd2bc" stroke="#a68f70" stroke-width="1"/>
+    <ellipse cx="324" cy="55" rx="12" ry="5" fill="#dfd2bc" stroke="#a68f70" stroke-width="1"/>
+    <rect x="36" y="78" width="324" height="24" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <rect x="36" y="102" width="324" height="16" fill="#eef5fb" stroke="#3b78b8" stroke-width="1.6"/>
+    <path d="M 36 118 L 360 118 L 360 194 C 330 184 300 206 270 194 C 240 182 210 206 180 194 C 150 182 120 206 90 194 C 68 185 50 192 36 196 Z" fill="#e3f4f8" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="64" y1="118" x2="78" y2="192" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="94" y1="118" x2="84" y2="193" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="138" y1="118" x2="152" y2="191" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="176" y1="118" x2="162" y2="191" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="216" y1="118" x2="228" y2="196" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="262" y1="118" x2="250" y2="192" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="306" y1="118" x2="322" y2="194" stroke="#6aa5c4" stroke-width="1.2"/>
+    <line x1="342" y1="118" x2="332" y2="192" stroke="#6aa5c4" stroke-width="1.2"/>
+    <path d="M 36 196 C 50 192 68 185 90 194 C 120 206 150 182 180 194 C 210 206 240 182 270 194 C 300 206 330 184 360 194 L 360 204 C 330 194 300 216 270 204 C 240 192 210 216 180 204 C 150 192 120 216 90 204 C 68 195 50 202 36 206 Z" fill="#f6cfc4" stroke="#b84a39" stroke-width="1.5"/>
+    <path d="M 36 206 C 50 202 68 195 90 204 C 120 216 150 192 180 204 C 210 216 240 192 270 204 C 300 216 330 194 360 204 L 360 318 L 36 318 Z" fill="#e6ddd2" stroke="#7a6b5d" stroke-width="1.8"/>
+    <path d="M 36 246 C 72 238 112 252 152 242 C 194 232 234 252 276 242 C 308 234 336 242 360 246 L 360 318 L 36 318 Z" fill="#f7f3ee" stroke="#b0a191" stroke-width="1.2"/>
+  </g>
+  <g>
+    <line x1="360" y1="55" x2="412" y2="55" stroke="#6b7480" stroke-width="1.4"/>
+    <text x="420" y="60" font-size="14" font-weight="700" fill="#222222">Kafatası kemiği</text>
+    <line x1="360" y1="90" x2="416" y2="90" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="432" cy="90" r="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="432" y="95" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">1</text>
+    <polyline points="360,110 390,128 416,128" fill="none" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="432" cy="128" r="14" fill="#ffffff" stroke="#3b78b8" stroke-width="1.8"/>
+    <text x="432" y="133" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2</text>
+    <polyline points="360,156 390,168 416,168" fill="none" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="432" cy="168" r="14" fill="#ffffff" stroke="#3b78b8" stroke-width="1.8"/>
+    <text x="432" y="173" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">3</text>
+    <polyline points="360,199 390,208 416,208" fill="none" stroke="#6b7480" stroke-width="1.4"/>
+    <circle cx="432" cy="208" r="14" fill="#ffffff" stroke="#b84a39" stroke-width="1.8"/>
+    <text x="432" y="213" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">4</text>
+    <line x1="360" y1="264" x2="412" y2="264" stroke="#6b7480" stroke-width="1.4"/>
+    <text x="420" y="269" font-size="14" font-weight="700" fill="#222222">Beyin dokusu</text>
+  </g>
+</svg>

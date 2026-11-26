@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="600" height="360" font-family="Nunito, sans-serif">
+<rect width="600" height="360" fill="#ffffff"/>
+<line x1="40" y1="330" x2="560" y2="330" stroke="#6b7480" stroke-width="1.5"/>
+<g fill="#3b8f4a" stroke="#2d6f39" stroke-width="1.2">
+<rect x="196" y="70" width="8" height="260" rx="3"/>
+<rect x="376" y="100" width="8" height="230" rx="3"/>
+</g>
+<g stroke="#3b8f4a" stroke-width="1.5">
+<line x1="172" y1="110" x2="197" y2="124"/>
+<line x1="230" y1="190" x2="203" y2="204"/>
+<line x1="410" y1="140" x2="383" y2="154"/>
+<line x1="350" y1="240" x2="377" y2="254"/>
+</g>
+<g fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5">
+<ellipse cx="168" cy="120" rx="18" ry="9" transform="rotate(-20 168 120)"/>
+<ellipse cx="176" cy="96" rx="9" ry="18" transform="rotate(-30 176 96)"/>
+<ellipse cx="150" cy="104" rx="9" ry="16" transform="rotate(-70 150 104)"/>
+<ellipse cx="232" cy="200" rx="18" ry="9" transform="rotate(20 232 200)"/>
+<ellipse cx="226" cy="176" rx="9" ry="18" transform="rotate(30 226 176)"/>
+<ellipse cx="250" cy="184" rx="9" ry="16" transform="rotate(70 250 184)"/>
+<ellipse cx="412" cy="150" rx="18" ry="9" transform="rotate(20 412 150)"/>
+<ellipse cx="406" cy="126" rx="9" ry="18" transform="rotate(30 406 126)"/>
+<ellipse cx="430" cy="134" rx="9" ry="16" transform="rotate(70 430 134)"/>
+<ellipse cx="348" cy="250" rx="18" ry="9" transform="rotate(-20 348 250)"/>
+<ellipse cx="354" cy="226" rx="9" ry="18" transform="rotate(-30 354 226)"/>
+<ellipse cx="330" cy="234" rx="9" ry="16" transform="rotate(-70 330 234)"/>
+</g>
+<g fill="none" stroke="#d9822b" stroke-width="2">
+<path d="M 186 320 L 214 300 L 186 280 L 214 260 L 186 240 L 214 220 L 186 200 L 214 180 L 186 160 L 214 140 L 190 124"/>
+<path d="M 366 320 L 394 300 L 366 280 L 394 262 L 366 244 L 394 226 L 366 208 L 394 190 L 370 176"/>
+<path d="M 214 220 C 260 196, 320 230, 366 208"/>
+<path d="M 214 300 C 270 286, 320 300, 366 280"/>
+</g>
+<g fill="#ffffff" stroke="#9a5a1a" stroke-width="1.2">
+<circle cx="208" cy="152" r="5"/><circle cx="217" cy="146" r="5"/><circle cx="214" cy="157" r="5"/>
+<circle cx="190" cy="232" r="5"/><circle cx="181" cy="226" r="5"/><circle cx="183" cy="238" r="5"/>
+<circle cx="372" cy="240" r="5"/><circle cx="363" cy="246" r="5"/><circle cx="366" cy="234" r="5"/>
+<circle cx="390" cy="198" r="5"/><circle cx="399" cy="192" r="5"/><circle cx="398" cy="203" r="5"/>
+<circle cx="290" cy="212" r="5"/><circle cx="299" cy="207" r="5"/><circle cx="297" cy="218" r="5"/>
+</g>
+<g stroke="#6b7480" stroke-width="1.2">
+<line x1="142" y1="102" x2="100" y2="70"/>
+<line x1="221" y1="145" x2="470" y2="60"/>
+<line x1="300" y1="292" x2="470" y2="300"/>
+</g>
+<g fill="#222222" font-size="14">
+<text x="96" y="62" text-anchor="middle">Yonca</text>
+<text x="476" y="64">Çiçek kümesi</text>
+<text x="476" y="298">Sarı-turuncu,</text>
+<text x="476" y="316">ince gövde</text>
+</g>
+</svg>

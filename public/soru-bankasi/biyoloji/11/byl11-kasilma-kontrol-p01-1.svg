@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 240" width="540" height="240" font-family="Nunito, sans-serif">
+  <rect width="540" height="240" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+
+  <g>
+    <rect x="18" y="74" width="108" height="82" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <text x="72" y="102" font-size="14" font-weight="600" fill="#222222" text-anchor="middle">Merkezî</text>
+    <text x="72" y="120" font-size="14" font-weight="600" fill="#222222" text-anchor="middle">sinir</text>
+    <text x="72" y="138" font-size="14" font-weight="600" fill="#222222" text-anchor="middle">sistemi</text>
+  </g>
+
+  <g>
+    <line x1="150" y1="68" x2="294" y2="68" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+    <text x="222" y="56" font-size="13" font-weight="600" fill="#1f5fa8" text-anchor="middle">Uyartı yönü</text>
+  </g>
+
+  <g>
+    <line x1="126" y1="115" x2="326" y2="115" stroke="#1f5fa8" stroke-width="4"/>
+    <rect x="142" y="103" width="46" height="24" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <rect x="200" y="103" width="46" height="24" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <rect x="258" y="103" width="46" height="24" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <path d="M 324 110 C 338 110 342 90 356 90 C 364 90 366 102 366 115 C 366 128 364 140 356 140 C 342 140 338 120 324 120 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="352" cy="103" r="4.5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+    <circle cx="355" cy="115" r="4.5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+    <circle cx="352" cy="127" r="4.5" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.2"/>
+  </g>
+
+  <g>
+    <circle cx="373" cy="103" r="2.2" fill="#c8642a"/>
+    <circle cx="379" cy="110" r="2.2" fill="#c8642a"/>
+    <circle cx="374" cy="117" r="2.2" fill="#c8642a"/>
+    <circle cx="379" cy="125" r="2.2" fill="#c8642a"/>
+    <circle cx="373" cy="131" r="2.2" fill="#c8642a"/>
+  </g>
+
+  <g>
+    <rect x="388" y="68" width="134" height="94" rx="12" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <line x1="404" y1="71" x2="404" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <line x1="420" y1="71" x2="420" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <line x1="436" y1="71" x2="436" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <line x1="452" y1="71" x2="452" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <line x1="468" y1="71" x2="468" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <line x1="484" y1="71" x2="484" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <line x1="500" y1="71" x2="500" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <line x1="512" y1="71" x2="512" y2="159" stroke="#d89367" stroke-width="1.3"/>
+    <ellipse cx="432" cy="79" rx="14" ry="5" fill="#c8642a"/>
+    <ellipse cx="484" cy="151" rx="14" ry="5" fill="#c8642a"/>
+  </g>
+
+  <g>
+    <line x1="223" y1="127" x2="223" y2="180" stroke="#6b7480" stroke-width="1.4"/>
+    <text x="223" y="200" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">X</text>
+
+    <line x1="376" y1="98" x2="376" y2="48" stroke="#6b7480" stroke-width="1.4"/>
+    <text x="376" y="38" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">Y</text>
+
+    <line x1="455" y1="162" x2="455" y2="190" stroke="#6b7480" stroke-width="1.4"/>
+    <text x="455" y="210" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">Z</text>
+  </g>
+</svg>

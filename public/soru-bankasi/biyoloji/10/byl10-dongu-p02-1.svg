@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="560" height="320" font-family="Nunito, sans-serif">
+  <rect width="560" height="320" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+
+  <rect x="12" y="12" width="536" height="296" rx="10" fill="#f8fbff" stroke="#cfd8e3" stroke-width="1.4"/>
+
+  <rect x="175" y="28" width="210" height="44" rx="8" fill="#e3effc" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="280" y="55" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">Atmosferdeki su buharı</text>
+
+  <rect x="28" y="138" width="150" height="44" rx="8" fill="#d5e8f8" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="103" y="165" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">Deniz ve göller</text>
+
+  <rect x="382" y="138" width="150" height="44" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="457" y="165" text-anchor="middle" font-size="14" font-weight="700" fill="#286433">Bitkiler</text>
+
+  <rect x="205" y="248" width="150" height="44" rx="8" fill="#f3ece1" stroke="#8b6f4e" stroke-width="1.8"/>
+  <text x="280" y="275" text-anchor="middle" font-size="14" font-weight="700" fill="#5c4632">Toprak suyu</text>
+
+  <path d="M 103 136 Q 108 62 170 50" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="116" cy="82" r="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="116" y="87" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">K</text>
+
+  <line x1="280" y1="74" x2="280" y2="243" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="280" cy="158" r="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="280" y="163" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">L</text>
+
+  <path d="M 357 270 Q 452 264 457 187" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="430" cy="240" r="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="430" y="245" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">M</text>
+
+  <path d="M 457 136 Q 452 62 390 50" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="444" cy="82" r="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="444" y="87" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">N</text>
+
+  <path d="M 203 270 Q 108 264 103 187" fill="none" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <circle cx="130" cy="240" r="14" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="130" y="245" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">P</text>
+</svg>

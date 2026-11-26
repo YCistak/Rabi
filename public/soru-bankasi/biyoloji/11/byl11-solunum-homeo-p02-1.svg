@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 360" width="560" height="360" font-family="Nunito, sans-serif">
+  <rect width="560" height="360" fill="#ffffff"/>
+  <path d="M 152 38 C 176 32, 208 38, 218 58 C 224 72, 222 92, 222 112 L 198 112 C 198 92, 196 76, 184 72 C 166 68, 150 66, 146 56 C 144 48, 146 42, 152 38 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <path d="M 156 54 C 170 50, 186 52, 198 62" fill="none" stroke="#1f5fa8" stroke-width="1.3"/>
+  <path d="M 188 188 C 154 182, 114 202, 96 248 C 84 278, 86 312, 108 324 C 132 334, 168 326, 184 312 C 194 302, 192 272, 190 242 C 190 218, 196 196, 188 188 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <path d="M 232 188 C 266 182, 306 202, 324 248 C 336 278, 334 312, 312 324 C 288 334, 252 326, 236 312 C 226 302, 228 272, 230 242 C 230 218, 224 196, 232 188 Z" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <rect x="198" y="112" width="24" height="84" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <line x1="199" y1="124" x2="221" y2="124" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="199" y1="136" x2="221" y2="136" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="199" y1="148" x2="221" y2="148" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="199" y1="160" x2="221" y2="160" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="199" y1="172" x2="221" y2="172" stroke="#1f5fa8" stroke-width="1.6"/>
+  <line x1="199" y1="184" x2="221" y2="184" stroke="#1f5fa8" stroke-width="1.6"/>
+  <path d="M 198 194 L 154 226 L 160 236 L 210 202 L 260 236 L 266 226 L 222 194 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <path d="M 157 231 L 130 250 M 157 231 L 146 266 M 130 250 L 116 270 M 130 250 L 134 282 M 146 266 L 162 292" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M 263 231 L 290 250 M 263 231 L 274 266 M 290 250 L 304 270 M 290 250 L 286 282 M 274 266 L 258 292" fill="none" stroke="#1f5fa8" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="298" cy="274" r="16" fill="none" stroke="#6b7480" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <line x1="306" y1="260" x2="404" y2="182" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <line x1="308" y1="286" x2="412" y2="296" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <circle cx="456" cy="236" r="74" fill="#ffffff" stroke="#6b7480" stroke-width="1.8"/>
+  <path d="M 412 186 L 434 206 L 442 198 L 420 178 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="446" cy="218" r="18" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="472" cy="216" r="18" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="430" cy="242" r="19" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="458" cy="242" r="20" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="486" cy="242" r="18" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="444" cy="268" r="18" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <circle cx="472" cy="268" r="18" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+  <path d="M 398 228 C 414 218, 434 216, 456 226 C 474 234, 492 228, 514 222" fill="none" stroke="#b93838" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 404 256 C 424 246, 444 252, 464 246 C 482 240, 498 250, 512 258" fill="none" stroke="#2c6fb8" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 426 222 C 436 240, 434 258, 444 276" fill="none" stroke="#b93838" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M 464 218 C 460 240, 466 258, 474 278" fill="none" stroke="#2c6fb8" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M 484 226 C 492 242, 488 260, 480 274" fill="none" stroke="#b93838" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="106" y1="54" x2="156" y2="54" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="156" cy="54" r="3" fill="#222222"/>
+  <text x="90" y="60" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+  <line x1="106" y1="150" x2="198" y2="150" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="198" cy="150" r="3" fill="#222222"/>
+  <text x="90" y="156" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+  <line x1="342" y1="126" x2="246" y2="216" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="246" cy="216" r="3" fill="#222222"/>
+  <text x="354" y="122" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">M</text>
+  <line x1="456" y1="322" x2="456" y2="278" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="456" cy="278" r="3" fill="#222222"/>
+  <text x="456" y="342" font-size="18" font-weight="700" fill="#222222" text-anchor="middle">N</text>
+</svg>

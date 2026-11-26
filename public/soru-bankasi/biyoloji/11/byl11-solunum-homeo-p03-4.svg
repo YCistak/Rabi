@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 212" width="440" height="212" font-family="Nunito, sans-serif">
+<rect width="440" height="212" fill="#ffffff"/>
+<g fill="#eef5fb" stroke="#1f5fa8" stroke-width="2">
+<path d="M134 20 Q160 27 186 20 L186 137 L236 173 L222 192 L160 151 L98 192 L84 173 L134 137 Z"/>
+</g>
+<g fill="none" stroke="#567081" stroke-width="2">
+<path d="M133 39 Q160 48 187 39 L187 45 Q160 54 133 45 Z" fill="#d9e4f2"/>
+<path d="M133 60 Q160 69 187 60 L187 66 Q160 75 133 66 Z" fill="#d9e4f2"/>
+<path d="M133 81 Q160 90 187 81 L187 87 Q160 96 133 87 Z" fill="#d9e4f2"/>
+<path d="M133 102 Q160 111 187 102 L187 108 Q160 117 133 108 Z" fill="#d9e4f2"/>
+<path d="M133 123 Q160 132 187 123 L187 129 Q160 138 133 129 Z" fill="#d9e4f2"/>
+<path d="M186 84 L260 64 L282 64"/>
+</g><text x="289" y="69" font-size="16" fill="#222222">Kıkırdak halka</text>
+</svg>

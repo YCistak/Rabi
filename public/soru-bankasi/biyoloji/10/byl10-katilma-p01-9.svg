@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 320" width="460" height="320" font-family="Nunito, sans-serif">
+<rect width="460" height="320" fill="#ffffff"/>
+<g stroke="#d0d5db" stroke-width="1.2" stroke-dasharray="4 4">
+<line x1="80" y1="230" x2="430" y2="230"/>
+<line x1="80" y1="190" x2="430" y2="190"/>
+<line x1="80" y1="150" x2="430" y2="150"/>
+<line x1="80" y1="110" x2="430" y2="110"/>
+<line x1="80" y1="70" x2="430" y2="70"/>
+</g>
+<g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6">
+<rect x="120" y="190" width="60" height="80"/>
+<rect x="220" y="90" width="60" height="180"/>
+<rect x="320" y="190" width="60" height="80"/>
+</g>
+<g stroke="#6b7480" stroke-width="1.6">
+<line x1="80" y1="270" x2="430" y2="270"/>
+<line x1="80" y1="270" x2="80" y2="50"/>
+<line x1="74" y1="230" x2="80" y2="230"/>
+<line x1="74" y1="190" x2="80" y2="190"/>
+<line x1="74" y1="150" x2="80" y2="150"/>
+<line x1="74" y1="110" x2="80" y2="110"/>
+<line x1="74" y1="70" x2="80" y2="70"/>
+</g>
+<g fill="#222222" font-size="13" text-anchor="end">
+<text x="68" y="275">0</text>
+<text x="68" y="235">20</text>
+<text x="68" y="195">40</text>
+<text x="68" y="155">60</text>
+<text x="68" y="115">80</text>
+<text x="68" y="75">100</text>
+</g>
+<g fill="#222222" font-size="14" text-anchor="middle">
+<text x="150" y="182">40</text>
+<text x="250" y="82">90</text>
+<text x="350" y="182">40</text>
+<text x="150" y="290" font-weight="700">K</text>
+<text x="250" y="290" font-weight="700">L</text>
+<text x="350" y="290" font-weight="700">M</text>
+</g>
+<text x="20" y="32" fill="#222222" font-size="14">10 g besinin enerjisi (kcal)</text>
+<text x="440" y="310" fill="#222222" font-size="14" text-anchor="end">Besin</text>
+</svg>

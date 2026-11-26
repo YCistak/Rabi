@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300" font-family="Nunito, sans-serif">
+  <rect width="600" height="300" fill="#ffffff"/>
+
+  <text x="150" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">1. Kap</text>
+  <circle cx="150" cy="142" r="84" fill="#f4f6f8" stroke="#6b7480" stroke-width="2"/>
+  <circle cx="150" cy="142" r="78" fill="#eef5fb" stroke="#b8c9dc" stroke-width="1.2"/>
+
+  <g stroke="#c8642a" stroke-width="1.6" fill="none">
+    <path d="M 150 142 L 150 110 M 150 120 L 143 111 M 150 120 L 157 111"/>
+    <path d="M 150 142 L 150 174 M 150 164 L 143 173 M 150 164 L 157 173"/>
+    <path d="M 150 142 L 118 142 M 128 142 L 119 135 M 128 142 L 119 149"/>
+    <path d="M 150 142 L 182 142 M 172 142 L 181 135 M 172 142 L 181 149"/>
+    <path d="M 150 142 L 127 119 M 134 126 L 126 126 M 134 126 L 134 118"/>
+    <path d="M 150 142 L 173 119 M 166 126 L 174 126 M 166 126 L 166 118"/>
+    <path d="M 150 142 L 127 165 M 134 158 L 126 158 M 134 158 L 134 166"/>
+    <path d="M 150 142 L 173 165 M 166 158 L 174 158 M 166 158 L 166 166"/>
+  </g>
+  <circle cx="150" cy="142" r="6" fill="#c8642a" stroke="#7d3a14" stroke-width="1.4"/>
+  <text x="150" y="248" text-anchor="middle" font-size="13" fill="#6b7480">48 saat sonra</text>
+
+  <text x="395" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">2. Kap</text>
+  <circle cx="395" cy="142" r="84" fill="#f4f6f8" stroke="#6b7480" stroke-width="2"/>
+  <circle cx="395" cy="142" r="78" fill="#eef5fb" stroke="#b8c9dc" stroke-width="1.2"/>
+
+  <g stroke="#c8642a" stroke-width="1.6" fill="none">
+    <path d="M 395 142 L 378 142 M 384 142 L 379 138"/>
+    <path d="M 395 142 L 383 128"/>
+    <path d="M 395 142 L 383 156"/>
+    <path d="M 395 142 L 395 124"/>
+    <path d="M 395 142 L 395 160"/>
+    <path d="M 395 142 L 438 142 M 415 142 L 436 134 M 415 142 L 436 150 M 426 138 L 439 138 M 426 146 L 439 146"/>
+    <path d="M 395 142 Q 418 124 441 131 M 416 131 L 434 123 M 424 128 L 438 127"/>
+    <path d="M 395 142 Q 418 160 441 153 M 416 153 L 434 161 M 424 156 L 438 157"/>
+    <path d="M 395 142 Q 412 114 434 118 M 414 120 L 427 112"/>
+    <path d="M 395 142 Q 412 170 434 166 M 414 164 L 427 172"/>
+  </g>
+  <circle cx="395" cy="142" r="6" fill="#c8642a" stroke="#7d3a14" stroke-width="1.4"/>
+  <circle cx="452" cy="142" r="12" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <line x1="464" y1="142" x2="496" y2="142" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="502" y="147" text-anchor="start" font-size="14" font-weight="600" fill="#222222">Besin diski</text>
+  <text x="395" y="248" text-anchor="middle" font-size="13" fill="#6b7480">48 saat sonra</text>
+
+  <circle cx="105" cy="279" r="5" fill="#c8642a" stroke="#7d3a14" stroke-width="1.2"/>
+  <text x="117" y="284" text-anchor="start" font-size="13" fill="#222222">Mantar ekimi</text>
+
+  <path d="M 244 279 L 260 279 M 252 279 L 260 273 M 252 279 L 260 285" stroke="#c8642a" stroke-width="1.6" fill="none"/>
+  <text x="268" y="284" text-anchor="start" font-size="13" fill="#222222">Mantar hifleri</text>
+
+  <circle cx="404" cy="279" r="6" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="417" y="284" text-anchor="start" font-size="13" fill="#222222">Besin diski</text>
+</svg>

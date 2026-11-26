@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="520" height="160" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="520" height="160" fill="#ffffff"/>
+  <rect x="32" y="53" width="76" height="54" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="70" y="87" font-size="20" font-weight="700" fill="#222222" text-anchor="middle">K</text>
+  <line x1="112" y1="80" x2="152" y2="80" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <rect x="158" y="53" width="76" height="54" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="196" y="87" font-size="20" font-weight="700" fill="#222222" text-anchor="middle">L</text>
+  <line x1="238" y1="80" x2="278" y2="80" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <rect x="284" y="53" width="76" height="54" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="322" y="87" font-size="20" font-weight="700" fill="#222222" text-anchor="middle">M</text>
+  <line x1="364" y1="80" x2="404" y2="80" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <rect x="410" y="53" width="76" height="54" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="448" y="87" font-size="20" font-weight="700" fill="#222222" text-anchor="middle">N</text>
+</svg>

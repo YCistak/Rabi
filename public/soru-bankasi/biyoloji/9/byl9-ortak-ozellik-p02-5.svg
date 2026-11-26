@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" width="520" height="330" font-family="Nunito, sans-serif">
+<rect width="520" height="330" fill="#ffffff"/>
+<rect x="10" y="10" width="500" height="310" rx="18" fill="#f4f6f8" stroke="#1f5fa8" stroke-width="1.6"/>
+<rect x="45" y="48" width="430" height="262" rx="16" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+<rect x="80" y="86" width="360" height="214" rx="14" fill="#e3eef8" stroke="#1f5fa8" stroke-width="1.6"/>
+<rect x="115" y="124" width="290" height="166" rx="12" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+<ellipse cx="260" cy="222" rx="80" ry="44" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+<circle cx="292" cy="222" r="15" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+<g font-size="18" font-weight="700" fill="#222222">
+<text x="24" y="36">L</text>
+<text x="59" y="74">P</text>
+<text x="94" y="112">N</text>
+<text x="129" y="150">K</text>
+<text x="215" y="229">M</text>
+</g>
+</svg>

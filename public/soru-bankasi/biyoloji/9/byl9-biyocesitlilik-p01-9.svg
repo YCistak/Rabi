@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="600" height="320" fill="#ffffff"/>
+  <text x="136" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">2015 (Başlangıç)</text>
+  <rect x="20" y="38" width="232" height="190" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+
+  <g fill="#1f5fa8" stroke="#ffffff" stroke-width="1.2">
+    <circle cx="56" cy="70" r="8"/>
+    <circle cx="108" cy="70" r="8"/>
+    <circle cx="160" cy="70" r="8"/>
+    <circle cx="212" cy="70" r="8"/>
+  </g>
+  <g fill="#3b8f4a" stroke="#ffffff" stroke-width="1.2">
+    <rect x="69" y="105" width="14" height="14"/>
+    <rect x="129" y="105" width="14" height="14"/>
+    <rect x="189" y="105" width="14" height="14"/>
+  </g>
+  <g fill="#7c4dff" stroke="#ffffff" stroke-width="1.2">
+    <polygon points="76,144 85,154 76,164 67,154"/>
+    <polygon points="136,144 145,154 136,164 127,154"/>
+    <polygon points="196,144 205,154 196,164 187,154"/>
+  </g>
+  <g fill="#d49a1a" stroke="#ffffff" stroke-width="1.2">
+    <polygon points="54,187 45,204 63,204"/>
+    <polygon points="96,187 87,204 105,204"/>
+    <polygon points="138,187 129,204 147,204"/>
+  </g>
+  <g fill="#0f8b8d" stroke="#ffffff" stroke-width="1.2">
+    <ellipse cx="182" cy="196" rx="10" ry="6"/>
+    <ellipse cx="222" cy="196" rx="10" ry="6"/>
+  </g>
+
+  <text x="300" y="104" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">İstilacı X</text>
+  <text x="300" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">girişi</text>
+  <line x1="262" y1="136" x2="334" y2="136" stroke="#c8642a" stroke-width="2.2" marker-end="url(#ok)"/>
+
+  <text x="464" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">2025 (10 yıl sonra)</text>
+  <rect x="348" y="38" width="232" height="190" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+
+  <g fill="#1f5fa8" stroke="#ffffff" stroke-width="1.2">
+    <circle cx="388" cy="68" r="8"/>
+    <circle cx="434" cy="68" r="8"/>
+  </g>
+  <g fill="#3b8f4a" stroke="#ffffff" stroke-width="1.2">
+    <rect x="488" y="61" width="14" height="14"/>
+    <rect x="534" y="61" width="14" height="14"/>
+  </g>
+  <g fill="#c83e2b" stroke="#ffffff" stroke-width="1.1">
+    <polygon points="380,101 383,108 390,108 384,113 386,120 380,115 374,120 376,113 370,108 377,108"/>
+    <polygon points="422,101 425,108 432,108 426,113 428,120 422,115 416,120 418,113 412,108 419,108"/>
+    <polygon points="464,101 467,108 474,108 468,113 470,120 464,115 458,120 460,113 454,108 461,108"/>
+    <polygon points="506,101 509,108 516,108 510,113 512,120 506,115 500,120 502,113 496,108 503,108"/>
+    <polygon points="548,101 551,108 558,108 552,113 554,120 548,115 542,120 544,113 538,108 545,108"/>
+
+    <polygon points="380,143 383,150 390,150 384,155 386,162 380,157 374,162 376,155 370,150 377,150"/>
+    <polygon points="422,143 425,150 432,150 426,155 428,162 422,157 416,162 418,155 412,150 419,150"/>
+    <polygon points="464,143 467,150 474,150 468,155 470,162 464,157 458,162 460,155 454,150 461,150"/>
+    <polygon points="506,143 509,150 516,150 510,155 512,162 506,157 500,162 502,155 496,150 503,150"/>
+    <polygon points="548,143 551,150 558,150 552,155 554,162 548,157 542,162 544,155 538,150 545,150"/>
+
+    <polygon points="400,185 403,192 410,192 404,197 406,204 400,199 394,204 396,197 390,192 397,192"/>
+    <polygon points="442,185 445,192 452,192 446,197 448,204 442,199 436,204 438,197 432,192 439,192"/>
+    <polygon points="484,185 487,192 494,192 488,197 490,204 484,199 478,204 480,197 474,192 481,192"/>
+    <polygon points="526,185 529,192 536,192 530,197 532,204 526,199 520,204 522,197 516,192 523,192"/>
+  </g>
+
+  <rect x="20" y="242" width="560" height="64" rx="8" fill="#f8f8f7" stroke="#d5d8dc" stroke-width="1.2"/>
+  <circle cx="46" cy="262" r="6.5" fill="#1f5fa8"/>
+  <text x="60" y="267" font-size="13" fill="#222222">Yerli 1</text>
+  <rect x="148" y="256" width="12" height="12" fill="#3b8f4a"/>
+  <text x="168" y="267" font-size="13" fill="#222222">Yerli 2</text>
+  <polygon points="262,254 270,262 262,270 254,262" fill="#7c4dff"/>
+  <text x="278" y="267" font-size="13" fill="#222222">Yerli 3</text>
+  <polygon points="370,255 362,269 378,269" fill="#d49a1a"/>
+  <text x="386" y="267" font-size="13" fill="#222222">Yerli 4</text>
+  <ellipse cx="478" cy="262" rx="9" ry="5.5" fill="#0f8b8d"/>
+  <text x="494" y="267" font-size="13" fill="#222222">Yerli 5</text>
+
+  <polygon points="244,282 247,288 253,288 248,292 250,298 244,294 238,298 240,292 235,288 241,288" fill="#c83e2b"/>
+  <text x="262" y="295" font-size="13" font-weight="700" fill="#222222">İstilacı X türü</text>
+</svg>

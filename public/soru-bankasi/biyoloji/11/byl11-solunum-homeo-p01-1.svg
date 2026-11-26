@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 210" width="430" height="210" font-family="Nunito, sans-serif">
+<rect width="430" height="210" fill="#ffffff"/>
+<path d="M 36 85 Q 107 85 178 85 Q 194 85 209 73 C 199 40 245 25 263 54 C 277 24 322 35 321 65 C 355 53 377 84 356 106 C 384 131 359 164 328 153 C 319 183 278 177 270 153 C 242 177 209 157 214 134 Q 202 119 178 119 L 36 119" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+<path d="M 263 54 Q 266 65 260 73 M 321 65 Q 317 74 306 78 M 356 106 Q 344 102 335 108 M 328 153 Q 324 139 313 137 M 270 153 Q 276 143 274 133" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+<path d="M 110 54 L 110 85 M 372 50 L 348 67" fill="none" stroke="#6b7480" stroke-width="1.5"/>
+<g font-size="18" fill="#222222" text-anchor="middle"><text x="110" y="47">K</text><text x="378" y="46">L</text></g>
+</svg>

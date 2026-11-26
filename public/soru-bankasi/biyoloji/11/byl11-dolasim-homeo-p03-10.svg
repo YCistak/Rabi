@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 296" width="580" height="296" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="okKirmizi" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="#b83b2d"/>
+    </marker>
+    <marker id="okMavi" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="#1f5fa8"/>
+    </marker>
+    <marker id="okYesil" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <polygon points="0,1 8,4 0,7" fill="#2d6e39"/>
+    </marker>
+  </defs>
+  <rect width="580" height="296" fill="#ffffff"/>
+
+  <rect x="28" y="26" width="142" height="44" rx="8" fill="#fbe6e2" stroke="#b83b2d" stroke-width="1.8"/>
+  <text x="99" y="53" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kan kılcalı</text>
+
+  <line x1="170" y1="48" x2="342" y2="48" stroke="#b83b2d" stroke-width="1.8" stroke-dasharray="6,4" marker-end="url(#okKirmizi)"/>
+  <text x="256" y="38" text-anchor="middle" font-size="13" fill="#6b7480">Kan dolaşımı</text>
+
+  <rect x="346" y="26" width="206" height="44" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="449" y="53" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kalbe dönen toplardamar</text>
+
+  <line x1="76" y1="70" x2="76" y2="122" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#okMavi)"/>
+  <line x1="122" y1="126" x2="122" y2="74" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#okMavi)"/>
+
+  <rect x="28" y="126" width="142" height="44" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="99" y="153" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Doku sıvısı</text>
+
+  <rect x="28" y="224" width="142" height="44" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="1.8"/>
+  <text x="99" y="251" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">İnce bağırsak</text>
+
+  <path d="M 170 148 L 198 148 L 198 186 L 222 186" fill="none" stroke="#2d6e39" stroke-width="1.8" marker-end="url(#okYesil)"/>
+  <path d="M 170 246 L 198 246 L 198 208 L 222 208" fill="none" stroke="#2d6e39" stroke-width="1.8" marker-end="url(#okYesil)"/>
+
+  <rect x="226" y="175" width="124" height="44" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="288" y="202" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Lenf kılcalları</text>
+
+  <line x1="350" y1="197" x2="392" y2="197" stroke="#2d6e39" stroke-width="1.8" marker-end="url(#okYesil)"/>
+
+  <ellipse cx="449" cy="197" rx="54" ry="29" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <text x="449" y="193" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Lenf</text>
+  <text x="449" y="210" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">düğümü</text>
+
+  <line x1="449" y1="168" x2="449" y2="74" stroke="#2d6e39" stroke-width="2" marker-end="url(#okYesil)"/>
+  <text x="462" y="126" text-anchor="start" font-size="13" fill="#2d6e39">Lenf damarı</text>
+</svg>

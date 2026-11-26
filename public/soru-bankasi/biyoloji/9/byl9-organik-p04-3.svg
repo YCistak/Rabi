@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 430" width="620" height="430" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="620" height="430" fill="#ffffff"/>
+
+  <rect x="175" y="16" width="270" height="40" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="310" y="41" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Tek bir şeker biriminden mi oluşur?</text>
+
+  <line x1="230" y1="56" x2="96" y2="105" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="142" y="76" text-anchor="middle" font-size="13" font-weight="700" fill="#3b8f4a">Evet</text>
+
+  <line x1="390" y1="56" x2="424" y2="101" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="432" y="82" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Hayır</text>
+
+  <rect x="60" y="108" width="60" height="38" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="90" y="133" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">K</text>
+
+  <rect x="275" y="104" width="300" height="46" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="425" y="132" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">İki şeker biriminden mi oluşur?</text>
+
+  <line x1="345" y1="150" x2="206" y2="201" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="252" y="171" text-anchor="middle" font-size="13" font-weight="700" fill="#3b8f4a">Evet</text>
+
+  <line x1="455" y1="150" x2="455" y2="196" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="484" y="179" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Hayır</text>
+
+  <rect x="170" y="204" width="60" height="38" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="200" y="229" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">L</text>
+
+  <rect x="335" y="200" width="240" height="40" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="455" y="225" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Depo görevi mi yapar?</text>
+
+  <line x1="395" y1="240" x2="334" y2="289" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="342" y="264" text-anchor="middle" font-size="13" font-weight="700" fill="#3b8f4a">Evet</text>
+
+  <line x1="520" y1="240" x2="558" y2="291" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="564" y="266" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Hayır</text>
+
+  <rect x="210" y="292" width="240" height="40" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="330" y="317" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Bitkilerde mi depolanır?</text>
+
+  <rect x="530" y="294" width="60" height="38" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="560" y="319" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">P</text>
+
+  <line x1="275" y1="332" x2="219" y2="373" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="225" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#3b8f4a">Evet</text>
+
+  <line x1="385" y1="332" x2="441" y2="373" stroke="#6b7480" stroke-width="1.6" marker-end="url(#ok)"/>
+  <text x="438" y="352" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">Hayır</text>
+
+  <rect x="185" y="376" width="60" height="38" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="215" y="401" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">M</text>
+
+  <rect x="415" y="376" width="60" height="38" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="445" y="401" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">N</text>
+</svg>

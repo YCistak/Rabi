@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 350" width="600" height="350" font-family="Nunito, sans-serif">
+  <rect width="600" height="350" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <text x="40" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Model</text>
+  <text x="205" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Başlangıç</text>
+  <text x="465" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kasılma temsili</text>
+  <rect x="16" y="40" width="568" height="90" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="40" y="91" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">K</text>
+  <rect x="135" y="56" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="267" y="56" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="143" y="67" width="124" height="5" rx="2" fill="#c8642a"/>
+  <rect x="143" y="82" width="124" height="5" rx="2" fill="#c8642a"/>
+  <rect x="143" y="97" width="124" height="5" rx="2" fill="#c8642a"/>
+  <line x1="312" y1="85" x2="356" y2="85" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+  <rect x="420" y="56" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="502" y="56" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="428" y="65" width="74" height="8" rx="2" fill="#c8642a"/>
+  <rect x="428" y="81" width="74" height="8" rx="2" fill="#c8642a"/>
+  <rect x="428" y="97" width="74" height="8" rx="2" fill="#c8642a"/>
+  <rect x="16" y="144" width="568" height="90" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="40" y="195" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">L</text>
+  <rect x="135" y="160" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="267" y="160" width="8" height="58" rx="2" fill="#374151"/>
+  <line x1="143" y1="168" x2="187" y2="168" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="143" y1="189" x2="187" y2="189" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="143" y1="210" x2="187" y2="210" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="223" y1="168" x2="267" y2="168" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="223" y1="189" x2="267" y2="189" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="223" y1="210" x2="267" y2="210" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="172" y="175" width="66" height="6" rx="3" fill="#c8642a"/>
+  <rect x="172" y="196" width="66" height="6" rx="3" fill="#c8642a"/>
+  <line x1="312" y1="189" x2="356" y2="189" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+  <rect x="410" y="160" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="512" y="160" width="8" height="58" rx="2" fill="#374151"/>
+  <line x1="418" y1="168" x2="462" y2="168" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="418" y1="189" x2="462" y2="189" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="418" y1="210" x2="462" y2="210" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="468" y1="168" x2="512" y2="168" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="468" y1="189" x2="512" y2="189" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="468" y1="210" x2="512" y2="210" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="432" y="175" width="66" height="6" rx="3" fill="#c8642a"/>
+  <rect x="432" y="196" width="66" height="6" rx="3" fill="#c8642a"/>
+  <rect x="16" y="248" width="568" height="90" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="40" y="299" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">M</text>
+  <rect x="135" y="264" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="267" y="264" width="8" height="58" rx="2" fill="#374151"/>
+  <line x1="143" y1="272" x2="187" y2="272" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="143" y1="293" x2="187" y2="293" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="143" y1="314" x2="187" y2="314" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="223" y1="272" x2="267" y2="272" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="223" y1="293" x2="267" y2="293" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="223" y1="314" x2="267" y2="314" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="172" y="279" width="66" height="6" rx="3" fill="#c8642a"/>
+  <rect x="172" y="300" width="66" height="6" rx="3" fill="#c8642a"/>
+  <line x1="312" y1="293" x2="356" y2="293" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+  <rect x="395" y="264" width="8" height="58" rx="2" fill="#374151"/>
+  <rect x="527" y="264" width="8" height="58" rx="2" fill="#374151"/>
+  <line x1="403" y1="272" x2="447" y2="272" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="403" y1="293" x2="447" y2="293" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="403" y1="314" x2="447" y2="314" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="483" y1="272" x2="527" y2="272" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="483" y1="293" x2="527" y2="293" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="483" y1="314" x2="527" y2="314" stroke="#1f5fa8" stroke-width="2"/>
+  <rect x="449" y="279" width="32" height="6" rx="3" fill="#c8642a"/>
+  <rect x="449" y="300" width="32" height="6" rx="3" fill="#c8642a"/>
+</svg>

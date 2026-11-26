@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 190" width="490" height="190" font-family="Nunito, sans-serif">
+  <rect width="490" height="190" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f5fa8"/></marker>
+  </defs>
+  <g fill="#eeeaf4" stroke="#796b88" stroke-width="1.7">
+    <path d="M63 46 Q70 50 79 46 L77 72 Q91 74 92 88 Q95 103 83 110 Q72 119 57 112 Q43 112 40 98 Q37 85 48 79 Q53 75 64 74 Z"/>
+    <path d="M77 72 Q77 80 73 86 Q67 96 74 114" fill="none"/>
+  </g>
+  <g fill="#eef1f4" stroke="#80909b" stroke-width="1.4">
+    <rect x="232" y="45" width="24" height="78" rx="6"/>
+    <path d="M233 54 H255 M233 61 H255 M233 111 H255 M233 118 H255" fill="none"/>
+  </g>
+  <path d="M216 60 Q205 49 203 68 Q200 90 209 104 Q218 115 226 101 Q231 94 235 94 H253 Q258 95 262 102 Q270 115 279 104 Q288 90 285 68 Q283 49 273 60 L260 78 Q255 84 250 83 H238 Q232 84 228 78 Z" fill="#fbe6d6" stroke="#ad653d" stroke-width="1.7"/>
+  <g fill="#f5dedd" stroke="#a96b68" stroke-width="1.5">
+    <path d="M378 75 Q393 57 442 58 L454 69 Q434 68 389 87 Z"/>
+    <path d="M382 93 Q398 76 447 77 L458 88 Q439 87 393 105 Z"/>
+    <path d="M385 112 Q402 95 450 96 L461 107 Q439 106 396 124 Z"/>
+  </g>
+  <g stroke="#1f5fa8" fill="none" stroke-width="1.8" marker-end="url(#ok)"><path d="M104 88 H189"/><path d="M297 88 H368"/></g>
+  <g fill="#222222" font-size="16" text-anchor="middle">
+    <text x="148" y="77" font-weight="bold">X</text><text x="332" y="77" font-weight="bold">Y</text>
+    <text x="67" y="154">Hipofiz</text><text x="244" y="154">Tiroit</text><text x="420" y="154">Kas dokusu</text>
+  </g>
+</svg>

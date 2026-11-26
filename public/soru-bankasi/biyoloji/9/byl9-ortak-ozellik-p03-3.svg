@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="okMavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="okYesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#3b8f4a"/>
+    </marker>
+  </defs>
+
+  <rect width="600" height="320" fill="#ffffff"/>
+
+  <g>
+    <rect x="14" y="14" width="572" height="138" rx="12" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+    <text x="28" y="36" font-size="14" font-weight="700" fill="#1f5fa8">Tek hücreli canlı (Amip)</text>
+
+    <rect x="28" y="46" width="134" height="94" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <path d="M 78 90 C 74 78 90 74 98 81 C 108 77 118 88 112 97 C 117 107 104 114 95 109 C 85 115 73 105 78 90 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="95" cy="95" r="5.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.3"/>
+
+    <line x1="168" y1="94" x2="212" y2="94" stroke="#1f5fa8" stroke-width="2" marker-end="url(#okMavi)"/>
+    <text x="190" y="84" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">I</text>
+
+    <rect x="220" y="46" width="146" height="94" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <path d="M 260 88 C 252 66 280 58 296 70 C 314 60 336 78 326 96 C 338 114 312 128 294 118 C 276 130 250 112 260 88 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="293" cy="94" r="8.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <circle cx="278" cy="104" r="3" fill="#6b7480"/>
+    <circle cx="309" cy="84" r="2.6" fill="#6b7480"/>
+
+    <line x1="372" y1="94" x2="416" y2="94" stroke="#1f5fa8" stroke-width="2" marker-end="url(#okMavi)"/>
+    <text x="394" y="84" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">II</text>
+
+    <rect x="424" y="46" width="148" height="94" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <path d="M 446 90 C 442 78 458 74 466 81 C 476 77 486 88 480 97 C 485 107 472 114 463 109 C 453 115 441 105 446 90 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="463" cy="95" r="5.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.3"/>
+
+    <path d="M 514 90 C 510 78 526 74 534 81 C 544 77 554 88 548 97 C 553 107 540 114 531 109 C 521 115 509 105 514 90 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="531" cy="95" r="5.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.3"/>
+  </g>
+
+  <g>
+    <rect x="14" y="168" width="572" height="138" rx="12" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.5"/>
+    <text x="28" y="190" font-size="14" font-weight="700" fill="#3b8f4a">Çok hücreli canlı (Balık yavrusu)</text>
+
+    <rect x="28" y="200" width="224" height="94" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <polygon points="56,248 40,237 44,248 40,259" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 54 248 C 64 234 94 234 114 248 C 94 262 64 262 54 248 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <path d="M 76 238 L 86 229 L 94 238" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <circle cx="101" cy="245" r="2.2" fill="#222222"/>
+    <line x1="92" y1="248" x2="170" y2="248" stroke="#6b7480" stroke-width="1.3"/>
+    <circle cx="198" cy="248" r="28" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+    <rect x="184" y="234" width="14" height="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="191" cy="241" r="2.2" fill="#3b8f4a"/>
+    <rect x="198" y="234" width="14" height="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="205" cy="241" r="2.2" fill="#3b8f4a"/>
+    <rect x="184" y="248" width="14" height="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="191" cy="255" r="2.2" fill="#3b8f4a"/>
+    <rect x="198" y="248" width="14" height="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="205" cy="255" r="2.2" fill="#3b8f4a"/>
+
+    <line x1="262" y1="248" x2="330" y2="248" stroke="#3b8f4a" stroke-width="2" marker-end="url(#okYesil)"/>
+    <text x="296" y="238" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">III</text>
+
+    <rect x="340" y="200" width="232" height="94" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"/>
+    <polygon points="376,248 352,229 360,248 352,267" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <path d="M 374 248 C 392 224 438 224 468 248 C 438 272 392 272 374 248 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 404 231 L 420 216 L 436 232" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 412 266 L 422 277 L 432 266" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <path d="M 442 239 C 438 245 438 251 442 257" fill="none" stroke="#3b8f4a" stroke-width="1.4"/>
+    <circle cx="452" cy="243" r="2.6" fill="#222222"/>
+    <line x1="436" y1="248" x2="490" y2="248" stroke="#6b7480" stroke-width="1.3"/>
+    <circle cx="518" cy="248" r="28" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+    <rect x="503" y="233" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="508" cy="238" r="1.5" fill="#3b8f4a"/>
+    <rect x="513" y="233" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="518" cy="238" r="1.5" fill="#3b8f4a"/>
+    <rect x="523" y="233" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="528" cy="238" r="1.5" fill="#3b8f4a"/>
+    <rect x="503" y="243" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="508" cy="248" r="1.5" fill="#3b8f4a"/>
+    <rect x="513" y="243" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="518" cy="248" r="1.5" fill="#3b8f4a"/>
+    <rect x="523" y="243" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="528" cy="248" r="1.5" fill="#3b8f4a"/>
+    <rect x="503" y="253" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="508" cy="258" r="1.5" fill="#3b8f4a"/>
+    <rect x="513" y="253" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="518" cy="258" r="1.5" fill="#3b8f4a"/>
+    <rect x="523" y="253" width="10" height="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="528" cy="258" r="1.5" fill="#3b8f4a"/>
+  </g>
+</svg>

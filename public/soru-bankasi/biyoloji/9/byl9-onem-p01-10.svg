@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 310" width="600" height="310" font-family="Nunito, sans-serif">
+  <rect width="600" height="310" fill="#ffffff"/>
+
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+
+  <g>
+    <line x1="18" y1="18" x2="42" y2="18" stroke="#d9534f" stroke-width="2.5"/>
+    <circle cx="30" cy="18" r="3.5" fill="#d9534f"/>
+    <text x="48" y="22" font-size="13" fill="#222222">Zararlı böcek (yaprak biti)</text>
+
+    <line x1="224" y1="18" x2="248" y2="18" stroke="#2b78e4" stroke-width="2.5"/>
+    <circle cx="236" cy="18" r="3.5" fill="#2b78e4"/>
+    <text x="254" y="22" font-size="13" fill="#222222">Doğal avcı (uğur böceği)</text>
+
+    <line x1="422" y1="18" x2="446" y2="18" stroke="#3b8f4a" stroke-width="2.5"/>
+    <circle cx="434" cy="18" r="3.5" fill="#3b8f4a"/>
+    <text x="452" y="22" font-size="13" fill="#222222">Tozlaştırıcı (bal arısı)</text>
+  </g>
+
+  <line x1="70" y1="64" x2="520" y2="64" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="70" y1="109" x2="520" y2="109" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="70" y1="154" x2="520" y2="154" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="70" y1="199" x2="520" y2="199" stroke="#e5e7eb" stroke-width="1"/>
+
+  <line x1="70" y1="54" x2="70" y2="244" stroke="#4b5563" stroke-width="1.5" marker-start="url(#ok)"/>
+  <line x1="70" y1="244" x2="530" y2="244" stroke="#4b5563" stroke-width="1.5" marker-end="url(#ok)"/>
+
+  <text x="70" y="44" font-size="13" font-weight="bold" fill="#4b5563" text-anchor="middle">Yoğunluk (bağıl)</text>
+  <text x="538" y="248" font-size="13" font-weight="bold" fill="#4b5563">Zaman</text>
+
+  <text x="60" y="248" font-size="13" fill="#6b7280" text-anchor="end">0</text>
+  <text x="60" y="203" font-size="13" fill="#6b7280" text-anchor="end">25</text>
+  <text x="60" y="158" font-size="13" fill="#6b7280" text-anchor="end">50</text>
+  <text x="60" y="113" font-size="13" fill="#6b7280" text-anchor="end">75</text>
+  <text x="60" y="68" font-size="13" fill="#6b7280" text-anchor="end">100</text>
+
+  <line x1="130" y1="241" x2="130" y2="247" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="130" y="266" font-size="13" fill="#222222" text-anchor="middle">1. Yıl</text>
+
+  <line x1="240" y1="241" x2="240" y2="247" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="240" y="266" font-size="13" fill="#222222" text-anchor="middle">2. Yıl</text>
+
+  <line x1="350" y1="241" x2="350" y2="247" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="350" y="266" font-size="13" fill="#222222" text-anchor="middle">3. Yıl</text>
+
+  <line x1="460" y1="241" x2="460" y2="247" stroke="#4b5563" stroke-width="1.5"/>
+  <text x="460" y="266" font-size="13" fill="#222222" text-anchor="middle">4. Yıl</text>
+
+  <line x1="185" y1="56" x2="185" y2="244" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="185" y="292" font-size="13" fill="#4b5563" text-anchor="middle">Biyolojik mücadele başlangıcı</text>
+
+  <polyline points="130,73 240,145 350,190 460,199" fill="none" stroke="#d9534f" stroke-width="2.5"/>
+  <circle cx="130" cy="73" r="4" fill="#d9534f"/>
+  <circle cx="240" cy="145" r="4" fill="#d9534f"/>
+  <circle cx="350" cy="190" r="4" fill="#d9534f"/>
+  <circle cx="460" cy="199" r="4" fill="#d9534f"/>
+
+  <polyline points="130,212 240,127 350,172 460,181" fill="none" stroke="#2b78e4" stroke-width="2.5"/>
+  <circle cx="130" cy="212" r="4" fill="#2b78e4"/>
+  <circle cx="240" cy="127" r="4" fill="#2b78e4"/>
+  <circle cx="350" cy="172" r="4" fill="#2b78e4"/>
+  <circle cx="460" cy="181" r="4" fill="#2b78e4"/>
+
+  <polyline points="130,226 240,181 350,118 460,91" fill="none" stroke="#3b8f4a" stroke-width="2.5"/>
+  <circle cx="130" cy="226" r="4" fill="#3b8f4a"/>
+  <circle cx="240" cy="181" r="4" fill="#3b8f4a"/>
+  <circle cx="350" cy="118" r="4" fill="#3b8f4a"/>
+  <circle cx="460" cy="91" r="4" fill="#3b8f4a"/>
+</svg>

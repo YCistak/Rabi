@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 340" width="620" height="340" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+
+  <rect width="620" height="340" fill="#ffffff"/>
+
+  <rect x="18" y="18" width="584" height="304" rx="34" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2.2"/>
+  <text x="44" y="46" font-size="14" font-weight="700" fill="#1f5fa8">Sitoplazma</text>
+
+  <ellipse cx="94" cy="264" rx="46" ry="28" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+  <text x="94" y="269" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Çekirdek</text>
+
+  <text x="504" y="46" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">Mitokondri</text>
+  <ellipse cx="504" cy="108" rx="76" ry="50" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <path d="M 442 98 Q 456 76 470 90 Q 484 70 498 86 Q 512 68 526 86 Q 540 74 556 96 Q 564 110 554 126 Q 540 144 524 130 Q 510 148 496 132 Q 482 146 468 128 Q 454 140 442 120 Z" fill="none" stroke="#c8642a" stroke-width="1.3"/>
+  <rect x="462" y="94" width="84" height="28" rx="6" fill="#ffffff" stroke="#c8642a" stroke-width="1.2"/>
+  <text x="504" y="113" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">CO₂ + H₂O</text>
+
+  <rect x="42" y="88" width="104" height="38" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="94" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Glikoz (6C)</text>
+
+  <line x1="146" y1="107" x2="234" y2="107" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="190" y="96" text-anchor="middle" font-size="13" font-weight="700" fill="#1f5fa8">Glikoliz</text>
+
+  <rect x="240" y="88" width="114" height="38" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="297" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2 Piruvat (3C)</text>
+
+  <line x1="354" y1="107" x2="456" y2="107" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <text x="390" y="86" text-anchor="middle" font-size="13" font-weight="700" fill="#c8642a">1. Yol</text>
+  <text x="390" y="134" text-anchor="middle" font-size="13" fill="#6b7480">(Yeterli O₂)</text>
+
+  <line x1="297" y1="126" x2="297" y2="236" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="312" y="176" font-size="13" font-weight="700" fill="#1f5fa8">2. Yol</text>
+  <text x="312" y="195" font-size="13" fill="#6b7480">(Yetersiz O₂)</text>
+
+  <rect x="246" y="242" width="102" height="38" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="297" y="266" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">2 K</text>
+
+  <rect x="200" y="142" width="60" height="24" rx="12" fill="#dbeafe" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="230" y="159" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">NADH</text>
+
+  <rect x="200" y="196" width="60" height="24" rx="12" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="230" y="213" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">NAD⁺</text>
+
+  <path d="M 190 112 Q 186 154 198 154" fill="none" stroke="#1f5fa8" stroke-width="1.6" marker-end="url(#ok)"/>
+  <path d="M 260 154 Q 282 154 292 172" fill="none" stroke="#1f5fa8" stroke-width="1.6" marker-end="url(#ok)"/>
+  <path d="M 294 192 Q 284 208 263 208" fill="none" stroke="#1f5fa8" stroke-width="1.6" marker-end="url(#ok)"/>
+  <path d="M 200 208 Q 168 208 174 114" fill="none" stroke="#1f5fa8" stroke-width="1.6" marker-end="url(#ok)"/>
+</svg>

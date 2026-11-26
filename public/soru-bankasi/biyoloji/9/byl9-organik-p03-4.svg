@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 195" width="600" height="195" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+
+  <rect width="600" height="195" fill="#ffffff"/>
+
+  <g>
+    <path d="M 104 36 Q 104 28 112 28 L 160 28 Q 168 28 168 36 L 168 86 Q 168 92 162 92 L 150 92 L 150 74 L 122 74 L 122 92 L 110 92 Q 104 92 104 86 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="136" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#1f5fa8">E₁</text>
+    <line x1="136" y1="96" x2="136" y2="122" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="3 3"/>
+  </g>
+
+  <g>
+    <path d="M 266 36 Q 266 28 274 28 L 322 28 Q 330 28 330 36 L 330 86 Q 330 92 324 92 L 314 92 L 298 72 L 282 92 L 272 92 Q 266 92 266 86 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="298" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#1f5fa8">E₂</text>
+    <line x1="298" y1="96" x2="298" y2="122" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="3 3"/>
+  </g>
+
+  <g>
+    <path d="M 424 36 Q 424 28 432 28 L 480 28 Q 488 28 488 36 L 488 86 Q 488 92 482 92 L 472 92 A 16 16 0 0 0 440 92 L 430 92 Q 424 92 424 86 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="456" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#1f5fa8">E₃</text>
+    <line x1="456" y1="96" x2="456" y2="122" stroke="#6b7480" stroke-width="1.4" stroke-dasharray="3 3"/>
+  </g>
+
+  <rect x="30" y="110" width="58" height="50" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="59" y="141" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">K</text>
+
+  <line x1="96" y1="135" x2="174" y2="135" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <polygon points="220,106 252,130 242,162 198,162 188,130" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <text x="220" y="143" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">L</text>
+
+  <line x1="260" y1="135" x2="336" y2="135" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <circle cx="378" cy="135" r="28" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="378" y="141" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">M</text>
+
+  <line x1="414" y1="135" x2="492" y2="135" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+  <polygon points="536,107 564,121 564,149 536,163 508,149 508,121" fill="#efe8fa" stroke="#6b46c1" stroke-width="1.8"/>
+  <text x="536" y="141" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">N</text>
+</svg>

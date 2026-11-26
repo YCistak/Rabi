@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 280" width="600" height="280" font-family="Nunito, sans-serif">
+  <rect width="600" height="280" fill="#ffffff"/>
+
+  <g>
+    <text x="102" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">1. Fanus (Aydınlık)</text>
+    <circle cx="102" cy="54" r="11" fill="#fde3a7" stroke="#d98a1c" stroke-width="1.6"/>
+    <line x1="102" y1="36" x2="102" y2="40" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="102" y1="68" x2="102" y2="72" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="84" y1="54" x2="88" y2="54" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="116" y1="54" x2="120" y2="54" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="89" y1="41" x2="92" y2="44" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="112" y1="64" x2="115" y2="67" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="115" y1="41" x2="112" y2="44" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="92" y1="64" x2="89" y2="67" stroke="#d98a1c" stroke-width="1.5"/>
+
+    <path d="M 42 224 L 42 132 Q 42 84 102 84 Q 162 84 162 132 L 162 224 Z" fill="#f4f9fd" stroke="#1f5fa8" stroke-width="1.8"/>
+    <rect x="32" y="224" width="140" height="10" rx="3" fill="#6b7480"/>
+
+    <polygon points="84,188 120,188 114,222 90,222" fill="#c8642a" stroke="#8f4318" stroke-width="1.4"/>
+    <line x1="102" y1="188" x2="102" y2="132" stroke="#3b8f4a" stroke-width="2.2"/>
+    <ellipse cx="86" cy="166" rx="15" ry="7" transform="rotate(-24 86 166)" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="118" cy="164" rx="15" ry="7" transform="rotate(24 118 164)" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="88" cy="144" rx="14" ry="7" transform="rotate(-20 88 144)" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="116" cy="142" rx="14" ry="7" transform="rotate(20 116 142)" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="102" cy="126" rx="10" ry="6" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+
+    <text x="102" y="258" text-anchor="middle" font-size="13" font-weight="700" fill="#2b6b37">Yeşil bitki</text>
+  </g>
+
+  <g>
+    <text x="300" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2. Fanus (Karanlık)</text>
+    <rect x="224" y="74" width="152" height="166" rx="8" fill="#dfe4ea" stroke="#5b6572" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+    <path d="M 240 224 L 240 132 Q 240 84 300 84 Q 360 84 360 132 L 360 224 Z" fill="#cfd6de" stroke="#1f5fa8" stroke-width="1.8"/>
+    <rect x="230" y="224" width="140" height="10" rx="3" fill="#6b7480"/>
+
+    <polygon points="282,188 318,188 312,222 288,222" fill="#c8642a" stroke="#8f4318" stroke-width="1.4"/>
+    <line x1="300" y1="188" x2="300" y2="132" stroke="#3b8f4a" stroke-width="2.2"/>
+    <ellipse cx="284" cy="166" rx="15" ry="7" transform="rotate(-24 284 166)" fill="#c9e2c5" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="316" cy="164" rx="15" ry="7" transform="rotate(24 316 164)" fill="#c9e2c5" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="286" cy="144" rx="14" ry="7" transform="rotate(-20 286 144)" fill="#c9e2c5" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="314" cy="142" rx="14" ry="7" transform="rotate(20 314 142)" fill="#c9e2c5" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="300" cy="126" rx="10" ry="6" fill="#c9e2c5" stroke="#3b8f4a" stroke-width="1.5"/>
+
+    <text x="300" y="258" text-anchor="middle" font-size="13" font-weight="700" fill="#2b6b37">Yeşil bitki</text>
+  </g>
+
+  <g>
+    <text x="498" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">3. Fanus (Aydınlık)</text>
+    <circle cx="498" cy="54" r="11" fill="#fde3a7" stroke="#d98a1c" stroke-width="1.6"/>
+    <line x1="498" y1="36" x2="498" y2="40" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="498" y1="68" x2="498" y2="72" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="480" y1="54" x2="484" y2="54" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="512" y1="54" x2="516" y2="54" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="485" y1="41" x2="488" y2="44" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="508" y1="64" x2="511" y2="67" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="511" y1="41" x2="508" y2="44" stroke="#d98a1c" stroke-width="1.5"/>
+    <line x1="488" y1="64" x2="485" y2="67" stroke="#d98a1c" stroke-width="1.5"/>
+
+    <path d="M 438 224 L 438 132 Q 438 84 498 84 Q 558 84 558 132 L 558 224 Z" fill="#f4f9fd" stroke="#1f5fa8" stroke-width="1.8"/>
+    <rect x="428" y="224" width="140" height="10" rx="3" fill="#6b7480"/>
+
+    <g>
+      <path d="M 454 221 Q 478 214 500 221 L 454 221 Z" fill="#f2d5b8" stroke="#8c5a2b" stroke-width="1.4"/>
+      <circle cx="474" cy="206" r="12" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+      <circle cx="474" cy="206" r="6" fill="none" stroke="#c8642a" stroke-width="1.3"/>
+      <line x1="494" y1="216" x2="501" y2="207" stroke="#8c5a2b" stroke-width="1.3"/>
+      <line x1="498" y1="217" x2="506" y2="210" stroke="#8c5a2b" stroke-width="1.3"/>
+    </g>
+
+    <g>
+      <path d="M 504 221 Q 526 214 546 221 L 504 221 Z" fill="#f2d5b8" stroke="#8c5a2b" stroke-width="1.4"/>
+      <circle cx="524" cy="207" r="11" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+      <circle cx="524" cy="207" r="5" fill="none" stroke="#c8642a" stroke-width="1.3"/>
+      <line x1="540" y1="216" x2="546" y2="208" stroke="#8c5a2b" stroke-width="1.3"/>
+      <line x1="544" y1="217" x2="551" y2="211" stroke="#8c5a2b" stroke-width="1.3"/>
+    </g>
+
+    <text x="498" y="258" text-anchor="middle" font-size="13" font-weight="700" fill="#8f4318">Salyangozlar</text>
+  </g>
+</svg>

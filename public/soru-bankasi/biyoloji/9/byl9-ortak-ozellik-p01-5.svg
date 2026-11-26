@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <rect width="600" height="320" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+
+  <text x="196" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Başlangıç</text>
+  <text x="462" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Bir süre sonra</text>
+
+  <line x1="16" y1="166" x2="584" y2="166" stroke="#d5dce4" stroke-width="1.4"/>
+
+  <g>
+    <rect x="16" y="82" width="88" height="36" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="60" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">X canlısı</text>
+
+    <ellipse cx="196" cy="100" rx="40" ry="26" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <circle cx="196" cy="100" r="10" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="172" cy="92" r="2.5" fill="#6b7480"/>
+    <circle cx="218" cy="108" r="2.5" fill="#6b7480"/>
+    <circle cx="214" cy="88" r="2" fill="#6b7480"/>
+
+    <line x1="274" y1="100" x2="366" y2="100" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+    <text x="320" y="75" text-anchor="middle" font-size="13" font-weight="700" fill="#222222"><tspan x="320" dy="0">Hücre</tspan><tspan x="320" dy="15">bölünmesi</tspan></text>
+
+    <ellipse cx="422" cy="100" rx="34" ry="22" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <circle cx="422" cy="100" r="8.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="403" cy="94" r="2" fill="#6b7480"/>
+    <circle cx="440" cy="106" r="2" fill="#6b7480"/>
+
+    <ellipse cx="508" cy="100" rx="34" ry="22" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <circle cx="508" cy="100" r="8.5" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="489" cy="106" r="2" fill="#6b7480"/>
+    <circle cx="526" cy="94" r="2" fill="#6b7480"/>
+  </g>
+
+  <g>
+    <rect x="16" y="226" width="88" height="36" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.4"/>
+    <text x="60" y="249" text-anchor="middle" font-size="14" font-weight="700" fill="#3b8f4a">Y canlısı</text>
+
+    <polygon points="146,272 190,272 184,302 152,302" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <rect x="142" y="264" width="52" height="8" rx="3" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <line x1="168" y1="264" x2="168" y2="232" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 168 244 C 154 242 146 232 152 224 C 160 224 167 234 168 244 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <path d="M 168 240 C 182 238 190 228 184 220 C 176 220 169 230 168 240 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+
+    <line x1="170" y1="252" x2="208" y2="234" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <rect x="208" y="206" width="52" height="52" rx="6" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+    <rect x="214" y="212" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="223" cy="221" r="2.5" fill="#3b8f4a"/>
+    <rect x="236" y="212" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="245" cy="221" r="2.5" fill="#3b8f4a"/>
+    <rect x="214" y="234" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="223" cy="243" r="2.5" fill="#3b8f4a"/>
+    <rect x="236" y="234" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="245" cy="243" r="2.5" fill="#3b8f4a"/>
+
+    <line x1="274" y1="244" x2="366" y2="244" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+    <text x="320" y="219" text-anchor="middle" font-size="13" font-weight="700" fill="#222222"><tspan x="320" dy="0">Hücre</tspan><tspan x="320" dy="15">bölünmesi</tspan></text>
+
+    <polygon points="404,272 448,272 442,302 410,302" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <rect x="400" y="264" width="52" height="8" rx="3" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <line x1="426" y1="264" x2="426" y2="192" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 426 246 C 408 244 398 232 405 222 C 415 222 424 234 426 246 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <path d="M 426 242 C 444 240 454 228 447 218 C 437 218 428 230 426 242 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <path d="M 426 218 C 408 214 400 202 408 192 C 418 194 424 206 426 218 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <path d="M 426 214 C 444 210 452 198 444 188 C 434 190 428 202 426 214 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+
+    <line x1="428" y1="252" x2="478" y2="230" stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4 3"/>
+    <rect x="478" y="202" width="96" height="52" rx="6" fill="#ffffff" stroke="#6b7480" stroke-width="1.4"/>
+    <rect x="484" y="208" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="493" cy="217" r="2.2" fill="#3b8f4a"/>
+    <rect x="506" y="208" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="515" cy="217" r="2.2" fill="#3b8f4a"/>
+    <rect x="528" y="208" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="537" cy="217" r="2.2" fill="#3b8f4a"/>
+    <rect x="550" y="208" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="559" cy="217" r="2.2" fill="#3b8f4a"/>
+    <rect x="484" y="230" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="493" cy="239" r="2.2" fill="#3b8f4a"/>
+    <rect x="506" y="230" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="515" cy="239" r="2.2" fill="#3b8f4a"/>
+    <rect x="528" y="230" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="537" cy="239" r="2.2" fill="#3b8f4a"/>
+    <rect x="550" y="230" width="18" height="18" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.3"/>
+    <circle cx="559" cy="239" r="2.2" fill="#3b8f4a"/>
+  </g>
+</svg>

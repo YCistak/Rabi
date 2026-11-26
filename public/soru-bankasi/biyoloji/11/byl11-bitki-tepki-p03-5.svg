@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 260" width="480" height="260" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="okGri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4b5563"/>
+    </marker>
+  </defs>
+  <rect width="480" height="260" fill="#ffffff"/>
+
+  <g>
+    <path d="M 118 85 L 178 85 Q 264 85 264 162 L 250 226 L 236 164 Q 236 111 176 111 L 118 109 Z" fill="#f7efe6" stroke="#8c5a32" stroke-width="1.8"/>
+    <ellipse cx="88" cy="96" rx="34" ry="22" fill="#e8d5c4" stroke="#8c5a32" stroke-width="1.8"/>
+    <text x="88" y="62" text-anchor="middle" font-size="14" fill="#222222">Tohum</text>
+    <text x="284" y="212" font-size="14" fill="#222222">Kök</text>
+  </g>
+
+  <g>
+    <line x1="243" y1="104" x2="294" y2="66" stroke="#6b7480" stroke-width="1.4"/>
+    <text x="304" y="71" font-size="16" font-weight="700" fill="#222222">X</text>
+
+    <line x1="221" y1="124" x2="174" y2="174" stroke="#6b7480" stroke-width="1.4"/>
+    <text x="164" y="190" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">Y</text>
+  </g>
+
+  <g>
+    <line x1="400" y1="60" x2="400" y2="196" stroke="#4b5563" stroke-width="2" marker-end="url(#okGri)"/>
+    <text x="400" y="220" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Yer çekimi</text>
+  </g>
+</svg>

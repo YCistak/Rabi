@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" width="640" height="260" font-family="Nunito, sans-serif">
+<rect width="640" height="260" fill="#ffffff"/>
+<defs>
+<marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#222222"/></marker>
+</defs>
+<g stroke="#6b7480" stroke-width="1.2" stroke-dasharray="4 4">
+<line x1="215" y1="15" x2="215" y2="245"/>
+<line x1="425" y1="15" x2="425" y2="245"/>
+</g>
+<g fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6">
+<rect x="80" y="30" width="60" height="34" rx="6"/>
+<rect x="145" y="170" width="60" height="34" rx="6"/>
+<rect x="15" y="170" width="60" height="34" rx="6"/>
+<rect x="290" y="30" width="60" height="34" rx="6"/>
+<rect x="355" y="170" width="60" height="34" rx="6"/>
+<rect x="225" y="170" width="60" height="34" rx="6"/>
+<rect x="500" y="30" width="60" height="34" rx="6"/>
+<rect x="565" y="170" width="60" height="34" rx="6"/>
+<rect x="435" y="170" width="60" height="34" rx="6"/>
+</g>
+<g font-size="16" fill="#222222" text-anchor="middle" font-weight="700">
+<text x="110" y="53">X</text><text x="175" y="193">Y</text><text x="45" y="193">Z</text>
+<text x="320" y="53">X</text><text x="385" y="193">Y</text><text x="255" y="193">Z</text>
+<text x="530" y="53">X</text><text x="595" y="193">Y</text><text x="465" y="193">Z</text>
+</g>
+<g stroke="#222222" stroke-width="1.6" fill="none">
+<line x1="128" y1="64" x2="160" y2="168" marker-end="url(#ok)"/>
+<line x1="145" y1="187" x2="77" y2="187" marker-end="url(#ok)"/>
+<line x1="60" y1="170" x2="92" y2="66" marker-end="url(#ok)"/>
+<line x1="338" y1="64" x2="370" y2="168" marker-end="url(#ok)"/>
+<line x1="355" y1="187" x2="287" y2="187" marker-end="url(#ok)"/>
+<line x1="270" y1="170" x2="302" y2="66" marker-end="url(#ok)"/>
+<line x1="548" y1="64" x2="580" y2="168" marker-end="url(#ok)"/>
+<line x1="565" y1="187" x2="497" y2="187" marker-end="url(#ok)"/>
+<line x1="480" y1="170" x2="512" y2="66" marker-end="url(#ok)"/>
+</g>
+<g font-size="15" fill="#222222" text-anchor="middle" font-weight="700">
+<text x="168" y="122">(+)</text><text x="110" y="208">(+)</text><text x="52" y="122">(−)</text>
+<text x="378" y="122">(+)</text><text x="320" y="208">(−)</text><text x="262" y="122">(−)</text>
+<text x="588" y="122">(+)</text><text x="530" y="208">(+)</text><text x="472" y="122">(+)</text>
+</g>
+<g font-size="17" fill="#222222" text-anchor="middle" font-weight="700">
+<text x="110" y="240">I</text><text x="320" y="240">II</text><text x="530" y="240">III</text>
+</g>
+</svg>

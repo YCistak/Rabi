@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 275" width="620" height="275" font-family="Nunito, sans-serif">
+  <rect width="620" height="275" fill="#ffffff"/>
+  <text x="148" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">M örneği (400×)</text>
+  <text x="424" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">N örneği (400×)</text>
+  <g>
+    <circle cx="148" cy="132" r="84" fill="#f7fafc" stroke="#4a5568" stroke-width="2"/>
+    <rect x="116" y="118" width="56" height="26" rx="13" fill="#dfe7ef" stroke="#4a5568" stroke-width="1.6"/>
+    <path d="M 172 131 Q 186 120 198 132 Q 208 142 218 130" fill="none" stroke="#4a5568" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="196" y1="128" x2="196" y2="96" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="196" y="90" text-anchor="middle" font-size="13" fill="#222222">Kamçı</text>
+    <line x1="144" y1="144" x2="144" y2="178" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="144" y="194" text-anchor="middle" font-size="13" fill="#222222">Dış sınır</text>
+    <text x="148" y="246" text-anchor="middle" font-size="13" fill="#4a5568">İç yapılar seçilemiyor</text>
+  </g>
+  <g>
+    <circle cx="424" cy="132" r="84" fill="#f7fafc" stroke="#4a5568" stroke-width="2"/>
+    <rect x="366" y="86" width="116" height="92" rx="12" fill="#eaf0dc" stroke="#6f8242" stroke-width="2"/>
+    <rect x="372" y="92" width="104" height="80" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.4"/>
+    <rect x="408" y="108" width="48" height="46" rx="14" fill="#ffffff" stroke="#90cdf4" stroke-width="1.4"/>
+    <circle cx="390" cy="124" r="13" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+    <circle cx="390" cy="124" r="3.5" fill="#1f5fa8"/>
+    <ellipse cx="394" cy="158" rx="9" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="438" cy="100" rx="9" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="465" cy="140" rx="8" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="436" cy="164" rx="9" ry="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <line x1="378" y1="118" x2="318" y2="94" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="313" y="98" text-anchor="end" font-size="13" fill="#222222">Çekirdek</text>
+    <line x1="478" y1="92" x2="520" y2="92" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="524" y="96" text-anchor="start" font-size="13" fill="#222222">Hücre duvarı</text>
+    <line x1="473" y1="140" x2="520" y2="140" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="524" y="144" text-anchor="start" font-size="13" fill="#222222">Kloroplast</text>
+    <text x="424" y="246" text-anchor="middle" font-size="13" fill="#4a5568">Ribozomlar görülemiyor</text>
+  </g>
+</svg>

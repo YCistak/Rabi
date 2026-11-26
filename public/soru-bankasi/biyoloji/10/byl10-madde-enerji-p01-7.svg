@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 380" width="540" height="380" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="540" height="380" fill="#ffffff"/>
+  <line x1="232" y1="315" x2="156" y2="270" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="308" y1="315" x2="384" y2="270" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="130" y1="224" x2="130" y2="170" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="410" y1="224" x2="410" y2="170" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="198" y1="145" x2="344" y2="145" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="156" y1="124" x2="232" y2="73" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <line x1="384" y1="124" x2="308" y2="73" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <rect x="208" y="27" width="124" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="270" y="53" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Atmaca</text>
+  <rect x="62" y="124" width="136" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="130" y="150" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Tarla kuşu</text>
+  <rect x="348" y="124" width="124" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="410" y="150" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Yılan</text>
+  <rect x="68" y="224" width="124" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="130" y="250" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Çekirge</text>
+  <rect x="342" y="224" width="136" height="42" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="410" y="250" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Tarla faresi</text>
+  <rect x="208" y="315" width="124" height="42" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="270" y="341" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">Buğday</text>
+</svg>

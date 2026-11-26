@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 280" width="560" height="280" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-gri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#4a5568"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2d6e38"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="560" height="280" fill="#ffffff"/>
+  <rect x="80" y="75" width="150" height="130" rx="14" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <text x="155" y="135" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Işığa bağımlı</text>
+  <text x="155" y="156" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">tepkimeler</text>
+  <rect x="330" y="75" width="150" height="130" rx="14" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="405" y="135" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Karbon</text>
+  <text x="405" y="156" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">bağlanması</text>
+  <line x1="230" y1="115" x2="324" y2="115" stroke="#c8642a" stroke-width="2.2" marker-end="url(#ok-turuncu)"/>
+  <rect x="263" y="80" width="30" height="26" rx="6" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  <text x="278" y="98" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">K</text>
+  <line x1="330" y1="170" x2="236" y2="170" stroke="#1f5fa8" stroke-width="2.2" marker-end="url(#ok-mavi)"/>
+  <rect x="263" y="180" width="30" height="26" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+  <text x="278" y="198" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">L</text>
+  <line x1="38" y1="44" x2="86" y2="86" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <text x="34" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">Işık</text>
+  <line x1="38" y1="236" x2="86" y2="194" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <text x="36" y="258" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">H₂O</text>
+  <line x1="155" y1="75" x2="155" y2="38" stroke="#2d6e38" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <text x="155" y="26" text-anchor="middle" font-size="14" font-weight="700" fill="#2d6e38">O₂</text>
+  <line x1="405" y1="34" x2="405" y2="69" stroke="#4a5568" stroke-width="2" marker-end="url(#ok-gri)"/>
+  <text x="405" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">CO₂</text>
+  <line x1="405" y1="205" x2="405" y2="242" stroke="#2d6e38" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <text x="405" y="264" text-anchor="middle" font-size="14" font-weight="700" fill="#2d6e38">Glikoz</text>
+</svg>

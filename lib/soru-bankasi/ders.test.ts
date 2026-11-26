@@ -45,19 +45,32 @@ describe('Soru Bankası dizinleri', () => {
     }
   })
 
-  it('henüz verisi olmayan biyoloji konuları sıfır sayılıdır (yakında)', () => {
+  // Zaman aşımı geniş: tüm veri dosyalarını tarıyor, dört derste veri büyüdü.
+  it('biyoloji konularının soru sayısı veri dosyasıyla aynıdır; verisi olmayan sıfırdır', async () => {
     const tumu = BANKA_DIZINLERI.biyoloji.flatMap((s) => s.temalar).flatMap((t) => t.konular)
     expect(tumu.length).toBeGreaterThan(0)
+    let verili = 0
     for (const konu of tumu) {
-      expect(konu.sayi).toBe(0)
-      expect(konu.yukle).toBeUndefined()
+      if (konu.yukle) {
+        verili++
+        const { default: sorular } = await konu.yukle()
+        expect(sorular.length, konu.id).toBeGreaterThan(0)
+        expect(konu.sayi, konu.id).toBe(sorular.length)
+        for (const soru of sorular) expect(soru.konu, konu.id).toBe(konu.id)
+      } else {
+        expect(konu.sayi, konu.id).toBe(0)
+      }
     }
-  })
+    expect(verili).toBeGreaterThan(0)
+  }, 120_000)
 
-  it('biyoloji konusu kimlikle bulunabilir', () => {
+  it('biyoloji konusu kimlikle bulunabilir', async () => {
     const konu = bankaKonusuBul('byl9-onem')
     expect(konu).toBeDefined()
     expect(konu?.ad).toBe('Biyolojinin Önemi')
-    expect(konu?.sayi).toBe(0)
+    expect(konu?.yukle).toBeDefined()
+    const { default: sorular } = await konu!.yukle!()
+    expect(sorular.length).toBeGreaterThan(0)
+    expect(konu?.sayi).toBe(sorular.length)
   })
 })

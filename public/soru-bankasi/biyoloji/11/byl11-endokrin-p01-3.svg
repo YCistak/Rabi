@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 200" width="470" height="200" font-family="Nunito, sans-serif">
+  <rect width="470" height="200" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#1f5fa8"/></marker>
+  </defs>
+  <g stroke="#1f5fa8" stroke-width="1.8" fill="#eef5fb">
+    <path d="M63 93 H193 Q202 93 208 85 L231 55 Q238 45 251 45 H295 V65 H255 Q250 65 246 70 L222 101 L246 130 Q250 135 255 135 H295 V155 H251 Q238 155 231 145 L208 117 Q202 110 193 110 H63 Z"/>
+  </g>
+  <g fill="none" stroke="#1f5fa8" stroke-width="1.6" marker-end="url(#ok)">
+    <path d="M111 101 H165"/><path d="M252 55 H280"/><path d="M252 145 H280"/>
+  </g>
+  <g stroke="#796b88" stroke-width="1.6" fill="#eeeaf4">
+    <path d="M33 86 Q36 77 46 78 Q53 70 63 77 Q76 75 81 87 Q89 94 84 103 Q88 115 75 120 Q65 128 54 123 Q43 127 36 118 Q24 115 27 103 Q23 93 33 86 Z"/>
+  </g>
+  <g stroke="#52776c" stroke-width="1.5" fill="#e8f2ed">
+    <ellipse cx="311" cy="48" rx="17" ry="11"/><ellipse cx="311" cy="66" rx="17" ry="10"/>
+    <ellipse cx="311" cy="138" rx="17" ry="11"/><ellipse cx="311" cy="156" rx="17" ry="10"/>
+  </g>
+  <g fill="#52776c"><circle cx="311" cy="48" r="2.7"/><circle cx="311" cy="66" r="2.7"/><circle cx="311" cy="138" r="2.7"/><circle cx="311" cy="156" r="2.7"/></g>
+  <g fill="#222222" font-size="15">
+    <text x="56" y="149" text-anchor="middle">İç salgı bezi</text>
+    <text x="142" y="82" text-anchor="middle">H taşıyan kan</text>
+    <text x="345" y="50" font-weight="bold">K dokusu</text><text x="345" y="71">Yanıt var</text>
+    <text x="345" y="140" font-weight="bold">L dokusu</text><text x="345" y="161">Yanıt yok</text>
+  </g>
+</svg>

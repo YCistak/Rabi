@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 270" width="560" height="270" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+
+  <rect width="560" height="270" fill="#ffffff"/>
+
+  <g>
+    <rect x="24" y="32" width="112" height="46" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="80" y="61" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Glikoz</text>
+
+    <text x="156" y="62" text-anchor="middle" font-size="18" font-weight="700" fill="#6b7480">+</text>
+
+    <rect x="176" y="32" width="112" height="46" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="232" y="61" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Glikoz</text>
+
+    <line x1="302" y1="55" x2="352" y2="55" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+    <rect x="366" y="32" width="80" height="46" rx="10" fill="#ffffff" stroke="#1f5fa8" stroke-width="2" stroke-dasharray="5 3"/>
+    <text x="406" y="61" text-anchor="middle" font-size="17" font-weight="700" fill="#1f5fa8">1</text>
+
+    <text x="494" y="61" text-anchor="middle" font-size="15.5" font-weight="700" fill="#4b5563">+ H₂O</text>
+  </g>
+
+  <g>
+    <rect x="24" y="112" width="112" height="46" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="80" y="141" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Glikoz</text>
+
+    <text x="156" y="142" text-anchor="middle" font-size="18" font-weight="700" fill="#6b7480">+</text>
+
+    <rect x="176" y="112" width="112" height="46" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+    <text x="232" y="141" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Fruktoz</text>
+
+    <line x1="302" y1="135" x2="352" y2="135" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+    <rect x="366" y="112" width="80" height="46" rx="10" fill="#ffffff" stroke="#1f5fa8" stroke-width="2" stroke-dasharray="5 3"/>
+    <text x="406" y="141" text-anchor="middle" font-size="17" font-weight="700" fill="#1f5fa8">2</text>
+
+    <text x="494" y="141" text-anchor="middle" font-size="15.5" font-weight="700" fill="#4b5563">+ H₂O</text>
+  </g>
+
+  <g>
+    <rect x="24" y="192" width="112" height="46" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <text x="80" y="221" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Glikoz</text>
+
+    <text x="156" y="222" text-anchor="middle" font-size="18" font-weight="700" fill="#6b7480">+</text>
+
+    <rect x="176" y="192" width="112" height="46" rx="10" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <text x="232" y="221" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Galaktoz</text>
+
+    <line x1="302" y1="215" x2="352" y2="215" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+    <rect x="366" y="192" width="80" height="46" rx="10" fill="#ffffff" stroke="#1f5fa8" stroke-width="2" stroke-dasharray="5 3"/>
+    <text x="406" y="221" text-anchor="middle" font-size="17" font-weight="700" fill="#1f5fa8">3</text>
+
+    <text x="494" y="221" text-anchor="middle" font-size="15.5" font-weight="700" fill="#4b5563">+ H₂O</text>
+  </g>
+</svg>

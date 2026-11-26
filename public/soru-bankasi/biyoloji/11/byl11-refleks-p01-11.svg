@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 370" width="580" height="370" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-mor" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#6e4ea3"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-koyu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 1 2 L 9 5 L 1 8 z" fill="#222222"/>
+    </marker>
+  </defs>
+  <rect width="580" height="370" fill="#ffffff"/>
+
+  <g>
+    <rect x="190" y="20" width="200" height="58" rx="28" fill="#f3eef8" stroke="#6e4ea3" stroke-width="1.8"/>
+    <text x="290" y="54" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Beyin kabuğu</text>
+  </g>
+
+  <g>
+    <rect x="208" y="178" width="164" height="106" rx="34" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <path d="M 290 218 C 300 208, 314 192, 330 195 C 338 197, 336 212, 326 225 C 336 236, 342 254, 332 266 C 320 274, 302 254, 290 240 C 278 254, 260 274, 248 266 C 238 254, 244 236, 254 225 C 244 212, 242 197, 250 195 C 266 192, 280 208, 290 218 Z" fill="#d9e4f2" stroke="#4a73a8" stroke-width="1.3"/>
+    <text x="290" y="308" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">Omurilik</text>
+  </g>
+
+  <g>
+    <rect x="20" y="200" width="108" height="44" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <text x="74" y="227" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">Deri reseptörü</text>
+  </g>
+
+  <g>
+    <rect x="452" y="200" width="108" height="44" rx="8" fill="#f7dcdc" stroke="#b54545" stroke-width="1.6"/>
+    <text x="506" y="227" text-anchor="middle" font-size="13" font-weight="600" fill="#222222">El kası</text>
+  </g>
+
+  <g>
+    <line x1="128" y1="222" x2="246" y2="222" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+    <circle cx="174" cy="222" r="12" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+    <text x="174" y="227" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">1</text>
+  </g>
+
+  <g>
+    <line x1="254" y1="222" x2="254" y2="82" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+    <circle cx="254" cy="132" r="12" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+    <text x="254" y="137" text-anchor="middle" font-size="14" font-weight="700" fill="#1f5fa8">2</text>
+  </g>
+
+  <g>
+    <line x1="326" y1="78" x2="326" y2="214" stroke="#6e4ea3" stroke-width="2" marker-end="url(#ok-mor)"/>
+    <circle cx="326" cy="132" r="12" fill="#ffffff" stroke="#6e4ea3" stroke-width="1.6"/>
+    <text x="326" y="137" text-anchor="middle" font-size="14" font-weight="700" fill="#6e4ea3">3</text>
+  </g>
+
+  <g>
+    <path d="M 254 222 Q 290 264, 321 226" fill="none" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+    <circle cx="290" cy="246" r="12" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+    <text x="290" y="251" text-anchor="middle" font-size="14" font-weight="700" fill="#c8642a">4</text>
+  </g>
+
+  <g>
+    <line x1="326" y1="222" x2="448" y2="222" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+    <circle cx="406" cy="222" r="12" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.6"/>
+    <text x="406" y="227" text-anchor="middle" font-size="14" font-weight="700" fill="#3b8f4a">5</text>
+  </g>
+
+  <circle cx="254" cy="222" r="4.5" fill="#1f5fa8"/>
+  <circle cx="326" cy="222" r="4.5" fill="#3b8f4a"/>
+
+  <g>
+    <line x1="230" y1="348" x2="262" y2="348" stroke="#222222" stroke-width="1.8" marker-end="url(#ok-koyu)"/>
+    <text x="272" y="353" font-size="13" fill="#222222">Uyartı yönü</text>
+  </g>
+</svg>

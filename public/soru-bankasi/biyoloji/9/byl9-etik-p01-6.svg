@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" width="560" height="300" font-family="Nunito, sans-serif">
+  <rect width="560" height="300" fill="#ffffff"/>
+  <rect x="20" y="14" width="520" height="32" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.4"/>
+  <text x="280" y="35" text-anchor="middle" font-size="13.5" font-weight="600" fill="#1f5fa8">Eşit ışık, su, toprak ve sıcaklık koşulları · 14. gün ölçümü</text>
+  <line x1="56" y1="90" x2="530" y2="90" stroke="#d9e4f2" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="56" y1="130" x2="530" y2="130" stroke="#d9e4f2" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="56" y1="170" x2="530" y2="170" stroke="#d9e4f2" stroke-width="1.2" stroke-dasharray="4 4"/>
+  <line x1="50" y1="78" x2="50" y2="210" stroke="#6b7480" stroke-width="1.5"/>
+  <line x1="45" y1="90" x2="50" y2="90" stroke="#6b7480" stroke-width="1.5"/>
+  <line x1="45" y1="130" x2="50" y2="130" stroke="#6b7480" stroke-width="1.5"/>
+  <line x1="45" y1="170" x2="50" y2="170" stroke="#6b7480" stroke-width="1.5"/>
+  <line x1="45" y1="210" x2="50" y2="210" stroke="#6b7480" stroke-width="1.5"/>
+  <text x="41" y="70" text-anchor="end" font-size="13" fill="#6b7480">cm</text>
+  <text x="41" y="94" text-anchor="end" font-size="13" fill="#6b7480">12</text>
+  <text x="41" y="134" text-anchor="end" font-size="13" fill="#6b7480">8</text>
+  <text x="41" y="174" text-anchor="end" font-size="13" fill="#6b7480">4</text>
+  <text x="41" y="214" text-anchor="end" font-size="13" fill="#6b7480">0</text>
+  <g>
+    <line x1="124" y1="208" x2="124" y2="130" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 124 176 C 110 172 104 162 110 156 C 116 154 122 164 124 176 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 124 164 C 138 160 144 150 138 144 C 132 142 126 152 124 164 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 124 142 C 113 138 111 130 118 128 C 122 128 124 134 124 142 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 124 142 C 135 138 137 130 130 128 C 126 128 124 134 124 142 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <polygon points="96,210 152,210 145,248 103,248" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <rect x="92" y="204" width="64" height="8" rx="3" fill="#f3cfa8" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="98" y1="208" x2="150" y2="208" stroke="#8a5a36" stroke-width="1.8"/>
+    <text x="124" y="116" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">8 cm</text>
+    <text x="124" y="269" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kontrol</text>
+    <text x="124" y="286" text-anchor="middle" font-size="13" fill="#6b7480">(gübresiz)</text>
+  </g>
+  <g>
+    <line x1="238" y1="208" x2="238" y2="100" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 238 178 C 224 174 218 164 224 158 C 230 156 236 166 238 178 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 238 158 C 252 154 258 144 252 138 C 246 136 240 146 238 158 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 238 134 C 224 130 218 120 224 114 C 230 112 236 122 238 134 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 238 112 C 227 108 225 100 232 98 C 236 98 238 104 238 112 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 238 112 C 249 108 251 100 244 98 C 240 98 238 104 238 112 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <polygon points="210,210 266,210 259,248 217,248" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <rect x="206" y="204" width="64" height="8" rx="3" fill="#f3cfa8" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="212" y1="208" x2="264" y2="208" stroke="#8a5a36" stroke-width="1.8"/>
+    <text x="238" y="86" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">11 cm</text>
+    <text x="238" y="269" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Gübreli-1</text>
+  </g>
+  <g>
+    <line x1="352" y1="208" x2="352" y2="90" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 352 178 C 338 174 332 164 338 158 C 344 156 350 166 352 178 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 352 154 C 366 150 372 140 366 134 C 360 132 354 142 352 154 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 352 128 C 338 124 332 114 338 108 C 344 106 350 116 352 128 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 352 102 C 341 98 339 90 346 88 C 350 88 352 94 352 102 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 352 102 C 363 98 365 90 358 88 C 354 88 352 94 352 102 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <polygon points="324,210 380,210 373,248 331,248" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <rect x="320" y="204" width="64" height="8" rx="3" fill="#f3cfa8" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="326" y1="208" x2="378" y2="208" stroke="#8a5a36" stroke-width="1.8"/>
+    <text x="352" y="76" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">12 cm</text>
+    <text x="352" y="269" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Gübreli-2</text>
+  </g>
+  <g>
+    <line x1="466" y1="208" x2="466" y2="150" stroke="#3b8f4a" stroke-width="2"/>
+    <path d="M 466 184 C 453 180 449 172 454 166 C 460 164 465 174 466 184 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 466 162 C 455 158 453 150 460 148 C 464 148 466 154 466 162 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M 466 162 C 477 158 479 150 472 148 C 468 148 466 154 466 162 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <polygon points="438,210 494,210 487,248 445,248" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <rect x="434" y="204" width="64" height="8" rx="3" fill="#f3cfa8" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="440" y1="208" x2="492" y2="208" stroke="#8a5a36" stroke-width="1.8"/>
+    <text x="466" y="136" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">6 cm</text>
+    <text x="466" y="269" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Gübreli-3</text>
+  </g>
+</svg>

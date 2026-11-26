@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 410" width="620" height="410" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-isik" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#d48a1f"/>
+    </marker>
+  </defs>
+  <rect width="620" height="410" fill="#ffffff"/>
+  <g>
+    <rect x="16" y="14" width="286" height="172" rx="8" fill="#eef1f5" stroke="#9ca3af" stroke-width="1.4"/>
+    <text x="30" y="36" font-size="15" font-weight="700" fill="#222222">1. kap</text>
+    <text x="288" y="36" text-anchor="end" font-size="13" font-weight="700" fill="#374151">Karanlık · 24 °C</text>
+    <circle cx="159" cy="105" r="48" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="159" cy="105" r="43" fill="#f8fbff" stroke="#93c5fd" stroke-width="1.2"/>
+    <ellipse cx="188" cy="105" rx="7.5" ry="15" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <path d="M 153 92 Q 166 94 178 97" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 156 99 Q 167 100 178 102" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 151 106 Q 165 106 178 106" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 156 112 Q 167 111 178 110" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 153 119 Q 166 117 178 114" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="151" cy="92" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="154" cy="99" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="149" cy="106" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="154" cy="112" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="151" cy="119" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <text x="159" y="174" text-anchor="middle" font-size="13" fill="#222222">Polen tüpleri sağa yöneldi</text>
+  </g>
+  <g>
+    <rect x="318" y="14" width="286" height="172" rx="8" fill="#eef1f5" stroke="#9ca3af" stroke-width="1.4"/>
+    <text x="332" y="36" font-size="15" font-weight="700" fill="#222222">2. kap</text>
+    <text x="590" y="36" text-anchor="end" font-size="13" font-weight="700" fill="#374151">Karanlık · 24 °C</text>
+    <circle cx="461" cy="105" r="48" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="461" cy="105" r="43" fill="#f8fbff" stroke="#93c5fd" stroke-width="1.2"/>
+    <path d="M 455 98 Q 445 88 436 82" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 467 99 Q 478 89 488 85" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 461 95 Q 462 82 464 71" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 458 106 Q 444 108 430 106" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 455 113 Q 450 125 446 136" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 468 113 Q 479 123 488 131" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="455" cy="98" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="467" cy="99" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="461" cy="95" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="458" cy="106" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="455" cy="113" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="468" cy="113" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <text x="461" y="174" text-anchor="middle" font-size="13" fill="#222222">Polen tüpleri her yöne uzadı</text>
+  </g>
+  <g>
+    <rect x="16" y="200" width="286" height="172" rx="8" fill="#ffffff" stroke="#d1d5db" stroke-width="1.4"/>
+    <text x="30" y="222" font-size="15" font-weight="700" fill="#222222">3. kap</text>
+    <text x="288" y="222" text-anchor="end" font-size="13" font-weight="700" fill="#b45309">Sağdan ışık · 24 °C</text>
+    <circle cx="142" cy="291" r="48" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="142" cy="291" r="43" fill="#f8fbff" stroke="#93c5fd" stroke-width="1.2"/>
+    <ellipse cx="171" cy="291" rx="7.5" ry="15" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <path d="M 136 278 Q 149 280 161 283" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 139 285 Q 150 286 161 288" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 134 292 Q 148 292 161 292" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 139 298 Q 150 297 161 296" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M 136 305 Q 149 303 161 300" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="134" cy="278" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="137" cy="285" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="132" cy="292" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="137" cy="298" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="134" cy="305" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <text x="245" y="262" text-anchor="middle" font-size="13" font-weight="700" fill="#b45309">Işık</text>
+    <line x1="278" y1="274" x2="212" y2="274" stroke="#d48a1f" stroke-width="1.8" marker-end="url(#ok-isik)"/>
+    <line x1="278" y1="291" x2="212" y2="291" stroke="#d48a1f" stroke-width="1.8" marker-end="url(#ok-isik)"/>
+    <line x1="278" y1="308" x2="212" y2="308" stroke="#d48a1f" stroke-width="1.8" marker-end="url(#ok-isik)"/>
+    <text x="159" y="360" text-anchor="middle" font-size="13" fill="#222222">Polen tüpleri sağa yöneldi</text>
+  </g>
+  <g>
+    <rect x="318" y="200" width="286" height="172" rx="8" fill="#eef1f5" stroke="#9ca3af" stroke-width="1.4"/>
+    <text x="332" y="222" font-size="15" font-weight="700" fill="#222222">4. kap</text>
+    <text x="590" y="222" text-anchor="end" font-size="13" font-weight="700" fill="#374151">Karanlık · 10 °C</text>
+    <circle cx="461" cy="291" r="48" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="461" cy="291" r="43" fill="#f8fbff" stroke="#93c5fd" stroke-width="1.2"/>
+    <circle cx="454" cy="284" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="467" cy="285" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="460" cy="292" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="454" cy="299" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <circle cx="468" cy="299" r="3.2" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <text x="461" y="360" text-anchor="middle" font-size="13" fill="#222222">Polenler çimlenmedi</text>
+  </g>
+  <g>
+    <path d="M 122 392 Q 134 389 144 392" fill="none" stroke="#c8642a" stroke-width="1.8" stroke-linecap="round"/>
+    <circle cx="120" cy="392" r="3.4" fill="#f59e0b" stroke="#b45309" stroke-width="1.2"/>
+    <text x="152" y="396" font-size="13" fill="#374151">Polen tanesi ve tüpü</text>
+    <ellipse cx="366" cy="392" rx="10" ry="5.5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.7"/>
+    <text x="384" y="396" font-size="13" fill="#374151">Yumurtalık dokusu</text>
+  </g>
+</svg>

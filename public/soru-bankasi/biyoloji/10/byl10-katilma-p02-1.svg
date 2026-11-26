@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="640" height="380" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+  </defs>
+  <rect width="640" height="380" fill="#ffffff"/>
+  <rect x="14" y="14" width="612" height="352" rx="16" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <text x="30" y="38" font-size="14" font-weight="700" fill="#1f5fa8">Sitoplazma</text>
+
+  <rect x="28" y="64" width="100" height="38" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="78" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Nişasta</text>
+
+  <rect x="28" y="218" width="100" height="46" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="78" y="238" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Nötral yağ</text>
+  <text x="78" y="256" text-anchor="middle" font-size="13" fill="#6b7480">(Trigliserit)</text>
+
+  <rect x="158" y="64" width="98" height="38" rx="8" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="207" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Glikoz</text>
+
+  <rect x="158" y="152" width="98" height="38" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="207" y="176" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Gliserol</text>
+
+  <rect x="158" y="294" width="98" height="38" rx="8" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="207" y="318" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Yağ asitleri</text>
+
+  <rect x="286" y="60" width="110" height="46" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="341" y="80" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Glikoliz</text>
+  <text x="341" y="97" text-anchor="middle" font-size="13" fill="#6b7480">ilk basamak</text>
+
+  <rect x="286" y="148" width="110" height="46" rx="8" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="341" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Glikoliz</text>
+  <text x="341" y="185" text-anchor="middle" font-size="13" fill="#6b7480">ara basamak</text>
+
+  <rect x="286" y="232" width="110" height="38" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/>
+  <text x="341" y="256" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Piruvat</text>
+
+  <rect x="426" y="34" width="186" height="312" rx="30" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <rect x="436" y="44" width="166" height="292" rx="24" fill="#fff7f0" stroke="#c8642a" stroke-width="1.4" stroke-dasharray="6,4"/>
+  <text x="519" y="70" text-anchor="middle" font-size="14.5" font-weight="700" fill="#c8642a">Mitokondri</text>
+
+  <rect x="448" y="96" width="142" height="42" rx="8" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="519" y="122" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Asetil CoA</text>
+
+  <rect x="448" y="176" width="142" height="42" rx="8" fill="#ffffff" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="519" y="202" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Sitrik asit döngüsü</text>
+
+  <rect x="468" y="256" width="102" height="38" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="519" y="280" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">ETS</text>
+
+  <line x1="128" y1="83" x2="154" y2="83" stroke="#3b8f4a" stroke-width="1.8" marker-end="url(#ok-yesil)"/>
+  <path d="M 128 232 L 143 232 L 143 171 L 154 171" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <path d="M 128 250 L 143 250 L 143 313 L 154 313" fill="none" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+
+  <line x1="256" y1="83" x2="282" y2="83" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <line x1="256" y1="171" x2="282" y2="171" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+
+  <line x1="341" y1="106" x2="341" y2="144" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <line x1="341" y1="194" x2="341" y2="228" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+
+  <path d="M 396 251 L 410 251 L 410 108 L 444 108" fill="none" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+  <path d="M 256 313 L 418 313 L 418 126 L 444 126" fill="none" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+
+  <line x1="519" y1="138" x2="519" y2="172" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+  <line x1="519" y1="218" x2="519" y2="252" stroke="#c8642a" stroke-width="1.8" marker-end="url(#ok-turuncu)"/>
+</svg>

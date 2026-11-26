@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 170" width="620" height="170" font-family="Nunito, sans-serif">
+<rect width="620" height="170" fill="#ffffff"/>
+<defs><marker id="ok" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M 0 0 L 10 5 L 0 10 Z" fill="#222222"/></marker></defs>
+<rect x="15" y="62" width="110" height="46" rx="8" fill="#fff6d6" stroke="#b08a1e" stroke-width="1.6"/><text x="70" y="90" font-size="14" fill="#222222" text-anchor="middle">Işık enerjisi</text>
+<rect x="175" y="62" width="110" height="46" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/><text x="230" y="90" font-size="15" fill="#222222" text-anchor="middle">Glikoz</text>
+<rect x="335" y="62" width="110" height="46" rx="8" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6"/><text x="390" y="90" font-size="15" fill="#222222" text-anchor="middle">ATP</text>
+<rect x="495" y="62" width="110" height="46" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/><text x="550" y="90" font-size="14" fill="#222222" text-anchor="middle">Kas kasılması</text>
+<line x1="125" y1="85" x2="173" y2="85" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+<text x="149" y="72" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">1</text>
+<line x1="285" y1="85" x2="333" y2="85" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+<text x="309" y="72" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">2</text>
+<line x1="445" y1="85" x2="493" y2="85" stroke="#222222" stroke-width="1.6" marker-end="url(#ok)"/>
+<text x="469" y="72" font-size="16" font-weight="700" fill="#222222" text-anchor="middle">3</text>
+</svg>

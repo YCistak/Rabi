@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 280" width="560" height="280" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 1 L9 5 L0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="560" height="280" fill="#ffffff"/>
+  <text x="165" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">1. gözlem (İlkbahar)</text>
+  <text x="436" y="28" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">2. gözlem (8 hafta sonra)</text>
+
+  <g>
+    <rect x="12" y="80" width="32" height="32" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+    <text x="28" y="102" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5fa8">K</text>
+    <rect x="56" y="46" width="218" height="100" rx="10" fill="#f7fafd" stroke="#cbd5e1" stroke-width="1.2"/>
+    <polygon points="134,96 116,81 120,96 116,111" fill="#bdd9ee" stroke="#1f5fa8" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M150 82 Q162 67 177 81 Z" fill="#bdd9ee" stroke="#1f5fa8" stroke-width="1.5"/>
+    <path d="M155 109 Q164 120 173 109 Z" fill="#bdd9ee" stroke="#1f5fa8" stroke-width="1.5"/>
+    <path d="M132 96 Q152 76 184 82 Q204 87 212 96 Q204 105 184 110 Q152 116 132 96 Z" fill="#d9e9f5" stroke="#1f5fa8" stroke-width="1.8"/>
+    <path d="M188 85 Q182 96 188 107" fill="none" stroke="#1f5fa8" stroke-width="1.5"/>
+    <path d="M155 91 Q160 96 155 101" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <path d="M166 89 Q171 96 166 103" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <path d="M176 91 Q181 96 176 101" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <circle cx="198" cy="93" r="2.6" fill="#222222"/>
+
+    <line x1="282" y1="96" x2="314" y2="96" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+    <rect x="324" y="46" width="224" height="100" rx="10" fill="#f7fafd" stroke="#cbd5e1" stroke-width="1.2"/>
+    <polygon points="390,96 362,73 370,96 362,119" fill="#bdd9ee" stroke="#1f5fa8" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M412 75 Q432 54 456 74 Z" fill="#bdd9ee" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M418 116 Q432 132 448 116 Z" fill="#bdd9ee" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M388 96 Q418 66 466 75 Q495 82 508 96 Q495 110 466 117 Q418 126 388 96 Z" fill="#d9e9f5" stroke="#1f5fa8" stroke-width="2"/>
+    <path d="M472 79 Q463 96 472 113" fill="none" stroke="#1f5fa8" stroke-width="1.6"/>
+    <path d="M462 103 Q450 113 442 108 Q451 100 462 103 Z" fill="#bdd9ee" stroke="#1f5fa8" stroke-width="1.4"/>
+    <path d="M415 88 Q421 94 415 100" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <path d="M428 84 Q434 91 428 98" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <path d="M428 97 Q434 104 428 111" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <path d="M442 84 Q448 91 442 98" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <path d="M442 97 Q448 104 442 111" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <path d="M455 88 Q461 94 455 100" fill="none" stroke="#5b8cc0" stroke-width="1.3"/>
+    <circle cx="487" cy="91" r="3.2" fill="#222222"/>
+  </g>
+
+  <g>
+    <rect x="12" y="198" width="32" height="32" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <text x="28" y="220" text-anchor="middle" font-size="16" font-weight="700" fill="#3b8f4a">L</text>
+    <rect x="56" y="162" width="218" height="104" rx="10" fill="#f7fbf6" stroke="#cbd5e1" stroke-width="1.2"/>
+    <path d="M168 206 Q140 198 106 214 Q140 230 168 222 Z" fill="#cde8c8" stroke="#3b8f4a" stroke-width="1.5"/>
+    <path d="M166 214 Q138 210 112 214" fill="none" stroke="#3b8f4a" stroke-width="1.3"/>
+    <ellipse cx="187" cy="214" rx="25" ry="16" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+    <circle cx="201" cy="207" r="2.6" fill="#222222"/>
+    <circle cx="201" cy="221" r="2.6" fill="#222222"/>
+
+    <line x1="282" y1="214" x2="314" y2="214" stroke="#6b7480" stroke-width="2" marker-end="url(#ok)"/>
+
+    <rect x="324" y="162" width="224" height="104" rx="10" fill="#f7fbf6" stroke="#cbd5e1" stroke-width="1.2"/>
+    <path d="M446 199 L457 187 L471 185" fill="none" stroke="#3b8f4a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M466 186 L474 180" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M466 186 L475 189" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M446 229 L457 241 L471 243" fill="none" stroke="#3b8f4a" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M466 242 L474 248" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M466 242 L475 239" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M412 201 L397 186 L416 182 L404 174" fill="none" stroke="#3b8f4a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M411 178 L398 176" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M411 178 L410 171" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M412 227 L397 242 L416 246 L404 254" fill="none" stroke="#3b8f4a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M411 250 L398 252" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M411 250 L410 257" fill="none" stroke="#3b8f4a" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M405 214 Q405 197 434 197 Q461 197 473 214 Q461 231 434 231 Q405 231 405 214 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <circle cx="458" cy="204" r="4.2" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.5"/>
+    <circle cx="459" cy="204" r="2.1" fill="#222222"/>
+    <circle cx="458" cy="224" r="4.2" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.5"/>
+    <circle cx="459" cy="224" r="2.1" fill="#222222"/>
+  </g>
+</svg>

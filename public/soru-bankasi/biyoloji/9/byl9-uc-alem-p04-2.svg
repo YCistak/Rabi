@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 260" width="460" height="260" font-family="Nunito, sans-serif">
+  <rect width="460" height="260" fill="#ffffff"/>
+  <g transform="rotate(14 130 138)" stroke="#416f46" stroke-width="1.5">
+    <path d="M130 235 Q128 145 132 31" fill="none"/>
+    <g transform="translate(130 198) scale(-1 1)"><path d="M0 0 Q32 3 64 -30 Q36.48 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q35.2 -12 60 -28" fill="none"/></g>
+    <g transform="translate(130 198) scale(1 1)"><path d="M0 0 Q32 3 64 -30 Q36.48 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q35.2 -12 60 -28" fill="none"/></g>
+    <g transform="translate(130 178) scale(-1 1)"><path d="M0 0 Q29 3 58 -30 Q33.059999999999995 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q31.900000000000002 -12 54 -28" fill="none"/></g>
+    <g transform="translate(130 178) scale(1 1)"><path d="M0 0 Q29 3 58 -30 Q33.059999999999995 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q31.900000000000002 -12 54 -28" fill="none"/></g>
+    <g transform="translate(130 158) scale(-1 1)"><path d="M0 0 Q26 3 52 -30 Q29.639999999999997 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q28.6 -12 48 -28" fill="none"/></g>
+    <g transform="translate(130 158) scale(1 1)"><path d="M0 0 Q26 3 52 -30 Q29.639999999999997 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q28.6 -12 48 -28" fill="none"/></g>
+    <g transform="translate(130 138) scale(-1 1)"><path d="M0 0 Q23 3 46 -30 Q26.22 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q25.3 -12 42 -28" fill="none"/></g>
+    <g transform="translate(130 138) scale(1 1)"><path d="M0 0 Q23 3 46 -30 Q26.22 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q25.3 -12 42 -28" fill="none"/></g>
+    <g transform="translate(130 118) scale(-1 1)"><path d="M0 0 Q20 3 40 -30 Q22.799999999999997 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q22 -12 36 -28" fill="none"/></g>
+    <g transform="translate(130 118) scale(1 1)"><path d="M0 0 Q20 3 40 -30 Q22.799999999999997 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q22 -12 36 -28" fill="none"/></g>
+    <g transform="translate(130 98) scale(-1 1)"><path d="M0 0 Q17 3 34 -30 Q19.38 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q18.700000000000003 -12 30 -28" fill="none"/></g>
+    <g transform="translate(130 98) scale(1 1)"><path d="M0 0 Q17 3 34 -30 Q19.38 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q18.700000000000003 -12 30 -28" fill="none"/></g>
+    <g transform="translate(130 78) scale(-1 1)"><path d="M0 0 Q14 3 28 -30 Q15.959999999999999 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q15.400000000000002 -12 24 -28" fill="none"/></g>
+    <g transform="translate(130 78) scale(1 1)"><path d="M0 0 Q14 3 28 -30 Q15.959999999999999 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q15.400000000000002 -12 24 -28" fill="none"/></g>
+    <g transform="translate(130 58) scale(-1 1)"><path d="M0 0 Q11 3 22 -30 Q12.54 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q12.100000000000001 -12 18 -28" fill="none"/></g>
+    <g transform="translate(130 58) scale(1 1)"><path d="M0 0 Q11 3 22 -30 Q12.54 -31 0 -5 Z" fill="#dff0dc"/><path d="M3 -3 Q12.100000000000001 -12 18 -28" fill="none"/></g>
+    <path d="M132 52 Q119 36 134 15 Q140 31 132 52Z" fill="#dff0dc"/>
+  </g>
+  <path d="M179 161 L219 146 L238 146" fill="none" stroke="#6b7480" stroke-width="1.4"/>
+  <circle cx="324" cy="135" r="85" stroke="#6b7480" stroke-width="1.4" fill="#ffffff"/>
+  <path d="M252 172 Q278 100 389 93 Q352 160 252 172Z" fill="#dff0dc" stroke="#416f46" stroke-width="1.6"/>
+  <path d="M254 171 Q310 126 385 95" fill="none" stroke="#416f46" stroke-width="1.4"/>
+  <circle cx="277" cy="145" r="3.4" fill="#80563a"/>
+  <circle cx="292" cy="134" r="3.4" fill="#80563a"/>
+  <circle cx="308" cy="124" r="3.4" fill="#80563a"/>
+  <circle cx="324" cy="115" r="3.4" fill="#80563a"/>
+  <circle cx="341" cy="108" r="3.4" fill="#80563a"/>
+  <circle cx="284" cy="155" r="3.4" fill="#80563a"/>
+  <circle cx="300" cy="145" r="3.4" fill="#80563a"/>
+  <circle cx="316" cy="137" r="3.4" fill="#80563a"/>
+  <circle cx="332" cy="129" r="3.4" fill="#80563a"/>
+  <circle cx="348" cy="120" r="3.4" fill="#80563a"/>
+  <circle cx="361" cy="111" r="3.4" fill="#80563a"/>
+  <g fill="#222222" font-size="15" text-anchor="middle"><text x="126" y="250">Yaprak</text><text x="324" y="250">Alt yüzün büyütülmüş görünümü</text></g>
+</svg>

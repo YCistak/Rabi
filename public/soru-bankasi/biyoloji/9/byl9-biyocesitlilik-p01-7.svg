@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 290" width="600" height="290" font-family="Nunito, sans-serif">
+  <rect width="600" height="290" fill="#ffffff"/>
+  <text x="172" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Toplam birey sayısı</text>
+  <g stroke="#e2e6ea" stroke-width="1">
+    <line x1="64" y1="182" x2="280" y2="182"/>
+    <line x1="64" y1="134" x2="280" y2="134"/>
+    <line x1="64" y1="86" x2="280" y2="86"/>
+  </g>
+  <g fill="#4b5563" font-size="13" text-anchor="end">
+    <text x="56" y="234">0</text>
+    <text x="56" y="186">40</text>
+    <text x="56" y="138">80</text>
+    <text x="56" y="90">120</text>
+  </g>
+  <g fill="#1f5fa8" stroke="#15457a" stroke-width="1.2">
+    <rect x="80" y="86" width="32" height="144"/>
+    <rect x="130" y="134" width="32" height="96"/>
+    <rect x="180" y="170" width="32" height="60"/>
+    <rect x="230" y="116" width="32" height="114"/>
+  </g>
+  <g fill="#222222" font-size="13" font-weight="700" text-anchor="middle">
+    <text x="96" y="79">120</text>
+    <text x="146" y="127">80</text>
+    <text x="196" y="163">50</text>
+    <text x="246" y="109">95</text>
+  </g>
+  <line x1="64" y1="60" x2="64" y2="230" stroke="#222222" stroke-width="1.6"/>
+  <line x1="64" y1="230" x2="280" y2="230" stroke="#222222" stroke-width="1.6"/>
+  <g fill="#222222" font-size="14" font-weight="700" text-anchor="middle">
+    <text x="96" y="250">K</text>
+    <text x="146" y="250">L</text>
+    <text x="196" y="250">M</text>
+    <text x="246" y="250">N</text>
+  </g>
+  <text x="172" y="274" text-anchor="middle" font-size="13" fill="#4b5563">Çayır alanı</text>
+
+  <text x="464" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Gözlenen tür sayısı</text>
+  <g stroke="#e2e6ea" stroke-width="1">
+    <line x1="356" y1="188" x2="572" y2="188"/>
+    <line x1="356" y1="146" x2="572" y2="146"/>
+    <line x1="356" y1="104" x2="572" y2="104"/>
+    <line x1="356" y1="62" x2="572" y2="62"/>
+  </g>
+  <g fill="#4b5563" font-size="13" text-anchor="end">
+    <text x="348" y="234">0</text>
+    <text x="348" y="192">4</text>
+    <text x="348" y="150">8</text>
+    <text x="348" y="108">12</text>
+    <text x="348" y="66">16</text>
+  </g>
+  <g fill="#3b8f4a" stroke="#276432" stroke-width="1.2">
+    <rect x="372" y="188" width="32" height="42"/>
+    <rect x="422" y="114.5" width="32" height="115.5"/>
+    <rect x="472" y="83" width="32" height="147"/>
+    <rect x="522" y="156.5" width="32" height="73.5"/>
+  </g>
+  <g fill="#222222" font-size="13" font-weight="700" text-anchor="middle">
+    <text x="388" y="181">4</text>
+    <text x="438" y="107">11</text>
+    <text x="488" y="76">14</text>
+    <text x="538" y="149">7</text>
+  </g>
+  <line x1="356" y1="60" x2="356" y2="230" stroke="#222222" stroke-width="1.6"/>
+  <line x1="356" y1="230" x2="572" y2="230" stroke="#222222" stroke-width="1.6"/>
+  <g fill="#222222" font-size="14" font-weight="700" text-anchor="middle">
+    <text x="388" y="250">K</text>
+    <text x="438" y="250">L</text>
+    <text x="488" y="250">M</text>
+    <text x="538" y="250">N</text>
+  </g>
+  <text x="464" y="274" text-anchor="middle" font-size="13" fill="#4b5563">Çayır alanı</text>
+</svg>

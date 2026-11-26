@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 360" width="600" height="360" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="600" height="360" fill="#ffffff"/>
+  <line x1="80" y1="252" x2="390" y2="252" stroke="#d6dbe1" stroke-width="1.2"/>
+  <line x1="80" y1="204" x2="390" y2="204" stroke="#d6dbe1" stroke-width="1.2"/>
+  <line x1="80" y1="156" x2="390" y2="156" stroke="#d6dbe1" stroke-width="1.2"/>
+  <line x1="80" y1="108" x2="390" y2="108" stroke="#d6dbe1" stroke-width="1.2"/>
+  <line x1="80" y1="60" x2="390" y2="60" stroke="#d6dbe1" stroke-width="1.2"/>
+  <text x="70" y="305" font-size="14" fill="#222222" text-anchor="end">0</text>
+  <text x="70" y="257" font-size="14" fill="#222222" text-anchor="end">10</text>
+  <text x="70" y="209" font-size="14" fill="#222222" text-anchor="end">20</text>
+  <text x="70" y="161" font-size="14" fill="#222222" text-anchor="end">30</text>
+  <text x="70" y="113" font-size="14" fill="#222222" text-anchor="end">40</text>
+  <text x="70" y="65" font-size="14" fill="#222222" text-anchor="end">50</text>
+  <line x1="80" y1="300" x2="80" y2="46" stroke="#6b7480" stroke-width="1.8"/>
+  <line x1="80" y1="300" x2="396" y2="300" stroke="#6b7480" stroke-width="1.8"/>
+  <text x="20" y="30" font-size="14" fill="#222222" text-anchor="start">Basınç (mmHg)</text>
+  <text x="80" y="322" font-size="14" fill="#222222" text-anchor="start">Atardamar ucu</text>
+  <text x="390" y="322" font-size="14" fill="#222222" text-anchor="end">Toplardamar ucu</text>
+  <text x="235" y="348" font-size="14" fill="#222222" text-anchor="middle">Kılcal damar boyunca konum</text>
+  <line x1="80" y1="84" x2="390" y2="170.4" stroke="#b03a2e" stroke-width="2"/>
+  <text x="88" y="76" font-size="14" fill="#b03a2e" text-anchor="start">45</text>
+  <text x="382" y="162.4" font-size="14" fill="#b03a2e" text-anchor="end">27</text>
+  <line x1="393" y1="170.4" x2="404" y2="145" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="408" y="150" font-size="14" fill="#b03a2e" text-anchor="start">Ayakta: kan basıncı</text>
+  <line x1="80" y1="132" x2="390" y2="228" stroke="#c8642a" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="88" y="124" font-size="14" fill="#c8642a" text-anchor="start">35</text>
+  <text x="382" y="247" font-size="14" fill="#c8642a" text-anchor="end">15</text>
+  <line x1="393" y1="228" x2="404" y2="231" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="408" y="236" font-size="14" fill="#c8642a" text-anchor="start">Otururken: kan basıncı</text>
+  <line x1="80" y1="180" x2="390" y2="180" stroke="#1f5fa8" stroke-width="2" stroke-dasharray="2 4"/>
+  <text x="88" y="172" font-size="14" fill="#1f5fa8" text-anchor="start">25</text>
+  <line x1="393" y1="180" x2="404" y2="188" stroke="#6b7480" stroke-width="1.2"/>
+  <text x="408" y="193" font-size="14" fill="#1f5fa8" text-anchor="start">Kana çeken basınç</text>
+</svg>

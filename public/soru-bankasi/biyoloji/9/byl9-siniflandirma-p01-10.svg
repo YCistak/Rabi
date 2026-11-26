@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" width="640" height="400" font-family="Nunito, sans-serif">
+<rect width="640" height="400" fill="#ffffff"/>
+<g stroke="#6b7480" stroke-width="1.5" fill="none">
+<line x1="320" y1="56" x2="160" y2="120"/>
+<line x1="320" y1="56" x2="480" y2="120"/>
+<line x1="160" y1="156" x2="100" y2="220"/>
+<line x1="160" y1="156" x2="220" y2="220"/>
+<line x1="480" y1="156" x2="400" y2="220"/>
+<line x1="480" y1="156" x2="540" y2="230"/>
+<line x1="540" y1="266" x2="480" y2="330"/>
+<line x1="540" y1="266" x2="600" y2="330"/>
+</g>
+<g fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5">
+<rect x="195" y="20" width="250" height="36" rx="8"/>
+<rect x="35" y="120" width="250" height="36" rx="8"/>
+<rect x="360" y="120" width="240" height="36" rx="8"/>
+<rect x="445" y="230" width="190" height="36" rx="8"/>
+</g>
+<g fill="#222222" font-size="14" text-anchor="middle">
+<text x="320" y="43">1. Vücut sıcaklığı sabit mi?</text>
+<text x="160" y="143">2. Vücudu tüyle örtülü mü?</text>
+<text x="480" y="143">3. Ergin, solungaçla mı solur?</text>
+<text x="540" y="253">4. Derisi pullu mu?</text>
+</g>
+<g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5">
+<circle cx="100" cy="240" r="20"/>
+<circle cx="220" cy="240" r="20"/>
+<circle cx="400" cy="240" r="20"/>
+<circle cx="480" cy="350" r="20"/>
+<circle cx="600" cy="350" r="20"/>
+</g>
+<g fill="#222222" font-size="16" font-weight="700" text-anchor="middle">
+<text x="100" y="246">K</text>
+<text x="220" y="246">L</text>
+<text x="400" y="246">M</text>
+<text x="480" y="356">N</text>
+<text x="600" y="356">P</text>
+</g>
+<g fill="#1f5fa8" font-size="13">
+<text x="232" y="84" text-anchor="end">Evet</text>
+<text x="408" y="84">Hayır</text>
+<text x="122" y="190" text-anchor="end">Evet</text>
+<text x="198" y="190">Hayır</text>
+<text x="432" y="190" text-anchor="end">Evet</text>
+<text x="518" y="190">Hayır</text>
+<text x="502" y="300" text-anchor="end">Evet</text>
+<text x="578" y="300">Hayır</text>
+</g>
+</svg>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="580" height="260" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#222222"/>
+    </marker>
+  </defs>
+  <rect width="580" height="260" fill="#ffffff"/>
+
+  <text x="96" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Bağırsak boşluğu</text>
+  <text x="276" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Villus epitel hücresi</text>
+  <text x="476" y="32" text-anchor="middle" font-size="14" font-weight="700" fill="#222222">Kan kılcalı</text>
+
+  <rect x="22" y="48" width="148" height="186" rx="8" fill="#fdfaf4" stroke="#6b7480" stroke-width="1.5"/>
+
+  <path d="M 206 54 L 358 54 L 358 228 L 206 228 L 206 220 C 180 220 180 208 206 208 L 206 200 C 180 200 180 188 206 188 L 206 180 C 180 180 180 168 206 168 L 206 160 C 180 160 180 148 206 148 L 206 140 C 180 140 180 128 206 128 L 206 120 C 180 120 180 108 206 108 L 206 100 C 180 100 180 88 206 88 L 206 80 C 180 80 180 68 206 68 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+  <ellipse cx="288" cy="180" rx="28" ry="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+
+  <rect x="406" y="48" width="140" height="186" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <ellipse cx="452" cy="76" rx="14" ry="8" fill="#e59a7b" stroke="#c8642a" stroke-width="1.2"/>
+  <ellipse cx="508" cy="186" rx="14" ry="8" fill="#e59a7b" stroke="#c8642a" stroke-width="1.2"/>
+  <ellipse cx="448" cy="204" rx="14" ry="8" fill="#e59a7b" stroke="#c8642a" stroke-width="1.2"/>
+
+  <polygon points="88,100 102,100 109,112 102,124 88,124 81,112" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="95" y="146" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Glikoz</text>
+
+  <line x1="115" y1="112" x2="255" y2="112" stroke="#222222" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="174" y="96" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">I</text>
+
+  <polygon points="274,100 288,100 295,112 288,124 274,124 267,112" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+
+  <line x1="301" y1="112" x2="452" y2="112" stroke="#222222" stroke-width="2" marker-end="url(#ok)"/>
+  <text x="382" y="96" text-anchor="middle" font-size="15" font-weight="700" fill="#222222">II</text>
+
+  <polygon points="471,100 485,100 492,112 485,124 471,124 464,112" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+</svg>

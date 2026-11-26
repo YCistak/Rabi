@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 260" width="600" height="260" font-family="Nunito, sans-serif">
+  <rect width="600" height="260" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+
+  <g>
+    <rect x="16" y="22" width="132" height="52" rx="8" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/>
+    <rect x="24" y="38" width="10" height="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+    <rect x="34" y="38" width="10" height="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+    <rect x="44" y="38" width="10" height="18" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+    <text x="100" y="53" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Epitel doku</text>
+
+    <rect x="16" y="102" width="132" height="52" rx="8" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+    <path d="M 24 122 Q 39 114 54 122 Q 39 130 24 122 Z" fill="#ffffff" stroke="#c8642a" stroke-width="1.2"/>
+    <path d="M 24 134 Q 39 126 54 134 Q 39 142 24 134 Z" fill="#ffffff" stroke="#c8642a" stroke-width="1.2"/>
+    <text x="100" y="133" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Kas dokusu</text>
+
+    <rect x="16" y="182" width="132" height="52" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <line x1="25" y1="196" x2="52" y2="220" stroke="#3b8f4a" stroke-width="1.2"/>
+    <line x1="25" y1="220" x2="52" y2="196" stroke="#3b8f4a" stroke-width="1.2"/>
+    <circle cx="38" cy="208" r="4" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.2"/>
+    <text x="100" y="213" text-anchor="middle" font-size="13.5" font-weight="700" fill="#222222">Bağ dokusu</text>
+  </g>
+
+  <g stroke="#6b7480" stroke-width="1.8" fill="none">
+    <path d="M 148 48 L 172 48 L 172 208 L 148 208"/>
+    <line x1="148" y1="128" x2="194" y2="128" marker-end="url(#ok)"/>
+  </g>
+
+  <g>
+    <rect x="198" y="84" width="76" height="88" rx="12" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <text x="236" y="118" text-anchor="middle" font-size="20" font-weight="700" fill="#1f5fa8">X</text>
+    <rect x="216" y="132" width="40" height="8" rx="2" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+    <rect x="216" y="142" width="40" height="8" rx="2" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.2"/>
+    <rect x="216" y="152" width="40" height="8" rx="2" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.2"/>
+  </g>
+
+  <g>
+    <line x1="274" y1="128" x2="328" y2="128" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+    <line x1="301" y1="196" x2="301" y2="128" stroke="#6b7480" stroke-width="1.6"/>
+    <circle cx="301" cy="128" r="3" fill="#6b7480"/>
+    <rect x="255" y="196" width="92" height="36" rx="8" fill="#f8f9fb" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="301" y="219" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Diğer X'ler</text>
+  </g>
+
+  <g>
+    <rect x="332" y="84" width="76" height="88" rx="12" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+    <text x="370" y="135" text-anchor="middle" font-size="20" font-weight="700" fill="#c8642a">Y</text>
+  </g>
+
+  <g>
+    <line x1="408" y1="128" x2="462" y2="128" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+    <line x1="435" y1="196" x2="435" y2="128" stroke="#6b7480" stroke-width="1.6"/>
+    <circle cx="435" cy="128" r="3" fill="#6b7480"/>
+    <rect x="389" y="196" width="92" height="36" rx="8" fill="#f8f9fb" stroke="#6b7480" stroke-width="1.3"/>
+    <text x="435" y="219" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Diğer Y'ler</text>
+  </g>
+
+  <g>
+    <rect x="466" y="46" width="118" height="164" rx="12" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+    <text x="525" y="76" text-anchor="middle" font-size="20" font-weight="700" fill="#3b8f4a">Z</text>
+    <circle cx="525" cy="100" r="11" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.6"/>
+    <path d="M 505 152 L 508 122 C 508 115 516 113 525 113 C 534 113 542 115 542 122 L 545 152 L 538 152 L 536 130 L 535 196 L 527 196 L 525 162 L 523 196 L 515 196 L 514 130 L 512 152 Z" fill="#ffffff" stroke="#3b8f4a" stroke-width="1.6"/>
+  </g>
+</svg>

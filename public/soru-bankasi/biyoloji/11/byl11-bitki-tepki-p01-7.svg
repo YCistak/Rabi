@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 260" width="480" height="260" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-gri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="480" height="260" fill="#ffffff"/>
+  <text x="24" y="28" font-size="14" font-weight="700" fill="#222222">Karanlık ortam</text>
+  <text x="418" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">Yer çekimi</text>
+  <line x1="418" y1="44" x2="418" y2="104" stroke="#6b7480" stroke-width="2" marker-end="url(#ok-gri)"/>
+
+  <line x1="22" y1="204" x2="365" y2="204" stroke="#6b7480" stroke-width="1.8"/>
+  <polygon points="46,116 150,104 150,196 46,184" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+  <polygon points="56,124 146,113 146,187 56,176" fill="#f3eadf" stroke="#8c6239" stroke-width="1.2"/>
+  <rect x="148" y="98" width="14" height="104" rx="3" fill="#fbe6d6" stroke="#c8642a" stroke-width="2"/>
+
+  <path d="M 148 150 C 122 150, 108 160, 104 182" fill="none" stroke="#8c6239" stroke-width="3"/>
+  <path d="M 122 153 C 115 162, 114 170, 114 178" fill="none" stroke="#8c6239" stroke-width="1.5"/>
+  <path d="M 108 164 C 98 168, 94 174, 92 180" fill="none" stroke="#8c6239" stroke-width="1.5"/>
+
+  <path d="M 162 144 C 218 144, 260 120, 272 62 L 286 64 C 276 130, 228 156, 162 156 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2"/>
+  <path d="M 272 62 C 254 54, 250 34, 268 32 C 276 42, 276 52, 272 62 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <path d="M 286 64 C 304 54, 310 36, 294 34 C 286 44, 284 54, 286 64 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+
+  <line x1="233" y1="125" x2="204" y2="80" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="233" cy="125" r="3.2" fill="#222222"/>
+  <text x="196" y="72" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">X</text>
+
+  <line x1="245" y1="135" x2="300" y2="174" stroke="#6b7480" stroke-width="1.5"/>
+  <circle cx="245" cy="135" r="3.2" fill="#222222"/>
+  <text x="314" y="182" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">Y</text>
+
+  <line x1="104" y1="176" x2="96" y2="226" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="96" y="244" text-anchor="middle" font-size="14" fill="#222222">Kök</text>
+  <text x="318" y="64" font-size="14" fill="#222222">Gövde</text>
+</svg>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 295" width="580" height="295" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-ileri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 Z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-geri" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 10 1.5 L 1 5 L 10 8.5 Z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-mavi-ileri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1.5 L 9 5 L 0 8.5 Z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-mavi-geri" viewBox="0 0 10 10" refX="2" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 10 1.5 L 1 5 L 10 8.5 Z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+
+  <rect width="580" height="295" fill="#ffffff"/>
+
+  <line x1="290" y1="20" x2="290" y2="250" stroke="#d5dbe3" stroke-width="1.5" stroke-dasharray="5 4"/>
+
+  <g id="k-eklemi">
+    <text x="145" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">K eklemi</text>
+
+    <path d="M 106 52 L 142 52 L 142 124 C 150 128 154 136 154 145 C 154 159 142 170 128 170 C 114 170 102 159 102 145 C 102 135 106 128 106 124 Z" fill="#f3ead8" stroke="#7c6a52" stroke-width="1.8"/>
+    <path d="M 151 133 C 158 146 152 164 136 169 C 124 173 110 168 104 157 L 110 152 C 115 161 125 165 134 162 C 146 158 150 146 145 136 Z" fill="#b8daf5" stroke="#1f5fa8" stroke-width="1.3"/>
+
+    <path d="M 98 158 C 100 176 118 186 138 184 L 204 206 L 214 178 L 162 160 C 165 148 163 136 156 128 L 150 134 C 155 140 156 150 151 158 C 145 168 130 174 117 169 C 109 166 104 161 103 156 Z" fill="#f3ead8" stroke="#7c6a52" stroke-width="1.8"/>
+    <path d="M 152 132 C 159 141 159 153 153 162 C 145 173 129 178 115 173 C 106 169 101 163 99 158 L 105 156 C 107 160 111 164 117 167 C 128 171 141 167 147 158 C 152 151 152 142 147 136 Z" fill="#b8daf5" stroke="#1f5fa8" stroke-width="1.3"/>
+
+    <path d="M 210 96 C 258 134 262 184 232 232" fill="none" stroke="#c8642a" stroke-width="2.2" marker-start="url(#ok-geri)" marker-end="url(#ok-ileri)"/>
+  </g>
+
+  <g id="l-eklemi">
+    <text x="435" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#222222">L eklemi</text>
+
+    <path d="M 326 66 L 382 66 C 396 66 408 82 406 98 C 386 102 372 118 372 138 C 372 158 386 174 406 178 C 408 194 396 208 380 208 L 326 208 Z" fill="#f3ead8" stroke="#7c6a52" stroke-width="1.8"/>
+    <path d="M 405 97 C 384 101 370 118 370 138 C 370 158 384 175 405 179 L 407 171 C 390 168 378 154 378 138 C 378 122 390 108 407 105 Z" fill="#b8daf5" stroke="#1f5fa8" stroke-width="1.3"/>
+
+    <path d="M 432 138 L 494 164 L 482 194 L 420 164 C 402 170 384 158 384 138 C 384 118 402 106 420 112 C 430 116 436 126 432 138 Z" fill="#f3ead8" stroke="#7c6a52" stroke-width="1.8"/>
+    <path d="M 412 111 C 395 110 383 122 383 138 C 383 154 395 166 412 165 L 412 158 C 399 159 390 150 390 138 C 390 126 399 117 412 118 Z" fill="#b8daf5" stroke="#1f5fa8" stroke-width="1.3"/>
+
+    <path d="M 502 82 C 546 116 552 178 514 234" fill="none" stroke="#c8642a" stroke-width="2.2" marker-start="url(#ok-geri)" marker-end="url(#ok-ileri)"/>
+    <path d="M 444 198 C 432 184 438 144 464 124" fill="none" stroke="#1f5fa8" stroke-width="2" marker-start="url(#ok-mavi-geri)" marker-end="url(#ok-mavi-ileri)"/>
+  </g>
+
+  <g id="aciklama-alt">
+    <line x1="126" y1="274" x2="160" y2="274" stroke="#c8642a" stroke-width="2.2" marker-end="url(#ok-ileri)"/>
+    <line x1="174" y1="274" x2="208" y2="274" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi-ileri)"/>
+    <text x="220" y="279" text-anchor="start" font-size="14" font-weight="600" fill="#444444">Eklemin izin verdiği hareket yönleri</text>
+  </g>
+</svg>

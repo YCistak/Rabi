@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+<rect width="600" height="320" fill="#ffffff"/>
+<rect x="72" y="100" width="176" height="178" fill="#e6f1fb"/>
+<line x1="72" y1="100" x2="248" y2="100" stroke="#1f5fa8" stroke-width="1.2"/>
+<polyline points="70,60 70,280 250,280 250,60" fill="none" stroke="#6b7480" stroke-width="2"/>
+<line x1="120" y1="30" x2="200" y2="30" stroke="#6b7480" stroke-width="2"/>
+<line x1="160" y1="30" x2="160" y2="113" stroke="#6b7480" stroke-width="1.4"/>
+<ellipse cx="160" cy="185" rx="56" ry="72" fill="#fdf3dc" stroke="#c8642a" stroke-width="1.6"/>
+<text x="160" y="185" font-size="14" fill="#222222" text-anchor="middle">Nişasta</text>
+<text x="160" y="205" font-size="14" fill="#222222" text-anchor="middle">+ protein</text>
+<text x="78" y="128" font-size="14" fill="#1f5fa8">Saf su</text>
+<text x="160" y="306" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">1. beher</text>
+<rect x="352" y="100" width="176" height="178" fill="#e6f1fb"/>
+<line x1="352" y1="100" x2="528" y2="100" stroke="#1f5fa8" stroke-width="1.2"/>
+<polyline points="350,60 350,280 530,280 530,60" fill="none" stroke="#6b7480" stroke-width="2"/>
+<line x1="400" y1="30" x2="480" y2="30" stroke="#6b7480" stroke-width="2"/>
+<line x1="440" y1="30" x2="440" y2="113" stroke="#6b7480" stroke-width="1.4"/>
+<ellipse cx="440" cy="185" rx="56" ry="72" fill="#fdf3dc" stroke="#c8642a" stroke-width="1.6"/>
+<text x="440" y="175" font-size="14" fill="#222222" text-anchor="middle">Nişasta</text>
+<text x="440" y="195" font-size="14" fill="#222222" text-anchor="middle">+ protein</text>
+<text x="440" y="215" font-size="14" fill="#222222" text-anchor="middle">+ enzim</text>
+<text x="358" y="128" font-size="14" fill="#1f5fa8">Saf su</text>
+<text x="440" y="306" font-size="15" font-weight="700" fill="#222222" text-anchor="middle">2. beher</text>
+</svg>

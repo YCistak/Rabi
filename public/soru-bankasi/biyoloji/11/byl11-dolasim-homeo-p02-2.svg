@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 330" width="600" height="330" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#1f5fa8"/>
+    </marker>
+    <marker id="okk" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <polygon points="0,0 8,3.5 0,7" fill="#b03a2e"/>
+    </marker>
+  </defs>
+  <rect width="600" height="330" fill="#ffffff"/>
+  <rect x="60" y="104" width="420" height="200" rx="10" fill="#eef5fb" stroke="#9fb3c8" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <ellipse cx="115" cy="185" rx="30" ry="19" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+  <circle cx="115" cy="185" r="6" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+  <ellipse cx="215" cy="265" rx="30" ry="19" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+  <circle cx="215" cy="265" r="6" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+  <ellipse cx="430" cy="175" rx="30" ry="19" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+  <circle cx="430" cy="175" r="6" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+  <ellipse cx="250" cy="160" rx="30" ry="19" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.5"/>
+  <circle cx="250" cy="160" r="6" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.2"/>
+  <text x="72" y="292" font-size="14" fill="#6b7480" text-anchor="start">Doku sıvısı</text>
+  <rect x="20" y="58" width="480" height="32" fill="#f8e1de"/>
+  <line x1="20" y1="58" x2="500" y2="58" stroke="#b03a2e" stroke-width="1.8"/>
+  <line x1="20" y1="90" x2="500" y2="90" stroke="#b03a2e" stroke-width="1.8"/>
+  <line x1="200" y1="74" x2="330" y2="74" stroke="#b03a2e" stroke-width="1.8" marker-end="url(#okk)"/>
+  <text x="20" y="44" font-size="14" fill="#222222" text-anchor="start">Atardamar tarafı</text>
+  <text x="500" y="44" font-size="14" fill="#222222" text-anchor="end">Toplardamar tarafı</text>
+  <path d="M 530 214 L 314 214 A 14 14 0 0 0 314 242 L 530 242" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="415" y="264" font-size="14" fill="#3b8f4a" text-anchor="middle">Lenf kılcalı</text>
+  <line x1="150" y1="93" x2="150" y2="140" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="164" y="126" font-size="16" font-weight="700" fill="#222222" text-anchor="start">1</text>
+  <line x1="390" y1="142" x2="390" y2="95" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="376" y="126" font-size="16" font-weight="700" fill="#222222" text-anchor="end">2</text>
+  <line x1="340" y1="170" x2="340" y2="209" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="354" y="196" font-size="16" font-weight="700" fill="#222222" text-anchor="start">3</text>
+  <line x1="550" y1="210" x2="550" y2="130" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <path d="M 534 228 L 550 228 L 550 212" fill="none" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="538" y="176" font-size="16" font-weight="700" fill="#222222" text-anchor="end">4</text>
+  <text x="550" y="96" font-size="14" fill="#222222" text-anchor="middle">Kalbe yakın</text>
+  <text x="550" y="112" font-size="14" fill="#222222" text-anchor="middle">toplardamara</text>
+</svg>

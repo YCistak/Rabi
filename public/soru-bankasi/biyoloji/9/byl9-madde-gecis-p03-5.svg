@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 320" width="600" height="320" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-yesil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#3b8f4a"/>
+    </marker>
+    <marker id="ok-kirmizi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#b91c1c"/>
+    </marker>
+  </defs>
+  <rect width="600" height="320" fill="#ffffff"/>
+  <rect x="0" y="205" width="600" height="115" fill="#eef5fb"/>
+  <text x="18" y="28" font-size="14" font-weight="700" fill="#475569">Hücre dışı</text>
+  <text x="18" y="302" font-size="14" font-weight="700" fill="#475569">Sitoplazma</text>
+  <g stroke="#6b7480" stroke-width="1.2">
+    <line x1="27" y1="131" x2="27" y2="157"/><line x1="33" y1="131" x2="33" y2="157"/>
+    <line x1="47" y1="131" x2="47" y2="157"/><line x1="53" y1="131" x2="53" y2="157"/>
+    <line x1="67" y1="131" x2="67" y2="157"/><line x1="73" y1="131" x2="73" y2="157"/>
+    <line x1="87" y1="131" x2="87" y2="157"/><line x1="93" y1="131" x2="93" y2="157"/>
+    <line x1="137" y1="131" x2="137" y2="157"/><line x1="143" y1="131" x2="143" y2="157"/>
+    <line x1="157" y1="131" x2="157" y2="157"/><line x1="163" y1="131" x2="163" y2="157"/>
+    <line x1="177" y1="131" x2="177" y2="157"/><line x1="183" y1="131" x2="183" y2="157"/>
+    <line x1="197" y1="131" x2="197" y2="157"/><line x1="203" y1="131" x2="203" y2="157"/>
+    <line x1="217" y1="131" x2="217" y2="157"/><line x1="223" y1="131" x2="223" y2="157"/>
+    <line x1="237" y1="131" x2="237" y2="157"/><line x1="243" y1="131" x2="243" y2="157"/>
+    <line x1="257" y1="131" x2="257" y2="157"/><line x1="263" y1="131" x2="263" y2="157"/>
+    <line x1="347" y1="131" x2="347" y2="157"/><line x1="353" y1="131" x2="353" y2="157"/>
+    <line x1="367" y1="131" x2="367" y2="157"/><line x1="373" y1="131" x2="373" y2="157"/>
+    <line x1="387" y1="131" x2="387" y2="157"/><line x1="393" y1="131" x2="393" y2="157"/>
+    <line x1="407" y1="131" x2="407" y2="157"/><line x1="413" y1="131" x2="413" y2="157"/>
+    <line x1="427" y1="131" x2="427" y2="157"/><line x1="433" y1="131" x2="433" y2="157"/>
+    <line x1="527" y1="131" x2="527" y2="157"/><line x1="533" y1="131" x2="533" y2="157"/>
+    <line x1="547" y1="131" x2="547" y2="157"/><line x1="553" y1="131" x2="553" y2="157"/>
+    <line x1="567" y1="131" x2="567" y2="157"/><line x1="573" y1="131" x2="573" y2="157"/>
+    <line x1="27" y1="163" x2="27" y2="189"/><line x1="33" y1="163" x2="33" y2="189"/>
+    <line x1="47" y1="163" x2="47" y2="189"/><line x1="53" y1="163" x2="53" y2="189"/>
+    <line x1="67" y1="163" x2="67" y2="189"/><line x1="73" y1="163" x2="73" y2="189"/>
+    <line x1="87" y1="163" x2="87" y2="189"/><line x1="93" y1="163" x2="93" y2="189"/>
+    <line x1="137" y1="163" x2="137" y2="189"/><line x1="143" y1="163" x2="143" y2="189"/>
+    <line x1="157" y1="163" x2="157" y2="189"/><line x1="163" y1="163" x2="163" y2="189"/>
+    <line x1="177" y1="163" x2="177" y2="189"/><line x1="183" y1="163" x2="183" y2="189"/>
+    <line x1="197" y1="163" x2="197" y2="189"/><line x1="203" y1="163" x2="203" y2="189"/>
+    <line x1="217" y1="163" x2="217" y2="189"/><line x1="223" y1="163" x2="223" y2="189"/>
+    <line x1="237" y1="163" x2="237" y2="189"/><line x1="243" y1="163" x2="243" y2="189"/>
+    <line x1="257" y1="163" x2="257" y2="189"/><line x1="263" y1="163" x2="263" y2="189"/>
+    <line x1="347" y1="163" x2="347" y2="189"/><line x1="353" y1="163" x2="353" y2="189"/>
+    <line x1="367" y1="163" x2="367" y2="189"/><line x1="373" y1="163" x2="373" y2="189"/>
+    <line x1="387" y1="163" x2="387" y2="189"/><line x1="393" y1="163" x2="393" y2="189"/>
+    <line x1="407" y1="163" x2="407" y2="189"/><line x1="413" y1="163" x2="413" y2="189"/>
+    <line x1="427" y1="163" x2="427" y2="189"/><line x1="433" y1="163" x2="433" y2="189"/>
+    <line x1="527" y1="163" x2="527" y2="189"/><line x1="533" y1="163" x2="533" y2="189"/>
+    <line x1="547" y1="163" x2="547" y2="189"/><line x1="553" y1="163" x2="553" y2="189"/>
+    <line x1="567" y1="163" x2="567" y2="189"/><line x1="573" y1="163" x2="573" y2="189"/>
+  </g>
+  <g fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4">
+    <circle cx="30" cy="123" r="8"/><circle cx="50" cy="123" r="8"/>
+    <circle cx="70" cy="123" r="8"/><circle cx="90" cy="123" r="8"/>
+    <circle cx="140" cy="123" r="8"/><circle cx="160" cy="123" r="8"/>
+    <circle cx="180" cy="123" r="8"/><circle cx="200" cy="123" r="8"/>
+    <circle cx="220" cy="123" r="8"/><circle cx="240" cy="123" r="8"/>
+    <circle cx="260" cy="123" r="8"/><circle cx="350" cy="123" r="8"/>
+    <circle cx="370" cy="123" r="8"/><circle cx="390" cy="123" r="8"/>
+    <circle cx="410" cy="123" r="8"/><circle cx="430" cy="123" r="8"/>
+    <circle cx="530" cy="123" r="8"/><circle cx="550" cy="123" r="8"/>
+    <circle cx="570" cy="123" r="8"/>
+    <circle cx="30" cy="197" r="8"/><circle cx="50" cy="197" r="8"/>
+    <circle cx="70" cy="197" r="8"/><circle cx="90" cy="197" r="8"/>
+    <circle cx="140" cy="197" r="8"/><circle cx="160" cy="197" r="8"/>
+    <circle cx="180" cy="197" r="8"/><circle cx="200" cy="197" r="8"/>
+    <circle cx="220" cy="197" r="8"/><circle cx="240" cy="197" r="8"/>
+    <circle cx="260" cy="197" r="8"/><circle cx="350" cy="197" r="8"/>
+    <circle cx="370" cy="197" r="8"/><circle cx="390" cy="197" r="8"/>
+    <circle cx="410" cy="197" r="8"/><circle cx="430" cy="197" r="8"/>
+    <circle cx="530" cy="197" r="8"/><circle cx="550" cy="197" r="8"/>
+    <circle cx="570" cy="197" r="8"/>
+  </g>
+  <rect x="274" y="108" width="22" height="104" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <rect x="314" y="108" width="22" height="104" rx="10" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.8"/>
+  <rect x="448" y="108" width="24" height="104" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <rect x="492" y="108" width="24" height="104" rx="10" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  <text x="115" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#1f5fa8">Z</text>
+  <g fill="#1f5fa8">
+    <circle cx="84" cy="58" r="5"/><circle cx="104" cy="52" r="5"/>
+    <circle cx="126" cy="56" r="5"/><circle cx="146" cy="62" r="5"/>
+    <circle cx="92" cy="76" r="5"/><circle cx="115" cy="72" r="5"/>
+    <circle cx="138" cy="78" r="5"/><circle cx="104" cy="90" r="5"/>
+    <circle cx="98" cy="252" r="5"/><circle cx="132" cy="246" r="5"/>
+  </g>
+  <line x1="115" y1="92" x2="115" y2="226" stroke="#1f5fa8" stroke-width="2" marker-end="url(#ok-mavi)"/>
+  <text x="305" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#c8642a">X</text>
+  <g fill="#c8642a">
+    <rect x="268" y="52" width="10" height="10" rx="2"/>
+    <rect x="292" y="48" width="10" height="10" rx="2"/>
+    <rect x="316" y="52" width="10" height="10" rx="2"/>
+    <rect x="336" y="60" width="10" height="10" rx="2"/>
+    <rect x="278" y="72" width="10" height="10" rx="2"/>
+    <rect x="300" y="68" width="10" height="10" rx="2"/>
+    <rect x="322" y="74" width="10" height="10" rx="2"/>
+    <rect x="282" y="246" width="10" height="10" rx="2"/>
+    <rect x="318" y="252" width="10" height="10" rx="2"/>
+  </g>
+  <line x1="305" y1="92" x2="305" y2="226" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+  <text x="482" y="34" text-anchor="middle" font-size="16" font-weight="700" fill="#3b8f4a">Y</text>
+  <g fill="#3b8f4a">
+    <polygon points="466,64 472,75 460,75"/>
+    <polygon points="502,60 508,71 496,71"/>
+    <polygon points="456,246 462,257 450,257"/>
+    <polygon points="482,240 488,251 476,251"/>
+    <polygon points="508,244 514,255 502,255"/>
+    <polygon points="444,268 450,279 438,279"/>
+    <polygon points="468,266 474,277 462,277"/>
+    <polygon points="494,268 500,279 488,279"/>
+    <polygon points="520,264 526,275 514,275"/>
+  </g>
+  <line x1="482" y1="92" x2="482" y2="226" stroke="#3b8f4a" stroke-width="2" marker-end="url(#ok-yesil)"/>
+  <path d="M 418 206 Q 446 218 418 232" fill="none" stroke="#b91c1c" stroke-width="1.6" marker-end="url(#ok-kirmizi)"/>
+  <text x="412" y="210" text-anchor="end" font-size="13" font-weight="700" fill="#b91c1c">ATP</text>
+  <text x="412" y="238" text-anchor="end" font-size="13" font-weight="700" fill="#b91c1c">ADP + Pᵢ</text>
+</svg>

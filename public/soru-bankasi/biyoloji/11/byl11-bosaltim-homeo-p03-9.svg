@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 220" width="500" height="220" font-family="Nunito, sans-serif">
+<rect width="500" height="220" fill="#ffffff"/>
+<defs><marker id="ok" viewBox="0 0 8 8" markerWidth="7" markerHeight="7" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#38495a"/></marker></defs>
+<path d="M35 42 Q143 32 250 42 T465 42 L465 78 Q357 88 250 78 T35 78 Z" fill="#fbe6d6" stroke="#a9684e" stroke-width="1.6"/>
+<path d="M35 141 Q143 131 250 141 T465 141 L465 185 Q357 195 250 185 T35 185 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.6"/><g fill="#222222" font-size="16"><text x="38" y="24">Kılcal damar</text><text x="40" y="213">Kanalcık</text><text x="112" y="128">K</text><text x="386" y="128">L</text><text x="158" y="165">Sıvı akışı</text></g>
+<path d="M118 137 L118 181 M393 145 L393 189" fill="none" stroke="#1f5fa8" stroke-width="1.5" stroke-dasharray="4 3"/>
+<g stroke="#38495a" stroke-width="2" fill="none" marker-end="url(#ok)"><path d="M215 145 L215 67"/><path d="M287 67 L287 152"/><path d="M234 164 L271 164"/></g>
+</svg>

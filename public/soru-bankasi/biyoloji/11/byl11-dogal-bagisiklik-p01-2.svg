@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 420" width="600" height="420" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 1 1 L 9 5 L 1 9 z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="600" height="420" fill="#ffffff"/>
+
+  <g>
+    <rect x="16" y="14" width="276" height="168" rx="10" fill="#fafafa" stroke="#d0d5dd" stroke-width="1.4"/>
+    <circle cx="38" cy="36" r="14" fill="#1f5fa8"/>
+    <text x="38" y="41" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">K</text>
+    <path d="M 232 72 C 208 50, 146 46, 108 58 C 72 70, 66 134, 108 148 C 146 160, 208 156, 232 134 C 238 128, 224 120, 206 122 C 188 120, 184 86, 206 84 C 224 86, 238 78, 232 72 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="122" cy="103" rx="25" ry="20" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="164" cy="75" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="162" cy="131" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <rect x="206" y="95" width="32" height="16" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  </g>
+
+  <g>
+    <rect x="308" y="14" width="276" height="168" rx="10" fill="#fafafa" stroke="#d0d5dd" stroke-width="1.4"/>
+    <circle cx="330" cy="36" r="14" fill="#1f5fa8"/>
+    <text x="330" y="41" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">L</text>
+    <path d="M 492 80 C 474 52, 424 46, 388 60 C 354 74, 354 132, 388 146 C 424 160, 474 154, 492 126 C 474 122, 466 114, 466 103 C 466 92, 474 84, 492 80 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="408" cy="103" rx="24" ry="20" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="448" cy="74" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="476" y1="103" x2="504" y2="103" stroke="#6b7480" stroke-width="1.5" marker-end="url(#ok)"/>
+    <circle cx="518" cy="91" r="5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="534" cy="105" rx="6" ry="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <circle cx="520" cy="117" r="4.5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="552" cy="95" rx="5.5" ry="3.8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <circle cx="550" cy="116" r="4.5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  </g>
+
+  <g>
+    <rect x="16" y="198" width="276" height="168" rx="10" fill="#fafafa" stroke="#d0d5dd" stroke-width="1.4"/>
+    <circle cx="38" cy="220" r="14" fill="#1f5fa8"/>
+    <text x="38" y="225" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">M</text>
+    <ellipse cx="128" cy="286" rx="64" ry="50" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="108" cy="286" rx="24" ry="20" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="152" cy="260" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="154" cy="312" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <path d="M 192 278 L 198 278 M 192 294 L 198 294" stroke="#1f5fa8" stroke-width="1.6"/>
+    <line x1="224" y1="286" x2="202" y2="286" stroke="#6b7480" stroke-width="1.5" marker-end="url(#ok)"/>
+    <rect x="230" y="278" width="34" height="16" rx="8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.8"/>
+  </g>
+
+  <g>
+    <rect x="308" y="198" width="276" height="168" rx="10" fill="#fafafa" stroke="#d0d5dd" stroke-width="1.4"/>
+    <circle cx="330" cy="220" r="14" fill="#1f5fa8"/>
+    <text x="330" y="225" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">N</text>
+    <ellipse cx="446" cy="286" rx="84" ry="52" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2"/>
+    <ellipse cx="400" cy="286" rx="23" ry="19" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.5"/>
+    <circle cx="478" cy="286" r="27" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.6"/>
+    <ellipse cx="468" cy="279" rx="6.5" ry="4.5" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <ellipse cx="487" cy="285" rx="6" ry="4" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <circle cx="476" cy="297" r="4.8" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+    <circle cx="478" cy="272" r="2.2" fill="#c8642a"/>
+    <circle cx="486" cy="296" r="2.2" fill="#c8642a"/>
+    <circle cx="465" cy="292" r="2.2" fill="#c8642a"/>
+    <circle cx="478" cy="256" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <circle cx="456" cy="316" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="460" y1="310" x2="466" y2="303" stroke="#c8642a" stroke-width="1.4"/>
+  </g>
+
+  <g>
+    <rect x="94" y="387" width="26" height="12" rx="6" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+    <text x="128" y="398" font-size="13" fill="#222222">Bakteri</text>
+    <circle cx="238" cy="393" r="6.5" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <text x="252" y="398" font-size="13" fill="#222222">Lizozom</text>
+    <ellipse cx="378" cy="393" rx="10" ry="7" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="396" y="398" font-size="13" fill="#222222">Çekirdek</text>
+  </g>
+</svg>

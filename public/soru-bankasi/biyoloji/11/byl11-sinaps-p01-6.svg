@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" width="520" height="320" font-family="Nunito, sans-serif">
+  <rect width="520" height="320" fill="#ffffff"/>
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+
+  <path d="M 224 14 L 224 62 C 176 74 144 104 144 140 C 144 162 162 170 198 170 L 244 170 C 244 156 276 156 276 170 L 322 170 C 358 170 376 162 376 140 C 376 104 344 74 296 62 L 296 14 Z" fill="#eef5fb" stroke="#1f5fa8" stroke-width="2" stroke-linejoin="round"/>
+
+  <line x1="260" y1="22" x2="260" y2="62" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="312" y="45" font-size="14" font-weight="700" fill="#1f5fa8">Uyartı geliş yönü</text>
+
+  <g fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6">
+    <circle cx="196" cy="116" r="15"/>
+    <circle cx="250" cy="96" r="15"/>
+    <circle cx="316" cy="112" r="15"/>
+    <circle cx="212" cy="146" r="14"/>
+    <circle cx="304" cy="144" r="14"/>
+  </g>
+
+  <g fill="#c8642a">
+    <circle cx="191" cy="113" r="2.6"/>
+    <circle cx="201" cy="115" r="2.6"/>
+    <circle cx="196" cy="122" r="2.6"/>
+    <circle cx="245" cy="92" r="2.6"/>
+    <circle cx="255" cy="94" r="2.6"/>
+    <circle cx="250" cy="102" r="2.6"/>
+    <circle cx="311" cy="108" r="2.6"/>
+    <circle cx="321" cy="111" r="2.6"/>
+    <circle cx="315" cy="118" r="2.6"/>
+    <circle cx="207" cy="143" r="2.6"/>
+    <circle cx="217" cy="146" r="2.6"/>
+    <circle cx="212" cy="152" r="2.6"/>
+    <circle cx="299" cy="141" r="2.6"/>
+    <circle cx="309" cy="144" r="2.6"/>
+    <circle cx="303" cy="150" r="2.6"/>
+
+    <circle cx="254" cy="168" r="3"/>
+    <circle cx="265" cy="171" r="3"/>
+    <circle cx="242" cy="182" r="3"/>
+    <circle cx="260" cy="186" r="3"/>
+    <circle cx="278" cy="184" r="3"/>
+    <circle cx="216" cy="196" r="3"/>
+    <circle cx="294" cy="198" r="3"/>
+    <circle cx="246" cy="202" r="3"/>
+    <circle cx="178" cy="212" r="3"/>
+    <circle cx="288" cy="212" r="3"/>
+  </g>
+
+  <path d="M 116 304 L 116 220 L 404 220 L 404 304 Z" fill="#dff0dc" stroke="#3b8f4a" stroke-width="2" stroke-linejoin="round"/>
+
+  <g fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.6" stroke-linejoin="round">
+    <path d="M 166 226 L 166 210 L 172 210 L 172 216 L 184 216 L 184 210 L 190 210 L 190 226 Z"/>
+    <path d="M 222 226 L 222 210 L 228 210 L 228 216 L 240 216 L 240 210 L 246 210 L 246 226 Z"/>
+    <path d="M 276 226 L 276 210 L 282 210 L 282 216 L 294 216 L 294 210 L 300 210 L 300 226 Z"/>
+    <path d="M 332 226 L 332 210 L 338 210 L 338 216 L 350 216 L 350 210 L 356 210 L 356 226 Z"/>
+  </g>
+
+  <line x1="181" y1="116" x2="94" y2="116" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="80" y="121" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">K</text>
+
+  <line x1="330" y1="192" x2="432" y2="192" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="448" y="197" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">L</text>
+
+  <line x1="356" y1="218" x2="432" y2="240" stroke="#6b7480" stroke-width="1.4"/>
+  <text x="448" y="246" font-size="16" font-weight="800" fill="#222222" text-anchor="middle">M</text>
+</svg>

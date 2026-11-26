@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="560" height="320" font-family="Nunito, sans-serif">
+  <rect width="560" height="320" fill="#ffffff"/>
+  <path d="M 24 46 C 84 54, 114 102, 114 160 C 114 218, 84 266, 24 274 Z" fill="#d9e4f2" stroke="#1f5fa8" stroke-width="1.8"/>
+  <text x="64" y="165" text-anchor="middle" font-size="14" font-weight="700" fill="#1f3b5c">Çekirdek</text>
+  <g fill="#ddeaf6" stroke="#1f5fa8" stroke-width="1.6">
+    <path d="M 116 90 C 138 76, 182 72, 224 84 C 234 87, 234 100, 222 101 C 186 95, 148 98, 126 112 C 122 115, 122 126, 134 126 C 166 122, 206 124, 242 134 C 254 137, 252 152, 238 152 C 202 146, 162 146, 130 156 C 120 159, 122 172, 134 172 C 168 168, 202 172, 230 182 C 240 186, 236 200, 222 199 C 192 192, 152 192, 118 202 C 110 204, 108 184, 114 168 C 118 148, 118 118, 116 90 Z"/>
+  </g>
+  <g fill="#223a5e">
+    <circle cx="144" cy="79" r="2.7"/>
+    <circle cx="164" cy="75" r="2.7"/>
+    <circle cx="186" cy="75" r="2.7"/>
+    <circle cx="208" cy="78" r="2.7"/>
+    <circle cx="228" cy="86" r="2.7"/>
+    <circle cx="152" cy="103" r="2.7"/>
+    <circle cx="176" cy="100" r="2.7"/>
+    <circle cx="200" cy="101" r="2.7"/>
+    <circle cx="148" cy="123" r="2.7"/>
+    <circle cx="172" cy="121" r="2.7"/>
+    <circle cx="196" cy="123" r="2.7"/>
+    <circle cx="220" cy="126" r="2.7"/>
+    <circle cx="244" cy="133" r="2.7"/>
+    <circle cx="160" cy="151" r="2.7"/>
+    <circle cx="186" cy="149" r="2.7"/>
+    <circle cx="214" cy="151" r="2.7"/>
+    <circle cx="146" cy="170" r="2.7"/>
+    <circle cx="172" cy="168" r="2.7"/>
+    <circle cx="198" cy="171" r="2.7"/>
+    <circle cx="224" cy="177" r="2.7"/>
+    <circle cx="140" cy="199" r="2.7"/>
+    <circle cx="166" cy="196" r="2.7"/>
+    <circle cx="192" cy="196" r="2.7"/>
+    <circle cx="216" cy="200" r="2.7"/>
+  </g>
+  <g fill="#ddeaf6" stroke="#1f5fa8" stroke-width="1.6">
+    <path d="M 194 206 C 192 224, 174 234, 174 252 C 174 268, 196 274, 212 266 C 220 262, 224 276, 240 278 C 258 280, 266 266, 268 258 C 276 266, 294 272, 304 262 C 314 252, 306 234, 290 232 C 282 231, 280 218, 266 214 C 252 210, 242 222, 232 220 C 222 218, 220 206, 208 202 Z"/>
+    <ellipse cx="204" cy="246" rx="11" ry="7" fill="#ffffff"/>
+    <ellipse cx="248" cy="252" rx="12" ry="8" fill="#ffffff"/>
+    <ellipse cx="284" cy="248" rx="9" ry="6" fill="#ffffff"/>
+  </g>
+  <g fill="#ddeaf6" stroke="#1f5fa8" stroke-width="1.6">
+    <path d="M 358 102 C 386 86, 444 86, 472 102 C 482 108, 476 122, 464 118 C 440 108, 390 108, 366 118 C 354 122, 348 108, 358 102 Z"/>
+    <path d="M 346 130 C 382 114, 448 114, 484 130 C 494 135, 488 150, 476 146 C 444 134, 386 134, 354 146 C 342 150, 336 135, 346 130 Z"/>
+    <path d="M 352 158 C 386 144, 444 144, 478 158 C 488 163, 482 178, 470 173 C 442 162, 388 162, 360 173 C 348 178, 342 163, 352 158 Z"/>
+    <path d="M 366 186 C 394 174, 436 174, 464 186 C 474 191, 468 205, 456 200 C 434 190, 396 190, 374 200 C 362 205, 356 191, 366 186 Z"/>
+    <circle cx="504" cy="118" r="9"/>
+    <circle cx="514" cy="152" r="10"/>
+    <circle cx="496" cy="186" r="8"/>
+    <circle cx="332" cy="166" r="7"/>
+  </g>
+  <g stroke="#6b7480" stroke-width="1.5">
+    <line x1="186" y1="74" x2="186" y2="34"/>
+    <line x1="298" y1="264" x2="366" y2="288"/>
+    <line x1="415" y1="90" x2="415" y2="34"/>
+  </g>
+  <circle cx="186" cy="74" r="3" fill="#6b7480"/>
+  <circle cx="298" cy="264" r="3" fill="#6b7480"/>
+  <circle cx="415" cy="90" r="3" fill="#6b7480"/>
+  <text x="186" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#222222">1</text>
+  <text x="376" y="294" font-size="18" font-weight="700" fill="#222222">2</text>
+  <text x="415" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#222222">3</text>
+</svg>

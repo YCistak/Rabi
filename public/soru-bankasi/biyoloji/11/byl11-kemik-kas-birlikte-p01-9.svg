@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" width="600" height="340" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok-turuncu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#c8642a"/>
+    </marker>
+    <marker id="ok-mavi" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#1f5fa8"/>
+    </marker>
+  </defs>
+  <rect width="600" height="340" fill="#ffffff"/>
+  <g>
+    <rect x="14" y="14" width="278" height="312" rx="8" fill="#ffffff" stroke="#d0d7de" stroke-width="1.4"/>
+    <text x="28" y="38" font-size="15" font-weight="700" fill="#222222">Düzenek X</text>
+    <rect x="44" y="54" width="12" height="148" rx="2" fill="#f3e6cf" stroke="#8c6d46" stroke-width="1.5"/>
+    <line x1="50" y1="194" x2="216" y2="194" stroke="#9aa3ad" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <line x1="50" y1="194" x2="202" y2="122" stroke="#8c6d46" stroke-width="9" stroke-linecap="round"/>
+    <line x1="50" y1="194" x2="202" y2="122" stroke="#f3e6cf" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="50" cy="194" r="6" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="50" cy="194" r="2.2" fill="#1f5fa8"/>
+    <circle cx="78" cy="181" r="3.5" fill="#c8642a"/>
+    <line x1="78" y1="181" x2="78" y2="112" stroke="#c8642a" stroke-width="1.8"/>
+    <rect x="70" y="76" width="16" height="36" rx="3" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="78" y1="76" x2="78" y2="54" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+    <text x="94" y="99" font-size="13" font-weight="700" fill="#c8642a">12 N</text>
+    <line x1="202" y1="122" x2="202" y2="142" stroke="#6b7480" stroke-width="1.4"/>
+    <rect x="186" y="142" width="32" height="22" rx="4" fill="#dbe6f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="202" y="158" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">2 N</text>
+    <line x1="230" y1="194" x2="230" y2="124" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+    <text x="237" y="164" font-size="13" font-weight="700" fill="#1f5fa8">12 cm</text>
+    <line x1="50" y1="212" x2="78" y2="212" stroke="#6b7480" stroke-width="1.2"/>
+    <line x1="50" y1="208" x2="50" y2="216" stroke="#6b7480" stroke-width="1.2"/>
+    <line x1="78" y1="208" x2="78" y2="216" stroke="#6b7480" stroke-width="1.2"/>
+    <text x="64" y="228" text-anchor="middle" font-size="13" fill="#222222">5 cm</text>
+    <rect x="28" y="242" width="250" height="72" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+    <text x="40" y="262" font-size="13" fill="#222222">Bağlantı uzaklığı: 5 cm</text>
+    <text x="40" y="282" font-size="13" fill="#222222">Okunan çekme kuvveti: 12 N</text>
+    <text x="40" y="302" font-size="13" fill="#222222">Uçtaki yükselme: 12 cm</text>
+  </g>
+  <g>
+    <rect x="308" y="14" width="278" height="312" rx="8" fill="#ffffff" stroke="#d0d7de" stroke-width="1.4"/>
+    <text x="322" y="38" font-size="15" font-weight="700" fill="#222222">Düzenek Y</text>
+    <rect x="338" y="54" width="12" height="148" rx="2" fill="#f3e6cf" stroke="#8c6d46" stroke-width="1.5"/>
+    <line x1="344" y1="194" x2="510" y2="194" stroke="#9aa3ad" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <line x1="344" y1="194" x2="508" y2="170" stroke="#8c6d46" stroke-width="9" stroke-linecap="round"/>
+    <line x1="344" y1="194" x2="508" y2="170" stroke="#f3e6cf" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="344" cy="194" r="6" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+    <circle cx="344" cy="194" r="2.2" fill="#1f5fa8"/>
+    <circle cx="426" cy="182" r="3.5" fill="#c8642a"/>
+    <line x1="426" y1="182" x2="426" y2="112" stroke="#c8642a" stroke-width="1.8"/>
+    <rect x="418" y="76" width="16" height="36" rx="3" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+    <line x1="426" y1="76" x2="426" y2="54" stroke="#c8642a" stroke-width="2" marker-end="url(#ok-turuncu)"/>
+    <text x="442" y="99" font-size="13" font-weight="700" fill="#c8642a">4 N</text>
+    <line x1="508" y1="170" x2="508" y2="202" stroke="#6b7480" stroke-width="1.4"/>
+    <rect x="492" y="202" width="32" height="22" rx="4" fill="#dbe6f2" stroke="#1f5fa8" stroke-width="1.4"/>
+    <text x="508" y="218" text-anchor="middle" font-size="13" font-weight="700" fill="#222222">2 N</text>
+    <line x1="534" y1="194" x2="534" y2="171" stroke="#1f5fa8" stroke-width="1.8" marker-end="url(#ok-mavi)"/>
+    <text x="541" y="187" font-size="13" font-weight="700" fill="#1f5fa8">4 cm</text>
+    <line x1="344" y1="212" x2="426" y2="212" stroke="#6b7480" stroke-width="1.2"/>
+    <line x1="344" y1="208" x2="344" y2="216" stroke="#6b7480" stroke-width="1.2"/>
+    <line x1="426" y1="208" x2="426" y2="216" stroke="#6b7480" stroke-width="1.2"/>
+    <text x="385" y="228" text-anchor="middle" font-size="13" fill="#222222">15 cm</text>
+    <rect x="322" y="242" width="250" height="72" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+    <text x="334" y="262" font-size="13" fill="#222222">Bağlantı uzaklığı: 15 cm</text>
+    <text x="334" y="282" font-size="13" fill="#222222">Okunan çekme kuvveti: 4 N</text>
+    <text x="334" y="302" font-size="13" fill="#222222">Uçtaki yükselme: 4 cm</text>
+  </g>
+</svg>

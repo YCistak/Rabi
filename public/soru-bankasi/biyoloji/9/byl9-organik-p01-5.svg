@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 340" width="620" height="340" font-family="Nunito, sans-serif">
+  <defs>
+    <marker id="ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 Z" fill="#6b7480"/>
+    </marker>
+  </defs>
+  <rect width="620" height="340" fill="#ffffff"/>
+
+  <rect x="40" y="16" width="140" height="30" rx="6" fill="#eef5fb" stroke="#1f5fa8" stroke-width="1.5"/>
+  <text x="110" y="36" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">1. Tüp · 0 °C</text>
+
+  <path d="M 86 106 L 86 146 A 24 24 0 0 0 134 146 L 134 106 Z" fill="#eef5fb"/>
+  <path d="M 82 62 L 86 62 L 86 146 A 24 24 0 0 0 134 146 L 134 62 L 138 62" fill="none" stroke="#1f5fa8" stroke-width="2"/>
+  <line x1="86" y1="106" x2="134" y2="106" stroke="#1f5fa8" stroke-width="1.4"/>
+
+  <rect x="30" y="186" width="160" height="36" rx="7" fill="#f4f5f7" stroke="#6b7480" stroke-width="1.5"/>
+  <text x="110" y="209" font-size="14" text-anchor="middle" fill="#222222">Ürün oluşmadı</text>
+
+  <line x1="110" y1="222" x2="110" y2="275" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="120" y="254" font-size="13" fill="#222222">37 °C'ye getirildi</text>
+
+  <rect x="30" y="280" width="160" height="36" rx="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="110" y="303" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Ürün oluştu</text>
+
+  <rect x="240" y="16" width="140" height="30" rx="6" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.5"/>
+  <text x="310" y="36" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">2. Tüp · 37 °C</text>
+
+  <path d="M 286 106 L 286 146 A 24 24 0 0 0 334 146 L 334 106 Z" fill="#dff0dc"/>
+  <path d="M 282 62 L 286 62 L 286 146 A 24 24 0 0 0 334 146 L 334 62 L 338 62" fill="none" stroke="#3b8f4a" stroke-width="2"/>
+  <line x1="286" y1="106" x2="334" y2="106" stroke="#3b8f4a" stroke-width="1.4"/>
+
+  <rect x="230" y="186" width="160" height="36" rx="7" fill="#dff0dc" stroke="#3b8f4a" stroke-width="1.6"/>
+  <text x="310" y="209" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Ürün oluştu</text>
+
+  <rect x="440" y="16" width="140" height="30" rx="6" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.5"/>
+  <text x="510" y="36" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">3. Tüp · 80 °C</text>
+
+  <path d="M 486 106 L 486 146 A 24 24 0 0 0 534 146 L 534 106 Z" fill="#fbe6d6"/>
+  <path d="M 482 62 L 486 62 L 486 146 A 24 24 0 0 0 534 146 L 534 62 L 538 62" fill="none" stroke="#c8642a" stroke-width="2"/>
+  <line x1="486" y1="106" x2="534" y2="106" stroke="#c8642a" stroke-width="1.4"/>
+
+  <rect x="430" y="186" width="160" height="36" rx="7" fill="#f4f5f7" stroke="#6b7480" stroke-width="1.5"/>
+  <text x="510" y="209" font-size="14" text-anchor="middle" fill="#222222">Ürün oluşmadı</text>
+
+  <line x1="510" y1="222" x2="510" y2="275" stroke="#6b7480" stroke-width="1.8" marker-end="url(#ok)"/>
+  <text x="500" y="254" font-size="13" text-anchor="end" fill="#222222">37 °C'ye getirildi</text>
+
+  <rect x="430" y="280" width="160" height="36" rx="7" fill="#fbe6d6" stroke="#c8642a" stroke-width="1.6"/>
+  <text x="510" y="303" font-size="14" font-weight="700" text-anchor="middle" fill="#222222">Ürün oluşmadı</text>
+</svg>
